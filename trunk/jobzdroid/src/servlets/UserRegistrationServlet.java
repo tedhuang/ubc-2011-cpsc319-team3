@@ -90,7 +90,7 @@ public class UserRegistrationServlet extends HttpServlet {
 			if(isUnique){
 				boolean accCreated = accManager.createAccount(email, pw, accType, name);
 				if(accCreated)
-					result = "Account creation successful!";
+					result = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
 				else
 					result = "Failed to created account. Please try again later.";
 			}
