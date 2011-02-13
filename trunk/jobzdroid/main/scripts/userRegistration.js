@@ -116,16 +116,11 @@ function sendRegRequest(evt){
 
 
 function parseRegResponse(responseXML){	
-	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;	 
-	 
-	 /*var responseText = "";
-	 
-	 if(success == "false"){
-		 responseText = "This email address has already been used. Please use another one.";
-	 }
-	 else{
-		 responseText = "User Created!";
+	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
+	 var msg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+	 /*
+	 if(result == "true"){
+		 window.location="./userRegistration.html";
 	 }*/
-	 
-	 return result;
+	 return msg;
 }

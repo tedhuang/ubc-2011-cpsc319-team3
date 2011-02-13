@@ -50,7 +50,8 @@ public class UserRegistrationServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String result = "";
+		boolean result = false;
+		String msg = "";
 		boolean allGood = true;
 		// get request parameters
 		String email = request.getParameter("Email");
@@ -61,27 +62,27 @@ public class UserRegistrationServlet extends HttpServlet {
 				
 		// validate data
 		if( !validate(email, EMAIL_PATTERN) ){
-			result = "Invalid email address format.";
+			msg = "Invalid email address format.";
 			allGood = false;
 		}
 		else if( !validate(pw, PW_PATTERN) ){
-			result = "Invalid password format.";
+			msg = "Invalid password format.";
 			allGood = false;
 		}		
 		else if( !accType.equals("searcher") && !accType.equals("poster") ){
-			result = "Invalid account type.";
+			msg = "Invalid account type.";
 			allGood = false;
 		}
 		else if( !pw.equals(pwRepeat) ){
-			result = "Passwords do not match.";
+			msg = "Passwords do not match.";
 			allGood = false;
 		}
 		else if( name.length() < 1 ){
 			allGood = false;
 			if(accType.equals("searcher"))
-				result = "Name must not be empty.";
+				msg = "Name must not be empty.";
 			else if(accType.equals("poster"))
-				result = "Company/organization must not be empty.";
+				msg = "Company/organization must not be empty.";
 		}
 		
 		if(allGood){
@@ -89,13 +90,15 @@ public class UserRegistrationServlet extends HttpServlet {
 			
 			if(isUnique){
 				boolean accCreated = accManager.createAccount(email, pw, accType, name);
-				if(accCreated)
-					result = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
+				if(accCreated){
+					msg = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
+					result = true;
+				}
 				else
-					result = "Failed to created account. Please try again later.";
+					msg = "Failed to created account. Please try again later.";
 			}
 			else{
-				result = "This email address has already been used. Please choose another one.";
+				msg = "This email address has already been used. Please choose another one.";
 			}			
 		}
 		
@@ -104,6 +107,7 @@ public class UserRegistrationServlet extends HttpServlet {
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
 		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + msg + "</message>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
