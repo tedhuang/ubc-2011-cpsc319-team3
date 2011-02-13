@@ -11,12 +11,12 @@
   </welcome-file-list>
   <servlet>
     <description>Handles user registration requests</description>
-    <display-name>UserRegisterationServlet</display-name>
-    <servlet-name>UserRegisterationServlet</servlet-name>
-    <servlet-class>servlets.UserRegisterationServlet</servlet-class>
+    <display-name>UserRegistrationServlet</display-name>
+    <servlet-name>UserRegistrationServlet</servlet-name>
+    <servlet-class>servlets.UserRegistrationServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>UserRegisterationServlet</servlet-name>
-    <url-pattern>/UserRegisterationServlet</url-pattern>
+    <servlet-name>UserRegistrationServlet</servlet-name>
+    <url-pattern>/UserRegistrationServlet</url-pattern>
   </servlet-mapping>
 </web-app>
