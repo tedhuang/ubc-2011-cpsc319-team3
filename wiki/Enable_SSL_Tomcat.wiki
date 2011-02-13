@@ -1,0 +1,18 @@
+#wiki page for enabling ssl on tomcat on eclipse
+
+= Introduction =
+
+sup
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Find server.xml
+  * create self signed certificate
+  * add location of self signed certificate to a "connector" in server.xml
+    * keytool -genkey - alias tomcat - keyalg RSA - storepass *changeit* -keystore *path* -keypass *changeit*
+
+Links
+  * [http://stackoverflow.com/questions/2465041/run-jsp-in-eclipse-on-specific-port-and-ssl Where to find server.xml]
+  * [http://www.akadia.com/services/ssh_test_certificate.html How to create self signing certificate]
