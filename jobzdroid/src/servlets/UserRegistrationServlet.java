@@ -86,7 +86,6 @@ public class UserRegistrationServlet extends HttpServlet {
 		
 		if(allGood){
 			boolean isUnique = accManager.isUniqueEmailAddr(email);
-			System.out.println("account name is unique? " + isUnique);
 			
 			if(isUnique){
 				boolean accCreated = accManager.createAccount(email, pw, accType, name);
