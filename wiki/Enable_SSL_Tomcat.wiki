@@ -24,5 +24,8 @@ Add your content here.  Format your content with:
 }}}
 Links
   * [http://www.coderanch.com/t/87738/Tomcat/Self-signed-certificate-tomcat full on tutorial]
+  * [http://www.cb1inc.com/2007/05/12/creating-self-signed-certs-on-apache-tomcat-5-5/ stuff]
+  * [http://www.liferay.com/web/guest/community/wiki/-/wiki/Main/How%20to%20configure%20https%20feature more stuff]
+  * [http://www.codemarvels.com/2010/11/enabling-ssl-on-tomcat-on-a-devl-machine-windows/ and stuff]
   * [http://stackoverflow.com/questions/2465041/run-jsp-in-eclipse-on-specific-port-and-ssl Where to find server.xml]
   * [http://www.akadia.com/services/ssh_test_certificate.html How to create self signing certificate]
