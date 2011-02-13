@@ -7,8 +7,7 @@ public class DBconn{
 
 	public DBconn() throws Exception{
 		Class.forName("com.mysql.jdbc.Driver").newInstance();		
-		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");		
-		System.out.println("Succesfully Connected");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 	}
 	
 	public Connection getDBConnection(){

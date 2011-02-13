@@ -82,6 +82,7 @@ function validateForm(evt){
 function sendRegRequest(evt){
 	var email = $("#emailAddr").val();
 	var pw = $("#pw1").val();
+	var pwRepeat = $("#pw2").val();
 	var accType = $("input[name=accType]:checked").val();
 	var name = $("#name").val();
 	if (window.XMLHttpRequest){
@@ -101,7 +102,7 @@ function sendRegRequest(evt){
 		}
 	};
 	
-	var params = "Email=" + encodeURIComponent(email) + "&Password=" + encodeURIComponent(pw)
+	var params = "Email=" + encodeURIComponent(email) + "&Password=" + encodeURIComponent(pw) + "&PasswordRepeat=" + encodeURIComponent(pwRepeat)
 				+ "&AccountType=" + encodeURIComponent(accType) + "&Name=" + encodeURIComponent(name);
 
 	//send the parameters to servlet

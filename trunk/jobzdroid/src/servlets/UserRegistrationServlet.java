@@ -1,6 +1,5 @@
 package servlets;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,30 +7,35 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import managers.DBManager;
+
+import managers.AccountManager;
 
 /**
  * Servlet implementation class UserRegisterationServlet
+ * Handles user registration requests by validating user data, calling AccountManager and subsequently 
+ * DBManager to perform DB operations, and finally returns the DB update results back to the user
  */
 public class UserRegistrationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	private static final String PW_PATTERN = "^\\S{5,15}$";
-	//
+	private AccountManager accManager;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public UserRegistrationServlet() {
         super();
+		accManager = new AccountManager();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//String temp = request.getPathInfo();
-		//System.out.println(temp);
+		/*
+		String temp = request.getPathInfo();
+		System.out.println(temp);
 		response.setContentType("text/html");  
 		PrintWriter out = response.getWriter();  
 		out.println("<html>");  
@@ -39,6 +43,7 @@ public class UserRegistrationServlet extends HttpServlet {
 		out.println("<body>");  
 		out.println("<p>This is a simple Servlet!</p>");  
 		out.println("</body></html>");  
+		*/
 	}
 
 	/**
@@ -46,51 +51,54 @@ public class UserRegistrationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String result = "";
+		boolean allGood = true;
 		// get request parameters
 		String email = request.getParameter("Email");
 		String pw = request.getParameter("Password");
+		String pwRepeat = request.getParameter("PasswordRepeat");
 		String accType = request.getParameter("AccountType");
 		String name = request.getParameter("Name");
-		System.out.println("name: "+name);
-		
+				
 		// validate data
-		if( !validate(email, EMAIL_PATTERN) )
+		if( !validate(email, EMAIL_PATTERN) ){
 			result = "Invalid email address format.";
-		
-		else if( !validate(pw, PW_PATTERN) )
+			allGood = false;
+		}
+		else if( !validate(pw, PW_PATTERN) ){
 			result = "Invalid password format.";
-		
-		else if( !accType.equals("searcher") && !accType.equals("poster") )
+			allGood = false;
+		}		
+		else if( !accType.equals("searcher") && !accType.equals("poster") ){
 			result = "Invalid account type.";
-		
+			allGood = false;
+		}
+		else if( !pw.equals(pwRepeat) ){
+			result = "Passwords do not match.";
+			allGood = false;
+		}
 		else if( name.length() < 1 ){
+			allGood = false;
 			if(accType.equals("searcher"))
 				result = "Name must not be empty.";
 			else if(accType.equals("poster"))
 				result = "Company/organization must not be empty.";
 		}
-		else{
-			result = "no errors!";
-		}
 		
-		DBManager dbm = new DBManager();
-		/*
-		boolean uniqueUsername = dbm.usernameCheck(Username);
-		
-		if(uniqueUsername){
-			String Password = request.getParameter("Password");
-			String PhoneNumber = request.getParameter("PhoneNumber");
-			String PhoneCarrier = request.getParameter("PhoneCarrier");
-			String EmailAddress = request.getParameter("EmailAddress");
-
-			success = dbm.userRegister(Username,Password ,PhoneNumber,PhoneCarrier, EmailAddress);
-			System.out.println("Success is: "+success);
-			success = true;
+		if(allGood){
+			boolean isUnique = accManager.isUniqueEmailAddr(email);
+			System.out.println("account name is unique? " + isUnique);
+			
+			if(isUnique){
+				boolean accCreated = accManager.createAccount(email, pw, accType, name);
+				if(accCreated)
+					result = "Account creation successful!";
+				else
+					result = "Failed to created account. Please try again later.";
+			}
+			else{
+				result = "This email address has already been used. Please choose another one.";
+			}			
 		}
-		else{
-			success = false;
-			System.out.println("Hello Success is: "+success);
-		}*/
 		
 		// Write XML to response if DB has return message
 		StringBuffer XMLResponse = new StringBuffer();	
