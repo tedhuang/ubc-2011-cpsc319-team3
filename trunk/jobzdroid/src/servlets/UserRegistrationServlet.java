@@ -47,6 +47,8 @@ public class UserRegistrationServlet extends HttpServlet {
 	}
 
 	/**
+	 * Performs server-side user registration data validation, calls account manager to check/create account, 
+	 * and then calls email manager to send a verification email to the newly registered account email
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
