@@ -3,6 +3,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.UUID;
+
 import classes.DBconn;
 
 /***
@@ -26,7 +28,7 @@ public class DBManager {
 	}
 	
 	/***
-	 * Checks whether the given primary email address is unique
+	 * Checks whether the given primary email address is unique.
 	 * @param email email address to be checked
 	 * @return boolean indicating whether the email address is unique
 	 */
@@ -82,20 +84,23 @@ public class DBManager {
 	
 	/***
 	 * Creates a new account with the given email, password, account type and person/company name
+	 * with a uniquely generated verification number used for email verification.
+	 * New accounts open with "Pending" status.
 	 * @param email Primary email
 	 * @param password User password
 	 * @param accType Account type
-	 * @param name Person/Company name
+	 * @param name Person/Company name 
+	 * @param uuid randomly generated unique verification number for email
 	 * @return boolean indicating whether account was successfully created
 	 */
-	public boolean createAccount(String email, String password, String accType, String name) {
+	public boolean createAccount(String email, String password, String accType, String name, UUID uuid) {
 		Connection conn = getNewDBconn();	
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
 					
-			String query = "INSERT INTO AccountTable(Email, Password, Type, Name, Status) VALUES " + 
-	  		"('" + email + "','" + password + "','" + accType + "','" + name + "','" + "Pending" + "')";
+			String query = "INSERT INTO AccountTable(Email, Password, Type, Name, Status, VerificationNum) VALUES " + 
+	  		"('" + email + "','" + password + "','" + accType + "','" + name + "','" + "Pending" + "','" + uuid + "')";
 			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
