@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import managers.AccountManager;
+import managers.EmailManager;
 
 /**
  * Servlet implementation class Servlet_User_Registration
@@ -23,16 +24,16 @@ public class ServletUserRegistration extends HttpServlet {
 	//TODO: move these constants to the config file
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	private static final String PW_PATTERN = "^\\S{5,15}$";
-	private AccountManager accManager;   
-	
-	
+	private AccountManager accountManager;   
+	private EmailManager emailManager;	
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ServletUserRegistration() {
         super();
-        accManager = new AccountManager();
+        accountManager = new AccountManager();
+        emailManager = new EmailManager();
     }
 
 	/**
@@ -49,64 +50,68 @@ public class ServletUserRegistration extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		boolean result = false;
-		String msg = "";
+		String message = "";
 		boolean allGood = true;
+		boolean accountCreated = false;
 		// get request parameters
 		String email = request.getParameter("Email");
-		String pw = request.getParameter("Password");
-		String pwRepeat = request.getParameter("PasswordRepeat");
-		String accType = request.getParameter("AccountType");
+		String password = request.getParameter("Password");
+		String passwordRepeat = request.getParameter("PasswordRepeat");
+		String accountType = request.getParameter("AccountType");
 		String name = request.getParameter("Name");
 				
 		// validate data
 		if( !validate(email, EMAIL_PATTERN) ){
-			msg = "Invalid email address format.";
+			message = "Invalid email address format.";
 			allGood = false;
 		}
-		else if( !validate(pw, PW_PATTERN) ){
-			msg = "Invalid password format.";
+		else if( !validate(password, PW_PATTERN) ){
+			message = "Invalid password format.";
 			allGood = false;
 		}		
-		else if( !accType.equals("searcher") && !accType.equals("poster") ){
-			msg = "Invalid account type.";
+		else if( !accountType.equals("searcher") && !accountType.equals("poster") ){
+			message = "Invalid account type.";
 			allGood = false;
 		}
-		else if( !pw.equals(pwRepeat) ){
-			msg = "Passwords do not match.";
+		else if( !password.equals(passwordRepeat) ){
+			message = "Passwords do not match.";
 			allGood = false;
 		}
 		else if( name.length() < 1 ){
 			allGood = false;
-			if(accType.equals("searcher"))
-				msg = "Name must not be empty.";
-			else if(accType.equals("poster"))
-				msg = "Company/organization must not be empty.";
+			if(accountType.equals("searcher"))
+				message = "Name must not be empty.";
+			else if(accountType.equals("poster"))
+				message = "Company/organization must not be empty.";
 		}
 		
 		// if info are all valid, then proceed to do DB updates
 		if(allGood){
 			// check if email is unique
-			boolean isUnique = accManager.checkEmailUnique(email);
+			boolean isUnique = accountManager.checkEmailUnique(email);
 			if(isUnique){
-				boolean accCreated = accManager.createAccount(email, pw, accType, name);
-				if(accCreated){
-					msg = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
+				accountCreated = accountManager.createAccount(email, password, accountType, name);
+				if(accountCreated){
+					message = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
+					// send verification email to new user
+				//	emailManager.sendAccountActivationEmail(email, name);
+					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name);
 					result = true;
 				}
 				else
-					msg = "Failed to created account. Please try again later.";
+					message = "Failed to create account. Please try again later.";
 			}
 			else{
-				msg = "This email address has already been used. Please choose another one.";
+				message = "This email address has already been used. Please choose another one.";
 			}			
 		}
 		
-		// Write XML to response if DB has return message
+		// Write XML containing message and result to response
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
 		XMLResponse.append("\t<result>" + result + "</result>\n");
-		XMLResponse.append("\t<message>" + msg + "</message>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
