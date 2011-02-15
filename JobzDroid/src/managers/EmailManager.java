@@ -16,16 +16,9 @@ public class EmailManager {
 	private static final String GMAIL_SMTP_HOST = "smtp.gmail.com";
 	private static final String GMAIL_PORT = "465";
 	
-//	private db_manager dbm = null;
+	public EmailManager() {}
 	
-	public EmailManager()
-	{
-//		dbm = new db_manager;
-	}
-
-	
-	private boolean send_mail(String address, String title, String body)
-	{
+	public boolean sendEmail(String address, String title, String body) {
 		Properties properties = new Properties();
 		properties.put("mail.smtp.user", CRAIGSBAY_EMAIL);
 		properties.put("mail.smtp.host", GMAIL_SMTP_HOST);
@@ -34,28 +27,26 @@ public class EmailManager {
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.debug", "true");
 		properties.put("mail.smtp.socketFactory.port", GMAIL_PORT);
-		properties.put("mail.smtp.socketFactory.class",
-				"javax.net.ssl.SSLSocketFactory");
+		properties.put("mail.smtp.socketFactory.class",	"javax.net.ssl.SSLSocketFactory");
 		properties.put("mail.smtp.socketFactory.fallback", "false");
 //		SecurityManager security = System.getSecurityManager();
 
 		try {
 			Authenticator auth = new SMTPAuthenticator();
 			Session session = Session.getInstance(properties, auth);
-			 session.setDebug(true);
+			session.setDebug(true);
 
 			MimeMessage msg = new MimeMessage(session);
 			msg.setText(body);
 			msg.setSubject(title);
 			msg.setFrom(new InternetAddress(address));
-			msg.addRecipient(Message.RecipientType.TO,
-					new InternetAddress(address));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
 			Transport.send(msg);
-			System.out.println("done");
-		} catch (Exception mex) {
-			mex.printStackTrace();
-		}
-		
+		} 
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}		
 		return true;
 	}
 	
