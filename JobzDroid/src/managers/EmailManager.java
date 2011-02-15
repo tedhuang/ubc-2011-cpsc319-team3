@@ -9,7 +9,7 @@ import javax.mail.Authenticator;
 //import java.sql.Array;
 import java.util.*;
 
-public class SMTP_Manager {
+public class EmailManager {
 
 	private static final String CRAIGSBAY_EMAIL = "craigsbayauctionhouse@gmail.com";
 	private static final String CRAIGSBAY_EMAIL_PW = "craigsbayrocks";
@@ -18,7 +18,7 @@ public class SMTP_Manager {
 	
 //	private db_manager dbm = null;
 	
-	public SMTP_Manager()
+	public EmailManager()
 	{
 //		dbm = new db_manager;
 	}
@@ -37,7 +37,6 @@ public class SMTP_Manager {
 		properties.put("mail.smtp.socketFactory.class",
 				"javax.net.ssl.SSLSocketFactory");
 		properties.put("mail.smtp.socketFactory.fallback", "false");
-
 //		SecurityManager security = System.getSecurityManager();
 
 		try {

@@ -85,19 +85,21 @@ function sendRegRequest(evt){
 	var pwRepeat = $("#pw2").val();
 	var accType = $("input[name=accType]:checked").val();
 	var name = $("#name").val();
+	
+	var xmlHttpReq;
 	if (window.XMLHttpRequest){
 		// Firefox, Chrome, Opera, Safari
-		xmlhttp = new XMLHttpRequest();
+		xmlHttpReq = new XMLHttpRequest();
 	}
 	else{
 		// IE
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	  
-	xmlhttp.onreadystatechange = function(){
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
+	xmlHttpReq.onreadystatechange = function(){
+		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
 			//parse XML response from server
-			var responseText = parseRegResponse(xmlhttp.responseXML);		   
+			var responseText = parseRegResponse(xmlHttpReq.responseXML);		   
 	    	$("#statusText").text(responseText);
 		}
 	};
@@ -106,9 +108,9 @@ function sendRegRequest(evt){
 				+ "&AccountType=" + encodeURIComponent(accType) + "&Name=" + encodeURIComponent(name);
 
 	//send the parameters to servlet
-	xmlhttp.open("POST","../UserRegistrationServlet" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(params);
+	xmlHttpReq.open("POST","../ServletUserRegistration" ,true);
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlHttpReq.send(params);
 	
 	//update status text
 	$("#statusText").text("Sending Request...");

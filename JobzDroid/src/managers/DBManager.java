@@ -6,46 +6,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DB_Manager {
-	
-	protected ResultSet rs;
-	protected Statement stm;
-	
-	private Connection db_conn = null;
-
-	
-	private Connection get_connection() {
-		Connection m_conn = null;
-		
-		try{
+public class DBManager {		
+	/***
+	 * Returns a JDBC connection object
+	 * @return Connection object to the database
+	 */
+	private Connection getConnection() {	
+		Connection dbConn = null;
+		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-
-			m_conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/craigsbay",
-			        "root", "cs319CS#!(");
-			
-			System.out.println("Succesfully Connected");
+	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/craigsbay", "root", "cs319CS#!(");
+			dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
 		catch(Exception e){
 			//TODO: log error
 			System.out.println("Error creating DB connection : " + e.getMessage());
-
-		}
-		
-		return m_conn;
+		}		
+		return dbConn;
 	}
 	
-	public DB_Manager()
-	{
-		db_conn = get_connection();
-	}
+	public DBManager() {}
 	
 	/***
 	 * Checks whether the given primary email address is unique.
 	 * @param email email address to be checked
 	 * @return boolean indicating whether the email address is unique
 	 */
-	public boolean check_unique_mail(String email) {
-		Connection conn = get_connection();	
+	public boolean checkEmailUnique(String email) {
+		Connection conn = getConnection();	
 		ResultSet rs = null;
 		Statement stmt = null;
 		try {
@@ -109,7 +97,7 @@ public class DB_Manager {
 
 	 */
 	public boolean createAccount(String email, String password, String accType, String name, UUID uuid) {
-		Connection conn = get_connection();	
+		Connection conn = getConnection();	
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
