@@ -9,28 +9,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import managers.Account_Manager;
+import managers.AccountManager;
 
 /**
  * Servlet implementation class Servlet_User_Registration
+ * Performs server-side checks on user registration inputs. If successful, then calls account manager update account tables in DB.
+ * Finally calls the email manager to send a verification email to the new user.
  */
-public class Servlet_User_Registration extends HttpServlet {
+public class ServletUserRegistration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	
 	//TODO: move these constants to the config file
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	private static final String PW_PATTERN = "^\\S{5,15}$";
-	private Account_Manager accManager;   
+	private AccountManager accManager;   
 	
 	
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Servlet_User_Registration() {
+    public ServletUserRegistration() {
         super();
-        // TODO Auto-generated constructor stub
+        accManager = new AccountManager();
     }
 
 	/**
@@ -41,6 +43,8 @@ public class Servlet_User_Registration extends HttpServlet {
 	}
 
 	/**
+	 * Performs server-side checks on user registration inputs. If successful, then calls account manager update account tables in DB.
+	 * Finally calls the email manager to send a verification email to the new user.
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -79,9 +83,10 @@ public class Servlet_User_Registration extends HttpServlet {
 				msg = "Company/organization must not be empty.";
 		}
 		
+		// if info are all valid, then proceed to do DB updates
 		if(allGood){
-			boolean isUnique = accManager.isUniqueEmailAddr(email);
-			
+			// check if email is unique
+			boolean isUnique = accManager.checkEmailUnique(email);
 			if(isUnique){
 				boolean accCreated = accManager.createAccount(email, pw, accType, name);
 				if(accCreated){

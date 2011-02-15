@@ -6,11 +6,11 @@ import java.util.UUID;
 /***
  * Manages account related actions, and calls DBManager to perform DB operations
  */
-public class Account_Manager {
-	private DB_Manager dbManager;
+public class AccountManager {
+	private DBManager dbManager;
 	
-	public Account_Manager(){
-		dbManager = new DB_Manager();
+	public AccountManager(){
+		dbManager = new DBManager();
 	}
 	
 	/***
@@ -21,8 +21,8 @@ public class Account_Manager {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public boolean isUniqueEmailAddr(String email){
-		return dbManager.check_unique_mail(email);
+	public boolean checkEmailUnique(String email){
+		return dbManager.checkEmailUnique(email);
 	}
 	
 	/***
