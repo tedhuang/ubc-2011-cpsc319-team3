@@ -1,0 +1,6 @@
+private final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
+
+private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
+private static final String PW_PATTERN = "^\\S{5,15}$";
+
+jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410"
