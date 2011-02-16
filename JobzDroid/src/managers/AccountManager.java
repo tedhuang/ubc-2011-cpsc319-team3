@@ -9,6 +9,8 @@ import java.util.UUID;
 public class AccountManager {
 	private DBManager dbManager;
 	
+	private final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
+	
 	public AccountManager(){
 		dbManager = new DBManager();
 	}
@@ -37,7 +39,7 @@ public class AccountManager {
 	 */
 	public boolean createAccount(String email, String password, String accType, String name){
 		UUID uuid = UUID.randomUUID();
-		return dbManager.createAccount(email, password, accType, name, uuid);
+		return dbManager.createAccount(email, password, accType, name, uuid, EXPIRY_TIME_EMAIL_VERIFICATION);
 	}
 	
 }
