@@ -19,4 +19,14 @@
     <servlet-name>ServletUserRegistration</servlet-name>
     <url-pattern>/ServletUserRegistration</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletHTTPS</display-name>
+    <servlet-name>ServletHTTPS</servlet-name>
+    <servlet-class>Servlets.ServletHTTPS</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletHTTPS</servlet-name>
+    <url-pattern>/ServletHTTPS</url-pattern>
+  </servlet-mapping>
 </web-app>
