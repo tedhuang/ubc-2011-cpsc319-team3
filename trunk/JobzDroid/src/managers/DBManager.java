@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DBManager {		
+import classes.Utility;
+
+public class DBManager {			
 	/***
 	 * Returns a JDBC connection object
 	 * @return Connection object to the database
@@ -15,8 +17,8 @@ public class DBManager {
 		Connection dbConn = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/craigsbay", "root", "cs319CS#!(");
-			dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
+			dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
+	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
 		catch(Exception e){
 			//TODO: log error
@@ -38,7 +40,7 @@ public class DBManager {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String query = "SELECT AccountID FROM AccountTable " + "WHERE Email='" + email + "'"; 			
+			String query = "SELECT idAccount FROM TableAccount " + "WHERE Email='" + email + "';"; 			
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
 			
@@ -90,27 +92,56 @@ public class DBManager {
 	 * New accounts open with "Pending" status.
 	 * @param email Primary email
 	 * @param password User password
-	 * @param accType Account type
+	 * @param accountType Account type
 	 * @param name Person/Company name 
 	 * @param uuid randomly generated unique verification number for email
+	 * @param expiryTimeEmailRegistration Time before the registration verification expires
 	 * @return boolean indicating whether account was successfully created
-
 	 */
-	public boolean createAccount(String email, String password, String accType, String name, UUID uuid) {
-		Connection conn = getConnection();	
+	public boolean createAccount(String email, String password, String accountType, String name, UUID uuid, long expiryTimeEmailRegistration) {
+		Connection conn = getConnection();
 		Statement stmt = null;
+		ResultSet rs = null;
 		try {
 			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			int idAccount;
 					
-			String query = "INSERT INTO AccountTable(Email, Password, Type, Name, Status, VerificationNum) VALUES " + 
-	  		"('" + email + "','" + password + "','" + accType + "','" + name + "','" + "Pending" + "','" + uuid + "')";
-			
+			// update account table
+			String query = "INSERT INTO TableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
+	  		"('" + email + "','" + password + "','" + accountType + "','" + "Pending" + "','" + currentTime + "');";			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
-			if (rowsInserted == 1)
-				return true;
+			if (rowsInserted != 1)
+				return false;
+			
+			// get account id of the account just created
+			query = "SELECT idAccount FROM TableAccount WHERE email='" + email + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			if(rs.first())
+				idAccount = rs.getInt("idAccount");
 			else
-				return false;					
+				return false;
+						
+			// add entry to email verification table
+			long expiryTime = currentTime + expiryTimeEmailRegistration;			
+			query = "INSERT INTO TableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
+	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
+			// if successful, 1 row should be inserted
+			rowsInserted = stmt.executeUpdate(query);
+			if (rowsInserted != 1)
+				return false;
+			// add entry to user profile table
+			if(accountType.equals("searcher")){
+				query = "INSERT INTO TableProfileSearcher(idAccount, name) VALUES " + 
+		  		"('" + idAccount + "','" + name + "');";		
+			}
+			else if(accountType.equals("poster")){
+				
+			}
+
+			System.out.println("aaa");
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception

@@ -1,13 +1,13 @@
 package servlets;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import classes.Utility;
 
 import managers.AccountManager;
 import managers.EmailManager;
@@ -61,11 +61,11 @@ public class ServletUserRegistration extends HttpServlet {
 		String name = request.getParameter("Name");
 				
 		// validate data
-		if( !validate(email, EMAIL_PATTERN) ){
+		if( !Utility.validate(email, EMAIL_PATTERN) ){
 			message = "Invalid email address format.";
 			allGood = false;
 		}
-		else if( !validate(password, PW_PATTERN) ){
+		else if( !Utility.validate(password, PW_PATTERN) ){
 			message = "Invalid password format.";
 			allGood = false;
 		}		
@@ -115,17 +115,6 @@ public class ServletUserRegistration extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-	}
-
-
-	/**
-	 * Determines whether a given string matches a regular expression pattern.
-	 */
-	private boolean validate(final String string, final String pattern){
-		Pattern p = Pattern.compile(pattern);
-		Matcher matcher = p.matcher(string);
-		return matcher.matches();
-	
 	}
 }
 
