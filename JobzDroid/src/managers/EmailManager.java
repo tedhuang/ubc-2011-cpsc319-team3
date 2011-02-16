@@ -24,12 +24,12 @@ public class EmailManager {
 	 * @param name Name or company/organization name of the new user receiving the account activation email
 	 * @return boolean indicating whether the email was successfully sent.
 	 */
-	public void sendAccountActivationEmail(String address, String name) {
+	public void sendAccountActivationEmail(String address, String name, UUID uuid) {
 		String emailTitle = "Jobzdroid Account Activation";
 		String emailBody = "Hello dear user " + name + ",\n\nThank you for registering on JobzDroid!\n" +
 							"Please click on the link below to activate your account:\n" +
-							"http://localhost:8080/JobzDroid/index.html\n\n"+
-							"Regards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
+							"http://localhost:8080/JobzDroid/verify?id=" + uuid +
+							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
 	

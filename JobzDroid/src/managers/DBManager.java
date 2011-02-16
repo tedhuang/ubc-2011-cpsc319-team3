@@ -109,7 +109,7 @@ public class DBManager {
 					
 			// update account table
 			String query = "INSERT INTO TableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
-	  		"('" + email + "','" + password + "','" + accountType + "','" + "Pending" + "','" + currentTime + "');";			
+	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "Pending" + "','" + currentTime + "');";			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
 			if (rowsInserted != 1)
@@ -135,13 +135,15 @@ public class DBManager {
 			// add entry to user profile table
 			if(accountType.equals("searcher")){
 				query = "INSERT INTO TableProfileSearcher(idAccount, name) VALUES " + 
-		  		"('" + idAccount + "','" + name + "');";		
+		  		"('" + idAccount + "','" + name + "');";
+				rowsInserted = stmt.executeUpdate(query);
+				if (rowsInserted != 1)
+					return false;
 			}
 			else if(accountType.equals("poster")){
 				
 			}
-
-			System.out.println("aaa");
+			return true;
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
