@@ -168,6 +168,82 @@ public class DBManager {
 	    }
 		return false;		
 	}
+	
+	
+	
+	
+	public boolean createJobAdvertisement(String jobAdvertisementTitle, String jobDescription, 
+									 	  String jobLocation, String contactInfo, 
+									 	  String strTags){
+		
+		
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+					
+			String query = 
+				"INSERT INTO tablejobadvertisement(title, jobDescription, location, contactInfo, tags) VALUES " + 
+				"('" + jobAdvertisementTitle + "','" + jobDescription + "','" + jobLocation + "','" + contactInfo + "','" + strTags + "')";
+			
+			// if successful, 1 row should be inserted
+			int rowsInserted = stmt.executeUpdate(query);
+			if (rowsInserted == 1)
+				return true;
+			else
+				return false;					
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return false;		
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
 	
