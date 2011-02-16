@@ -37,8 +37,7 @@ public class AccountManager {
 	 * @param name Person/Company name
 	 * @return boolean indicating whether account was successfully created
 	 */
-	public boolean createAccount(String email, String password, String accType, String name){
-		UUID uuid = UUID.randomUUID();
+	public boolean createAccount(String email, String password, String accType, String name, UUID uuid){
 		return dbManager.createAccount(email, password, accType, name, uuid, EXPIRY_TIME_EMAIL_VERIFICATION);
 	}
 	

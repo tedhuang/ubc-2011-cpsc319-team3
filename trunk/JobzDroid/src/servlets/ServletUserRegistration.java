@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -53,6 +54,7 @@ public class ServletUserRegistration extends HttpServlet {
 		String message = "";
 		boolean allGood = true;
 		boolean accountCreated = false;
+		UUID uuid = UUID.randomUUID();; // verification number
 		// get request parameters
 		String email = request.getParameter("Email");
 		String password = request.getParameter("Password");
@@ -90,12 +92,12 @@ public class ServletUserRegistration extends HttpServlet {
 			// check if email is unique
 			boolean isUnique = accountManager.checkEmailUnique(email);
 			if(isUnique){
-				accountCreated = accountManager.createAccount(email, password, accountType, name);
+				accountCreated = accountManager.createAccount(email, password, accountType, name, uuid);
 				if(accountCreated){
 					message = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
-					// send verification email to new user
+					//send verification email to new user
 				//	emailManager.sendAccountActivationEmail(email, name);
-					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name);
+					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
 					result = true;
 				}
 				else
