@@ -102,20 +102,26 @@ function sendRegRequest(evt){
 			var responseText = parseRegResponse(xmlHttpReq.responseXML);		   
 	    	$("#statusText").text(responseText);
 		}};
-	
-	var params = "Email=" + encodeURIComponent(strEmail) + "&Password=" + encodeURIComponent(strPassword) + 
-				"&PasswordRepeat=" + encodeURIComponent(strPasswordRepeat) + "&AccountType=" + encodeURIComponent(strAccountType)
-				+ "&Name=" + encodeURIComponent(strName);
 
-	//send the parameters to servlet
+
+	request = new Request;
+	//TODO action & sessionID
+	request.addAction("register");
+	request.addSessionID("1234");
+	request.addParam("email", strEmail);
+	request.addParam("password", strPassword);
+	request.addParam("passwordRepeat", strPasswordRepeat);
+	request.addParam("accountType", strAccountType);
+	request.addParam("name", strName);
+
+	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletUserRegistration", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.send(params);
+	xmlHttpReq.send(request.toString());
 	
 	//update status text
 	$("#statusText").text("Sending Request...");
 }
-
 
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;

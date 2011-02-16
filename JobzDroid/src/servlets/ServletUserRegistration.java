@@ -56,11 +56,11 @@ public class ServletUserRegistration extends HttpServlet {
 		boolean accountCreated = false;
 		UUID uuid = UUID.randomUUID();; // verification number
 		// get request parameters
-		String email = request.getParameter("Email");
-		String password = request.getParameter("Password");
-		String passwordRepeat = request.getParameter("PasswordRepeat");
-		String accountType = request.getParameter("AccountType");
-		String name = request.getParameter("Name");
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		String passwordRepeat = request.getParameter("passwordRepeat");
+		String accountType = request.getParameter("accountType");
+		String name = request.getParameter("name");
 				
 		// validate data
 		if( !Utility.validate(email, EMAIL_PATTERN) ){
