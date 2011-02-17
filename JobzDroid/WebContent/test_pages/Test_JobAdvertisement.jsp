@@ -43,6 +43,8 @@ yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, 
 
  
  
+ 
+ 
 <SCRIPT LANGUAGE="JavaScript">
 
 // This script and many more are available free online at 
@@ -95,7 +97,6 @@ function ChangeOptionDays(Which)
   }
     if (DaysObject.selectedIndex < 0) DaysObject.selectedIndex == 0;
 }
-
 //function to set options to today
 function SetToToday(Which)
 {
@@ -125,8 +126,8 @@ function WriteYearOptions(YearsAhead)
 //  End -->
 </script>
 
-</head>
 
+</head>
 
 
 
@@ -236,7 +237,7 @@ Starting Date:
 		};
 	</script> 
 	<br>
-
+<!-- 
 Expire In... : 
 	<form action="" name="formExpiryDate">
 	<select id="expiryDay">
@@ -253,7 +254,7 @@ Expire In... :
 		};
 	</script>
 	<br>
-
+ -->
 
 <div id="feedback"><h3>Feedback Area</h3></div>
 <button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Create Job Advertisement</button>
