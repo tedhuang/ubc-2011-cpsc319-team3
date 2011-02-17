@@ -69,6 +69,7 @@ public class ServletAccount extends HttpServlet {
 			EnumAction.valueOf(action);
 		}
 		catch(IllegalArgumentException e){
+			//TODO forward to error page
 			PrintWriter out = response.getWriter();
 			out.println("Grats, you broke the server.");
 			return;
