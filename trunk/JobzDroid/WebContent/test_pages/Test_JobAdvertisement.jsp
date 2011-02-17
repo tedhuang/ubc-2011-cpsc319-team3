@@ -7,7 +7,7 @@
 	
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/JobAdvertisementCreation.js'></script>
-<!-- 
+
 	<script type="text/javascript">
 	
 	/***********************************************
@@ -38,7 +38,7 @@
 	}
 	
 	</script>
- -->
+
  
  
 </head>
