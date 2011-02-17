@@ -351,20 +351,22 @@ public class DBManager {
 									 	  String jobLocation, String contactInfo, 
 									 	  String strTags){
 		
-		
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
 					
 			String query = 
-				"INSERT INTO tablejobadvertisement(title, jobDescription, location, contactInfo, tags) VALUES " + 
-				"('" + jobAdvertisementTitle + "','" + jobDescription + "','" + jobLocation + "','" + contactInfo + "','" + strTags + "')";
+				"INSERT INTO tablejobadvertisement(title, description, location, contactInfo, tags) VALUES " + 
+				"('" + jobAdvertisementTitle + "','" + jobDescription + "','" 
+					 + jobLocation + "','" + contactInfo + "','" + strTags + "')";
 			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
-			if (rowsInserted == 1)
+			if (rowsInserted == 1){
+				System.out.println("Checkpoint:" + jobAdvertisementTitle);
 				return true;
+			}
 			else
 				return false;					
 		}

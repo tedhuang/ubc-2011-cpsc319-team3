@@ -33,12 +33,21 @@ public class ServletHTTPS extends HttpServlet {
     }
     
     
+//	private enum manager
+//	{
+//		//Add more manager names here separated by a comma
+//		JOB_ADVERTISEMENT_MANAGER;
+//	}
+//	
 	private enum manager
-	{
-		//Add more manager names here separated by a comma
-		JOB_ADVERTISEMENT_MANAGER;
-	}
+	{ JobAdvertismentManager, UNKNOWN;
 	
+	public static manager fromString(String Str)
+	{
+		try {return valueOf(Str);}
+		catch (Exception ex){return UNKNOWN;}
+	}
+	};
 
     
     
@@ -53,13 +62,19 @@ public class ServletHTTPS extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println("Checkpoint: " + 
+				request.getParameter("manager").toString());
 		
-		switch( manager.valueOf(request.getParameter("manager").toString()) ){
-			case JOB_ADVERTISEMENT_MANAGER:
+		switch( manager.fromString(request.getParameter("manager").toString()) ){
+			case JobAdvertismentManager:
 				
+				System.out.println("Checkpoint: switch");
 				jobAdvertisementManager.requestHandle(dbm, request);
 				
+				break;
 				
+			default:
+				System.out.println("Failed HTTPS servlet post");
 				break;
 			//Add more manager cases here		
 		}

@@ -38,23 +38,22 @@ function createJobAdvertisement()
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-		    var responseText= auctionParseXMLResponse(xmlhttp.responseXML);
-		   	
-		    
-	    	document.getElementById("feedback").innerHTML=responseText;
+//		    var responseText= auctionParseXMLResponse(xmlhttp.responseXML);
+//		   	
+//		    
+//	    	document.getElementById("feedback").innerHTML=responseText;
 
 	    }
 	  };
 	
 	  
-	var params = "manager=" + "JobAdvertismentManager" + "function= " + "createJobAdvertisement"
-				+ "strTitle=" + strTitle + "&strDescription=" + strDescription
+	var params = "manager=" + "JobAdvertismentManager" + "&function=" + "createJobAdvertisement"
+				+ "&strTitle=" + strTitle + "&strDescription=" + strDescription
 				+ "&educationRequirement=" + educationRequirement + "&strJobLocation=" + strJobLocation 
 				+ "&strContactInfo=" + strContactInfo +"&strTags=" + strTags
 				+ "&ExpiryWeek=" + ExpiryWeek + "&ExpiryDay=" + ExpiryDay;
 		
-		
-		
+	
 		  
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletHTTPS" ,true);

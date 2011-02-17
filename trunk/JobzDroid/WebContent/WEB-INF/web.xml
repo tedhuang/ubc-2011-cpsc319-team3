@@ -13,7 +13,7 @@
     <description></description>
     <display-name>ServletHTTPS</display-name>
     <servlet-name>ServletHTTPS</servlet-name>
-    <servlet-class>Servlets.ServletHTTPS</servlet-class>
+    <servlet-class>servlets.ServletHTTPS</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>ServletHTTPS</servlet-name>
