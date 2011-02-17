@@ -14,7 +14,7 @@ public class DBManager {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			//TODO move to config
-			dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "root", "cs319CS#!(");
+			dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
 		catch(Exception e){
