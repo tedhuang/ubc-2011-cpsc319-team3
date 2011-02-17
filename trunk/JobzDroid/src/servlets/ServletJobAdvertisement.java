@@ -89,12 +89,16 @@ public class ServletJobAdvertisement extends HttpServlet {
 	
 	public boolean createJobAdvertisement(HttpServletRequest request){
 		
-		String jobAdvertisementTitle = request.getParameter("strTitle").toString();
-		String jobDescription = request.getParameter("strDescription").toString();
-		String jobLocation = request.getParameter("strJobLocation").toString();
-		String contactInfo = request.getParameter("strContactInfo").toString();
-		String strTags = request.getParameter("strTags").toString();
+		String jobAdvertisementTitle = request.getParameter("strTitle");
+		String jobDescription = request.getParameter("strDescription");
+		String jobLocation = request.getParameter("strJobLocation");
+		String contactInfo = request.getParameter("strContactInfo");
+		String strTags = request.getParameter("strTags");
 		//int expiryYear = request.getParameter("expiryMonth");
+		//int expiryMonth = request.getParameter("expiryMonth");
+		//int expiryDay = request.getParameter("expiryDay");
+		
+		//int startingYear = request.getParameter("expiryMonth");
 		//int expiryMonth = request.getParameter("expiryMonth");
 		//int expiryDay = request.getParameter("expiryDay");
 		

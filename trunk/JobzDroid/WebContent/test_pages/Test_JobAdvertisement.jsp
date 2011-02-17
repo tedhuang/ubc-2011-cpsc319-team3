@@ -18,46 +18,27 @@
 	var monthtext=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
 	
 	function populatedropdown(dayfield, monthfield, yearfield){
-	var today=new Date()
-	var dayfield=document.getElementById(dayfield)
-	var monthfield=document.getElementById(monthfield)
-	var yearfield=document.getElementById(yearfield)
-	for (var i=0; i<31; i++)
-	dayfield.options[i]=new Option(i, i+1)
-	dayfield.options[today.getDate()]=new Option(today.getDate(), today.getDate(), true, true) //select today's day
-	for (var m=0; m<12; m++)
-	monthfield.options[m]=new Option(monthtext[m], monthtext[m])
-	monthfield.options[today.getMonth()]=new Option(monthtext[today.getMonth()], monthtext[today.getMonth()], true, true) //select today's month
-	var thisyear=today.getFullYear()
-	for (var y=0; y<20; y++){
-	yearfield.options[y]=new Option(thisyear, thisyear)
-	thisyear+=1
-	}
-	yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true) //select today's year
+		var today=new Date()
+		var dayfield=document.getElementById(dayfield)
+		var monthfield=document.getElementById(monthfield)
+		var yearfield=document.getElementById(yearfield)
+		for (var i=0; i<31; i++)
+		dayfield.options[i]=new Option(i, i+1)
+		dayfield.options[today.getDate()]=new Option(today.getDate(), today.getDate(), true, true) //select today's day
+		for (var m=0; m<12; m++)
+		monthfield.options[m]=new Option(monthtext[m], monthtext[m])
+		monthfield.options[today.getMonth()]=new Option(monthtext[today.getMonth()], monthtext[today.getMonth()], true, true) //select today's month
+		var thisyear=today.getFullYear()
+		for (var y=0; y<20; y++){
+		yearfield.options[y]=new Option(thisyear, thisyear)
+		thisyear+=1
+		}
+		yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true) //select today's year
 	}
 	
 	</script>
 
 </head>
-
-
-
-<script type="text/javascript">
-
-
-function ParseXMLResponse(responseXML)
-{
-	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-	 var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 
-	 var xml_response_text = "<h2>AJAX XML response from server: ";
-	 responseText += result + " " + message + "</h2>";
-
-	 return xml_response_text;
-}
-
-
-</script>
 
 
 <body>
@@ -99,7 +80,6 @@ Starting Date:  <br>
 	</select> 
 	</form>
 	<script type="text/javascript">
-		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
 		window.onload=function(){
 		populatedropdown("startingDay", "startingMonth", "startingYear");
 		};
@@ -111,15 +91,14 @@ Tags: <input id="tags" type="text" name="tags" size="20"><br>
 
 Expire In... :
 	<form action="" name="formExpiryDate">
-	<select id="expireDay">
+	<select id="expiryDay">
 	</select> 
-	<select id="expireMonth">
+	<select id="expiryMonth">
 	</select> 
-	<select id="expireYear">
+	<select id="expiryYear">
 	</select> 
 	</form>
 	<script type="text/javascript">
-		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
 		window.onload=function(){
 		populatedropdown("expireDay", "expireMonth", "expireYear");
 		};
