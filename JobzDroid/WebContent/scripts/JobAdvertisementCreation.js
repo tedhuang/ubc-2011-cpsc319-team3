@@ -11,8 +11,14 @@ function createJobAdvertisement()
 	var strContactInfo = document.getElementById("contactInfo").value;
 	//var startingDate = TODO: add this when it is implemented
 	var strTags = document.getElementById("tags").value;
-	var ExpiryWeek = document.getElementById("expiryWeek").value;
-	var ExpiryDay = document.getElementById("expiryDay").value;
+	
+	var expiryYear = document.getElementById("expiryYear").value;
+	var expiryMonth = document.getElementById("expiryMonth").value;
+	var expiryDay = document.getElementById("expiryDay").value;
+	
+	var startingDay = document.getElementById("startingDay").value;
+	var startingMonth = document.getElementById("startingMonth").value;
+	var startingYear = document.getElementById("startingYear").value;
 	
 	
 	//User Input Check:
@@ -56,7 +62,7 @@ function createJobAdvertisement()
 	
 		  
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletHTTPS" ,true);
+	xmlhttp.open("POST","../ServletJobAdvertisement" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(params);
 

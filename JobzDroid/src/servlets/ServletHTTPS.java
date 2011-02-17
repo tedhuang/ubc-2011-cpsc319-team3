@@ -79,10 +79,6 @@ public class ServletHTTPS extends HttpServlet {
 			//Add more manager cases here		
 		}
 			
-			
-		
-		
-		
 		
 		
 	}
