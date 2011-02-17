@@ -1,9 +1,5 @@
 package managers;
 import java.sql.*;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import classes.Utility;
@@ -17,6 +13,7 @@ public class DBManager {
 		Connection dbConn = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			//TODO move to config
 			dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
@@ -107,9 +104,9 @@ public class DBManager {
 			long currentTime = Utility.getCurrentTime();
 			int idAccount;
 					
-			// update account table
+			// update account table, and set account status to pending
 			String query = "INSERT INTO TableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
-	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "Pending" + "','" + currentTime + "');";			
+	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "pending" + "','" + currentTime + "');";			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
 			if (rowsInserted != 1)
@@ -151,6 +148,14 @@ public class DBManager {
 		}
 		// close DB objects
 	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
@@ -171,8 +176,176 @@ public class DBManager {
 		return false;		
 	}
 	
+	/***
+	 * Updates account status from pending to active if the given verification number is valid.
+	 * The verification number is created and linked to an account upon account creation, and deleted after it is used to activate the account.
+	 * @param verificationNumber A UUID linked to an account id in TableEmailVerification
+	 * @return boolean indicating whether the account activation was successful
+	 */
+	public boolean activateAccount(String verificationNumber){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			long expiryTime;
+			int idAccount, rowsUpdated;
+					
+			// check if verification number is valid	
+			query = "SELECT idAccount, expiryTime FROM TableEmailVerification WHERE idEmailVerification='" + 
+	  		verificationNumber + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			// if valid, then check expiry time of verification number
+			if(rs.first()){
+				expiryTime = rs.getLong("expiryTime");
+				// if not expired, then activate account
+				if( currentTime < expiryTime){
+					idAccount = rs.getInt("idAccount");
+					query = "UPDATE TableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
+					// if successful, 1 row should be updated
+					rowsUpdated = stmt.executeUpdate(query);
+					if (rowsUpdated != 1)
+						return false;
+					else {
+						// finally, delete row containing the verification number from TableEmailVerification
+						query = "DELETE FROM TableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						rowsUpdated = stmt.executeUpdate(query);
+						if(rowsUpdated != 1){
+							//TODO log error
+							System.out.println("Failed to delete row containing the verification number upon successful account activation.");
+						}
+						return true;
+					}
+				}
+			}
+			else
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return false;	
+	}
 	
-	
+	/***
+	 * Updates account primary email if the given verification number is valid.
+	 * The new email address is stored in TableEmailVerification when user requests for the email change.
+	 * The verification number is created and linked to user's account when user requests to change primary email, and deleted after it is used to change the email.
+	 * @param verificationNumber A UUID in TableEmailVerification which is linked to an account ID that requested for a primary email change
+	 * @return boolean indicating whether changing the primary email was successful
+	 */
+	public boolean verifyChangePrimaryEmail(String verificationNumber){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			long expiryTime;
+			int idAccount, rowsUpdated;
+			String emailPending;
+					
+			// check if verification number is valid	
+			query = "SELECT idAccount, expiryTime, emailPending FROM TableEmailVerification WHERE idEmailVerification='" + 
+	  		verificationNumber + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			// if valid, then check expiry time of verification number
+			if(rs.first()){
+				expiryTime = rs.getLong("expiryTime");
+				// if not expired, then update primary email
+				if( currentTime < expiryTime){
+					idAccount = rs.getInt("idAccount");
+					emailPending = rs.getString("emailPending");
+					query = "UPDATE TableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
+					// if successful, 1 row should be updated
+					rowsUpdated = stmt.executeUpdate(query);
+					if (rowsUpdated != 1)
+						return false;
+					else {
+						// finally, delete row containing the verification number from TableEmailVerification
+						query = "DELETE FROM TableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						rowsUpdated = stmt.executeUpdate(query);
+						if(rowsUpdated != 1){
+							//TODO log error
+							System.out.println("Failed to delete row containing the verification number upon successfully changing primary email.");
+						}
+						return true;
+					}
+				}
+			}
+			else
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return false;
+	}
 	
 	public boolean createJobAdvertisement(String jobAdvertisementTitle, String jobDescription, 
 									 	  String jobLocation, String contactInfo, 
