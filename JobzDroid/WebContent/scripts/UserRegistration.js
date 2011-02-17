@@ -115,7 +115,7 @@ function sendRegRequest(evt){
 	request.addParam("name", strName);
 
 	//send the request to servlet
-	xmlHttpReq.open("POST","../ServletUserRegistration", true);
+	xmlHttpReq.open("POST","../ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	

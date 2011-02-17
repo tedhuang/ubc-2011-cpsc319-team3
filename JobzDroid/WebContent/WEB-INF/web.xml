@@ -10,16 +10,6 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <description>Handles user registration requests</description>
-    <display-name>ServletUserRegistration</display-name>
-    <servlet-name>ServletUserRegistration</servlet-name>
-    <servlet-class>servlets.ServletUserRegistration</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ServletUserRegistration</servlet-name>
-    <url-pattern>/ServletUserRegistration</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <description></description>
     <display-name>ServletHTTPS</display-name>
     <servlet-name>ServletHTTPS</servlet-name>
@@ -28,5 +18,16 @@
   <servlet-mapping>
     <servlet-name>ServletHTTPS</servlet-name>
     <url-pattern>/ServletHTTPS</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>Handles all account related requests</description>
+    <display-name>ServletAccount</display-name>
+    <servlet-name>ServletAccount</servlet-name>
+    <servlet-class>servlets.ServletAccount</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletAccount</servlet-name>
+    <url-pattern>/ServletAccount</url-pattern>
+    <url-pattern>/Account/*</url-pattern>
   </servlet-mapping>
 </web-app>

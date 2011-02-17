@@ -1,6 +1,4 @@
-/**
- * Utility javascript functions and classes
- */
+// Utility javascript functions and classes
 
 /***
  * A string wrapper class that represents xmlhttpsrequest parameters
