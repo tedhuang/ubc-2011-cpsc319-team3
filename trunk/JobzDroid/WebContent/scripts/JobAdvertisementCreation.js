@@ -30,18 +30,16 @@ function createJobAdvertisement()
 	var startingMonth = document.getElementById("startingMonth").value;
 	var startingYear = document.getElementById("startingYear").value;
 	
-	
-	
+
 	
 	//User Input Check:
 	if(strTitle == null){
 		alert("Must Enter Job Advertisement Title!");
 		return;
 	}
-
 	document.getElementById("newJobAdButton").disabled=true;
 	
-	
+	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -57,8 +55,6 @@ function createJobAdvertisement()
 	    {
 		    //parse XML response from server
 //		    var responseText= auctionParseXMLResponse(xmlhttp.responseXML);
-//		   	
-//		    
 //	    	document.getElementById("feedback").innerHTML=responseText;
 
 	    }

@@ -5,6 +5,7 @@
 <head> <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Testing Title</title>
 	
+	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/JobAdvertisementCreation.js'></script>
 
 	<script type="text/javascript">
