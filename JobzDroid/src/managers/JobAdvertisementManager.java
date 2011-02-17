@@ -3,8 +3,6 @@ package managers;
 import javax.servlet.http.HttpServletRequest;
 
 
-
-
 public class JobAdvertisementManager {
 	
 
@@ -13,7 +11,13 @@ public class JobAdvertisementManager {
 	private enum function
 	{
 		//Add more manager names here separated by a comma
-		CREATE_JOB_ADVERTISEMENT;
+		createJobAdvertisement, UNKNOWN;
+		
+		public static function fromString(String Str)
+		{
+			try {return valueOf(Str);}
+			catch (Exception ex){return UNKNOWN;}
+		}
 	}
 
 	
@@ -24,15 +28,19 @@ public class JobAdvertisementManager {
 		
 		dbManager = dbm;
 		
+		System.out.println("Checkpoint: requestHandle function: " + request.getParameter("function").toString());
 		
-		switch(function.valueOf(request.getParameter("function").toString())){
-			case CREATE_JOB_ADVERTISEMENT:
+		
+		switch(function.fromString(request.getParameter("function").toString())){
+			case createJobAdvertisement:
 				if( !createJobAdvertisement(request) ){
 					//TODO: implement error handling
 					System.out.println("Create Job Advertisement Failed");
-					break;
 				} 
-			
+				break;
+			default:
+				System.out.println("Failed JobAdvertisementManager requestHandle");
+				break;
 				
 		}
 		
@@ -49,8 +57,8 @@ public class JobAdvertisementManager {
 		String jobLocation = request.getParameter("strJobLocation").toString();
 		String contactInfo = request.getParameter("strContactInfo").toString();
 		String strTags = request.getParameter("strTags").toString();
-		int expiryWeek = Integer.parseInt(request.getParameter("expiryWeek").toString());
-		int expiryDay = Integer.parseInt( request.getParameter("expiryDay").toString());
+		//int expiryWeek = Integer.parseInt(request.getParameter("expiryWeek").toString());
+		//int expiryDay = Integer.parseInt( request.getParameter("expiryDay").toString());
 		//int ownerID;
 		
 		
