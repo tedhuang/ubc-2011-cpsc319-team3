@@ -105,7 +105,7 @@ function sendRegRequest(evt){
 
 
 	request = new Request;
-	//TODO action & sessionID
+	//TODO sessionID
 	request.addAction("register");
 	request.addSessionID("1234");
 	request.addParam("email", strEmail);
@@ -123,6 +123,7 @@ function sendRegRequest(evt){
 	$("#statusText").text("Sending Request...");
 }
 
+// parses response from server
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
