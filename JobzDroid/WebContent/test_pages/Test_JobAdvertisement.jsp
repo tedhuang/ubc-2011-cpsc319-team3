@@ -7,7 +7,7 @@
 	
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/JobAdvertisementCreation.js'></script>
-
+<!-- 
 	<script type="text/javascript">
 	
 	/***********************************************
@@ -38,7 +38,9 @@
 	}
 	
 	</script>
-
+ -->
+ 
+ 
 </head>
 
 
@@ -71,7 +73,7 @@ Job Location(s) (separated by comma): <input id="jobLocation" type="text" name="
 Contact Info: <input id="contactInfo" type="text" name="contactInfo" size="20"><br>
 <br>
 
-Starting Date:  <br>
+Starting Date:  
 	<form action="" name="formStartingDate">
 	<select id="startingDay">
 	</select> 
@@ -84,13 +86,14 @@ Starting Date:  <br>
 		window.onload=function(){
 		populatedropdown("startingDay", "startingMonth", "startingYear");
 		};
-	</script> <br>
+	</script> 
+	<br>
 
 
 Tags: <input id="tags" type="text" name="tags" size="20"><br>
 
 
-Expire In... :
+Expire In... : 
 	<form action="" name="formExpiryDate">
 	<select id="expiryDay">
 	</select> 
@@ -104,9 +107,7 @@ Expire In... :
 		populatedropdown("expireDay", "expireMonth", "expireYear");
 		};
 	</script>
-
-
- <br>
+	<br>
 
 
 <div id="feedback"><h3>Feedback Area</h3></div>
