@@ -430,6 +430,33 @@ public class DBManager {
 		return -1;
 	}
 	
+	public String generateSession(String name, String pw)
+	{
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		try{
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
+					   						  "WHERE UserName='"+name + "'" +
+					   						  "&&Password ='md5(" + pw + ")'");
+			if(rs.first()){
+				
+				System.out.println(name +"Logged in");
+				stmt.close();
+//				return 1;
+			}
+			else{
+//				return -1;
+			}
+		}
+		catch(SQLException e) {
+				//TODO Auto-generated catch block
+				e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	
 	
 	

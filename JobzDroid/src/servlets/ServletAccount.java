@@ -213,4 +213,10 @@ public class ServletAccount extends HttpServlet {
 		    out.close();
 		}
 	}
+	
+	private String generateSessionKey( String email, String password) {
+		UUID uuid = UUID.randomUUID();
+		
+		return null;
+	}
 }
