@@ -1,5 +1,6 @@
 package managers;
 import java.sql.*;
+import java.util.Calendar;
 import java.util.UUID;
 
 import classes.Utility;
@@ -14,9 +15,10 @@ public class DBManager {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			//TODO move to config
-			dbConn = DriverManager.getConnection("jdbc:mysql://db4free.net/dbjobzdriod", "blitzcriegteam", "cs319team3");
+			
+	//		dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
-	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
+			dbConn = DriverManager.getConnection("jdbc:mysql://www.db4free.net:3306/dbjobzdriod", "blitzcriegteam", "cs319team3");
 		}
 		catch(Exception e){
 			//TODO: log error
@@ -26,6 +28,7 @@ public class DBManager {
 	}
 	
 	public DBManager() {}
+	
 	
 	/***
 	 * Checks whether the given primary email address already exists.
@@ -459,13 +462,13 @@ public class DBManager {
 		return false;	
 	}
 	
-	/**
-	 * User LogIn Function
+	/**********************************************************************************************************************
+	 * 											User LogIn FUNCTION
 	 * @param name
 	 * @param pw
 	 * @return 1 if log in successfully
 	 * 	       -1 otherwise
-	 */
+	 **********************************************************************************************************************/
 	public int userLogIn(String name, String pw)
 	{
 		Connection conn = getConnection();	
@@ -548,6 +551,15 @@ public class DBManager {
 		return idAccount;
 	}
 	
+
+	/************************************************************************************************************
+	 * 									SessionKey Generator FUNCTION
+	 * ? => Should we bind it to user log-in
+	 * return: sessionKey or null
+	 * TODO sync DB name
+	 *************************************************************************************************************/
+
+
 	public String generateSession(String name, String pw)
 	{
 		Connection conn = getConnection();	
@@ -561,6 +573,16 @@ public class DBManager {
 				
 				System.out.println(name +"Logged in");
 				stmt.close();
+				try{
+					stmt.executeUpdate("UPDATE UserTable set sessionKey="+"where UserName= '"+name +"'");
+				}
+				catch(SQLException e) {
+					//TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(rs.first()){//TODO how to get sessionkey
+					System.out.println("sessionKey Generated:"+"");
+				}
 //				return 1;
 			}
 			else{
@@ -573,6 +595,35 @@ public class DBManager {
 		}
 		return null;
 	}
+	
+
+	/************************************************************************************************************
+	 * 									USER LOG-OUT FUNCTION
+	 * return: T/F
+	 * TODO sync DB name
+	 *************************************************************************************************************/
+	public boolean userLogout(String SessionKey){
+		Connection conn=getConnection();
+		Statement stmt=null;
+		try
+		{
+			stmt=conn.createStatement();
+			stmt.executeUpdate("UPDATE UserTable" +
+								 "SET SessionKey="+ null +
+								 ", ExpireTime=" + Calendar.getInstance().getTimeInMillis() +
+								 "WHERE SessionKey='" + SessionKey+"'");
+			System.out.println("User Logged Out");
+			return true;
+			
+		}
+		catch (SQLException e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("There is a problem when logging out");
+		}
+		return false;
+	}
+	
 	
 }
 	
