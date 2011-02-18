@@ -20,3 +20,8 @@ Request.prototype.addParam = function(param, arg){
 Request.prototype.toString = function(){
 	return this.str;
 };
+
+/***********************************************************************************************
+						LightBox Functions
+ TODO ADD stuff
+*************************************************************************************************/
