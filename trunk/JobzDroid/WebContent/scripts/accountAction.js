@@ -5,7 +5,7 @@ function userLoginRequest()//TODO Recover lightbox element
 {
 //	$("#loginBox").hide();
 //	openbox("sign-inLoading",'',1);
-	var userName = document.getElementById("username").value;
+	var userName = document.getElementById("userName").value;
 	var password = document.getElementById("password").value;
 	
 	if (window.XMLHttpRequest)
@@ -26,7 +26,7 @@ function userLoginRequest()//TODO Recover lightbox element
 			
 		    if( sessionKey != "null" ) 
 			    { 
-					var responseText = "<h2>User " + username + "logged in with SESSION KEY: ";
+					var responseText = "<h2>User " + userName + "logged in with SESSION KEY: ";
 										responseText += sessionKey  + "</h2>";		
 					
 					document.getElementById("myDiv").innerHTML=responseText;
@@ -47,7 +47,7 @@ function userLoginRequest()//TODO Recover lightbox element
 	    }
 	  };
 	  
-	var Params = "userName=" + userName + "&password=" + password;
+	var Params = "action=requestforlogin" + "&userName=" + userName + "&password=" + password;
 
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletAccount" ,true);

@@ -240,7 +240,7 @@ public class ServletAccount extends HttpServlet {
  * @throws IOException
  **************************************************************************************************************************************/
 	private void loginReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
-		String user=req.getParameter("username");
+		String user=req.getParameter("userName");
 		String pw=req.getParameter("password");
 		System.out.println("user="+ user+ "Password="+ pw);
 		String sessKey=dbManager.generateSession(user, pw);
