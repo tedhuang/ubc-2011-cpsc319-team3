@@ -14,6 +14,8 @@ public class DBManager {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			//TODO move to config
+	//		dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
+	//		dbConn = DriverManager.getConnection("jdbc:mysql://db4free.net/jobzdroid", "team3cs319", "cs319CS#!(");
 			dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
@@ -27,11 +29,11 @@ public class DBManager {
 	public DBManager() {}
 	
 	/***
-	 * Checks whether the given primary email address is unique.
+	 * Checks whether the given primary email address already exists.
 	 * @param email email address to be checked
 	 * @return boolean indicating whether the email address is unique
 	 */
-	public boolean checkEmailUnique(String email) {
+	public boolean checkEmailExists(String email) {
 		Connection conn = getConnection();	
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -43,9 +45,9 @@ public class DBManager {
 			
 			// check if ResultSet is empty  
 			if (!rs.next())
-				return true;
-			else
 				return false;
+			else
+				return true;
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
@@ -113,12 +115,8 @@ public class DBManager {
 				return false;
 			
 			// get account id of the account just created
-			query = "SELECT idAccount FROM TableAccount WHERE email='" + email + "';";
-			stmt.executeQuery(query);
-			rs = stmt.getResultSet();
-			if(rs.first())
-				idAccount = rs.getInt("idAccount");
-			else
+			idAccount = getIdAcccountFromEmail(email);
+			if(idAccount == -1)
 				return false;
 						
 			// add entry to email verification table
@@ -138,7 +136,11 @@ public class DBManager {
 					return false;
 			}
 			else if(accountType.equals("poster")){
-				
+				query = "INSERT INTO TableProfilePoster(idAccount, name) VALUES " + 
+		  		"('" + idAccount + "','" + name + "');";
+				rowsInserted = stmt.executeUpdate(query);
+				if (rowsInserted != 1)
+					return false;
 			}
 			return true;
 		}
@@ -395,7 +397,68 @@ public class DBManager {
 	    }
 		return false;		
 	}
-
+	
+	/**
+	 * Adds a password reset request entry into the DB.
+	 * An entry contains a password request id, the primary email of the account, and expiry time of the request.
+	 * @param email User's primary email address.
+	 * @param uuid Unique password reset request id.
+	 * @param expiryTimeForgetPasswordRequest Time before request expires.
+	 * @return boolean indicating whether adding the password reset request was successful.
+	 */
+	public boolean addForgetPasswordRequest(String email, UUID uuid, long expiryTimeForgetPasswordRequest){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int rowsInserted;
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			int idAccount = getIdAcccountFromEmail(email);
+			// add entry to password reset table
+			long expiryTime = currentTime + expiryTimeForgetPasswordRequest;			
+			query = "INSERT INTO TablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
+	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
+			// if successful, 1 row should be inserted
+			rowsInserted = stmt.executeUpdate(query);
+			if (rowsInserted != 1)
+				return false;
+			return true;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return false;	
+	}
 	
 	/**
 	 * User LogIn Function
@@ -430,6 +493,62 @@ public class DBManager {
 		return -1;
 	}
 	
+	/***
+	 * Returns the account ID accosiated with the input email address. 
+	 * Returns -1 if email address doesn't exist in the account table.
+	 * @param email Email address to be queried.
+	 * @return Account ID associated with the input email address. Returns -1 if not found.
+	 */
+	public int getIdAcccountFromEmail(String email){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int idAccount = -1;
+		try {
+			stmt = conn.createStatement();
+			// get account id of the account just created
+			query = "SELECT idAccount FROM TableAccount WHERE email='" + email + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			if(rs.first())
+				idAccount = rs.getInt("idAccount");
+			return idAccount;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return idAccount;
+	}
+	
 	public String generateSession(String name, String pw)
 	{
 		Connection conn = getConnection();	
@@ -456,32 +575,5 @@ public class DBManager {
 		return null;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }
 	

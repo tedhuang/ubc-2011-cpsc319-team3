@@ -25,6 +25,7 @@ public class ServletAccount extends HttpServlet {
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	private static final String PW_PATTERN = "^\\S{5,15}$";
 	private final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
+	private final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
 	
 	private EmailManager emailManager;	
 	private DBManager dbManager;
@@ -92,9 +93,9 @@ public class ServletAccount extends HttpServlet {
 			case verifyEmailChange:
 				verifyEmailChange(request, response);
 				break;				
-			// 
+			// requests a unique link to be sent to user's email to reset password
 			case requestForgetPassword:
-				
+				requestForgetPassword(request, response);
 				break;				
 			// reset password
 			case resetForgetPassword:
@@ -150,15 +151,17 @@ public class ServletAccount extends HttpServlet {
 		// if info are all valid, then proceed to do DB updates
 		if(allGood){
 			// check if email is unique
-			boolean isUnique = dbManager.checkEmailUnique(email);
+			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
 				accountCreated = dbManager.createAccount(email, password, accountType, name, uuid, EXPIRY_TIME_EMAIL_VERIFICATION);
 				if(accountCreated){
-					message = "Account creation successful! An email has been sent to your inbox, please follow the instructions to activate your account.";
 					//send verification email to new user
 					//TODO
 				//	emailManager.sendAccountActivationEmail(email, name, uuid);
 					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
+					message = "Account creation successful! An email has been sent to your inbox, " +
+							"please follow the instructions to activate your account within "
+					+ Math.floor(EXPIRY_TIME_EMAIL_VERIFICATION/(1000*60)) + " minutes.";
 					result = true;
 				}
 				else
@@ -212,6 +215,44 @@ public class ServletAccount extends HttpServlet {
 		    out.println("Invalid or expired account email change request.");
 		    out.close();
 		}
+	}
+	
+	/***
+	 * Calls DB manager to add a password request entry, sends an email containing the password reset link
+	 * to the user, and then returns the results to the user in the response.
+	 */
+	private void requestForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String email = request.getParameter("email");
+		boolean result = false;
+		String message = "";
+		boolean emailExists = dbManager.checkEmailExists(email);
+		if(emailExists){
+			UUID uuid = UUID.randomUUID();
+			boolean requestAdded = dbManager.addForgetPasswordRequest(email, uuid, EXPIRY_TIME_FORGET_PASSWORD_RESET);
+			if(requestAdded){
+				//send verification email to new user
+				//TODO
+			//	emailManager.sendAccountActivationEmail(email, name, uuid);
+				emailManager.sendPasswordResetEmail("luolw123@hotmail.com", uuid);
+				message = "An email has been sent to your mail box to reset your password. " +
+					"Please follow the link in your email to reset your password within "
+					+ Math.floor(EXPIRY_TIME_FORGET_PASSWORD_RESET/(1000*60)) + " minutes.";
+				result = true;
+			}
+		}
+		else{
+			result = false;
+			message = "Your entered email address does not exist as an account.";
+		}
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 	}
 	
 	private String generateSessionKey( String email, String password) {
