@@ -482,7 +482,7 @@ public class DBManager {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
 					   						  "WHERE UserName='"+name + "'" +
-					   						  "&&Password ='md5(" + pw + ")'");
+					   						  "&&Password =md5('" + pw + "')");
 			if(rs.first()){
 				
 				System.out.println(name +"Logged in");
@@ -715,6 +715,121 @@ public class DBManager {
 		return false;
 	}
 	
+	/**
+	 * Returns the account ID associated with the password reset request ID
+	 * @param idPasswordReset Password reset ID contained in the link set to the user requesting a password reset.
+	 * @return Account ID associated with the the password reset. Returns -1 if the password reset ID is invalid or expired.
+	 */
+	public int getIdAccountFromIdPasswordReset(String idPasswordReset){
+		Connection conn = getConnection();	
+		ResultSet rs = null;
+		Statement stmt = null;
+		long expiryTime, currentTime = Utility.getCurrentTime();
+		int idAccount = -1;
+		try {
+			stmt = conn.createStatement();
+			String query = "SELECT idAccount,expiryTime FROM tablePasswordReset " + "WHERE idPasswordReset='" + idPasswordReset + "';"; 			
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			
+			if(rs.first()){
+				expiryTime = rs.getLong("expiryTime");
+				// if not expired, then return account id
+				if( currentTime < expiryTime){
+					idAccount = rs.getInt("idAccount");
+					return idAccount;
+				}
+				else
+					return -1;
+			}
+			else
+				return -1;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		return -1;
+	}
 	
+	public boolean resetPassword(String idPasswordReset, int idAccount, String newPassword){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int rowsUpdated;
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated != 1){
+				//TODO log error
+				System.out.println("Failed to delete row in tablePasswordReset.");
+				}
+			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated == 1)
+				return true;
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	            //TODO log "Cannot close ResultSet"
+	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    return false;
+	}
 }
 	

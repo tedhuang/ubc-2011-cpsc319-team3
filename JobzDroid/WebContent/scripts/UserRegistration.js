@@ -12,13 +12,13 @@ $("document").ready(function() {
 			$("#nameLabel").text("Company/organization name: ");
 		}
 	});
-	// real-time client side error checking
+	// client side error checking
 	$("input").bind("change", validateForm);
 	// send request to registeration servlet on submit
 	$("#submitButton").bind("click",sendRegRequest);
 });
 
-// real-time client side error checking
+// client side error checking
 function validateForm(evt){
 	// case: account type changed (must have at least one selected)
 	if( $(this).is("[name=accountType]") ){
@@ -105,9 +105,7 @@ function sendRegRequest(evt){
 
 
 	request = new Request;
-	//TODO sessionID
 	request.addAction("register");
-	request.addSessionID("1234");
 	request.addParam("email", strEmail);
 	request.addParam("password", strPassword);
 	request.addParam("passwordRepeat", strPasswordRepeat);

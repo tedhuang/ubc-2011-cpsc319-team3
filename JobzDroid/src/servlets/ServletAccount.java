@@ -22,10 +22,10 @@ public class ServletAccount extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	//TODO: move these constants to the config file
-	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
-	private static final String PW_PATTERN = "^\\S{5,15}$";
-	private final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
-	private final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
+	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
+	public static final String PW_PATTERN = "^\\S{5,15}$";
+	public final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
+	public final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
 	
 	private EmailManager emailManager;	
 	private DBManager dbManager;
@@ -46,6 +46,7 @@ public class ServletAccount extends HttpServlet {
 		requestEmailChange,
 		verifyEmailChange,
 		requestForgetPassword,
+		emailLinkForgetPassword,
 		resetForgetPassword,
 		requestforlogin,
 		requestforlogout
@@ -96,10 +97,14 @@ public class ServletAccount extends HttpServlet {
 			// requests a unique link to be sent to user's email to reset password
 			case requestForgetPassword:
 				requestForgetPassword(request, response);
-				break;				
+				break;		
+			// handles email link click from a forget password request
+			case emailLinkForgetPassword:
+				emailLinkForgetPassword(request, response);
+				break;
 			// reset password
 			case resetForgetPassword:
-				
+				resetForgetPassword(request, response);
 				break;
 			case requestforlogin:
 				loginReqTaker(request, response);
@@ -199,6 +204,7 @@ public class ServletAccount extends HttpServlet {
 		String verificationNumber = request.getParameter("id");
 		boolean accountActivated = dbManager.activateAccount(verificationNumber);
 		if(accountActivated){
+			//TODO redirect to actual page
 			PrintWriter out = response.getWriter();
 		    out.println("Congratulations, your account has successfully been activated!");
 		    out.close();
@@ -214,6 +220,7 @@ public class ServletAccount extends HttpServlet {
 		String verificationNumber = request.getParameter("id");
 		boolean emailChanged = dbManager.verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
+			//TODO redirect to actual page
 			PrintWriter out = response.getWriter();
 		    out.println("Congratulations, your primary email has successfully been changed!");
 		    out.close();
@@ -312,8 +319,53 @@ public class ServletAccount extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
-	private void resetForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	/***
+	 * Handles email link click from a forget password request
+	 */
+	private void emailLinkForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		getServletConfig().getServletContext().getRequestDispatcher("/test_pages/ResetForgetPassword.jsp").forward(request,response);
+	}
+	
+	/***
+	 * Final step of forget password procedure. Final validation of request and updates user password.
+	 */
+	private void resetForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		// get request parameters
+		String password = request.getParameter("password");
+		String passwordRepeat = request.getParameter("passwordRepeat");
+		String idPasswordReset = request.getParameter("idPasswordReset");
+		
+		String message = "";
+		boolean result = false;
+		
+		// validate new password	
+		if( !Utility.validate(password, PW_PATTERN) )
+			message = "Invalid password format.";
+		else if( !password.equals(passwordRepeat) )
+			message = "Passwords do not match.";
+		else{
+			int idAccount = dbManager.getIdAccountFromIdPasswordReset(idPasswordReset);
+			if (idAccount == -1)
+				message = "Invalid or expired request.";
+			else{
+				boolean updateSuccessful = dbManager.resetPassword(idPasswordReset, idAccount, password);
+				if(updateSuccessful){
+					message = "Password change successful!";
+					result = true;
+				}
+				else
+					message = "An error has been encountered during the request.";
+			}
+		}
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 	}
 	
 	/***
