@@ -16,7 +16,7 @@ public class DBManager {
 			//TODO move to config
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://db4free.net/jobzdroid", "team3cs319", "cs319CS#!(");
-			dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
+			dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "root", "cs319CS#!(");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
 		}
 		catch(Exception e){
@@ -359,7 +359,7 @@ public class DBManager {
 			stmt = conn.createStatement();
 					
 			String query = 
-				"INSERT INTO tablejobadvertisement(title, description, location, contactInfo, tags) VALUES " + 
+				"INSERT INTO tableJobAd(title, description, location, contactInfo, tags) VALUES " + 
 				"('" + jobAdvertisementTitle + "','" + jobDescription + "','" 
 					 + jobLocation + "','" + contactInfo + "','" + strTags + "')";
 			
