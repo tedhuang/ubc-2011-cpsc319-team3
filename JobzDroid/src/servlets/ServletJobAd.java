@@ -24,6 +24,7 @@ public class ServletJobAd extends HttpServlet {
      */
     public ServletJobAd() {
         super();
+        dbManager = new DBManager();
         // TODO Auto-generated constructor stub
     }
     
@@ -122,8 +123,9 @@ public class ServletJobAd extends HttpServlet {
 //			//TODO: Implement Error Handling:
 //			return false;
 //		}
-		dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
-				jobLocation, contactInfo, strTags);
+		
+		dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, jobLocation, contactInfo, strTags);
+
 		
 		
 		return true;
