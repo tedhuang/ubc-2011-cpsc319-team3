@@ -46,7 +46,10 @@ public class ServletAccount extends HttpServlet {
 		requestEmailChange,
 		verifyEmailChange,
 		requestForgetPassword,
-		resetForgetPassword
+		resetForgetPassword,
+		requestforlogin,
+		requestforlogout,
+		unknown//if non-matched
 	}
 
 	/**
@@ -99,9 +102,18 @@ public class ServletAccount extends HttpServlet {
 				break;				
 			// reset password
 			case resetForgetPassword:
-				resetForgetPassword(request, response);
-				break;				
+				
+				break;
+			case requestforlogin:
+				loginReqTaker(request, response);
+				break;
+			
+			case requestforlogout:
+				userLogout(request, response);
+				//dbManager.userLogout("request.getParameter("SessionKey").toString());
+			
 			default:
+				System.out.println("What are you doing?");
 				break;
 		}
 	}
@@ -217,6 +229,58 @@ public class ServletAccount extends HttpServlet {
 		}
 	}
 	
+
+/**************************************************************************************************************************************
+ * 								USER LOG IN/OUT Function
+ * 
+ * @param req
+ * @param response
+ * @return
+ * @throws ServletException
+ * @throws IOException
+ **************************************************************************************************************************************/
+	private void loginReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
+		String user=req.getParameter("username");
+		String pw=req.getParameter("password");
+		System.out.println("user="+ user+ "Password="+ pw);
+		String sessKey=dbManager.generateSession(user, pw);
+//		int userID=
+		if(sessKey!=null){
+			// if login successful, return credential and sucess message
+			// Write XML to response if DB has return message
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			
+			XMLResponse.append("\t<sessionKey>" + sessKey + "</sessionKey>\n");
+//			XMLResponse.append("\t<userID>" + userID + "</userID>\n");
+			
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+			
+		}
+		else{
+			System.out.println("sessionKey is null");
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			XMLResponse.append("\t<sessionKey>" + null + "</sessionKey>\n");
+//			XMLResponse.append("\t<userID>" + null + "</userID>\n");
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+		}
+		
+	}
+/***************************/
+	private void userLogout(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
+		dbManager.userLogout(req.getParameter("SessionKey").toString());
+		
+	}
+/**************************************************************************************************************************************/
+	
+
 	/***
 	 * Calls DB manager to add a password request entry, sends an email containing the password reset link
 	 * to the user, and then returns the results to the user in the response.
@@ -259,9 +323,4 @@ public class ServletAccount extends HttpServlet {
 		getServletConfig().getServletContext().getRequestDispatcher("/test_pages/ResetForgetPassword.jsp").forward(request,response);
 	}
 	
-	private String generateSessionKey( String email, String password) {
-		UUID uuid = UUID.randomUUID();
-		
-		return null;
-	}
 }
