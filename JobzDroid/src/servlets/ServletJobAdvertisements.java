@@ -13,7 +13,7 @@ import managers.DBManager;
 /**
  * Servlet implementation class ServletJobAdvertisement
  */
-public class ServletJobAdvertisement extends HttpServlet {
+public class ServletJobAdvertisements extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private DBManager dbManager;
@@ -22,7 +22,7 @@ public class ServletJobAdvertisement extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ServletJobAdvertisement() {
+    public ServletJobAdvertisements() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -33,7 +33,12 @@ public class ServletJobAdvertisement extends HttpServlet {
 		createJobAdvertisement
 		
 	}
-    
+	
+	private int calculateDate(int year, int month, int day){
+		
+		
+		return 0;
+	}
     
     
     
@@ -94,13 +99,14 @@ public class ServletJobAdvertisement extends HttpServlet {
 		String jobLocation = request.getParameter("strJobLocation");
 		String contactInfo = request.getParameter("strContactInfo");
 		String strTags = request.getParameter("strTags");
-		//int expiryYear = request.getParameter("expiryMonth");
-		//int expiryMonth = request.getParameter("expiryMonth");
-		//int expiryDay = request.getParameter("expiryDay");
 		
-		//int startingYear = request.getParameter("expiryMonth");
-		//int expiryMonth = request.getParameter("expiryMonth");
-		//int expiryDay = request.getParameter("expiryDay");
+		int expiryYear = Integer.parseInt( request.getParameter("expiryMonth"));
+		int expiryMonth = Integer.parseInt( request.getParameter("expiryMonth"));
+		int expiryDay =  Integer.parseInt( request.getParameter("expiryDay"));
+		
+		int startingYear =  Integer.parseInt(request.getParameter("startingYear"));
+		int startingMonth = Integer.parseInt(request.getParameter("startingMonth"));
+		int startingDay = Integer.parseInt(request.getParameter("startingDay"));
 		
 		//TODO: add values for these:
 		//int ownerID;
@@ -116,6 +122,7 @@ public class ServletJobAdvertisement extends HttpServlet {
 		
 		return true;
 	}
+	
 	
 }
 
