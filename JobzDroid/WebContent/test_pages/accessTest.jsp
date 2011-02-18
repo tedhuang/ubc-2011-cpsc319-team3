@@ -12,7 +12,7 @@
 <H2>Login</H2>
 <br />
 User:
-<input id="username" name="username" class="form-login" title="Username" value="" size="30" maxlength="2048" />
+<input id="userName" name="username" class="form-login" title="Username" value="" size="30" maxlength="2048" />
 Password:
 <input id="password" name="password" type="password" class="form-login" title="Password" value="" size="30" maxlength="2048" />
 <br />
