@@ -29,6 +29,8 @@ function createJobAdvertisement()
 	var startingMonth = document.getElementById("startingMonth").value;
 	var startingYear = document.getElementById("startingYear").value;
 	
+	alert("Expiry Date: " + expiryYear + " " + expiryMonth + " " + expiryDay);
+	
 
 	
 	//User Input Check:
@@ -86,7 +88,7 @@ function createJobAdvertisement()
 	
 		  
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAdvertisement" ,true);
+	xmlhttp.open("POST","../ServletJobAdvertisements" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 
