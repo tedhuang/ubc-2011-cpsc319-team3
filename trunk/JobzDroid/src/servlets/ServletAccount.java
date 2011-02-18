@@ -240,18 +240,16 @@ public class ServletAccount extends HttpServlet {
  * @throws IOException
  **************************************************************************************************************************************/
 	private void loginReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
-		String user=req.getParameter("userName");
+		String email=req.getParameter("email");
 		String pw=req.getParameter("password");
-		System.out.println("user="+ user+ "Password="+ pw);
-		String sessKey=dbManager.generateSession(user, pw);
-//		int userID=
+		System.out.println("user="+ email+ "Password="+ pw);
+		String sessKey=dbManager.startSession(email, pw);
 		if(sessKey!=null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
 			StringBuffer XMLResponse = new StringBuffer();	
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
-			
 			XMLResponse.append("\t<sessionKey>" + sessKey + "</sessionKey>\n");
 //			XMLResponse.append("\t<userID>" + userID + "</userID>\n");
 			
