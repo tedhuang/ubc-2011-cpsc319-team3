@@ -1,4 +1,6 @@
 package managers;
+
+import java.security.*;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.UUID;
@@ -467,6 +469,41 @@ public class DBManager {
 		return false;	
 	}
 	
+<<<<<<< .mine
+//	/**********************************************************************************************************************
+//	 * 											User LogIn FUNCTION
+//	 * @param name
+//	 * @param pw
+//	 * @return 1 if log in successfully
+//	 * 	       -1 otherwise
+//	 **********************************************************************************************************************/
+//	public int userLogIn(String name, String pw)
+//	{
+//		Connection conn = getConnection();	
+//		Statement stmt = null;
+//		try{
+//			stmt = conn.createStatement();
+//			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
+//					   						  "WHERE UserName='"+name + "'" +
+//					   						  "&&Password ='md5(" + pw + ")'");
+//			if(rs.first()){
+//				
+//				System.out.println(name +"Logged in");
+//				stmt.close();
+//				return 1;
+//			}
+//			else{
+//				return -1;
+//			}
+//		}
+//		catch(SQLException e) {
+//				//TODO Auto-generated catch block
+//				e.printStackTrace();
+//		}
+//		return -1;
+//	}
+//	
+=======
 	/**********************************************************************************************************************
 	 * 											User LogIn FUNCTION
 	 * @param name
@@ -500,6 +537,7 @@ public class DBManager {
 		return -1;
 	}
 	
+>>>>>>> .r71
 	/***
 	 * Returns the account ID accosiated with the input email address. 
 	 * Returns -1 if email address doesn't exist in the account table.
@@ -556,42 +594,82 @@ public class DBManager {
 		return idAccount;
 	}
 	
-	// should return a new unique session key for the account
-	// return null for failure
-	public String startSession(String email, String pw)
-	/************************************************************************************************************
-	 * 									SessionKey Generator FUNCTION
-	 * ? => Should we bind it to user log-in
-	 * return: sessionKey or null
-	 * TODO sync DB name
-	 *************************************************************************************************************/
-
-	{
+/***************************************************************************************************************************************
+ * 									SessionKey Generator FUNCTIONS
+ * 
+ * TODO sync DB name
+ *
+ * should return a new unique session key for the account
+ * return null for failure
+***************************************************************************************************************************************/
+	public String md5(String input){
+        String res = "";
+        try {
+            MessageDigest algorithm = MessageDigest.getInstance("MD5");
+            algorithm.reset();
+            algorithm.update(input.getBytes());
+            byte[] md5 = algorithm.digest();
+            String tmp = "";
+            for (int i = 0; i < md5.length; i++) {
+                tmp = (Integer.toHexString(0xFF & md5[i]));
+                if (tmp.length() == 1) {
+                    res += "0" + tmp;
+                } else {
+                    res += tmp;
+                }
+            }
+        } catch (NoSuchAlgorithmException ex) {}
+        return res;
+    }
+	public String startSession(String email, String pw){
+		
+		int idAccount= -1;
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		String md5PW=md5(pw);
+//		MessageDigest md=null;
+//		try {
+//			md = MessageDigest.getInstance("MD5");
+//			md.update(pw.getBytes(),0,pw.length());
+//			md5PW=new String(md.digest());
+//			System.out.println("md: "+md5PW);
+//			
+//		} catch (NoSuchAlgorithmException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}//ENDOF TRY hash(MD5)
+		
 		try{
-			
 			// retrieve the account ID from login information
-			int idAccount= -1;
 			stmt = conn.createStatement();
+			System.out.println("check email:" + email +"password" + pw);
 			ResultSet rs = stmt.executeQuery( "SELECT idAccount FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
-					   						  "&& password ='md5(" + pw + ")'");
+					   						  "AND password ='"+md5PW+"'");//TODO original md5 not working
 			if(rs.first()){
 				
 				System.out.println( email +"Logged in");
 				idAccount = rs.getInt("idAccount");
+				System.out.println(idAccount);
 				stmt.close();
+				
 
 			}
 			else{
 				// Error Handling if no id matches login info
+				
 				return null;
 			}
-			
-			return registerSessionKey( idAccount );
-			
-		}
+			String sessKey=checkSessionKey(idAccount);
+			if(sessKey==null)
+			{
+				return registerSessionKey( idAccount );
+			}
+			else
+			{
+				return sessKey;
+			}
+		}//ENDOF TRY
 		catch(SQLException e) {
 				//TODO Auto-generated catch block
 				e.printStackTrace();
@@ -602,33 +680,34 @@ public class DBManager {
 	private String registerSessionKey( int idAccount ) {
 		Connection conn = getConnection();	
 		Statement stmt = null;
-		try{
+		try{//wipe previous sessionKey associated with the account
+			stmt = conn.createStatement();
+//			ResultSet rs = stmt.executeQuery("SELECT sessionKey FROM tableSession " +
+//											 "WHERE idAccount='"+idAccount+"'");
+//			String oldKey=checkSessionKey(rs.getString("sessionKey"));
+//			ResultSet rs = stmt.executeQuery( "DELETE FROM tableSession " +
+//											  "WHERE idAccount='" + idAccount +"'");
+//			stmt.close();
+//			if(oldKey == null){//check oldKey
+				// insert generated sessionKey and return it
+				stmt = conn.createStatement();
+				UUID uuid = UUID.randomUUID();
+				String sessionKey = uuid.toString();
+				int done=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
+											"('" + sessionKey + "','" + idAccount + "','" + 
+											(Calendar.getInstance().getTimeInMillis() + sessionExpireTime) + "')");
 				
-	
-			//wipe previous sessionKey associated with the account
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery( "DELETE FROM tableSession " +
-									"WHERE idAccount=" + idAccount);
-			stmt.close();
-			
-			// insert generated sessionKey and return it
-			stmt = conn.createStatement();
-			UUID uuid = UUID.randomUUID();
-			String sessionKey = uuid.toString();
-			rs = stmt.executeQuery( "INSERT INTO tableSession" +
-									"(sessionKey, idAccount, expiryTime) " + 
-									"VALUES " +
-									"(" + sessionKey + ", " + idAccount + ", " + (Calendar.getInstance().getTimeInMillis() + sessionExpireTime) + ")");
-			
-			// if sucess, return session key
-			if( rs.rowInserted() ) {
-				stmt.close();
-				return sessionKey;
-			}
-			else {
-				stmt.close();
-			}
-		}
+//			if( rs.rowInserted() ) {
+				if(done==1){	// if success, return session key
+					stmt.close();
+					return sessionKey;
+				}
+				else {
+					System.out.println("There is a problem when generating the session Key");
+					stmt.close();
+				}
+//			}//ENDOF "Check oldKey"
+		}//ENDOF TRY
 		catch(SQLException e) {
 				//TODO Auto-generated catch block
 				e.printStackTrace();
@@ -638,63 +717,111 @@ public class DBManager {
 	
 
 	// returns null if session is expired
-	public String checkSessionKey( String key ) {
+	public String checkSessionKey( int acctID ) {//HARRY's VERSION
+		int idAccount = -1;
+		long expiryTime = 0;
+		String curKey=null;
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		try{
-			
 			// retrieves idAccount
-			int idAccount = -1;
-			long expiryTime = 0;
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
-					   						  "WHERE sessionKey='"+ key);
+					   						  "WHERE idAccount='"+ acctID +"'");
 			
-			if(rs.first()){
-				//get expiryTime to check it later
+			if(rs.first()){//Check if session exists, get expiryTime to check it later
 				expiryTime = rs.getLong("expiryTime");
 				idAccount = rs.getInt("idAccount");
+				curKey = rs.getString("sessionKey");
 			}
 			else{
 				stmt.close();
 				return null;
-				// Error Handling
-			}
+				//TODO Error Handling
+			}//ENDOF if session exists 
+			
 			stmt.close();
-			
 			long currentTime = Calendar.getInstance().getTimeInMillis();
-			if( expiryTime <= currentTime ) {
-				// if session didn't expire, return the current key
-				return key;
-				
+			if( currentTime <= expiryTime) {// if session didn't expire, return the current key
+				return curKey;
 			}
-			
-			else {
+			else {//if the key is expired but within 30min
 				if( expiryTime <= currentTime + sessionRenewTime ) {
 					// renew user's sessionKey
 					return registerSessionKey( idAccount );
 				}
 				else {
 					// past renewal period, user must re-log in
+					rs = stmt.executeQuery( "DELETE FROM tableSession " +
+											"WHERE idAccount='" + idAccount +"'");
 					return null;
 				}
-				
 			}
-			
-		}
+		}//ENDOF TRY
 		catch(SQLException e) {
 				//TODO Auto-generated catch block
 				e.printStackTrace();
 		}
 		return null;
 	}
+//	public String checkSessionKey( String key ) { MARTIN's VERSION
+//		Connection conn = getConnection();	
+//		Statement stmt = null;
+//		try{
+//			
+//			// retrieves idAccount
+//			int idAccount = -1;
+//			long expiryTime = 0;
+//			stmt = conn.createStatement();
+//			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
+//					   						  "WHERE sessionKey='"+ key+"'");
+//			
+//			if(rs.first()){
+//				//get expiryTime to check it later
+//				expiryTime = rs.getLong("expiryTime");
+//				idAccount = rs.getInt("idAccount");
+//			}
+//			else{
+//				stmt.close();
+//				return null;
+//				// Error Handling
+//			}
+//			stmt.close();
+//			
+//			long currentTime = Calendar.getInstance().getTimeInMillis();
+//			if( expiryTime <= currentTime ) {
+//				// if session didn't expire, return the current key
+//				return key;
+//				
+//			}
+//			
+//			else {//if the key is expired but within 30min
+//				if( expiryTime <= currentTime + sessionRenewTime ) {
+//					// renew user's sessionKey
+//					return registerSessionKey( idAccount );
+//				}
+//				else {
+//					// past renewal period, user must re-log in
+//					return null;
+//				}
+//				
+//			}
+//			
+//		}
+//		catch(SQLException e) {
+//				//TODO Auto-generated catch block
+//				e.printStackTrace();
+//		}
+//		return null;
+//	}
+/**********************************END OF SESSIONKEY GENERATION FUNCTIONS***************************************************************/
 
 
-	/************************************************************************************************************
-	 * 									USER LOG-OUT FUNCTION
-	 * return: T/F
-	 * TODO sync DB name
-	 *************************************************************************************************************/
+/****************************************************************************************************************************************
+ * 									USER LOG-OUT FUNCTION
+ * return: T/F
+ * TODO sync DB name
+ ****************************************************************************************************************************************/
 	public boolean userLogout(String sessionKey){
 		Connection conn=getConnection();
 		Statement stmt=null;

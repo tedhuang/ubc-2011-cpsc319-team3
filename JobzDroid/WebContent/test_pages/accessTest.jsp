@@ -9,10 +9,10 @@
 </head>
 <body>
 
-<H2>Login</H2>
+<H2 id="header">Login</H2>
 <br />
-User:
-<input id="userName" name="username" class="form-login" title="Username" value="" size="30" maxlength="2048" />
+User Email:
+<input id="email" name="email" class="form-login" title="User Email" value="" size="30" maxlength="2048" />
 Password:
 <input id="password" name="password" type="password" class="form-login" title="Password" value="" size="30" maxlength="2048" />
 <br />
