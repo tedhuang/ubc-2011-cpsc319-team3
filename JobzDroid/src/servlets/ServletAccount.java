@@ -99,7 +99,7 @@ public class ServletAccount extends HttpServlet {
 				break;				
 			// reset password
 			case resetForgetPassword:
-				
+				resetForgetPassword(request, response);
 				break;				
 			default:
 				break;
@@ -161,7 +161,7 @@ public class ServletAccount extends HttpServlet {
 					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
 					message = "Account creation successful! An email has been sent to your inbox, " +
 							"please follow the instructions to activate your account within "
-					+ Math.floor(EXPIRY_TIME_EMAIL_VERIFICATION/(1000*60)) + " minutes.";
+					+ (int)Math.floor(EXPIRY_TIME_EMAIL_VERIFICATION/(1000*60)) + " minutes.";
 					result = true;
 				}
 				else
@@ -236,7 +236,7 @@ public class ServletAccount extends HttpServlet {
 				emailManager.sendPasswordResetEmail("luolw123@hotmail.com", uuid);
 				message = "An email has been sent to your mail box to reset your password. " +
 					"Please follow the link in your email to reset your password within "
-					+ Math.floor(EXPIRY_TIME_FORGET_PASSWORD_RESET/(1000*60)) + " minutes.";
+					+ (int)Math.floor(EXPIRY_TIME_FORGET_PASSWORD_RESET/(1000*60)) + " minutes.";
 				result = true;
 			}
 		}
@@ -253,6 +253,10 @@ public class ServletAccount extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
+	}
+	
+	private void resetForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		getServletConfig().getServletContext().getRequestDispatcher("/test_pages/ResetForgetPassword.jsp").forward(request,response);
 	}
 	
 	private String generateSessionKey( String email, String password) {

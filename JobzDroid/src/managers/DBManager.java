@@ -14,7 +14,6 @@ public class DBManager {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			//TODO move to config
-	//		dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
 			dbConn = DriverManager.getConnection("jdbc:mysql://db4free.net/dbjobzdriod", "blitzcriegteam", "cs319team3");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
 	//		dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jobzdroid", "web", "somepw");
@@ -39,7 +38,7 @@ public class DBManager {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String query = "SELECT idAccount FROM TableAccount " + "WHERE Email='" + email + "';"; 			
+			String query = "SELECT idAccount FROM tableAccount " + "WHERE Email='" + email + "';"; 			
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
 			
@@ -107,7 +106,7 @@ public class DBManager {
 			int idAccount;
 					
 			// update account table, and set account status to pending
-			String query = "INSERT INTO TableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
+			String query = "INSERT INTO tableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
 	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "pending" + "','" + currentTime + "');";			
 			// if successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
@@ -121,7 +120,7 @@ public class DBManager {
 						
 			// add entry to email verification table
 			long expiryTime = currentTime + expiryTimeEmailRegistration;			
-			query = "INSERT INTO TableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
+			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
 	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
 			// if successful, 1 row should be inserted
 			rowsInserted = stmt.executeUpdate(query);
@@ -129,14 +128,14 @@ public class DBManager {
 				return false;
 			// add entry to user profile table
 			if(accountType.equals("searcher")){
-				query = "INSERT INTO TableProfileSearcher(idAccount, name) VALUES " + 
+				query = "INSERT INTO tableProfileSearcher(idAccount, name) VALUES " + 
 		  		"('" + idAccount + "','" + name + "');";
 				rowsInserted = stmt.executeUpdate(query);
 				if (rowsInserted != 1)
 					return false;
 			}
 			else if(accountType.equals("poster")){
-				query = "INSERT INTO TableProfilePoster(idAccount, name) VALUES " + 
+				query = "INSERT INTO tableProfilePoster(idAccount, name) VALUES " + 
 		  		"('" + idAccount + "','" + name + "');";
 				rowsInserted = stmt.executeUpdate(query);
 				if (rowsInserted != 1)
@@ -181,7 +180,7 @@ public class DBManager {
 	/***
 	 * Updates account status from pending to active if the given verification number is valid.
 	 * The verification number is created and linked to an account upon account creation, and deleted after it is used to activate the account.
-	 * @param verificationNumber A UUID linked to an account id in TableEmailVerification
+	 * @param verificationNumber A UUID linked to an account id in tableEmailVerification
 	 * @return boolean indicating whether the account activation was successful
 	 */
 	public boolean activateAccount(String verificationNumber){
@@ -196,7 +195,7 @@ public class DBManager {
 			int idAccount, rowsUpdated;
 					
 			// check if verification number is valid	
-			query = "SELECT idAccount, expiryTime FROM TableEmailVerification WHERE idEmailVerification='" + 
+			query = "SELECT idAccount, expiryTime FROM tableEmailVerification WHERE idEmailVerification='" + 
 	  		verificationNumber + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
@@ -206,14 +205,14 @@ public class DBManager {
 				// if not expired, then activate account
 				if( currentTime < expiryTime){
 					idAccount = rs.getInt("idAccount");
-					query = "UPDATE TableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
+					query = "UPDATE tableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
 					// if successful, 1 row should be updated
 					rowsUpdated = stmt.executeUpdate(query);
 					if (rowsUpdated != 1)
 						return false;
 					else {
-						// finally, delete row containing the verification number from TableEmailVerification
-						query = "DELETE FROM TableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						// finally, delete row containing the verification number from tableEmailVerification
+						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1){
 							//TODO log error
@@ -264,9 +263,9 @@ public class DBManager {
 	
 	/***
 	 * Updates account primary email if the given verification number is valid.
-	 * The new email address is stored in TableEmailVerification when user requests for the email change.
+	 * The new email address is stored in tableEmailVerification when user requests for the email change.
 	 * The verification number is created and linked to user's account when user requests to change primary email, and deleted after it is used to change the email.
-	 * @param verificationNumber A UUID in TableEmailVerification which is linked to an account ID that requested for a primary email change
+	 * @param verificationNumber A UUID in tableEmailVerification which is linked to an account ID that requested for a primary email change
 	 * @return boolean indicating whether changing the primary email was successful
 	 */
 	public boolean verifyChangePrimaryEmail(String verificationNumber){
@@ -282,7 +281,7 @@ public class DBManager {
 			String emailPending;
 					
 			// check if verification number is valid	
-			query = "SELECT idAccount, expiryTime, emailPending FROM TableEmailVerification WHERE idEmailVerification='" + 
+			query = "SELECT idAccount, expiryTime, emailPending FROM tableEmailVerification WHERE idEmailVerification='" + 
 	  		verificationNumber + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
@@ -293,14 +292,14 @@ public class DBManager {
 				if( currentTime < expiryTime){
 					idAccount = rs.getInt("idAccount");
 					emailPending = rs.getString("emailPending");
-					query = "UPDATE TableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
+					query = "UPDATE tableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
 					// if successful, 1 row should be updated
 					rowsUpdated = stmt.executeUpdate(query);
 					if (rowsUpdated != 1)
 						return false;
 					else {
-						// finally, delete row containing the verification number from TableEmailVerification
-						query = "DELETE FROM TableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						// finally, delete row containing the verification number from tableEmailVerification
+						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1){
 							//TODO log error
@@ -418,7 +417,7 @@ public class DBManager {
 			int idAccount = getIdAcccountFromEmail(email);
 			// add entry to password reset table
 			long expiryTime = currentTime + expiryTimeForgetPasswordRequest;			
-			query = "INSERT INTO TablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
+			query = "INSERT INTO tablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
 	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
 			// if successful, 1 row should be inserted
 			rowsInserted = stmt.executeUpdate(query);
@@ -508,7 +507,7 @@ public class DBManager {
 		try {
 			stmt = conn.createStatement();
 			// get account id of the account just created
-			query = "SELECT idAccount FROM TableAccount WHERE email='" + email + "';";
+			query = "SELECT idAccount FROM tableAccount WHERE email='" + email + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
 			if(rs.first())
