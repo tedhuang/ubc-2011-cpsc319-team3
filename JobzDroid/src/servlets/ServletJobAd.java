@@ -13,7 +13,7 @@ import managers.DBManager;
 /**
  * Servlet implementation class ServletJobAdvertisement
  */
-public class ServletJobAdvertisements extends HttpServlet {
+public class ServletJobAd extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private DBManager dbManager;
@@ -22,7 +22,7 @@ public class ServletJobAdvertisements extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ServletJobAdvertisements() {
+    public ServletJobAd() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -60,9 +60,8 @@ public class ServletJobAdvertisements extends HttpServlet {
 
 	public void requestProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		
-		System.out.println("Checkpoint: requestProcess function: " + request.getParameter("function").toString());
 		String action = request.getParameter("action");
-		
+		System.out.println(action);
 		try{
 			EnumAction.valueOf(action);
 		}
@@ -100,24 +99,31 @@ public class ServletJobAdvertisements extends HttpServlet {
 		String contactInfo = request.getParameter("strContactInfo");
 		String strTags = request.getParameter("strTags");
 		
-		int expiryYear = Integer.parseInt( request.getParameter("expiryMonth"));
-		int expiryMonth = Integer.parseInt( request.getParameter("expiryMonth"));
+		int expiryYear = Integer.parseInt( request.getParameter("expiryYear"));
+		String expiryMonth = request.getParameter("expiryMonth");
 		int expiryDay =  Integer.parseInt( request.getParameter("expiryDay"));
 		
 		int startingYear =  Integer.parseInt(request.getParameter("startingYear"));
-		int startingMonth = Integer.parseInt(request.getParameter("startingMonth"));
+		String startingMonth = request.getParameter("startingMonth");
 		int startingDay = Integer.parseInt(request.getParameter("startingDay"));
 		
 		//TODO: add values for these:
 		//int ownerID;
 		//int jobAdID;
 		
-		if( !dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
-										jobLocation, contactInfo, strTags) ){
-			//TODO: Implement Error Handling:
-			return false;
-		}
+		System.out.println(jobAdvertisementTitle);
+		System.out.println(jobDescription);
+		System.out.println(jobLocation);
+		System.out.println(contactInfo);
+		System.out.println(strTags);
 		
+//		if( !dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
+//										jobLocation, contactInfo, strTags) ){
+//			//TODO: Implement Error Handling:
+//			return false;
+//		}
+		dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
+				jobLocation, contactInfo, strTags);
 		
 		
 		return true;

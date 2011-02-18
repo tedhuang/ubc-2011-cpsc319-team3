@@ -32,12 +32,12 @@
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>ServletJobAdvertisements</display-name>
-    <servlet-name>ServletJobAdvertisements</servlet-name>
-    <servlet-class>servlets.ServletJobAdvertisements</servlet-class>
+    <display-name>ServletJobAd</display-name>
+    <servlet-name>ServletJobAd</servlet-name>
+    <servlet-class>servlets.ServletJobAd</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ServletJobAdvertisements</servlet-name>
-    <url-pattern>/ServletJobAdvertisements</url-pattern>
+    <servlet-name>ServletJobAd</servlet-name>
+    <url-pattern>/ServletJobAd</url-pattern>
   </servlet-mapping>
 </web-app>
