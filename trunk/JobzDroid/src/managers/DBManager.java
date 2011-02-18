@@ -469,7 +469,7 @@ public class DBManager {
 		return false;	
 	}
 	
-<<<<<<< .mine
+
 //	/**********************************************************************************************************************
 //	 * 											User LogIn FUNCTION
 //	 * @param name
@@ -503,7 +503,7 @@ public class DBManager {
 //		return -1;
 //	}
 //	
-=======
+
 	/**********************************************************************************************************************
 	 * 											User LogIn FUNCTION
 	 * @param name
@@ -537,7 +537,7 @@ public class DBManager {
 		return -1;
 	}
 	
->>>>>>> .r71
+
 	/***
 	 * Returns the account ID accosiated with the input email address. 
 	 * Returns -1 if email address doesn't exist in the account table.
