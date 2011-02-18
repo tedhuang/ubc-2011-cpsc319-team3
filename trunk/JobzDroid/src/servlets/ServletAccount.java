@@ -48,8 +48,7 @@ public class ServletAccount extends HttpServlet {
 		requestForgetPassword,
 		resetForgetPassword,
 		requestforlogin,
-		requestforlogout,
-		unknown//if non-matched
+		requestforlogout
 	}
 
 	/**
@@ -68,14 +67,12 @@ public class ServletAccount extends HttpServlet {
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String action = request.getParameter("action");
-		// return error message if action parameter is invalid
+		// forward to error page if request is invalid
 		try{
 			EnumAction.valueOf(action);
 		}
-		catch(IllegalArgumentException e){
-			//TODO forward to error page
-			PrintWriter out = response.getWriter();
-			out.println("Grats, you broke the server.");
+		catch(Exception e){
+			forwardErrorPage(request, response);
 			return;
 		}
 		
@@ -113,7 +110,7 @@ public class ServletAccount extends HttpServlet {
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
 			
 			default:
-				System.out.println("What are you doing?");
+				forwardErrorPage(request, response);
 				break;
 		}
 	}
@@ -200,16 +197,14 @@ public class ServletAccount extends HttpServlet {
 	 */
 	private void activateAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
-		PrintWriter out = response.getWriter();
 		boolean accountActivated = dbManager.activateAccount(verificationNumber);
 		if(accountActivated){
+			PrintWriter out = response.getWriter();
 		    out.println("Congratulations, your account has successfully been activated!");
 		    out.close();
 		}
-		else{
-		    out.println("Invalid or expired account activation request.");
-		    out.close();
-		}
+		else
+			forwardErrorPage(request, response);
 	}
 	
 	/***
@@ -217,16 +212,14 @@ public class ServletAccount extends HttpServlet {
 	 */
 	private void verifyEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
-		PrintWriter out = response.getWriter();
 		boolean emailChanged = dbManager.verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
+			PrintWriter out = response.getWriter();
 		    out.println("Congratulations, your primary email has successfully been changed!");
 		    out.close();
 		}
-		else{
-		    out.println("Invalid or expired account email change request.");
-		    out.close();
-		}
+		else
+			forwardErrorPage(request, response);
 	}
 	
 
@@ -323,4 +316,10 @@ public class ServletAccount extends HttpServlet {
 		getServletConfig().getServletContext().getRequestDispatcher("/test_pages/ResetForgetPassword.jsp").forward(request,response);
 	}
 	
+	/***
+	 * Forwards current request to error page.
+	 */
+	private void forwardErrorPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		getServletConfig().getServletContext().getRequestDispatcher("/error.html").forward(request,response);
+	}
 }
