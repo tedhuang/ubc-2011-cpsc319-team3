@@ -26,7 +26,7 @@ function populatedropdown(dayfield, monthfield, yearfield){
 	var monthfield=document.getElementById(monthfield);
 	var yearfield=document.getElementById(yearfield);
 	
-	for (var i=0; i<31; i++)
+	for (var i=0; i<32; i++)
 		dayfield.options[i]=new Option(i, i+1);
 	
 	dayfield.options[today.getDate()]=new Option(today.getDate(), today.getDate(), true, true); //select today's day
@@ -55,7 +55,7 @@ function populatedropdown(dayfield, monthfield, yearfield){
 
 
 
-<!-- Fields of Input -->
+
 <br>
 
 <h2>Create New Job Advertisement</h2>
