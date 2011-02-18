@@ -61,7 +61,7 @@ public class EmailManager {
 		String emailTitle = "Jobzdroid Password Reset Request";
 		String emailBody = "Greetings!\n\n" +
 							"Please click on the link below to reset your password:\n" +
-							"http://localhost:8080/JobzDroid/Account?action=resetForgetPassword&id=" + uuid +
+							"http://localhost:8080/JobzDroid/Account?action=emailLinkForgetPassword&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
