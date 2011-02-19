@@ -5,6 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <script src="../scripts/accountAction.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
 <title>Access Test</title>
 </head>
 <body>
@@ -24,5 +25,6 @@ Password:
 <button	onclick="userLogoutRequest()">Logout</button>
 
 <div id="myDiv"><h2>Debug Message for page</h2></div>
+<input id="sessKey"></form>
 </body>
 </html>

@@ -697,7 +697,7 @@ public class DBManager {
  * should return a new unique session key for the account
  * return null for failure
 ***************************************************************************************************************************************/
-	public String md5(String input){
+	private String md5(String input){
         String res = "";
         try {
             MessageDigest algorithm = MessageDigest.getInstance("MD5");
@@ -716,6 +716,7 @@ public class DBManager {
         } catch (NoSuchAlgorithmException ex) {}
         return res;
     }
+	
 	public String startSession(String email, String pw){
 		
 		int idAccount= -1;
@@ -888,7 +889,7 @@ public class DBManager {
 			stmt.close();
 			
 			long currentTime = Calendar.getInstance().getTimeInMillis();
-			if( expiryTime <= currentTime ) {
+			if( expiryTime >= currentTime ) {
 				// if session didn't expire, return the current key
 				return key;
 				
@@ -928,19 +929,26 @@ public class DBManager {
 	public boolean userLogout(String sessionKey){
 		Connection conn=getConnection();
 		Statement stmt=null;
+		int done=-1; 
+		
 		try
 		{
 			stmt=conn.createStatement();
 			
-			//TODO check case if there is no entry in table
-			stmt.executeUpdate("DELETE FROM tableSession " +
-								 "WHERE sessionKey=" + sessionKey );
-			System.out.println("User Logged Out");
-			return true;
+			
+			done = stmt.executeUpdate("DELETE FROM tableSession " +
+								 	   "WHERE sessionKey='" + sessionKey +"'" );
+			if(done==0){//TODO add user-end response
+				System.out.println("LOGOUT ROW DELETION:No Entry found!");
+				return false;
+			}
+			else{
+				System.out.println("User Logged Out");
+				return true;
+				}
 			
 		}
 		catch (SQLException e) {
-			//TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("There is a problem when logging out");
 		}
