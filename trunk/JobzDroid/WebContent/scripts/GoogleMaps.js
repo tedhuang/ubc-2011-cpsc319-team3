@@ -12,12 +12,12 @@ $("document").ready(function(){
  * Displays the map centered around the given location. Also marks the given location.
  */
 function showMap(location) {
-	var myOptions = { 
+	var options = { 
 			zoom: 16, 
 			center: location,
 			mapTypeId: google.maps.MapTypeId.ROADMAP 
 	}; 
-	map = new google.maps.Map(document.getElementById("mapCanvas"), myOptions);
+	map = new google.maps.Map(document.getElementById("mapCanvas"), options);
 	
 	// add a marker to the map indicating the location of the address
 	var marker = new google.maps.Marker({
@@ -33,6 +33,7 @@ function calculateLocation() {
 	var address = $("#address").text();
 	geocoder.geocode( {'address': address}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
+			// display map when done calculating location
 			showMap(results[0].geometry.location);
 		}
 		else {
