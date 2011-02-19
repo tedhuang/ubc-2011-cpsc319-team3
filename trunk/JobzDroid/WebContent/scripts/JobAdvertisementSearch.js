@@ -18,6 +18,10 @@ function searchJobAdvertisement(){
 	var strSearchJobLoc = document.getElementById("searchJobLoc").value;
 	var strTags = document.getElementById("tags").value;
 	
+	
+
+	
+	
 	//User Input Check:
 	if(strTitle == null){
 		alert("Must Enter Job Advertisement Title!");
@@ -47,24 +51,27 @@ function searchJobAdvertisement(){
 	  };
 	  
 	  
-		request = new Request;
-		//TODO fix sessionID
-		request.addAction("searchJobAdvertisement");
-		request.addSessionID("1234"); //TODO implement this
-		request.addParam("strTitle", strTitle);
-		request.addParam("educationRequirement", educationRequirement);
-		request.addParam("strJobLocation", strJobLocation);
-		request.addParam("strTags", strTags);
-		//request.addParam("strDescription", strDescription);
-			  
-		
-		//send the parameters to the servlet with POST
-		xmlhttp.open("POST","../ServletJobAd" ,true);
-		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xmlhttp.send(request.toString());
+	
+	
+	request = new Request;
+	//TODO fix sessionID
+	request.addAction("searchJobAdvertisement");
+	request.addSessionID("1234"); //TODO implement this
+	request.addParam("strTitle", strTitle);
+	request.addParam("educationRequirement", searchEducationReq);
+	request.addParam("strJobLocation", strSearchJobLoc);
+	request.addParam("strTags", strTags);
+	request.addParam("searchText", strSearchText);
+	//request.addParam("strDescription", strDescription);
+		  
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
 
-		//change the text while sending the request
-		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 	  
 }
 

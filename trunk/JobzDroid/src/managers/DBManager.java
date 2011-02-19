@@ -2,9 +2,11 @@ package managers;
 
 import java.security.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
 
+import classes.JobAdvertisement;
 import classes.Utility;
 
 public class DBManager {			
@@ -497,7 +499,98 @@ public class DBManager {
 	
 	
 
+	public ArrayList<JobAdvertisement> searchJobAdvertisement(String title, String location, String tags){
+		
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		String totalQuery;
+		String titleQuery;
+		String locationQuery;
+		String tagsQuery;
+		
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		
+		try {
+			
+			stmt = conn.createStatement();
+			
+			if(title == ""){
+				titleQuery = "";
+			}
+			else
+			{
+				titleQuery = "AND title = (SELECT title FROM UserTable WHERE title = '" + title + "')";
+			}
+			
+			totalQuery = "SELECT * FROM tableJobAd "
+					+ "WHERE title LIKE '" + title + "%' " 
+					+ " AND Category LIKE '" + titleQuery;
+			
+			
+			System.out.println(totalQuery);
+			boolean success = stmt.execute(totalQuery);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			while( result.next() ) {
+				JobAdvertisement temp = new JobAdvertisement();
+				
+				temp.jobAdTitle = result.getString("title");
+				temp.jobAdId = result.getInt("idJobAd");
+				temp.expiryDate = result.getString("ExpiryDate");
+				temp.creationDate = result.getString("CreationDate");
+				temp.ownerID = result.getInt("OwnerID");
+				temp.numberOfViews = result.getInt("numberOfViews");
+				temp.jobAdDescription = result.getString("description");
+				temp.location = result.getString("location");
+				temp.status = result.getString("status");
+				temp.tags = result.getString("tags");
+				
+				
+				jobAdList.add( temp );
+				
+			}
+			
+
+			stmt.close();
+			
+			System.out.println("Searched Auctions");
+			return jobAdList;
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		
+		return null;
+	}
 	
+	
+	public JobAdvertisement getJobAdById(int jobId){
+		
+		
+		return null;
+	}
 	
 	
 	
