@@ -111,7 +111,8 @@ public class ServletAccount extends HttpServlet {
 				break;
 			
 			case requestforlogout:
-				userLogout(request, response);
+				logoutReqTaker(request, response);
+				break;
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
 			
 			default:
@@ -272,8 +273,13 @@ public class ServletAccount extends HttpServlet {
 		
 	}
 /***************************/
-	private void userLogout(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
-		dbManager.userLogout(req.getParameter("SessionKey").toString());
+	private void logoutReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
+		if(dbManager.userLogout(req.getParameter("sessKey").toString())){
+			System.out.println("Logout Successfully");
+		}
+		else{
+			System.out.println("Logout failed");
+		}
 		
 	}
 /**************************************************************************************************************************************/
