@@ -37,6 +37,37 @@ public class DBManager {
 	public DBManager() {}
 	
 	
+	
+/*****************************************************************
+ * 	Helper Methods												 *
+ *****************************************************************/
+	
+	//Parse user input into SQL acceptable format
+	private String checkInputFormat(String toBeChecked){
+		
+		String corrected;
+		corrected = toBeChecked.replace("\'", "\\\'");
+		corrected = toBeChecked.replace("\"", "\\\"");
+		corrected = toBeChecked.replace(";", "");
+		corrected = toBeChecked.replace("{", "");
+		corrected = toBeChecked.replace("}", "");
+		corrected = toBeChecked.replace("<", "");
+		corrected = toBeChecked.replace(">", "");
+		corrected = toBeChecked.replace("^", "");
+		
+		return corrected;		
+	}
+	
+	
+	
+	
+	
+	
+/*********************************************************************
+ * DB Functions  													 *
+ *********************************************************************/
+	
+	
 	/***
 	 * Checks whether the given primary email address already exists.
 	 * @param email email address to be checked
@@ -295,9 +326,11 @@ public class DBManager {
 	  		verificationNumber + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
+			
 			// if valid, then check expiry time of verification number
 			if(rs.first()){
 				expiryTime = rs.getLong("expiryTime");
+				
 				// if not expired, then update primary email
 				if( currentTime < expiryTime){
 					idAccount = rs.getInt("idAccount");
@@ -305,6 +338,7 @@ public class DBManager {
 					query = "UPDATE tableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
 					// if successful, 1 row should be updated
 					rowsUpdated = stmt.executeUpdate(query);
+					
 					if (rowsUpdated != 1)
 						return false;
 					else {
@@ -317,7 +351,9 @@ public class DBManager {
 						}
 						return true;
 					}
+					
 				}
+				
 			}
 			else
 				return false;
@@ -358,33 +394,84 @@ public class DBManager {
 		return false;
 	}
 	
-	public boolean createJobAdvertisement(String jobAdvertisementTitle, String jobDescription, 
-									 	  String jobLocation, String contactInfo, 
-									 	  String strTags){
+	
+	
+	
+	/**
+	 * Creates a new job advertisement entry in the database with the given values
+	 * @param jobAdvertisementTitle
+	 * @param jobDescription
+	 * @param jobLocation
+	 * @param contactInfo
+	 * @param strTags
+	 * @return idJobAd
+	 */
+	public int createJobAdvertisement(String jobAdvertisementTitle, String jobDescription, 
+									 	  String jobLocation, String contactInfo, int educationRequirement,
+									 	  String strTags, long expiryDate, long startingDate,
+									 	  long datePosted){
 		
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		int idJobAd = -1;
+		
+		
 		try {
 			stmt = conn.createStatement();
-					
+			
+			checkInputFormat( jobAdvertisementTitle );
+			checkInputFormat( jobDescription );
+			checkInputFormat( jobLocation );
+			checkInputFormat( contactInfo );
+			checkInputFormat( strTags );
+			
 			String query = 
-				"INSERT INTO tableJobAd(title, description, location, contactInfo, tags) VALUES " + 
-				"('" + jobAdvertisementTitle + "','" + jobDescription + "','" 
-					 + jobLocation + "','" + contactInfo + "','" + strTags + "')";
+				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
+				"VALUES " + "('" 
+					+ jobAdvertisementTitle + "','" 
+					+ jobDescription + "','" 
+					+ expiryDate + "','" 
+					+ startingDate + "','" 
+					+ datePosted + "','"
+					+ jobLocation + "','" 
+					+ contactInfo + "','" 
+					+ educationRequirement + "','"
+					+ strTags + 
+				"')";
 			
 			// if successful, 1 row should be inserted
+			System.out.println("New Job Ad Query:" + query);
 			int rowsInserted = stmt.executeUpdate(query);
+			
 			if (rowsInserted == 1){
-				System.out.println("Checkpoint:" + jobAdvertisementTitle);
-				return true;
+				System.out.println("New JobAd Creation success (DB)");
+			}
+			else{
+				stmt.close();
+				return -1;
+			}
+			
+			query = "SELECT idJobAd FROM tableJobAd WHERE " + " title='" + jobAdvertisementTitle + "'"; 
+			ResultSet result = stmt.executeQuery(query);
+			
+			if( result.first() )
+			{
+				idJobAd = result.getInt("idJobAd");
+				System.out.println("idJobAd: " + idJobAd);
 			}
 			else
-				return false;					
+			{
+				System.out.println("Error: result.first() is false ");
+			}
+			
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
 			System.out.println("SQL exception : " + e.getMessage());
+			idJobAd = -1;
 		}
+		
+		
 		// close DB objects
 	    finally {
 	        try{
@@ -404,8 +491,15 @@ public class DBManager {
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
-		return false;		
+	    
+		return idJobAd;		
 	}
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Adds a password reset request entry into the DB.
@@ -469,7 +563,7 @@ public class DBManager {
 		return false;	
 	}
 	
-
+/**<<<<<<< .mine
 //	/**********************************************************************************************************************
 //	 * 											User LogIn FUNCTION
 //	 * @param name
@@ -502,7 +596,7 @@ public class DBManager {
 //		}
 //		return -1;
 //	}
-//	
+//========	
 
 	/**********************************************************************************************************************
 	 * 											User LogIn FUNCTION
@@ -537,7 +631,7 @@ public class DBManager {
 		return -1;
 	}
 	
-
+//>>>>>>> .r71
 	/***
 	 * Returns the account ID accosiated with the input email address. 
 	 * Returns -1 if email address doesn't exist in the account table.
