@@ -30,9 +30,9 @@ public class DBManager {
 	}
 	
 	// if the previous session key expired but is within 30 min, renew it
-	final long sessionRenewTime	 = 30 * 60 * 1000;
+	final long sessionRenewTime	 = 15 * 60 * 1000;
 	// session expires in 6 hours
-	final long sessionExpireTime = 6 * 60 * 60 * 1000;
+	final long sessionExpireTime = 1 * 60 * 60 * 1000;
 	
 	public DBManager() {}
 	
@@ -743,7 +743,7 @@ public class DBManager {
 					   						  "AND password ='"+md5PW+"'");//TODO original md5 not working
 			if(rs.first()){
 				
-				System.out.println( email +"Logged in");
+				System.out.println( email +" Logged in");
 				idAccount = rs.getInt("idAccount");
 				System.out.println(idAccount);
 				stmt.close();
@@ -755,10 +755,12 @@ public class DBManager {
 				
 				return null;
 			}
-			String sessKey=checkSessionKey(idAccount);
+			
+			String sessKey=registerSessionKey(idAccount);
 			if(sessKey==null)
 			{
-				return registerSessionKey( idAccount );
+				//TODO make error statement
+				return null;
 			}
 			else
 			{
@@ -775,7 +777,8 @@ public class DBManager {
 	private String registerSessionKey( int idAccount ) {
 		Connection conn = getConnection();	
 		Statement stmt = null;
-		try{//wipe previous sessionKey associated with the account
+		try{
+			//wipe previous sessionKey associated with the account
 			stmt = conn.createStatement();
 //			ResultSet rs = stmt.executeQuery("SELECT sessionKey FROM tableSession " +
 //											 "WHERE idAccount='"+idAccount+"'");
@@ -812,84 +815,34 @@ public class DBManager {
 	
 
 	// returns null if session is expired
-	public String checkSessionKey( int acctID ) {//HARRY's VERSION
-		int idAccount = -1;
-		long expiryTime = 0;
-		String curKey=null;
-		Connection conn = getConnection();	
-		Statement stmt = null;
-		try{
-			// retrieves idAccount
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
-					   						  "WHERE idAccount='"+ acctID +"'");
-			
-			if(rs.first()){//Check if session exists, get expiryTime to check it later
-				expiryTime = rs.getLong("expiryTime");
-				idAccount = rs.getInt("idAccount");
-				curKey = rs.getString("sessionKey");
-			}
-			else{
-				stmt.close();
-				return null;
-				//TODO Error Handling
-			}//ENDOF if session exists 
-			
-			stmt.close();
-			long currentTime = Calendar.getInstance().getTimeInMillis();
-			if( currentTime <= expiryTime) {// if session didn't expire, return the current key
-				return curKey;
-			}
-			else {//if the key is expired but within 30min
-				if( expiryTime <= currentTime + sessionRenewTime ) {
-					// renew user's sessionKey
-					return registerSessionKey( idAccount );
-				}
-				else {
-					// past renewal period, user must re-log in
-					rs = stmt.executeQuery( "DELETE FROM tableSession " +
-											"WHERE idAccount='" + idAccount +"'");
-					return null;
-				}
-			}
-		}//ENDOF TRY
-		catch(SQLException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
-		}
-		return null;
-	}
-//	public String checkSessionKey( String key ) { MARTIN's VERSION
+//	public String checkSessionKey( String sessionKey ) {//HARRY's VERSION
+//		int idAccount = -1;
+//		long expiryTime = 0;
+//		String curKey=null;
 //		Connection conn = getConnection();	
 //		Statement stmt = null;
 //		try{
-//			
 //			// retrieves idAccount
-//			int idAccount = -1;
-//			long expiryTime = 0;
 //			stmt = conn.createStatement();
 //			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
-//					   						  "WHERE sessionKey='"+ key+"'");
+//					   						  "WHERE idAccount='"+ acctID +"'");
 //			
-//			if(rs.first()){
-//				//get expiryTime to check it later
+//			if(rs.first()){//Check if session exists, get expiryTime to check it later
 //				expiryTime = rs.getLong("expiryTime");
 //				idAccount = rs.getInt("idAccount");
+//				curKey = rs.getString("sessionKey");
 //			}
 //			else{
 //				stmt.close();
 //				return null;
-//				// Error Handling
-//			}
+//				//TODO Error Handling
+//			}//ENDOF if session exists 
+//			
 //			stmt.close();
-//			
 //			long currentTime = Calendar.getInstance().getTimeInMillis();
-//			if( expiryTime <= currentTime ) {
-//				// if session didn't expire, return the current key
-//				return key;
-//				
+//			if( currentTime <= expiryTime) {// if session didn't expire, return the current key
+//				return curKey;
 //			}
-//			
 //			else {//if the key is expired but within 30min
 //				if( expiryTime <= currentTime + sessionRenewTime ) {
 //					// renew user's sessionKey
@@ -897,18 +850,73 @@ public class DBManager {
 //				}
 //				else {
 //					// past renewal period, user must re-log in
+//					rs = stmt.executeQuery( "DELETE FROM tableSession " +
+//											"WHERE idAccount='" + idAccount +"'");
 //					return null;
 //				}
-//				
 //			}
-//			
-//		}
+//		}//ENDOF TRY
 //		catch(SQLException e) {
 //				//TODO Auto-generated catch block
 //				e.printStackTrace();
 //		}
 //		return null;
 //	}
+	
+	public String checkSessionKey( String key ) { 
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		try{
+			
+			// retrieves idAccount
+			int idAccount = -1;
+			long expiryTime = 0;
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
+					   						  "WHERE sessionKey='"+ key+"'");
+			
+			if(rs.first()){
+				//get expiryTime to check it later
+				expiryTime = rs.getLong("expiryTime");
+				idAccount = rs.getInt("idAccount");
+			}
+			else{
+				stmt.close();
+				return null;
+				// Error Handling
+			}
+			stmt.close();
+			
+			long currentTime = Calendar.getInstance().getTimeInMillis();
+			if( expiryTime <= currentTime ) {
+				// if session didn't expire, return the current key
+				return key;
+				
+			}
+			
+			else {//if the key is expired but within 30min
+				if( expiryTime <= currentTime + sessionRenewTime ) {
+					// renew user's sessionKey
+					//TODO delete the old entry?
+					return registerSessionKey( idAccount );
+				}
+				else {
+					// past renewal period, user must re-log in
+					//TODO delte old entry?
+//					rs = stmt.executeQuery( "DELETE FROM tableSession " +
+//							"WHERE idAccount='" + idAccount +"'");
+					return null;
+				}
+				
+			}
+			
+		}
+		catch(SQLException e) {
+				//TODO Auto-generated catch block
+				e.printStackTrace();
+		}
+		return null;
+	}
 /**********************************END OF SESSIONKEY GENERATION FUNCTIONS***************************************************************/
 
 
@@ -923,6 +931,8 @@ public class DBManager {
 		try
 		{
 			stmt=conn.createStatement();
+			
+			//TODO check case if there is no entry in table
 			stmt.executeUpdate("DELETE FROM tableSession " +
 								 "WHERE sessionKey=" + sessionKey );
 			System.out.println("User Logged Out");
