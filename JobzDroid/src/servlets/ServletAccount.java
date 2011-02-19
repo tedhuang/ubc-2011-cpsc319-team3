@@ -24,8 +24,8 @@ public class ServletAccount extends HttpServlet {
 	//TODO: move these constants to the config file
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	public static final String PW_PATTERN = "^\\S{5,15}$";
-	public final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
-	public final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
+	public static final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
+	public static final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
 	
 	private EmailManager emailManager;	
 	private DBManager dbManager;
