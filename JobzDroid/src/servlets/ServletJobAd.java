@@ -32,7 +32,8 @@ public class ServletJobAd extends HttpServlet {
     // Enumerates the action parameter
 	private enum EnumAction	{
 		//Add new functions here
-		createJobAdvertisement
+		createJobAdvertisement,
+		searchJobAdvertisement
 		
 	}
 	
@@ -176,6 +177,19 @@ public class ServletJobAd extends HttpServlet {
 		
 		return true;
 	}
+	
+	
+	public boolean searchJobAdvertisement(HttpServletRequest request){
+		
+		
+		
+		
+		return false;
+	}
+		
+	
+	
+	
 	
 	
 }
