@@ -181,6 +181,15 @@ public class ServletJobAd extends HttpServlet {
 	
 	public boolean searchJobAdvertisement(HttpServletRequest request){
 		
+		String searchTitle = request.getParameter("strTitle");
+		//String jobDescription = request.getParameter("strDescription");
+		String jobLocation = request.getParameter("strJobLocation");
+		String strTags = request.getParameter("strTags");
+		String searchText = request.getParameter("searchText");
+		
+		int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
+		
+		//TODO: implement parse "strSearchText" for title and keywords
 		
 		
 		
