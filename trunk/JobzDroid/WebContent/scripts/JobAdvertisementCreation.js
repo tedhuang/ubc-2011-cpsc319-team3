@@ -18,7 +18,6 @@ function createJobAdvertisement()
 	var educationRequirement = document.getElementById("educationRequirement").value;
 	var strJobLocation = document.getElementById("jobLocation").value;
 	var strContactInfo = document.getElementById("contactInfo").value;
-	//var startingDate = TODO: add this when it is implemented
 	var strTags = document.getElementById("tags").value;
 	
 	var expiryYear = document.getElementById("expiryYear").value;
@@ -29,9 +28,6 @@ function createJobAdvertisement()
 	var startingMonth = document.getElementById("startingMonth").value;
 	var startingYear = document.getElementById("startingYear").value;
 	
-	alert("Expiry Date: " + expiryYear + " " + expiryMonth + " " + expiryDay);
-	
-
 	
 	//User Input Check:
 	if(strTitle == null){
@@ -55,24 +51,18 @@ function createJobAdvertisement()
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-//		    var responseText= auctionParseXMLResponse(xmlhttp.responseXML);
+//		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
 //	    	document.getElementById("feedback").innerHTML=responseText;
 
 	    }
 	  };
 	
 	  
-//	var params = "manager=" + "JobAdvertismentManager" + "&function=" + "createJobAdvertisement"
-//				+ "&strTitle=" + strTitle + "&strDescription=" + strDescription
-//				+ "&educationRequirement=" + educationRequirement + "&strJobLocation=" + strJobLocation 
-//				+ "&strContactInfo=" + strContactInfo +"&strTags=" + strTags
-//				+ "&ExpiryWeek=" + ExpiryWeek + "&ExpiryDay=" + ExpiryDay;
-		
 	
 	request = new Request;
 	//TODO fix sessionID
 	request.addAction("createJobAdvertisement");
-	request.addSessionID("1234");
+	request.addSessionID("1234"); //TODO implement this
 	request.addParam("strTitle", strTitle);
 	request.addParam("strDescription", strDescription);
 	request.addParam("educationRequirement", educationRequirement);
