@@ -1112,6 +1112,13 @@ public class DBManager {
 		return -1;
 	}
 	
+	/***
+	 * Resets password
+	 * @param idPasswordReset Unique password reset ID
+	 * @param idAccount Account id
+	 * @param newPassword The new password.
+	 * @return boolean indicating whether the password reset was successful.
+	 */
 	public boolean resetPassword(String idPasswordReset, int idAccount, String newPassword){
 		Connection conn = getConnection();
 		Statement stmt = null;

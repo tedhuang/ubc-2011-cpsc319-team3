@@ -9,8 +9,23 @@
 	<title>Google Maps Test</title>
 </head>
 <body>
-	<span id="address">10 Main Mall, Vancouver</span>
-	<button id="viewMapButton" type="button">View Location in Google Maps</button><br /><br />
+	<table id="addressTable">
+		<tbody>
+			<tr>
+				<td><span id="address0">asd</span></td>
+				<td><button type="button">Link to a Google Maps location</button></td>
+				<td>Currently linked to: [get data from server]  local data:<span id="tmp0"></span></td>
+			</tr>
+			<tr>
+				<td><span id="address1">100 Main Street Vancouver</span></td>
+				<td><button type="button">Link to a Google Maps location</button></td>
+				<td>Currently linked to: [get data from server]  local data:<span id="tmp1"></span></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<br /><br />
+	<table id="lookUpTable"></table><br />
 	<div id="mapCanvas"></div> 
 </body>
 </html>
