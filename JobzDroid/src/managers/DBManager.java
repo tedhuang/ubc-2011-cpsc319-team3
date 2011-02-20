@@ -815,18 +815,8 @@ public class DBManager {
 		int idAccount= -1;
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		// md5 the password
 		String md5PW=md5(pw);
-//		MessageDigest md=null;
-//		try {
-//			md = MessageDigest.getInstance("MD5");
-//			md.update(pw.getBytes(),0,pw.length());
-//			md5PW=new String(md.digest());
-//			System.out.println("md: "+md5PW);
-//			
-//		} catch (NoSuchAlgorithmException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}//ENDOF TRY hash(MD5)
 		
 		try{
 			// retrieve the account ID from login information
@@ -849,6 +839,9 @@ public class DBManager {
 				
 				return null;
 			}
+			
+			//cleanSessionKeyByID returns rows clean out of DB, don't need to check right now
+			cleanSessionKeyByID( idAccount );
 			
 			String sessKey=registerSessionKey(idAccount);
 			if(sessKey==null)
@@ -874,31 +867,22 @@ public class DBManager {
 		try{
 			//wipe previous sessionKey associated with the account
 			stmt = conn.createStatement();
-//			ResultSet rs = stmt.executeQuery("SELECT sessionKey FROM tableSession " +
-//											 "WHERE idAccount='"+idAccount+"'");
-//			String oldKey=checkSessionKey(rs.getString("sessionKey"));
-//			ResultSet rs = stmt.executeQuery( "DELETE FROM tableSession " +
-//											  "WHERE idAccount='" + idAccount +"'");
-//			stmt.close();
-//			if(oldKey == null){//check oldKey
-				// insert generated sessionKey and return it
-				stmt = conn.createStatement();
-				UUID uuid = UUID.randomUUID();
-				String sessionKey = uuid.toString();
-				int done=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
-											"('" + sessionKey + "','" + idAccount + "','" + 
-											(Calendar.getInstance().getTimeInMillis() + sessionExpireTime) + "')");
+
+			UUID uuid = UUID.randomUUID();
+			String sessionKey = uuid.toString();
+			int rowsInserted=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
+										"('" + sessionKey + "','" + idAccount + "','" + 
+										(Calendar.getInstance().getTimeInMillis() + sessionExpireTime) + "')");
 				
 //			if( rs.rowInserted() ) {
-				if(done==1){	// if success, return session key
-					stmt.close();
-					return sessionKey;
-				}
-				else {
-					System.out.println("There is a problem when generating the session Key");
-					stmt.close();
-				}
-//			}//ENDOF "Check oldKey"
+			if(rowsInserted==1){	// if success, return session key
+				stmt.close();
+				return sessionKey;
+			}
+			else {
+				System.out.println("There is a problem when generating the session Key");
+				stmt.close();
+			}
 		}//ENDOF TRY
 		catch(SQLException e) {
 				//TODO Auto-generated catch block
@@ -907,7 +891,57 @@ public class DBManager {
 		return null;
 	}
 	
+	private int cleanSessionKeyByID( int idAccount ) {
+		// cleanup other sessionKey associated with this idAccount 
 
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		
+		int cleanUpCount = 0;
+		try {
+			stmt=conn.createStatement();
+			cleanUpCount = stmt.executeUpdate("DELETE FROM tableSession " +
+				 	   "WHERE idAccount='" + idAccount +"'" );
+			if(cleanUpCount==0){//TODO add user-end response
+				System.out.println("No other keys for account " + idAccount);
+			}
+			else{
+				System.out.println( cleanUpCount + " keys were cleaned from DB");
+			}
+			stmt.close();
+		}
+		catch(SQLException e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cleanUpCount;
+	}
+	
+	private int cleanSessionKeyByKey( String sessionKey ) {
+		// cleanup other sessionKey associated with this idAccount 
+
+		Connection conn = getConnection();	
+		Statement stmt = null;
+		
+		int cleanUpCount = 0;
+		try {
+			stmt=conn.createStatement();
+			cleanUpCount = stmt.executeUpdate("DELETE FROM tableSession " +
+				 	   "WHERE sessionKey='" + sessionKey +"'" );
+			if(cleanUpCount==0){//TODO add user-end response
+				System.out.println("No key matches " + sessionKey);
+			}
+			else{
+				System.out.println( cleanUpCount + " keys were cleaned from DB");
+			}
+			stmt.close();
+		}
+		catch(SQLException e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cleanUpCount;
+	}
 	// returns null if session is expired
 //	public String checkSessionKey( String sessionKey ) {//HARRY's VERSION
 //		int idAccount = -1;
@@ -987,11 +1021,11 @@ public class DBManager {
 				return key;
 				
 			}
-			
 			else {//if the key is expired but within 30min
+				//clean up the sessionKey
+				cleanSessionKeyByKey( key );
 				if( expiryTime <= currentTime + sessionRenewTime ) {
 					// renew user's sessionKey
-					//TODO delete the old entry?
 					return registerSessionKey( idAccount );
 				}
 				else {
@@ -1026,6 +1060,7 @@ public class DBManager {
 		
 		try
 		{
+			//TODO same code as cleanSessionKeyByKey() merge code?
 			stmt=conn.createStatement();
 			
 			
@@ -1038,7 +1073,7 @@ public class DBManager {
 			else{
 				System.out.println("User Logged Out");
 				return true;
-				}
+			}
 			
 		}
 		catch (SQLException e) {
