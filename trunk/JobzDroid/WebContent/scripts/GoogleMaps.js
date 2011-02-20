@@ -2,10 +2,11 @@
  * Javascript file for GoogleMaps functions
  */
 var map;
+var latitude, longitude, currAddrNum;
 var geocoder = new google.maps.Geocoder(); 
 
 $("document").ready(function(){
-	$("#viewMapButton").bind("click",calculateLocation);
+	$("#addressTable button").bind("click",calculateLocation);
 });
 
 /***
@@ -30,14 +31,41 @@ function showMap(location) {
  * Converts address into latitude and longitude, and then calls showMap to display the map
  */
 function calculateLocation() {
-	var address = $("#address").text();
+	var rowNumber = $(this).parent().parent().index();
+	currAddrNum = rowNumber;
+	var address = $("#address"+rowNumber).text();
 	geocoder.geocode( {'address': address}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			// display map when done calculating location
-			showMap(results[0].geometry.location);
+			// showMap(results[0].geometry.location);
+			listLocationChoices(results);
 		}
 		else {
 			alert("Geocode was not successful for the following reason: " + status);
 		}
 	});   
+}
+
+function listLocationChoices(googleMapsResults){
+	$("#lookUpTable tr").remove();
+	var i;
+	for (i = 0; i < googleMapsResults.length; i++){
+		var currentResult = googleMapsResults[i];
+		$("#lookUpTable").append("<tr title='Click to view this location in GoogleMaps'>" +
+				"<td><a href=''>" + currentResult.formatted_address + "</a></td>" +
+				"<td><button type='button'>Save</button><td></tr>");
+	}
+	$("#lookUpTable a").bind("click", function(){
+		var rowNumber = $(this).parent().parent().index();
+		showMap(googleMapsResults[rowNumber].geometry.location);
+		return false;
+	});
+	$("#lookUpTable button").bind("click", function(){
+		var rowNumber = $(this).parent().parent().index();
+		latitude = googleMapsResults[rowNumber].geometry.location.lat();
+		longitude = googleMapsResults[rowNumber].geometry.location.lng();
+		$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
+		
+		//TODO send request to save data in DB
+	});
 }
