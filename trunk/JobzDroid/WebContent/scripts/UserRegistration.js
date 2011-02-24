@@ -40,10 +40,10 @@ function validateForm(evt){
 	}
 	// case: password changed (must be 5-15 non-white-space characters)
 	else if( $(this).attr('id') == "password1" ){
-		var strPasswordPattern = /^\S{5,15}$/;
+		var strPasswordPattern = /^([A-Za-z0-9_\-\.]){5,15}$/;
 		var password = $(this).val();
 		if(strPasswordPattern.test(password) == false) {
-			$("#password1Error").text("Password must be 5 to 15 characters long, and cannot contain white spaces.");
+			$("#password1Error").text("Password must be 5 to 15 characters long, and cannot contain special characters.");
 		}
 		else{
 			$("#password1Error").text("");
@@ -62,6 +62,7 @@ function validateForm(evt){
 	}
 	// case: name field changed (must not be empty)
 	else if( $(this).attr('id') == "name" ){
+		var strNamePattern = /^([A-Za-z0-9_\-\.])+$/;
 		var strName = $("#name").val();
 		var accountType = $("input[name=accountType]:checked").val();
 		if( !strName || strName == "" ) {
@@ -71,6 +72,9 @@ function validateForm(evt){
 			else if(accountType == "poster"){
 				$("#nameError").text("Company/organization name must not be empty.");
 			}
+		}
+		else if(strNamePattern.test(strName) == false)	{
+			$("#nameError").text("Special characters are not allowed.");
 		}
 		else{
 			$("#nameError").text("");

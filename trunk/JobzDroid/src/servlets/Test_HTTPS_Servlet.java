@@ -12,7 +12,6 @@ package servlets;
  *  these programs and files. 
  */ 
 import java.io.DataInputStream; 
-import java.security.*; 
 import java.net.URLConnection; 
 import java.net.URL; 
 import java.net.URLDecoder; 
@@ -24,8 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class Test_HTTPS_Servlet extends HttpServlet 
 { 
+	private static final long serialVersionUID = 1L;
 
-  public void doGet(HttpServletRequest req, HttpServletResponse res) { 
+public void doGet(HttpServletRequest req, HttpServletResponse res) { 
   
     res.setContentType("text/html"); 
   
