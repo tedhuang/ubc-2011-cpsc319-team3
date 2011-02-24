@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>AjaxSmart Tab - JobzDroid</title>
+
+<link href="css/default_style.css" rel="stylesheet" type="text/css">
+<link href="css/verticalTabs.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
+<script type="text/javascript" src="scripts/AjaxSmartTab.js"></script>
+
+<script type="text/javascript">
+   
+    $(document).ready(function(){
+    	// Smart Tab
+  		$('#tabs').AjaxSmartTab({});
+		});
+</script>
+</head><body>
+  <div class="infoHeader">   
+    <h1>Registered User Home Page</h1>
+    <h2>The Layout</h2>
+    <h3>  
+    <br /> Registered User will see this page
+	<br /> TODO: Add a headbar on the top
+    <br /> Each Tab loads a different page from our server
+    <br /> The loaded page will have the style as in "normal page tamplate"
+	<br /> The "normal pages" can be load independently in browser
+	</h3>
+    <br />
+    <a href="normalpage.html" class="btn">Normal Page Template</a>
+    <a href="#" class="selected">Button1</a>
+    <a href="#" class="btn">Button2</a>
+    <a href="#" class="btn">Button3</a>
+  </div>
+
+<!-- Tabs -->
+  		<div id="tabs" class="verticalTabs">
+  			<ul>
+  				<li>
+  					<a href="#tabs-1"><!--Refer to the DIV below-->
+                		<img class='logoImage2' border="0" width="50px" src="images/Step1.png">
+                		<h2>Tab 1<br /><small>tab's description</small></h2>
+            		</a>
+				</li>
+  				<li><a href="#tabs-2">
+                <img class='logoImage2' border="0" width="50px" src="images/Step2.png">
+                <h2>Tab 2<br />
+                <small>tab's description</small></h2>
+            </a></li>
+  				<li><a href="#tabs-3">
+                <img class='logoImage2' border="0" width="50px" src="images/Step3.png">
+                <h2>Tab 3<br />
+                <small>tab's description</small></h2>
+             </a></li>
+  				<li><a href="#tabs-4">
+                <img class='logoImage2' border="0" width="50px" src="images/Step4.png">
+                <h2>Tab 4<br />
+                <small>tab's description</small></h2>
+            </a></li>
+  			</ul>
+		<div id="tabFrame">
+  			<div id="tabs-1">
+            	<h2>Tab 1 Content</h2>	
+	            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+	        </div>
+  			<div id="tabs-2">
+	            <h2>Tab 2 Content</h2>	
+	            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	            </p>
+        </div>                      
+  			<div id="tabs-3">
+	            <h2>Tab 3 Content</h2>	
+	            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	            </p>
+        </div>
+  			<div id="tabs-4">
+	            <h2>Tab 4 Content</h2>	
+	            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	            </p>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+	            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+	            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+	            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+       		</div>
+		 </div><!--ENDOF TABFRAME-->
+  		</div>
+</body>
+</html>
