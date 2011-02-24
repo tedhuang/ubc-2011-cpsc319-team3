@@ -17,12 +17,8 @@ public class DBManager {
 	private Connection getConnection() {	
 		Connection dbConn = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			//TODO move to config
-			
-	//		dbConn = DriverManager.getConnection("jdbc:mysql://70.79.38.90/jobzdroid", "root", "cpsc410");
-	//		dbConn = DriverManager.getConnection("jdbc:mysql://192.168.0.192:3306/jobzdroid", "root", "cs319CS#!(");
-			dbConn = DriverManager.getConnection("jdbc:mysql://www.db4free.net:3306/dbjobzdriod", "blitzcriegteam", "cs319team3");
+			Class.forName("com.mysql.jdbc.Driver").newInstance();			
+			dbConn = DriverManager.getConnection(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword);
 		}
 		catch(Exception e){
 			//TODO: log error
@@ -866,7 +862,7 @@ public class DBManager {
 			String sessionKey = uuid.toString();
 			int rowsInserted=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
 										"('" + sessionKey + "','" + idAccount + "','" + 
-										(Calendar.getInstance().getTimeInMillis() + SystemManager.sessionExpireTime) + "')");
+										(Calendar.getInstance().getTimeInMillis() + SystemManager.expiryTimeSession) + "')");
 //			if( rs.rowInserted() ) {
 			if(rowsInserted==1){	// if success, return session key
 				stmt.close();
@@ -969,7 +965,7 @@ public class DBManager {
 			else {//if the key is expired but within 30min
 				//clean up the sessionKey
 				cleanSessionKeyByKey( key );
-				if( expiryTime <= currentTime + SystemManager.sessionRenewTime ) {
+				if( expiryTime <= currentTime + SystemManager.sessionRenewPeriodAfterExpiry ) {
 					// renew user's sessionKey
 					return registerSessionKey( idAccount );
 				}
