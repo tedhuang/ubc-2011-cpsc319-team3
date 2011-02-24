@@ -40,4 +40,15 @@
     <servlet-name>ServletJobAd</servlet-name>
     <url-pattern>/ServletJobAd</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description>Loads configuation files and starts timer for automated tasks.</description>
+    <display-name>ServletInitializer</display-name>
+    <servlet-name>ServletInitializer</servlet-name>
+    <servlet-class>servlets.ServletInitializer</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletInitializer</servlet-name>
+    <url-pattern>/ServletInitializer</url-pattern>
+  </servlet-mapping>
 </web-app>

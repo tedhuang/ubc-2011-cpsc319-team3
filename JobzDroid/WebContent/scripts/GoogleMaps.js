@@ -28,7 +28,7 @@ function showMap(location) {
 } 
 
 /***
- * Converts address into latitude and longitude, and then calls showMap to display the map
+ * Query data from Google maps
  */
 function calculateLocation() {
 	var rowNumber = $(this).parent().parent().index();
@@ -36,8 +36,7 @@ function calculateLocation() {
 	var address = $("#address"+rowNumber).text();
 	geocoder.geocode( {'address': address}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
-			// display map when done calculating location
-			// showMap(results[0].geometry.location);
+			// list results after receiving data
 			listLocationChoices(results);
 		}
 		else {
@@ -46,6 +45,9 @@ function calculateLocation() {
 	});   
 }
 
+/***
+ * List results from Google maps, and bind functions to buttons in dynamically generated table elements
+ */
 function listLocationChoices(googleMapsResults){
 	$("#lookUpTable tr").remove();
 	var i;

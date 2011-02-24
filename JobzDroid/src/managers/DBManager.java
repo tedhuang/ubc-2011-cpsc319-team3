@@ -30,12 +30,7 @@ public class DBManager {
 		}		
 		return dbConn;
 	}
-	
-	// if the previous session key expired but is within 30 min, renew it
-	final long sessionRenewTime	 = 15 * 60 * 1000;
-	// session expires in 6 hours
-	final long sessionExpireTime = 1 * 60 * 60 * 1000;
-	
+		
 	public DBManager() {}
 	
 	
@@ -867,13 +862,11 @@ public class DBManager {
 		try{
 			//wipe previous sessionKey associated with the account
 			stmt = conn.createStatement();
-
 			UUID uuid = UUID.randomUUID();
 			String sessionKey = uuid.toString();
 			int rowsInserted=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
 										"('" + sessionKey + "','" + idAccount + "','" + 
-										(Calendar.getInstance().getTimeInMillis() + sessionExpireTime) + "')");
-				
+										(Calendar.getInstance().getTimeInMillis() + SystemManager.sessionExpireTime) + "')");
 //			if( rs.rowInserted() ) {
 			if(rowsInserted==1){	// if success, return session key
 				stmt.close();
@@ -976,7 +969,7 @@ public class DBManager {
 			else {//if the key is expired but within 30min
 				//clean up the sessionKey
 				cleanSessionKeyByKey( key );
-				if( expiryTime <= currentTime + sessionRenewTime ) {
+				if( expiryTime <= currentTime + SystemManager.sessionRenewTime ) {
 					// renew user's sessionKey
 					return registerSessionKey( idAccount );
 				}
@@ -1100,7 +1093,7 @@ public class DBManager {
 	}
 	
 	/***
-	 * Resets password
+	 * Resets password and deletes associated entry from tablePasswordReset
 	 * @param idPasswordReset Unique password reset ID
 	 * @param idAccount Account id
 	 * @param newPassword The new password.

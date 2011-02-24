@@ -28,9 +28,7 @@ function sendPasswordChangeRequest(evt){
 
 
 	request = new Request;
-	//TODO sessionID
 	request.addAction("requestForgetPassword");
-	request.addSessionID("1234");
 	request.addParam("email", strEmail);
 
 	//send the request to servlet

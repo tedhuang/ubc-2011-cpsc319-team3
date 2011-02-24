@@ -15,16 +15,16 @@
 User Email:
 <input id="email" name="email" class="form-login" title="User Email" value="" size="30" maxlength="2048" />
 Password:
-<input id="password" name="password" type="password" class="form-login" title="Password" value="" size="30" maxlength="2048" />
+<input id="password" name="password" type="password" class="form-login" title="Password" value="" size="30" maxlength="15" />
 <br />
 <span class="login-box-options"><input type="checkbox" name="1" value="1"> Remember Me 
- <a href="#" style="margin-left:30px;">Forgot password?</a></span>
+ <a href="ForgetPassword.html" style="margin-left:30px;">Forgot password?</a></span>
 <br />
 <br />
 <button	onclick="userLoginRequest()">Login</button>
 <button	onclick="userLogoutRequest()">Logout</button>
 
 <div id="myDiv"><h2>Debug Message for page</h2></div>
-<input id="sessKey"></form>
+<input id="sessKey">
 </body>
 </html>

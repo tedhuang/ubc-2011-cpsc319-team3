@@ -41,7 +41,7 @@ public class EmailManager {
 	 * @param uuid Unique id for confirming the email change request.
 	 * @return boolean indicating whether the email was successfully sent.
 	 */
-	public void sendPrimaryEmailChangeVerificationEmail(String address, String name, UUID uuid){
+	public void sendPrimaryEmailChangeVerificationEmail(String address, UUID uuid){
 		String emailTitle = "Jobzdroid Primary Email Change Confirmation";
 		String emailBody = "Greetings!\n\n" +
 							"Please click on the link below to confirm your primary email change:\n" +
@@ -51,7 +51,7 @@ public class EmailManager {
 	}
 	
 	/***
-	 * Sends an account forget password reset request email to the to the given address.
+	 * Sends a forget password reset request email to the to the given address.
 	 * Contains a link to reset the password.
 	 * @param address Email address of the receiver.
 	 * @param uuid Unique id for resetting password.

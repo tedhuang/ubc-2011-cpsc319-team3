@@ -13,6 +13,7 @@ import classes.Utility;
 
 import managers.DBManager;
 import managers.EmailManager;
+import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletAccount
@@ -20,13 +21,6 @@ import managers.EmailManager;
  */
 public class ServletAccount extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	//TODO: move these constants to the config file
-	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
-	public static final String PW_PATTERN = "^\\S{5,15}$";
-	public static final long EXPIRY_TIME_EMAIL_VERIFICATION = 60 * 60 * 1000; // 60 minutes
-	public static final long EXPIRY_TIME_FORGET_PASSWORD_RESET = 60 * 60 * 1000; // 60 minutes
-	
 	private EmailManager emailManager;	
 	private DBManager dbManager;
        
@@ -122,7 +116,7 @@ public class ServletAccount extends HttpServlet {
 	}
 	
 	/***
-	 * Performs server-side checks on user registration inputs. If successful, then calls account manager update account tables in DB.
+	 * Performs server-side checks on user registration inputs. If successful, then calls db manager update account tables in DB.
 	 * Finally calls the email manager to send a verification email to the new user, and sends result and message back to user.
 	 */
 	private void registerAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -139,11 +133,11 @@ public class ServletAccount extends HttpServlet {
 		String name = request.getParameter("name");
 				
 		// validate data
-		if( !Utility.validate(email, EMAIL_PATTERN) ){
+		if( !Utility.validate(email, SystemManager.emailPattern) ){
 			message = "Invalid email address format.";
 			allGood = false;
 		}
-		else if( !Utility.validate(password, PW_PATTERN) ){
+		else if( !Utility.validate(password, SystemManager.pwPattern) ){
 			message = "Invalid password format.";
 			allGood = false;
 		}		
@@ -160,7 +154,14 @@ public class ServletAccount extends HttpServlet {
 			if(accountType.equals("searcher"))
 				message = "Name must not be empty.";
 			else if(accountType.equals("poster"))
-				message = "Company/organization must not be empty.";
+				message = "Company/organization name must not be empty.";
+		}
+		else if( !Utility.validate(name, SystemManager.namePattern) ){
+			allGood = false;
+			if(accountType.equals("searcher"))
+				message = "Name cannot contain special characters.";
+			else if(accountType.equals("poster"))
+				message = "Company/organization name cannot contain special characters.";
 		}
 		
 		// if info are all valid, then proceed to do DB updates
@@ -168,7 +169,7 @@ public class ServletAccount extends HttpServlet {
 			// check if email is unique
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
-				accountCreated = dbManager.createAccount(email, password, accountType, name, uuid, EXPIRY_TIME_EMAIL_VERIFICATION);
+				accountCreated = dbManager.createAccount(email, password, accountType, name, uuid, SystemManager.expiryTimeEmailVerification);
 				if(accountCreated){
 					//send verification email to new user
 					//TODO
@@ -176,7 +177,7 @@ public class ServletAccount extends HttpServlet {
 					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
 					message = "Account creation successful! An email has been sent to your inbox, " +
 							"please follow the instructions to activate your account within "
-					+ (int)Math.floor(EXPIRY_TIME_EMAIL_VERIFICATION/(1000*60)) + " minutes.";
+					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
 					result = true;
 				}
 				else
@@ -296,7 +297,7 @@ public class ServletAccount extends HttpServlet {
 		boolean emailExists = dbManager.checkEmailExists(email);
 		if(emailExists){
 			UUID uuid = UUID.randomUUID();
-			boolean requestAdded = dbManager.addForgetPasswordRequest(email, uuid, EXPIRY_TIME_FORGET_PASSWORD_RESET);
+			boolean requestAdded = dbManager.addForgetPasswordRequest(email, uuid, SystemManager.expiryTimeForgetPasswordReset);
 			if(requestAdded){
 				//send verification email to new user
 				//TODO
@@ -304,7 +305,7 @@ public class ServletAccount extends HttpServlet {
 				emailManager.sendPasswordResetEmail("luolw123@hotmail.com", uuid);
 				message = "An email has been sent to your mail box to reset your password. " +
 					"Please follow the link in your email to reset your password within "
-					+ (int)Math.floor(EXPIRY_TIME_FORGET_PASSWORD_RESET/(1000*60)) + " minutes.";
+					+ (int)Math.floor(SystemManager.expiryTimeForgetPasswordReset/(1000*60)) + " minutes.";
 				result = true;
 			}
 		}
@@ -343,7 +344,7 @@ public class ServletAccount extends HttpServlet {
 		boolean result = false;
 		
 		// validate new password	
-		if( !Utility.validate(password, PW_PATTERN) )
+		if( !Utility.validate(password, SystemManager.pwPattern) )
 			message = "Invalid password format.";
 		else if( !password.equals(passwordRepeat) )
 			message = "Passwords do not match.";
