@@ -1,6 +1,10 @@
 package servlets;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
@@ -16,15 +20,17 @@ public class ServletInitializer extends HttpServlet {
        
     public ServletInitializer() {
         super();
-        systemManager = new SystemManager();
+        systemManager = SystemManager.getInstance();
     }
 
 	/**
 	 * Calls SystemManager to load the configuration file to update the system variables, and then sets up timers to run automated tasks.
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		systemManager.loadConfigFile("../../configuration");
-		
+		super.init(config);
+		// load configuration file
+		String realConfigPath = getServletContext().getRealPath("/WEB-INF/config.ini");
+		systemManager.loadConfigFile(realConfigPath);
 	}
 
 }
