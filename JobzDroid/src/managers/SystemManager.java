@@ -1,9 +1,6 @@
 package managers;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Properties;
 
 /***
@@ -86,6 +83,9 @@ public class SystemManager {
 		}
 	}
 	
+	/***
+	 * Removes all expired em
+	 */
 	public void removeExpiredEmailVerifications(){
 		
 	}

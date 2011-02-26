@@ -1,10 +1,9 @@
 package servlets;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
@@ -17,10 +16,12 @@ import managers.SystemManager;
 public class ServletInitializer extends HttpServlet {	
 	private static final long serialVersionUID = 1L;
 	SystemManager systemManager;
+	Timer timer;
        
     public ServletInitializer() {
         super();
         systemManager = SystemManager.getInstance();
+        timer = new Timer();
     }
 
 	/**
@@ -31,6 +32,17 @@ public class ServletInitializer extends HttpServlet {
 		// load configuration file
 		String realConfigPath = getServletContext().getRealPath("/WEB-INF/config.ini");
 		systemManager.loadConfigFile(realConfigPath);
+		
+		// schedule automated tasks
+	    class AutomatedTasks extends TimerTask {
+	        public void run() {
+	        	systemManager.removeExpiredEmailVerifications();
+	        	systemManager.removeExpiredPwResetRequests();
+	        	systemManager.removeExpiredSessionKeys();
+	        	systemManager.removeExpiredInactiveJobAds();
+	        	systemManager.makeInactiveExpiredJobAds();
+	        }
+	    }
+		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
 	}
-
 }

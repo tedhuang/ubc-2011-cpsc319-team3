@@ -70,6 +70,7 @@ public class DBManager {
 		Connection conn = getConnection();	
 		ResultSet rs = null;
 		Statement stmt = null;
+		email = checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
 			String query = "SELECT idAccount FROM tableAccount " + "WHERE Email='" + email + "';"; 			
@@ -134,6 +135,12 @@ public class DBManager {
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
+		
+		email = checkInputFormat(email);
+		password = checkInputFormat(password);
+		accountType = checkInputFormat(accountType);
+		name = checkInputFormat(name);
+		
 		try {
 			stmt = conn.createStatement();
 			long currentTime = Utility.getCurrentTime();
@@ -221,6 +228,8 @@ public class DBManager {
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
+		
+		verificationNumber = checkInputFormat(verificationNumber);
 		String query = "";
 		try {
 			stmt = conn.createStatement();
@@ -306,6 +315,8 @@ public class DBManager {
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
+		
+		verificationNumber = checkInputFormat(verificationNumber);
 		String query = "";
 		try {
 			stmt = conn.createStatement();
@@ -412,11 +423,11 @@ public class DBManager {
 		try {
 			stmt = conn.createStatement();
 			
-			checkInputFormat( jobAdvertisementTitle );
-			checkInputFormat( jobDescription );
-			checkInputFormat( jobLocation );
-			checkInputFormat( contactInfo );
-			checkInputFormat( strTags );
+			jobAdvertisementTitle = checkInputFormat( jobAdvertisementTitle );
+			jobDescription = checkInputFormat( jobDescription );
+			jobLocation = checkInputFormat( jobLocation );
+			contactInfo = checkInputFormat( contactInfo );
+			strTags = checkInputFormat( strTags );
 			
 			String query = 
 				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
@@ -501,6 +512,9 @@ public class DBManager {
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		
+		title = checkInputFormat( title );
+		location = checkInputFormat( location );
+		tags = checkInputFormat( tags );
 		try {
 			
 			stmt = conn.createStatement();
@@ -598,6 +612,8 @@ public class DBManager {
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
+		
+		email = checkInputFormat(email);
 		String query = "";
 		int rowsInserted;
 		try {
@@ -694,6 +710,9 @@ public class DBManager {
 	{
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		
+		name = checkInputFormat(name);
+		pw = checkInputFormat(pw);
 		try{
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
@@ -729,6 +748,8 @@ public class DBManager {
 		ResultSet rs = null;
 		String query = "";
 		int idAccount = -1;
+		
+		email = checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
 			// get account id of the account just created
@@ -805,7 +826,9 @@ public class DBManager {
 		
 		int idAccount= -1;
 		Connection conn = getConnection();	
-		Statement stmt = null;
+		Statement stmt = null;		
+		email = checkInputFormat(email);
+		pw = checkInputFormat(pw);
 		// md5 the password
 		String md5PW=md5(pw);
 		
@@ -935,6 +958,7 @@ public class DBManager {
 	public String checkSessionKey( String key ) { 
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		key = checkInputFormat(key);
 		try{
 			
 			// retrieves idAccount
@@ -998,7 +1022,7 @@ public class DBManager {
 		Connection conn=getConnection();
 		Statement stmt=null;
 		int done=-1; 
-		
+		sessionKey = checkInputFormat(sessionKey);
 		try
 		{
 			//TODO same code as cleanSessionKeyByKey() merge code?
@@ -1035,6 +1059,7 @@ public class DBManager {
 		Statement stmt = null;
 		long expiryTime, currentTime = Utility.getCurrentTime();
 		int idAccount = -1;
+		idPasswordReset = checkInputFormat(idPasswordReset);
 		try {
 			stmt = conn.createStatement();
 			String query = "SELECT idAccount,expiryTime FROM tablePasswordReset " + "WHERE idPasswordReset='" + idPasswordReset + "';"; 			
@@ -1101,6 +1126,8 @@ public class DBManager {
 		ResultSet rs = null;
 		String query = "";
 		int rowsUpdated;
+		idPasswordReset = checkInputFormat(idPasswordReset);
+		newPassword = checkInputFormat(newPassword);
 		try {
 			stmt = conn.createStatement();
 			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
