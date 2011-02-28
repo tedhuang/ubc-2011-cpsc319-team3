@@ -3,6 +3,8 @@ package managers;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import classes.Utility;
+
 /***
  * Provides functions to execute automated tasks and loading system variables from configuration file.
  * Singleton class.
@@ -32,8 +34,11 @@ public class SystemManager {
 	/***********************************************************************************************************************/
 	
 	// singleton instance
+	private DBManager dbManager;
 	private static SystemManager systemManagerInstance = null;
-	protected SystemManager() {}	
+	protected SystemManager() {
+		dbManager = new DBManager();
+	}	
 	public static SystemManager getInstance() {
 		if(systemManagerInstance == null) {
 			systemManagerInstance = new SystemManager();
@@ -52,8 +57,8 @@ public class SystemManager {
 			config.load(new FileInputStream(filename));
 	        } 
 		catch (Exception ex) {
-			//TODO log error
-			System.out.println("Error loading configuration file: " + ex.getMessage());
+			// log error
+			Utility.getErrorLogger().severe("Error loading configuration file: " + ex.getMessage());
 			return;
 	    }
 		// update system variables
@@ -78,31 +83,47 @@ public class SystemManager {
 				autoRemoveExpiredInactiveJobAds = true;
 		}
 		catch(NumberFormatException e){
-			//TODO log error
-			System.out.println("Error parsing configuration file due to number format exception: " + e.getMessage());
+			// log error
+			Utility.getErrorLogger().severe("Error parsing configuration file due to number format exception: " + e.getMessage());
 		}
 	}
 	
 	/***
-	 * Removes all expired em
+	 * Removes all entries inside email verification table with expiry time < current time.
 	 */
 	public void removeExpiredEmailVerifications(){
-		
+		dbManager.removeExpiredEmailVerifications();
 	}
 	
+	/***
+	 * Removes all entries inside password reset table with expiry time < current time.
+	 */
 	public void removeExpiredPwResetRequests(){
-		
+		dbManager.removeExpiredPwResetRequests();
 	}
 	
+	/***
+	 * Removes all entries inside session key table with (expiry time + sessionRenewPeriodAfterExpiry) < current time 
+	 * (session keys that have passed the latest possible time to renew).
+	 */
 	public void removeExpiredSessionKeys(){
-		
+		dbManager.removeExpiredSessionKeys();
 	}
 	
+	/***
+	 * Removes all entries inside job ads table with status “inactive” AND (expiry time < current time).
+	 */
 	public void removeExpiredInactiveJobAds(){
-		
+		dbManager.removeExpiredInactiveJobAds();
 	}
 	
+	/***
+	 * Updates all entries with status NOT “inactive” AND (expiry time < current time) inside job ads table,
+	 *  to status “inactive” and expiry time = (currentTime + timeBeforeRemovingExpiredInactiveJobAds)
+	 */
 	public void makeInactiveExpiredJobAds(){
-		
+		dbManager.makeInactiveExpiredJobAds();
 	}
+	
+	
 }

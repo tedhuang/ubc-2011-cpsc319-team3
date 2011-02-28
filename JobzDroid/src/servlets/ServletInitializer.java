@@ -32,7 +32,6 @@ public class ServletInitializer extends HttpServlet {
 		// load configuration file
 		String realConfigPath = getServletContext().getRealPath("/WEB-INF/config.ini");
 		systemManager.loadConfigFile(realConfigPath);
-		
 		// schedule automated tasks
 	    class AutomatedTasks extends TimerTask {
 	        public void run() {

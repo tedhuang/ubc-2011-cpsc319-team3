@@ -1,5 +1,9 @@
 package classes;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,5 +29,23 @@ public class Utility {
 	 */
 	public static long getCurrentTime(){
 		return new java.util.Date().getTime();
+	}
+	
+	/***
+	 * Find or create a logger for logging errors. If a logger has already been created with the name "JobzDroid", then it is returned.
+	 * Otherwise a new logger is created. 
+	 * @return Logger object.
+	 */
+	public static Logger getErrorLogger(){
+		Logger logger = Logger.getLogger("JobzDroid.error");
+		try {
+	        FileHandler fh = new FileHandler("Errors.log", true);
+	        fh.setFormatter(new SimpleFormatter());
+	        logger.addHandler(fh);
+	      }
+	      catch (IOException e) {
+	        System.out.println("Failed to get error logger: " + e.getMessage());
+	      }
+	    return logger;
 	}
 }
