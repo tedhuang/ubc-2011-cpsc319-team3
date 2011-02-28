@@ -21,8 +21,8 @@ public class DBManager {
 			dbConn = DriverManager.getConnection(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword);
 		}
 		catch(Exception e){
-			//TODO: log error
-			System.out.println("Error creating DB connection : " + e.getMessage());
+			// log error
+			Utility.getErrorLogger().severe("Error creating DB connection : " + e.getMessage());
 		}		
 		return dbConn;
 	}
@@ -717,7 +717,7 @@ public class DBManager {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
 					   						  "WHERE UserName='"+name + "'" +
-					   						  "&&Password =md5('" + pw + "')");
+					   						  "&&Password = md5('" + pw + "')");
 			if(rs.first()){
 				
 				System.out.println(name +"Logged in");
@@ -857,14 +857,12 @@ public class DBManager {
 			//cleanSessionKeyByID returns rows clean out of DB, don't need to check right now
 			cleanSessionKeyByID( idAccount );
 			
-			String sessKey=registerSessionKey(idAccount);
-			if(sessKey==null)
-			{
+			String sessKey = registerSessionKey(idAccount);
+			if(sessKey==null) {
 				//TODO make error statement
 				return null;
 			}
-			else
-			{
+			else {
 				return sessKey;
 			}
 		}//ENDOF TRY
@@ -885,7 +883,7 @@ public class DBManager {
 			String sessionKey = uuid.toString();
 			int rowsInserted=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
 										"('" + sessionKey + "','" + idAccount + "','" + 
-										(Calendar.getInstance().getTimeInMillis() + SystemManager.expiryTimeSession) + "')");
+										(Utility.getCurrentTime() + SystemManager.expiryTimeSession) + "')");
 //			if( rs.rowInserted() ) {
 			if(rowsInserted==1){	// if success, return session key
 				stmt.close();
@@ -980,7 +978,7 @@ public class DBManager {
 			}
 			stmt.close();
 			
-			long currentTime = Calendar.getInstance().getTimeInMillis();
+			long currentTime = Utility.getCurrentTime();
 			if( expiryTime >= currentTime ) {
 				// if session didn't expire, return the current key
 				return key;
@@ -1173,6 +1171,199 @@ public class DBManager {
 	        }
 	    }
 	    return false;
+	}
+	
+	/***
+	 * Removes all expired entries from tableEmailVerification
+	 */
+	public void removeExpiredEmailVerifications(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableEmailVerification WHERE expiryTime<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	}
+	
+	/***
+	 * Removes all expired entries from tablePasswordReset
+	 */
+	public void removeExpiredPwResetRequests(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tablePasswordReset WHERE expiryTime<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	}
+	
+	/***
+	 * Removes all entries from tableSession that have passed the latest possible time to renew.
+	 * (expiry time + sessionRenewPeriodAfterExpiry) < current time) 
+	 */
+	public void removeExpiredSessionKeys(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime + SystemManager.sessionRenewPeriodAfterExpiry) + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	}
+	
+	/***
+	 * Removes all entries inside job ads table with status “inactive” AND (expiry time < current time).
+	 */
+	public void removeExpiredInactiveJobAds(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableJobAd WHERE expiryDate<'" + currentTime + "'&& status='inactive'" + ";";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	}
+	
+	/***
+	 * Updates all entries with status NOT “inactive” AND (expiry time < current time) inside job ads table,
+	 *  to status “inactive” and expiry time = (currentTime + timeBeforeRemovingExpiredInactiveJobAds)
+	 */
+	public void makeInactiveExpiredJobAds(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		long newExpiryTime = currentTime + SystemManager.timeBeforeRemovingExpiredInactiveJobAds;
+		try {
+			stmt = conn.createStatement();
+			query = "UPDATE tableJobAd SET status='inactive', expiryDate='" + newExpiryTime + "' WHERE status!='inactive' && expiryDate<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
 	}
 }
 	

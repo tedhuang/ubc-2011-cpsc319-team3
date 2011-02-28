@@ -241,12 +241,12 @@ public class ServletAccount extends HttpServlet {
  * @throws ServletException
  * @throws IOException
  **************************************************************************************************************************************/
-	private void loginReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
-		String email=req.getParameter("email");
-		String pw=req.getParameter("password");
+	private void loginReqTaker(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String email = request.getParameter("email");
+		String pw = request.getParameter("password");
 		System.out.println("user="+ email+ "Password="+ pw);
-		String sessKey=dbManager.startSession(email, pw);
-		if(sessKey!=null){
+		String sessKey = dbManager.startSession(email, pw);
+		if(sessKey != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
 			StringBuffer XMLResponse = new StringBuffer();	

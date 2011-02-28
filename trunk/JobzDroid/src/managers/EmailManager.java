@@ -4,6 +4,8 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.Authenticator;
 
+import classes.Utility;
+
 //import managers.DBManager;
 
 //import java.sql.Array;
@@ -99,8 +101,8 @@ public class EmailManager {
 			Transport.send(msg);
 		} 
 		catch (Exception e) {
-			//TODO log error 
-			System.out.println("Failed to send email to " + address + " : " + e.getMessage());
+			// log error
+			Utility.getErrorLogger().severe("Failed to send email to " + address + " : " + e.getMessage()); 
 		}
 	}
 	
