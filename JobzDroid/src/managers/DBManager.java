@@ -3,7 +3,6 @@ package managers;
 import java.security.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.UUID;
 
 import classes.JobAdvertisement;
@@ -17,7 +16,7 @@ public class DBManager {
 	private Connection getConnection() {	
 		Connection dbConn = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();			
+			Class.forName(SystemManager.dbDriver).newInstance();			
 			dbConn = DriverManager.getConnection(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword);
 		}
 		catch(Exception e){

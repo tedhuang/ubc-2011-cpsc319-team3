@@ -27,6 +27,7 @@ public class SystemManager {
 	public static String namePattern = "^[_A-Za-z0-9-\\.]+$";
 	
 	// DB connection variables
+	public static String dbDriver = "com.mysql.jdbc.Driver";
 	public static String dbURL = "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
 	public static String dbUser = "blitzcriegteam";
 	public static String dbPassword = "cs319team3";
@@ -62,6 +63,7 @@ public class SystemManager {
 			return;
 	    }
 		// update system variables
+		dbDriver = config.getProperty("dbDriver");
 		dbURL = config.getProperty("dbURL");
 		dbUser = config.getProperty("dbUser");
 		dbPassword = config.getProperty("dbPassword");
