@@ -48,4 +48,23 @@ public class Utility {
 	      }
 	    return logger;
 	}
+	
+	/***
+	 * Corrects user SQL input to acceptable format, preventing injection attacks.
+	 * @param toBeChecked String to be checked.
+	 * @return The corrected string.
+	 */
+	public static String checkInputFormat(String toBeChecked){		
+		String corrected;
+		corrected = toBeChecked.replace("\'", "\\\'");
+		corrected = toBeChecked.replace("\"", "\\\"");
+		corrected = toBeChecked.replace(";", "");
+		corrected = toBeChecked.replace("{", "");
+		corrected = toBeChecked.replace("}", "");
+		corrected = toBeChecked.replace("<", "");
+		corrected = toBeChecked.replace(">", "");
+		corrected = toBeChecked.replace("^", "");
+		
+		return corrected;		
+	}
 }
