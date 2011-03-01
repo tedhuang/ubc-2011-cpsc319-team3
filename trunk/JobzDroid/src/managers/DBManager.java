@@ -501,35 +501,53 @@ public class DBManager {
 	
 	
 
-	public ArrayList<JobAdvertisement> searchJobAdvertisement(String title, String location, String tags){
+	public ArrayList<JobAdvertisement> searchJobAdvertisement(String keywords, //TODO: change keywords to array 
+															  String location, 
+															  String education
+															  ){ //String tags //TODO: fix up tags search
 		
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 		String totalQuery;
-		String titleQuery;
+		String keywordQuery;
 		String locationQuery;
-		String tagsQuery;
+		//String tagsQuery;
+		String educationQuery;
 		
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		
-		title = checkInputFormat( title );
+		keywords = checkInputFormat( keywords );
 		location = checkInputFormat( location );
-		tags = checkInputFormat( tags );
+		education = checkInputFormat( education );
+		//tags = checkInputFormat( tags );
+		
 		try {
 			
 			stmt = conn.createStatement();
 			
-			if(title == ""){
-				titleQuery = "";
-			}
+			if(keywords == "")
+				keywordQuery = "";
 			else
-			{
-				titleQuery = "AND title = (SELECT title FROM UserTable WHERE title = '" + title + "')";
-			}
+				keywordQuery = "AND title = '" + keywords + "'";
+			
+			if(location == "")
+				locationQuery = "";
+			else
+				locationQuery = " AND location = '" + location + "'";
+			
+			if(education == "")
+				educationQuery = "";
+			else
+				educationQuery = " AND education = '" + education + "'";
+			
+//			if(title == "")
+//				tagsQuery = "";
+//			else
+//				tagsQuery = "AND tags = (SELECT title FROM tableJobAd WHERE tags = '" + tags + "')";
 			
 			totalQuery = "SELECT * FROM tableJobAd "
-					+ "WHERE title LIKE '" + title + "%' " 
-					+ " AND Category LIKE '" + titleQuery;
+					+ "WHERE status = 'open' " 
+					+ keywordQuery + locationQuery + educationQuery; 
 			
 			
 			System.out.println(totalQuery);
@@ -540,19 +558,21 @@ public class DBManager {
 			while( result.next() ) {
 				JobAdvertisement temp = new JobAdvertisement();
 				
-				temp.jobAdTitle = result.getString("title");
+
 				temp.jobAdId = result.getInt("idJobAd");
-				temp.expiryDate = result.getString("ExpiryDate");
-				temp.creationDate = result.getString("CreationDate");
 				temp.ownerID = result.getInt("OwnerID");
 				temp.numberOfViews = result.getInt("numberOfViews");
-				temp.jobAdDescription = result.getString("description");
+				temp.jobAdTitle = result.getString("title");
 				temp.location = result.getString("location");
-				temp.status = result.getString("status");
 				temp.tags = result.getString("tags");
+				temp.contactInfo = result.getString("contactInfo");
+				temp.expiryDate = result.getLong("ExpiryDate");
+				temp.startingDate = result.getLong("startingDate");
+				temp.creationDate = result.getLong("CreationDate");
+				temp.status = result.getString("status");
+				temp.jobAdDescription = result.getString("description");				
 				
-				
-				jobAdList.add( temp );
+				jobAdList.add( temp ); //add to the temporary list
 				
 			}
 			

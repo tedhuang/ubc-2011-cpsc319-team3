@@ -18,7 +18,7 @@
 <h2>Job Advertisement Search</h2> <br>
 
 <h3>Search input: </h3>
-<input id="searchText" type="text" name="searchText" size="20"><br>
+<input id="searchText" type="text" name="searchText" size="40"><br>
 <br>
 
 
@@ -34,12 +34,15 @@ Education Requirement:
 
 Job Location(s) (separated by comma): <input id="searchJobLoc" type="text" name="searchJobLoc" size="20"><br>
 
+<!-- 
 Tags: <input id="searchTags" type="text" name="tags" size="20"><br>
+ -->
 
-
+<button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Search</button>
+<br>
 
 <div id="feedback"><h3>Feedback Area</h3></div>
-<button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Search</button>
+
 
 
 </body>
