@@ -46,32 +46,7 @@ public class DBManager {
 	 */
 	public void freeConnection(Connection connection){
 		connectionPool.returnConnectionToPool(connection);
-	}
-	
-/*****************************************************************
- * 	Helper Methods												 *
- *****************************************************************/
-	
-	//Parse user input into SQL acceptable format
-	private String checkInputFormat(String toBeChecked){
-		
-		String corrected;
-		corrected = toBeChecked.replace("\'", "\\\'");
-		corrected = toBeChecked.replace("\"", "\\\"");
-		corrected = toBeChecked.replace(";", "");
-		corrected = toBeChecked.replace("{", "");
-		corrected = toBeChecked.replace("}", "");
-		corrected = toBeChecked.replace("<", "");
-		corrected = toBeChecked.replace(">", "");
-		corrected = toBeChecked.replace("^", "");
-		
-		return corrected;		
-	}
-	
-	
-	
-	
-	
+	}	
 	
 /*********************************************************************
  * DB Functions  													 *
@@ -87,13 +62,12 @@ public class DBManager {
 		Connection conn = getConnection();	
 		ResultSet rs = null;
 		Statement stmt = null;
-		email = checkInputFormat(email);
+		email = Utility.checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
 			String query = "SELECT idAccount FROM tableAccount " + "WHERE Email='" + email + "';"; 			
 			stmt.executeQuery(query);
-			rs = stmt.getResultSet();
-			
+			rs = stmt.getResultSet();			
 			// check if ResultSet is empty  
 			if (!rs.next())
 				return false;
@@ -101,35 +75,25 @@ public class DBManager {
 				return true;
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
-		// close DB objects
+		// free DB objects
 	    finally {
 	        try {
 	            if (rs != null)
 	                rs.close();
 	        }
 	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
 	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
+	        freeConnection(conn);
 	    }
 		return false; 
 	}	
@@ -153,10 +117,10 @@ public class DBManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		email = checkInputFormat(email);
-		password = checkInputFormat(password);
-		accountType = checkInputFormat(accountType);
-		name = checkInputFormat(name);
+		email = Utility.checkInputFormat(email);
+		password = Utility.checkInputFormat(password);
+		accountType = Utility.checkInputFormat(accountType);
+		name = Utility.checkInputFormat(name);
 		
 		try {
 			stmt = conn.createStatement();
@@ -246,7 +210,7 @@ public class DBManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		verificationNumber = checkInputFormat(verificationNumber);
+		verificationNumber = Utility.checkInputFormat(verificationNumber);
 		String query = "";
 		try {
 			stmt = conn.createStatement();
@@ -333,7 +297,7 @@ public class DBManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		verificationNumber = checkInputFormat(verificationNumber);
+		verificationNumber = Utility.checkInputFormat(verificationNumber);
 		String query = "";
 		try {
 			stmt = conn.createStatement();
@@ -440,11 +404,11 @@ public class DBManager {
 		try {
 			stmt = conn.createStatement();
 			
-			jobAdvertisementTitle = checkInputFormat( jobAdvertisementTitle );
-			jobDescription = checkInputFormat( jobDescription );
-			jobLocation = checkInputFormat( jobLocation );
-			contactInfo = checkInputFormat( contactInfo );
-			strTags = checkInputFormat( strTags );
+			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
+			jobDescription = Utility.checkInputFormat( jobDescription );
+			jobLocation = Utility.checkInputFormat( jobLocation );
+			contactInfo = Utility.checkInputFormat( contactInfo );
+			strTags = Utility.checkInputFormat( strTags );
 			
 			String query = 
 				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
@@ -533,10 +497,10 @@ public class DBManager {
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		
-		keywords = checkInputFormat( keywords );
-		location = checkInputFormat( location );
-		education = checkInputFormat( education );
-		//tags = checkInputFormat( tags );
+		keywords = Utility.checkInputFormat( keywords );
+		location = Utility.checkInputFormat( location );
+		education = Utility.checkInputFormat( education );
+		//tags = Utility.checkInputFormat( tags );
 		
 		try {
 			
@@ -650,7 +614,7 @@ public class DBManager {
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		email = checkInputFormat(email);
+		email = Utility.checkInputFormat(email);
 		String query = "";
 		int rowsInserted;
 		try {
@@ -748,8 +712,8 @@ public class DBManager {
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		
-		name = checkInputFormat(name);
-		pw = checkInputFormat(pw);
+		name = Utility.checkInputFormat(name);
+		pw = Utility.checkInputFormat(pw);
 		try{
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
@@ -786,7 +750,7 @@ public class DBManager {
 		String query = "";
 		int idAccount = -1;
 		
-		email = checkInputFormat(email);
+		email = Utility.checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
 			// get account id of the account just created
@@ -864,8 +828,8 @@ public class DBManager {
 		int idAccount= -1;
 		Connection conn = getConnection();	
 		Statement stmt = null;		
-		email = checkInputFormat(email);
-		pw = checkInputFormat(pw);
+		email = Utility.checkInputFormat(email);
+		pw = Utility.checkInputFormat(pw);
 		// md5 the password
 		String md5PW=md5(pw);
 		
@@ -993,7 +957,7 @@ public class DBManager {
 	public String checkSessionKey( String key ) { 
 		Connection conn = getConnection();	
 		Statement stmt = null;
-		key = checkInputFormat(key);
+		key = Utility.checkInputFormat(key);
 		try{
 			
 			// retrieves idAccount
@@ -1057,7 +1021,7 @@ public class DBManager {
 		Connection conn=getConnection();
 		Statement stmt=null;
 		int done=-1; 
-		sessionKey = checkInputFormat(sessionKey);
+		sessionKey = Utility.checkInputFormat(sessionKey);
 		try
 		{
 			//TODO same code as cleanSessionKeyByKey() merge code?
@@ -1094,7 +1058,7 @@ public class DBManager {
 		Statement stmt = null;
 		long expiryTime, currentTime = Utility.getCurrentTime();
 		int idAccount = -1;
-		idPasswordReset = checkInputFormat(idPasswordReset);
+		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
 		try {
 			stmt = conn.createStatement();
 			String query = "SELECT idAccount,expiryTime FROM tablePasswordReset " + "WHERE idPasswordReset='" + idPasswordReset + "';"; 			
@@ -1161,8 +1125,8 @@ public class DBManager {
 		ResultSet rs = null;
 		String query = "";
 		int rowsUpdated;
-		idPasswordReset = checkInputFormat(idPasswordReset);
-		newPassword = checkInputFormat(newPassword);
+		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
+		newPassword = Utility.checkInputFormat(newPassword);
 		try {
 			stmt = conn.createStatement();
 			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
