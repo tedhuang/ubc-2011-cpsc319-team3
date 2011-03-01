@@ -29,7 +29,7 @@ public class ServletAccount extends HttpServlet {
      */
     public ServletAccount() {
         super();
-		dbManager = new DBManager();
+		dbManager = DBManager.getInstance();
 		emailManager = new EmailManager();
     }
     

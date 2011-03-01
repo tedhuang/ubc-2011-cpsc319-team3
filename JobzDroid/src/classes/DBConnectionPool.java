@@ -1,9 +1,14 @@
 package classes;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/***
+ * The DBConnectionPool class represents a pool of connections to one database. 
+ * The connection pool acts like a FIFO queue. 
+ */
 public class DBConnectionPool {
 	private String URL, user, password;
 	private int maxConnections, connectionsInUse;
@@ -21,9 +26,10 @@ public class DBConnectionPool {
         this.user = user;
         this.password = password;
         this.maxConnections = maxConnections;	// no limit on connections if value is 0
+        freeConnections = new ArrayList<Connection>();
     }
 
-	/***
+	/***(
 	 * Returns a new database connection.
 	 * @return A new database connection.
 	 */
@@ -65,7 +71,7 @@ public class DBConnectionPool {
         }
         // if no restriction on amount of connections or no active connection was available in the pool,
         // then create new connection
-        if (maxConnections == 0) {
+        if (maxConnections == 0 || freeConnections.size() == 0) {
         	connection = createNewConnection();
         }
         if (connection != null) {
@@ -75,10 +81,10 @@ public class DBConnectionPool {
     }
     
     /***
-     * Adds the given connection at the end of the connection pool.
-     * @param connection Connection to be added.
+     * Returns the given connection at the end of the connection pool.
+     * @param connection Connection to be returned.
      */
-    public synchronized void addConnectionToPool(Connection connection) {
+    public synchronized void returnConnectionToPool(Connection connection) {
         freeConnections.add(connection);
         connectionsInUse--;
         notifyAll();

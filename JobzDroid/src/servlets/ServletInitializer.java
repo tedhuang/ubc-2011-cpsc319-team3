@@ -45,6 +45,5 @@ public class ServletInitializer extends HttpServlet {
 	        }
 	    }
 		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
-		Utility.getErrorLogger().severe("omg!!!");
 	}
 }

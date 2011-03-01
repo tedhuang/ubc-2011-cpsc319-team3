@@ -20,7 +20,7 @@ public class ServletProfile extends HttpServlet{
 
 	public ServletProfile() {
         super();
-		dbManager = new DBManager();
+		dbManager = DBManager.getInstance();
     }
 	
 	private enum EnumAction
