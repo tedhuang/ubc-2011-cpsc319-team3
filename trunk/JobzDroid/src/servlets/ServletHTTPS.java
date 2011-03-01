@@ -15,7 +15,7 @@ public class ServletHTTPS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
     //Add Manager Creation here
-    DBManager dbm = new DBManager();
+    DBManager dbm = DBManager.getInstance();
     
 //****************************************
 //TODO: find out how to call multiple managers without having to pass all of them through parameters    

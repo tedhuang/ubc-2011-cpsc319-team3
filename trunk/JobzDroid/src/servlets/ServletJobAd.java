@@ -27,7 +27,7 @@ public class ServletJobAd extends HttpServlet {
      */
     public ServletJobAd() {
         super();
-        dbManager = new DBManager();
+        dbManager = DBManager.getInstance();
         // TODO Auto-generated constructor stub
     }
     

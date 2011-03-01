@@ -5,30 +5,48 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import classes.DBConnectionPool;
 import classes.JobAdvertisement;
 import classes.Utility;
 
 public class DBManager {			
-	/***
-	 * Returns a JDBC connection object
-	 * @return Connection object to the database
-	 */
-	private Connection getConnection() {	
-		Connection dbConn = null;
-		try {
-			Class.forName(SystemManager.dbDriver).newInstance();			
-			dbConn = DriverManager.getConnection(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword);
+	private DBConnectionPool connectionPool;
+	// singleton class constructor
+	private static DBManager dbManagerInstance = null;
+	protected DBManager() {
+		// register jdbc driver
+		try{
+			Driver driver = (Driver) Class.forName(SystemManager.dbDriver).newInstance();
+			DriverManager.registerDriver(driver);
 		}
 		catch(Exception e){
-			// log error
-			Utility.getErrorLogger().severe("Error creating DB connection : " + e.getMessage());
-		}		
-		return dbConn;
+			Utility.getErrorLogger().severe("Failed to register JDBC driver: " + e.getMessage());
+		}
+		// create connection pool
+		connectionPool = new DBConnectionPool
+			(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword, SystemManager.maxDBConnectionPoolSize);
+	}	
+	public static DBManager getInstance() {
+		if(dbManagerInstance == null) {
+			dbManagerInstance = new DBManager();
+		}
+		return dbManagerInstance;
 	}
-		
-	public DBManager() {}
 	
+	/***
+	 * Gets an active connection from the connection pool.
+	 * @return An active connection.
+	 */
+	public Connection getConnection(){
+		return connectionPool.getConnection();
+	}
 	
+	/***
+	 * Frees and returns a connection to the connection pool.
+	 */
+	public void freeConnection(Connection connection){
+		connectionPool.returnConnectionToPool(connection);
+	}
 	
 /*****************************************************************
  * 	Helper Methods												 *

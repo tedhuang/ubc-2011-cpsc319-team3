@@ -31,6 +31,7 @@ public class SystemManager {
 	public static String dbURL = "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
 	public static String dbUser = "blitzcriegteam";
 	public static String dbPassword = "cs319team3";
+	public static int maxDBConnectionPoolSize = 50;
 	
 	/***********************************************************************************************************************/
 	
@@ -38,7 +39,7 @@ public class SystemManager {
 	private DBManager dbManager;
 	private static SystemManager systemManagerInstance = null;
 	protected SystemManager() {
-		dbManager = new DBManager();
+		dbManager = DBManager.getInstance();
 	}	
 	public static SystemManager getInstance() {
 		if(systemManagerInstance == null) {
@@ -78,11 +79,13 @@ public class SystemManager {
 			timeIntervalAutomatedTasks = Long.parseLong(config.getProperty("timeIntervalAutomatedTasks").trim()) * 60 * 1000;
 			timeBeforeRemovingExpiredInactiveJobAds =
 				Long.parseLong(config.getProperty("timeBeforeRemovingExpiredInactiveJobAds").trim()) * 24 * 3600 * 1000;			// unit: day -> millisecond
-			
+						
 			if (Integer.parseInt(config.getProperty("autoRemoveExpiredInactiveJobAds").trim()) == 0)								// 0 = false, true otherwise
 				autoRemoveExpiredInactiveJobAds = false;
 			else
-				autoRemoveExpiredInactiveJobAds = true;
+				autoRemoveExpiredInactiveJobAds = true;			
+
+			maxDBConnectionPoolSize = Integer.parseInt(config.getProperty("maxDBConnectionPoolSize").trim());
 		}
 		catch(NumberFormatException e){
 			// log error
