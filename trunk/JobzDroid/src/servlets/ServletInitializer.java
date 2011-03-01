@@ -7,6 +7,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import classes.Utility;
+
 import managers.SystemManager;
 
 /**
@@ -43,5 +45,6 @@ public class ServletInitializer extends HttpServlet {
 	        }
 	    }
 		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
+		Utility.getErrorLogger().severe("omg!!!");
 	}
 }
