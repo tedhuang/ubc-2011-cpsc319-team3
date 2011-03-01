@@ -1,6 +1,7 @@
 package classes;
 
 import java.sql.*;
+import java.util.Iterator;
 import java.util.List;
 
 public class DBConnectionPool {
@@ -73,4 +74,31 @@ public class DBConnectionPool {
         return connection;
     }
     
+    /***
+     * Adds the given connection at the end of the connection pool.
+     * @param connection Connection to be added.
+     */
+    public synchronized void addConnectionToPool(Connection connection) {
+        freeConnections.add(connection);
+        connectionsInUse--;
+        notifyAll();
+    }
+
+    /***
+     * Releases the connection pool by closing all connections in the pool.
+     */
+    public synchronized void release() {
+        Iterator<Connection> itr = freeConnections.iterator();
+        while (itr.hasNext()) {
+            Connection connection = itr.next();
+            try {
+                connection.close();
+            }
+            catch (SQLException e) {
+                Utility.getErrorLogger().severe("Failed to close connection during connection pool release: " + e.getMessage());
+            }
+        }
+        freeConnections.clear();
+    }
+
 }
