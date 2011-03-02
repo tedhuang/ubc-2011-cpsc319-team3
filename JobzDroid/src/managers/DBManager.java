@@ -199,6 +199,8 @@ public class DBManager {
 		return -1;
 	}
 	
+	/****************************************************************************************************/
+	
 	/**
 	 * Creates a new job advertisement entry in the database with the given values
 	 * @param jobAdvertisementTitle

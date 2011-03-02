@@ -646,7 +646,6 @@ public class ServletAccount extends HttpServlet {
 						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1){
-							//TODO log error
 							Utility.getErrorLogger().severe("Failed to delete row containing the verification number " +
 									verificationNumber + "in tableEmailVerification upon successfully changing primary email.");
 						}
