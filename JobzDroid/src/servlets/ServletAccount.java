@@ -174,6 +174,7 @@ public class ServletAccount extends HttpServlet {
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
 				accountCreated = createAccount(email, password, accountType, name, uuid, SystemManager.expiryTimeEmailVerification);
+
 				if(accountCreated){
 					//send verification email to new user
 					//TODO
@@ -278,6 +279,7 @@ public class ServletAccount extends HttpServlet {
 	}
 /***************************/
 	private void logoutReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
+		
 		if(dbManager.userLogout(req.getParameter("sessKey").toString())){
 			System.out.println("Logout Successfully");
 		}
