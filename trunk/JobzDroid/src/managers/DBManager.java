@@ -13,6 +13,7 @@ public class DBManager {
 	private DBConnectionPool connectionPool;
 	// singleton class constructor
 	private static DBManager dbManagerInstance = null;
+	
 	protected DBManager() {
 		// register jdbc driver
 		try{
@@ -25,7 +26,8 @@ public class DBManager {
 		// create connection pool
 		connectionPool = new DBConnectionPool
 			(SystemManager.dbURL, SystemManager.dbUser, SystemManager.dbPassword, SystemManager.maxDBConnectionPoolSize);
-	}	
+	}
+	
 	public static DBManager getInstance() {
 		if(dbManagerInstance == null) {
 			dbManagerInstance = new DBManager();
@@ -495,102 +497,122 @@ public class DBManager {
  * should return a new unique session key for the account
  * return null for failure
 ***************************************************************************************************************************************/
-	private String md5(String input){
-        String res = "";
-        try {
-            MessageDigest algorithm = MessageDigest.getInstance("MD5");
-            algorithm.reset();
-            algorithm.update(input.getBytes());
-            byte[] md5 = algorithm.digest();
-            String tmp = "";
-            for (int i = 0; i < md5.length; i++) {
-                tmp = (Integer.toHexString(0xFF & md5[i]));
-                if (tmp.length() == 1) {
-                    res += "0" + tmp;
-                } else {
-                    res += tmp;
-                }
-            }
-        } catch (NoSuchAlgorithmException ex) {}
-        return res;
-    }
 	
 	public String startSession(String email, String pw){
-		
-		int idAccount= -1;
+
 		Connection conn = getConnection();	
 		Statement stmt = null;		
 		email = Utility.checkInputFormat(email);
 		pw = Utility.checkInputFormat(pw);
 		// md5 the password
-		String md5PW=md5(pw);
+		String md5PW= Utility.md5(pw);
+		int idAccount = 0;
+		String accountType = null;
+		ResultSet rs = null;
 		
 		try{
 			// retrieve the account ID from login information
 			stmt = conn.createStatement();
-			System.out.println("check email:" + email +"password" + pw);
-			ResultSet rs = stmt.executeQuery( "SELECT idAccount FROM tableAccount "+
+			System.out.println("check email:" + email + "password" + pw);
+			rs = stmt.executeQuery( "SELECT idAccount FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
 					   						  "AND password ='"+md5PW+"'");//TODO original md5 not working
 			if(rs.first()){
 				
 				System.out.println( email +" Logged in");
-				idAccount = rs.getInt("idAccount");
-				System.out.println(idAccount);
-				stmt.close();
 				
-
+				idAccount	= rs.getInt("idAccount");
+				accountType	= rs.getString("Type");
+				
+				System.out.println( idAccount + " " + accountType );
+				
+				
 			}
 			else{
-				// Error Handling if no id matches login info
-				
+				//TODO Error Handling if no id matches login info
+
 				return null;
 			}
 			
+			//TODO maybe we can think about returning same session Key if not expired
 			//cleanSessionKeyByID returns rows clean out of DB, don't need to check right now
 			cleanSessionKeyByID( idAccount );
 			
-			String sessKey = registerSessionKey(idAccount);
+			String sessKey = registerSessionKey( idAccount );
 			if(sessKey==null) {
-				//TODO make error statement
+				Utility.getErrorLogger().severe( "Failed to generate session key on request, returning null" );
 				return null;
 			}
 			else {
 				return sessKey;
 			}
 		}//ENDOF TRY
-		catch(SQLException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
+		
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+	    
 		return null;
 	}
 	
 	private String registerSessionKey( int idAccount ) {
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		UUID uuid = UUID.randomUUID();
+		String sessionKey = uuid.toString();
+		int rowsInserted = 0;
+		
 		try{
 			//wipe previous sessionKey associated with the account
 			stmt = conn.createStatement();
-			UUID uuid = UUID.randomUUID();
-			String sessionKey = uuid.toString();
-			int rowsInserted=stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
+
+			rowsInserted = stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
 										"('" + sessionKey + "','" + idAccount + "','" + 
 										(Utility.getCurrentTime() + SystemManager.expiryTimeSession) + "')");
-//			if( rs.rowInserted() ) {
-			if(rowsInserted==1){	// if success, return session key
-				stmt.close();
-				return sessionKey;
-			}
-			else {
-				System.out.println("There is a problem when generating the session Key");
-				stmt.close();
-			}
+
 		}//ENDOF TRY
-		catch(SQLException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+		
+		// free DB objects
+
+		if(rowsInserted==1){	// if success, return session key
+			
+			return sessionKey;
+		}
+		else {
+			Utility.getErrorLogger().severe("could not insert new session key into DB");
+		}
+		
 		return null;
 	}
 	
@@ -602,6 +624,7 @@ public class DBManager {
 		
 		int cleanUpCount = 0;
 		try {
+			
 			stmt=conn.createStatement();
 			cleanUpCount = stmt.executeUpdate("DELETE FROM tableSession " +
 				 	   "WHERE idAccount='" + idAccount +"'" );
@@ -611,12 +634,22 @@ public class DBManager {
 			else{
 				System.out.println( cleanUpCount + " keys were cleaned from DB");
 			}
-			stmt.close();
+			
 		}
-		catch(SQLException e) {
-			//TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+		
 		return cleanUpCount;
 	}
 	
@@ -637,26 +670,38 @@ public class DBManager {
 			else{
 				System.out.println( cleanUpCount + " keys were cleaned from DB");
 			}
-			stmt.close();
 		}
-		catch(SQLException e) {
-			//TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
+		finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+		
 		return cleanUpCount;
 	}
 	
 	public String checkSessionKey( String key ) { 
 		Connection conn = getConnection();	
 		Statement stmt = null;
+		ResultSet rs = null;
 		key = Utility.checkInputFormat(key);
+		
+		
 		try{
 			
 			// retrieves idAccount
 			int idAccount = -1;
 			long expiryTime = 0;
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery( "SELECT * FROM tableSession "+
+			rs = stmt.executeQuery( "SELECT * FROM tableSession "+
 					   						  "WHERE sessionKey='"+ key+"'");
 			
 			if(rs.first()){
@@ -693,14 +738,37 @@ public class DBManager {
 				}
 				
 			}
-			
 		}
-		catch(SQLException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
+		catch (SQLException e) {
+				Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+	    
 		return null;
 	}
+	
+	public String getAccountTypeBySessionKey( String key ) { 
+
+		return null;
+	}
+	
+	
 /**********************************END OF SESSIONKEY GENERATION FUNCTIONS***************************************************************/
 
 
