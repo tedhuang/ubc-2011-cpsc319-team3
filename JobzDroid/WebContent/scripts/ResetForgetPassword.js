@@ -11,10 +11,10 @@ $("document").ready(function() {
 function validatePasswords(evt){
 	// case: new password changed (must be 5-15 non-white-space characters)
 	if( $(this).attr('id') == "password1" ){
-		var strPasswordPattern = /^\S{5,15}$/;
+		var strPasswordPattern = /^([A-Za-z0-9_\-\.]){5,15}$/;
 		var password = $(this).val();
 		if(strPasswordPattern.test(password) == false) {
-			$("#password1Error").text("Password must be 5 to 15 characters long, and cannot contain white spaces.");
+			$("#password1Error").text("Password must be 5 to 15 characters long, and cannot contain special characters.");
 		}
 		else{
 			$("#password1Error").text("");

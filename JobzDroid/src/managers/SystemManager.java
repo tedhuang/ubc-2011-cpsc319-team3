@@ -1,6 +1,9 @@
 package managers;
 
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 import classes.Utility;
@@ -97,14 +100,58 @@ public class SystemManager {
 	 * Removes all entries inside email verification table with expiry time < current time.
 	 */
 	public void removeExpiredEmailVerifications(){
-		dbManager.removeExpiredEmailVerifications();
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableEmailVerification WHERE expiryTime<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
 	}
 	
 	/***
 	 * Removes all entries inside password reset table with expiry time < current time.
 	 */
 	public void removeExpiredPwResetRequests(){
-		dbManager.removeExpiredPwResetRequests();
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tablePasswordReset WHERE expiryTime<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
 	}
 	
 	/***
@@ -112,23 +159,88 @@ public class SystemManager {
 	 * (session keys that have passed the latest possible time to renew).
 	 */
 	public void removeExpiredSessionKeys(){
-		dbManager.removeExpiredSessionKeys();
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime + SystemManager.sessionRenewPeriodAfterExpiry) + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
 	}
 	
 	/***
 	 * Removes all entries inside job ads table with status “inactive” AND (expiry time < current time).
 	 */
 	public void removeExpiredInactiveJobAds(){
-		dbManager.removeExpiredInactiveJobAds();
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableJobAd WHERE expiryDate<'" + currentTime + "'&& status='inactive'" + ";";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
 	}
-	
+
 	/***
 	 * Updates all entries with status NOT “inactive” AND (expiry time < current time) inside job ads table,
 	 *  to status “inactive” and expiry time = (currentTime + timeBeforeRemovingExpiredInactiveJobAds)
 	 */
 	public void makeInactiveExpiredJobAds(){
-		dbManager.makeInactiveExpiredJobAds();
-	}
-	
-	
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		long newExpiryTime = currentTime + SystemManager.timeBeforeRemovingExpiredInactiveJobAds;
+		try {
+			stmt = conn.createStatement();
+			query = "UPDATE tableJobAd SET status='inactive', expiryDate='" + newExpiryTime + "' WHERE status!='inactive' && expiryDate<'" + currentTime + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}	
 }
