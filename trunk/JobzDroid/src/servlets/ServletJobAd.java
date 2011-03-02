@@ -2,6 +2,10 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Calendar;
 
 import javax.servlet.ServletException;
@@ -10,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import classes.JobAdvertisement;
+import classes.Utility;
 
 import managers.DBManager;
 
@@ -128,6 +133,16 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
+	
+	/**
+	 * Creates a new job advertisement entry in the database with the given values
+	 * @param jobAdvertisementTitle
+	 * @param jobDescription
+	 * @param jobLocation
+	 * @param contactInfo
+	 * @param strTags
+	 * @return idJobAd
+	 */
 	public boolean createJobAdvertisement(HttpServletRequest request){
 		
 		String jobAdvertisementTitle = request.getParameter("strTitle");
@@ -163,22 +178,74 @@ public class ServletJobAd extends HttpServlet {
 		System.out.println(strTags);
 		System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
 		
-//		if( !dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
-//										jobLocation, contactInfo, strTags) ){
-//			//TODO: Implement Error Handling:
-//			return false;
-//		}
+		Connection conn = dbManager.getConnection();	
 		
-		if( dbManager.createJobAdvertisement(jobAdvertisementTitle, jobDescription, 
-										 jobLocation, contactInfo, educationRequirement,  strTags,
-										 millisExpiryDate, millisStartingDate,
-										 millisDateCreated)  == -1){ //Error check
-			return false;
+		Statement stmt = null;
+		
+		try {
+			stmt = conn.createStatement();
+			
+			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
+			jobDescription = Utility.checkInputFormat( jobDescription );
+			jobLocation = Utility.checkInputFormat( jobLocation );
+			contactInfo = Utility.checkInputFormat( contactInfo );
+			strTags = Utility.checkInputFormat( strTags );
+			
+			String query = 
+				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
+				"VALUES " + "('" 
+					+ jobAdvertisementTitle + "','" 
+					+ jobDescription + "','" 
+					+ millisExpiryDate + "','" 
+					+ millisStartingDate + "','" 
+					+ millisDateCreated + "','"
+					+ jobLocation + "','" 
+					+ contactInfo + "','" 
+					+ educationRequirement + "','"
+					+ strTags + 
+				"')";
+			
+			// if successful, 1 row should be inserted
+			System.out.println("New Job Ad Query:" + query);
+			int rowsInserted = stmt.executeUpdate(query);
+			
+			if (rowsInserted == 1){
+				System.out.println("New JobAd Creation success (DB)");
+			}
+			else{
+				Utility.getErrorLogger().warning("New JobAd insert in DB failed");
+				return false;
+			}
+			
+			
 		}
-
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.getErrorLogger().severe("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
 		
 		return true;
 	}
+	
 	
 	
 	public boolean searchJobAdvertisement(HttpServletRequest request){
