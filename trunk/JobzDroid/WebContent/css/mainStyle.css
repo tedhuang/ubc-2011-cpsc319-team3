@@ -20,6 +20,28 @@ font-size: 13px;
     font-size: 100%;
     vertical-align: baseline;
 }
+table {
+	display: table;
+	border-collapse: separate;
+	border-spacing: 7px 7px;
+	border-color: gray;
+}
+
+tbody {
+	display: table-row-group;
+	vertical-align: middle;
+	border-color: inherit;
+}
+tr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+}
+td, th {
+	display: table-cell;
+	vertical-align: inherit;
+}
+
 
 .main{
 	width: 971px;
@@ -81,12 +103,6 @@ div.header{
 		
 }
 
-.innerbox{
-
-	padding: 1em;
-	
-}
-
 .centerbox .loginbox{
     background-image: url("../images/login-box.png");
 	float: right;
@@ -127,6 +143,44 @@ div.header{
 	font-size: 11px;
 	margin-left: 15px !important
 }
+/***********Register Page*****************************/
+#regpage{
+	margin: 50px auto;
+	height: inherit;
+	width: 520px;
+	position: relative;
+	padding-bottom: 1em;
+	margin-bottom: 3em;
+	min-height: 550px;
+}
+.regbox{
+	margin: 0 auto;
+	border: 1px solid #7D7D7D; 
+}
+.regbox .heading-text{
+	text-align: center;
+	margin-bottom: 1em;
+}
+.regbox table td.clean {
+	padding: 0 5px;
+}
+
+.regbox table td {
+	padding: 3px 0px 3px 5px;
+	color: #666;
+	vertical-align: middle;
+	font-size: 11px;
+}
+
+.regbox table td.label, .regbox table div.label {
+	white-space: nowrap;
+	text-align: right;
+	font-weight: normal;
+}
+.force-no-break {
+	white-space: nowrap;
+}
+
 
 /***********Normal Page**************************/
 .infoHeader {   
