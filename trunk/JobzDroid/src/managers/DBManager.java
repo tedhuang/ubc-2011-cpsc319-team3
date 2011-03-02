@@ -49,9 +49,8 @@ public class DBManager {
 	}	
 	
 /*********************************************************************
- * DB Functions  													 *
+ * Commonly used DB Functions in multiple classes												 *
  *********************************************************************/
-	
 	
 	/***
 	 * Checks whether the given primary email address already exists.
@@ -96,291 +95,109 @@ public class DBManager {
 	        freeConnection(conn);
 	    }
 		return false; 
-	}	
-	
-	
+	}
 	
 	/***
-	 * Creates a new account with the given email, password, account type and person/company name
-	 * with a uniquely generated verification number used for email verification.
-	 * New accounts open with "Pending" status.
-	 * @param email Primary email
-	 * @param password User password
-	 * @param accountType Account type
-	 * @param name Person/Company name 
-	 * @param uuid randomly generated unique verification number for email
-	 * @param expiryTimeEmailRegistration Time before the registration verification expires
-	 * @return boolean indicating whether account was successfully created
+	 * Returns the account ID associated with the input email address. 
+	 * Returns -1 if email address doesn't exist in the account table.
+	 * @param email Email address to be queried.
+	 * @return Account ID associated with the input email address. Returns -1 if not found.
 	 */
-	public boolean createAccount(String email, String password, String accountType, String name, UUID uuid, long expiryTimeEmailRegistration) {
+	public int getIdAcccountFromEmail(String email){
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
-		
+		String query = "";
+		int idAccount = -1;		
 		email = Utility.checkInputFormat(email);
-		password = Utility.checkInputFormat(password);
-		accountType = Utility.checkInputFormat(accountType);
-		name = Utility.checkInputFormat(name);
-		
 		try {
 			stmt = conn.createStatement();
-			long currentTime = Utility.getCurrentTime();
-			int idAccount;
-					
-			// update account table, and set account status to pending
-			String query = "INSERT INTO tableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
-	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "pending" + "','" + currentTime + "');";			
-			// if successful, 1 row should be inserted
-			int rowsInserted = stmt.executeUpdate(query);
-			if (rowsInserted != 1)
-				return false;
-			
 			// get account id of the account just created
-			idAccount = getIdAcccountFromEmail(email);
-			if(idAccount == -1)
-				return false;
-						
-			// add entry to email verification table
-			long expiryTime = currentTime + expiryTimeEmailRegistration;			
-			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
-	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
-			// if successful, 1 row should be inserted
-			rowsInserted = stmt.executeUpdate(query);
-			if (rowsInserted != 1)
-				return false;
-			// add entry to user profile table
-			if(accountType.equals("searcher")){
-				query = "INSERT INTO tableProfileSearcher(idAccount, name) VALUES " + 
-		  		"('" + idAccount + "','" + name + "');";
-				rowsInserted = stmt.executeUpdate(query);
-				if (rowsInserted != 1)
-					return false;
-			}
-			else if(accountType.equals("poster")){
-				query = "INSERT INTO tableProfilePoster(idAccount, name) VALUES " + 
-		  		"('" + idAccount + "','" + name + "');";
-				rowsInserted = stmt.executeUpdate(query);
-				if (rowsInserted != 1)
-					return false;
-			}
-			return true;
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-		return false;		
-	}
-	
-	/***
-	 * Updates account status from pending to active if the given verification number is valid.
-	 * The verification number is created and linked to an account upon account creation, and deleted after it is used to activate the account.
-	 * @param verificationNumber A UUID linked to an account id in tableEmailVerification
-	 * @return boolean indicating whether the account activation was successful
-	 */
-	public boolean activateAccount(String verificationNumber){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		verificationNumber = Utility.checkInputFormat(verificationNumber);
-		String query = "";
-		try {
-			stmt = conn.createStatement();
-			long currentTime = Utility.getCurrentTime();
-			long expiryTime;
-			int idAccount, rowsUpdated;
-					
-			// check if verification number is valid	
-			query = "SELECT idAccount, expiryTime FROM tableEmailVerification WHERE idEmailVerification='" + 
-	  		verificationNumber + "';";
+			query = "SELECT idAccount FROM tableAccount WHERE email='" + email + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
-			// if valid, then check expiry time of verification number
-			if(rs.first()){
-				expiryTime = rs.getLong("expiryTime");
-				// if not expired, then activate account
-				if( currentTime < expiryTime){
-					idAccount = rs.getInt("idAccount");
-					query = "UPDATE tableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
-					// if successful, 1 row should be updated
-					rowsUpdated = stmt.executeUpdate(query);
-					if (rowsUpdated != 1)
-						return false;
-					else {
-						// finally, delete row containing the verification number from tableEmailVerification
-						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
-						rowsUpdated = stmt.executeUpdate(query);
-						if(rowsUpdated != 1){
-							//TODO log error
-							System.out.println("Failed to delete row containing the verification number upon successful account activation.");
-						}
-						return true;
-					}
-				}
-			}
-			else
-				return false;
-			
-			return true;
+			if(rs.first())
+				idAccount = rs.getInt("idAccount");
+			return idAccount;
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
-		// close DB objects
+		// free DB objects
 	    finally {
 	        try {
 	            if (rs != null)
 	                rs.close();
 	        }
 	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
 	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
+	        freeConnection(conn);
 	    }
-		return false;	
+		return idAccount;
 	}
 	
-	/***
-	 * Updates account primary email if the given verification number is valid.
-	 * The new email address is stored in tableEmailVerification when user requests for the email change.
-	 * The verification number is created and linked to user's account when user requests to change primary email, and deleted after it is used to change the email.
-	 * @param verificationNumber A UUID in tableEmailVerification which is linked to an account ID that requested for a primary email change
-	 * @return boolean indicating whether changing the primary email was successful
+	/**
+	 * Returns the account ID associated with the password reset request ID
+	 * @param idPasswordReset Password reset ID contained in the link set to the user requesting a password reset.
+	 * @return Account ID associated with the the password reset. Returns -1 if the password reset ID is invalid or expired.
 	 */
-	public boolean verifyChangePrimaryEmail(String verificationNumber){
-		Connection conn = getConnection();
-		Statement stmt = null;
+	public int getIdAccountFromIdPasswordReset(String idPasswordReset){
+		Connection conn = getConnection();	
 		ResultSet rs = null;
-		
-		verificationNumber = Utility.checkInputFormat(verificationNumber);
-		String query = "";
+		Statement stmt = null;
+		long expiryTime, currentTime = Utility.getCurrentTime();
+		int idAccount = -1;
+		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
 		try {
 			stmt = conn.createStatement();
-			long currentTime = Utility.getCurrentTime();
-			long expiryTime;
-			int idAccount, rowsUpdated;
-			String emailPending;
-					
-			// check if verification number is valid	
-			query = "SELECT idAccount, expiryTime, emailPending FROM tableEmailVerification WHERE idEmailVerification='" + 
-	  		verificationNumber + "';";
+			String query = "SELECT idAccount,expiryTime FROM tablePasswordReset " + "WHERE idPasswordReset='" + idPasswordReset + "';"; 			
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
 			
-			// if valid, then check expiry time of verification number
 			if(rs.first()){
 				expiryTime = rs.getLong("expiryTime");
-				
-				// if not expired, then update primary email
+				// if not expired, then return account id
 				if( currentTime < expiryTime){
 					idAccount = rs.getInt("idAccount");
-					emailPending = rs.getString("emailPending");
-					query = "UPDATE tableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
-					// if successful, 1 row should be updated
-					rowsUpdated = stmt.executeUpdate(query);
-					
-					if (rowsUpdated != 1)
-						return false;
-					else {
-						// finally, delete row containing the verification number from tableEmailVerification
-						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
-						rowsUpdated = stmt.executeUpdate(query);
-						if(rowsUpdated != 1){
-							//TODO log error
-							System.out.println("Failed to delete row containing the verification number upon successfully changing primary email.");
-						}
-						return true;
-					}
-					
+					return idAccount;
 				}
-				
+				else
+					return -1;
 			}
 			else
-				return false;
-			
-			return true;
+				return -1;
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
 		}
-		// close DB objects
+		// free DB objects
 	    finally {
 	        try {
 	            if (rs != null)
 	                rs.close();
 	        }
 	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
 	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
+	        freeConnection(conn);
 	    }
-		return false;
+		return -1;
 	}
-	
-	
-	
 	
 	/**
 	 * Creates a new job advertisement entry in the database with the given values
@@ -597,75 +414,7 @@ public class DBManager {
 		
 		return null;
 	}
-	
-	
-	
-	
-	/**
-	 * Adds a password reset request entry into the DB.
-	 * An entry contains a password request id, the primary email of the account, and expiry time of the request.
-	 * @param email User's primary email address.
-	 * @param uuid Unique password reset request id.
-	 * @param expiryTimeForgetPasswordRequest Time before request expires.
-	 * @return boolean indicating whether adding the password reset request was successful.
-	 */
-	public boolean addForgetPasswordRequest(String email, UUID uuid, long expiryTimeForgetPasswordRequest){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		email = Utility.checkInputFormat(email);
-		String query = "";
-		int rowsInserted;
-		try {
-			stmt = conn.createStatement();
-			long currentTime = Utility.getCurrentTime();
-			int idAccount = getIdAcccountFromEmail(email);
-			// add entry to password reset table
-			long expiryTime = currentTime + expiryTimeForgetPasswordRequest;			
-			query = "INSERT INTO tablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
-	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
-			// if successful, 1 row should be inserted
-			rowsInserted = stmt.executeUpdate(query);
-			if (rowsInserted != 1)
-				return false;
-			return true;
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-		return false;	
-	}
-	
-/**<<<<<<< .mine
+
 //	/**********************************************************************************************************************
 //	 * 											User LogIn FUNCTION
 //	 * @param name
@@ -699,7 +448,7 @@ public class DBManager {
 //		return -1;
 //	}
 //========	
-
+	
 	/**********************************************************************************************************************
 	 * 											User LogIn FUNCTION
 	 * @param name
@@ -734,65 +483,6 @@ public class DBManager {
 				e.printStackTrace();
 		}
 		return -1;
-	}
-	
-//>>>>>>> .r71
-	/***
-	 * Returns the account ID accosiated with the input email address. 
-	 * Returns -1 if email address doesn't exist in the account table.
-	 * @param email Email address to be queried.
-	 * @return Account ID associated with the input email address. Returns -1 if not found.
-	 */
-	public int getIdAcccountFromEmail(String email){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		String query = "";
-		int idAccount = -1;
-		
-		email = Utility.checkInputFormat(email);
-		try {
-			stmt = conn.createStatement();
-			// get account id of the account just created
-			query = "SELECT idAccount FROM tableAccount WHERE email='" + email + "';";
-			stmt.executeQuery(query);
-			rs = stmt.getResultSet();
-			if(rs.first())
-				idAccount = rs.getInt("idAccount");
-			return idAccount;
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-		return idAccount;
 	}
 	
 /***************************************************************************************************************************************
@@ -1045,326 +735,6 @@ public class DBManager {
 			System.out.println("There is a problem when logging out");
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns the account ID associated with the password reset request ID
-	 * @param idPasswordReset Password reset ID contained in the link set to the user requesting a password reset.
-	 * @return Account ID associated with the the password reset. Returns -1 if the password reset ID is invalid or expired.
-	 */
-	public int getIdAccountFromIdPasswordReset(String idPasswordReset){
-		Connection conn = getConnection();	
-		ResultSet rs = null;
-		Statement stmt = null;
-		long expiryTime, currentTime = Utility.getCurrentTime();
-		int idAccount = -1;
-		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
-		try {
-			stmt = conn.createStatement();
-			String query = "SELECT idAccount,expiryTime FROM tablePasswordReset " + "WHERE idPasswordReset='" + idPasswordReset + "';"; 			
-			stmt.executeQuery(query);
-			rs = stmt.getResultSet();
-			
-			if(rs.first()){
-				expiryTime = rs.getLong("expiryTime");
-				// if not expired, then return account id
-				if( currentTime < expiryTime){
-					idAccount = rs.getInt("idAccount");
-					return idAccount;
-				}
-				else
-					return -1;
-			}
-			else
-				return -1;
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-		return -1;
-	}
-	
-	/***
-	 * Resets password and deletes associated entry from tablePasswordReset
-	 * @param idPasswordReset Unique password reset ID
-	 * @param idAccount Account id
-	 * @param newPassword The new password.
-	 * @return boolean indicating whether the password reset was successful.
-	 */
-	public boolean resetPassword(String idPasswordReset, int idAccount, String newPassword){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		String query = "";
-		int rowsUpdated;
-		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
-		newPassword = Utility.checkInputFormat(newPassword);
-		try {
-			stmt = conn.createStatement();
-			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
-			rowsUpdated = stmt.executeUpdate(query);
-			if(rowsUpdated != 1){
-				//TODO log error
-				System.out.println("Failed to delete row in tablePasswordReset.");
-				}
-			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
-			rowsUpdated = stmt.executeUpdate(query);
-			if(rowsUpdated == 1)
-				return true;
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	            //TODO log "Cannot close ResultSet"
-	        	System.out.println("Cannot close ResultSet : " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    return false;
-	}
-	
-	/***
-	 * Removes all expired entries from tableEmailVerification
-	 */
-	public void removeExpiredEmailVerifications(){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		String query = "";
-		long currentTime = Utility.getCurrentTime();
-		try {
-			stmt = conn.createStatement();
-			query = "DELETE FROM tableEmailVerification WHERE expiryTime<'" + currentTime + "';";
-			stmt.executeUpdate(query);
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	}
-	
-	/***
-	 * Removes all expired entries from tablePasswordReset
-	 */
-	public void removeExpiredPwResetRequests(){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		String query = "";
-		long currentTime = Utility.getCurrentTime();
-		try {
-			stmt = conn.createStatement();
-			query = "DELETE FROM tablePasswordReset WHERE expiryTime<'" + currentTime + "';";
-			stmt.executeUpdate(query);
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	}
-	
-	/***
-	 * Removes all entries from tableSession that have passed the latest possible time to renew.
-	 * (expiry time + sessionRenewPeriodAfterExpiry) < current time) 
-	 */
-	public void removeExpiredSessionKeys(){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		String query = "";
-		long currentTime = Utility.getCurrentTime();
-		try {
-			stmt = conn.createStatement();
-			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime + SystemManager.sessionRenewPeriodAfterExpiry) + "';";
-			stmt.executeUpdate(query);
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	}
-	
-	/***
-	 * Removes all entries inside job ads table with status “inactive” AND (expiry time < current time).
-	 */
-	public void removeExpiredInactiveJobAds(){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		String query = "";
-		long currentTime = Utility.getCurrentTime();
-		try {
-			stmt = conn.createStatement();
-			query = "DELETE FROM tableJobAd WHERE expiryDate<'" + currentTime + "'&& status='inactive'" + ";";
-			stmt.executeUpdate(query);
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	}
-	
-	/***
-	 * Updates all entries with status NOT “inactive” AND (expiry time < current time) inside job ads table,
-	 *  to status “inactive” and expiry time = (currentTime + timeBeforeRemovingExpiredInactiveJobAds)
-	 */
-	public void makeInactiveExpiredJobAds(){
-		Connection conn = getConnection();
-		Statement stmt = null;
-		String query = "";
-		long currentTime = Utility.getCurrentTime();
-		long newExpiryTime = currentTime + SystemManager.timeBeforeRemovingExpiredInactiveJobAds;
-		try {
-			stmt = conn.createStatement();
-			query = "UPDATE tableJobAd SET status='inactive', expiryDate='" + newExpiryTime + "' WHERE status!='inactive' && expiryDate<'" + currentTime + "';";
-			stmt.executeUpdate(query);
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
 	}
 }
 	

@@ -13,7 +13,7 @@
 </head>
 <body>
 	<%	
-	DBManager dbManager = new DBManager();
+	DBManager dbManager = DBManager.getInstance();
 	String idPasswordReset = request.getParameter("id");
 	int idAccount = dbManager.getIdAccountFromIdPasswordReset(idPasswordReset);
 	// if password reset id is invalid or expired, then forward to error page.
