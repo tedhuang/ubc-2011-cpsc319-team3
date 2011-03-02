@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import classes.DBConnectionPool;
 import classes.JobAdvertisement;
+import classes.Session;
 import classes.Utility;
 
 public class DBManager {			
@@ -202,104 +203,6 @@ public class DBManager {
 	}
 	
 	/****************************************************************************************************/
-	
-	/**
-	 * Creates a new job advertisement entry in the database with the given values
-	 * @param jobAdvertisementTitle
-	 * @param jobDescription
-	 * @param jobLocation
-	 * @param contactInfo
-	 * @param strTags
-	 * @return idJobAd
-	 */
-	public int createJobAdvertisement(String jobAdvertisementTitle, String jobDescription, 
-									 	  String jobLocation, String contactInfo, int educationRequirement,
-									 	  String strTags, long expiryDate, long startingDate,
-									 	  long datePosted){
-		
-		Connection conn = getConnection();	
-		Statement stmt = null;
-		int idJobAd = -1;
-		
-		
-		try {
-			stmt = conn.createStatement();
-			
-			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
-			jobDescription = Utility.checkInputFormat( jobDescription );
-			jobLocation = Utility.checkInputFormat( jobLocation );
-			contactInfo = Utility.checkInputFormat( contactInfo );
-			strTags = Utility.checkInputFormat( strTags );
-			
-			String query = 
-				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
-				"VALUES " + "('" 
-					+ jobAdvertisementTitle + "','" 
-					+ jobDescription + "','" 
-					+ expiryDate + "','" 
-					+ startingDate + "','" 
-					+ datePosted + "','"
-					+ jobLocation + "','" 
-					+ contactInfo + "','" 
-					+ educationRequirement + "','"
-					+ strTags + 
-				"')";
-			
-			// if successful, 1 row should be inserted
-			System.out.println("New Job Ad Query:" + query);
-			int rowsInserted = stmt.executeUpdate(query);
-			
-			if (rowsInserted == 1){
-				System.out.println("New JobAd Creation success (DB)");
-			}
-			else{
-				stmt.close();
-				return -1;
-			}
-			
-			query = "SELECT idJobAd FROM tableJobAd WHERE " + " title='" + jobAdvertisementTitle + "'"; 
-			ResultSet result = stmt.executeQuery(query);
-			
-			if( result.first() )
-			{
-				idJobAd = result.getInt("idJobAd");
-				System.out.println("idJobAd: " + idJobAd);
-			}
-			else
-			{
-				System.out.println("Error: result.first() is false ");
-			}
-			
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-			idJobAd = -1;
-		}
-		
-		
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-		return idJobAd;		
-	}
 	
 	
 
@@ -498,25 +401,28 @@ public class DBManager {
  * return null for failure
 ***************************************************************************************************************************************/
 	
-	public String startSession(String email, String pw){
+	public Session startSession(String email, String pw){
 
 		Connection conn = getConnection();	
 		Statement stmt = null;		
 		email = Utility.checkInputFormat(email);
 		pw = Utility.checkInputFormat(pw);
 		// md5 the password
-		String md5PW= Utility.md5(pw);
 		int idAccount = 0;
 		String accountType = null;
 		ResultSet rs = null;
+		
+		Session newSession = null;
 		
 		try{
 			// retrieve the account ID from login information
 			stmt = conn.createStatement();
 			System.out.println("check email:" + email + "password" + pw);
-			rs = stmt.executeQuery( "SELECT idAccount FROM tableAccount "+
+			rs = stmt.executeQuery( "SELECT * FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
-					   						  "AND password ='"+md5PW+"'");//TODO original md5 not working
+					   						  "AND password = md5('" + pw + "')" );//TODO original md5 not working
+			
+			System.out.println( Utility.md5(pw) );
 			if(rs.first()){
 				
 				System.out.println( email +" Logged in");
@@ -524,27 +430,26 @@ public class DBManager {
 				idAccount	= rs.getInt("idAccount");
 				accountType	= rs.getString("Type");
 				
-				System.out.println( idAccount + " " + accountType );
+				newSession = new Session( idAccount, accountType );
 				
+				System.out.println( idAccount + " " + accountType );
 				
 			}
 			else{
 				//TODO Error Handling if no id matches login info
-
+				Utility.getErrorLogger().info( "could not find matching email / password info" );
 				return null;
 			}
 			
 			//TODO maybe we can think about returning same session Key if not expired
-			//cleanSessionKeyByID returns rows clean out of DB, don't need to check right now
-			cleanSessionKeyByID( idAccount );
 			
-			String sessKey = registerSessionKey( idAccount );
-			if(sessKey==null) {
+			newSession = registerSessionKey( newSession );
+			if(newSession.getKey()==null) {
 				Utility.getErrorLogger().severe( "Failed to generate session key on request, returning null" );
 				return null;
 			}
 			else {
-				return sessKey;
+				return newSession;
 			}
 		}//ENDOF TRY
 		catch (SQLException e) {
@@ -573,20 +478,23 @@ public class DBManager {
 		return null;
 	}
 	
-	private String registerSessionKey( int idAccount ) {
+	private Session registerSessionKey( Session session ) {
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		UUID uuid = UUID.randomUUID();
-		String sessionKey = uuid.toString();
+		String newSessionKey = uuid.toString();
+		long newExpiryTime = Utility.getCurrentTime() + SystemManager.expiryTimeSession;
+		
 		int rowsInserted = 0;
 		
 		try{
 			//wipe previous sessionKey associated with the account
-			stmt = conn.createStatement();
-
+			cleanSessionKeyByID( session.getIdAccount() );
+			
+			stmt = conn.createStatement();			
 			rowsInserted = stmt.executeUpdate("INSERT INTO tableSession (sessionKey, idAccount, expiryTime) VALUES " +
-										"('" + sessionKey + "','" + idAccount + "','" + 
-										(Utility.getCurrentTime() + SystemManager.expiryTimeSession) + "')");
+										"('" + newSessionKey + "','" + session.getIdAccount() + "','" + 
+										newExpiryTime + "')");
 
 		}//ENDOF TRY
 		catch (SQLException e) {
@@ -606,8 +514,8 @@ public class DBManager {
 		// free DB objects
 
 		if(rowsInserted==1){	// if success, return session key
-			
-			return sessionKey;
+			session.registerNewSessionKey( newSessionKey, newExpiryTime);
+			return session;
 		}
 		else {
 			Utility.getErrorLogger().severe("could not insert new session key into DB");
@@ -688,26 +596,31 @@ public class DBManager {
 		return cleanUpCount;
 	}
 	
-	public String checkSessionKey( String key ) { 
+	public Session getSessionByKey( String key ) { 
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		ResultSet rs = null;
 		key = Utility.checkInputFormat(key);
 		
-		
 		try{
 			
 			// retrieves idAccount
-			int idAccount = -1;
-			long expiryTime = 0;
+//			int idAccount = -1;
+//			long expiryTime = 0;
+			Session currSession = null;
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery( "SELECT * FROM tableSession "+
-					   						  "WHERE sessionKey='"+ key+"'");
+			rs = stmt.executeQuery( "SELECT * FROM tableSession, tableAccount "+
+					"idAccount.tableAccount=idAccount.tableSession" + 
+					"WHERE sessionKey.tableSession='"+key+"' && " );
 			
 			if(rs.first()){
 				//get expiryTime to check it later
-				expiryTime = rs.getLong("expiryTime");
-				idAccount = rs.getInt("idAccount");
+//				expiryTime = rs.getLong("expiryTime");
+//				idAccount = rs.getInt("idAccount");
+				currSession = new Session( 	key,
+											rs.getInt("idAccount"),
+											rs.getString("type"),
+											rs.getLong("expiryTime") );
 			}
 			else{
 				stmt.close();
@@ -717,23 +630,20 @@ public class DBManager {
 			stmt.close();
 			
 			long currentTime = Utility.getCurrentTime();
-			if( expiryTime >= currentTime ) {
-				// if session didn't expire, return the current key
-				return key;
+			if( currSession.getExpiryTime() >= currentTime ) {
+				// if session didn't expire, return the current session
+				return currSession;
 				
 			}
 			else {//if the key is expired but within 30min
-				//clean up the sessionKey
-				cleanSessionKeyByKey( key );
-				if( expiryTime <= currentTime + SystemManager.sessionRenewPeriodAfterExpiry ) {
+				if( currSession.getExpiryTime() <= currentTime + SystemManager.sessionRenewPeriodAfterExpiry ) {
 					// renew user's sessionKey
-					return registerSessionKey( idAccount );
+					currSession = registerSessionKey(currSession);
 				}
 				else {
 					// past renewal period, user must re-log in
 					//TODO delte old entry?
-//					rs = stmt.executeQuery( "DELETE FROM tableSession " +
-//							"WHERE idAccount='" + idAccount +"'");
+					cleanSessionKeyByKey( key );
 					return null;
 				}
 				
@@ -760,11 +670,6 @@ public class DBManager {
 	        freeConnection(conn);
 	    }
 	    
-		return null;
-	}
-	
-	public String getAccountTypeBySessionKey( String key ) { 
-
 		return null;
 	}
 	

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
@@ -249,14 +250,14 @@ public class ServletAccount extends HttpServlet {
 		String email = request.getParameter("email");
 		String pw = request.getParameter("password");
 		System.out.println("user="+ email+ "Password="+ pw);
-		String sessKey = dbManager.startSession(email, pw);
-		if(sessKey != null){
+		Session currSession = dbManager.startSession(email, pw);
+		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
 			StringBuffer XMLResponse = new StringBuffer();	
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
-			XMLResponse.append("\t<sessionKey>" + sessKey + "</sessionKey>\n");
+			XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
 //			XMLResponse.append("\t<userID>" + userID + "</userID>\n");
 			
 			XMLResponse.append("</response>\n");
