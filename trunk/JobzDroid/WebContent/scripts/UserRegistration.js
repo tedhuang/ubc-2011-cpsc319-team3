@@ -3,17 +3,51 @@
  */
 
 $("document").ready(function() {
-	// update name label based on account type chosen
+	// generate input fields based on account type chosen
 	$("input:[name=accountType]").bind("change",function(){
 		if( $("input:[name=accountType]:checked").val() == "searcher" ){
-			$("#nameLabel").text("Name: ");
+			$(".accountTypeSpecific").remove();
+			$("#regTable").append(
+					"<tr class='accountTypeSpecific'>" +
+						"<td class='label force-no-break'><div> ** Education level: </div></td>" +
+						"<td>" +
+				        	"<select id='eduLevel'>" +
+				        		"<option value='0'>None</option>" +
+				        		"<option value='1'>B.Sc</option>" +
+				        		"<option value='2'>M.Sc</option>" +
+				        		"<option value='3'>Ph.D</option>" +
+				        	"</select>" +
+				        "</td>" +
+				    "</tr>" +
+				    "<tr class='accountTypeSpecific'>" +
+				    	"<td class='label force-no-break'><div> Starting date (yyyy-mm-dd): </div></td>" + 
+				    	"<td>" +
+				        	"<input type='text' id='startingDate' class='textinput' maxlength='50' tabindex='14'>" +
+				        	"<span id='startingDateError' class='errorTag'></span>" +
+				        "</td>" +
+				    "</tr>" +
+				    "<tr class='accountTypeSpecific'>" +
+					    "<td class='label force-no-break'>" +
+					        "<div> Employment preference: </div>" +
+					    "</td>" + 
+					    "<td>" +
+							"<input type='checkbox' name='empPref' value='full' /> Full time" + 
+							"<input type='checkbox' name='empPref' value='part' /> Part time " +
+							"<input type='checkbox' name='empPref' value='intern' /> Internship" + 
+					    "</td>" +
+					"</tr>"
+				);
 		}
 		else{
-			$("#nameLabel").text("Company/organization name: ");
+			$(".accountTypeSpecific").remove();
 		}
 	});
 	// client side error checking
 	$("input").bind("change", validateForm);
+	// allow description to have maximum 250 characters
+	$("#description").bind("keyup", function(){
+		limitChars('description', 250, 'descInfo');
+	});
 	// send request to registeration servlet on submit
 	$("#submitButton").bind("click",sendRegRequest);
 });
@@ -27,7 +61,7 @@ function validateForm(evt){
 		}
 		$("#nameError").text("");
 	}
-	// case: email changed
+	// case: primary email changed
 	else if( $(this).attr('id') == "emailAddress" ){
 			var strEmailPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,})$/;
 			var strEmailAddress = $(this).val();
@@ -38,6 +72,19 @@ function validateForm(evt){
 				$("#emailError").text("");
 			}				
 	}
+	// case: secondary email changed
+	else if( $(this).attr('id') == "secondaryEmailAddress" ){
+		var strEmailPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,})$/;
+		var strEmailAddress = $(this).val();
+		if( strEmailAddress && strEmailAddress != "" ){
+			if(strEmailPattern.test(strEmailAddress) == false) {
+				$("#secondaryEmailError").text("Invalid Email Address");
+			}
+		}
+		else{
+			$("#secondaryEmailError").text("");
+		}				
+}
 	// case: password changed (must be 5-15 non-white-space characters)
 	else if( $(this).attr('id') == "password1" ){
 		var strPasswordPattern = /^([A-Za-z0-9_\-\.]){5,15}$/;
@@ -62,22 +109,25 @@ function validateForm(evt){
 	}
 	// case: name field changed (must not be empty)
 	else if( $(this).attr('id') == "name" ){
-		var strNamePattern = /^([A-Za-z0-9_\-\.])+$/;
 		var strName = $("#name").val();
 		var accountType = $("input[name=accountType]:checked").val();
 		if( !strName || strName == "" ) {
-			if(accountType == "searcher"){
-				$("#nameError").text("Name must not be empty.");
-			}
-			else if(accountType == "poster"){
-				$("#nameError").text("Company/organization name must not be empty.");
-			}
-		}
-		else if(strNamePattern.test(strName) == false)	{
-			$("#nameError").text("Special characters are not allowed.");
+			$("#nameError").text("Name must not be empty.");
 		}
 		else{
 			$("#nameError").text("");
+		}
+	}
+	// case: starting date changed
+	else if( $(this).attr('id') == "startingDate" ){
+		var strStartingDate = $("#startingDate").val();
+		var strDatePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+		if( strStartingDate && strStartingDate != "" ) {
+			if(strDatePattern.test(strStartingDate) == false)
+				$("#startingDateError").text("Invalid date format.");
+		}
+		else{
+			$("#startingDateError").text("");
 		}
 	}
 }
@@ -86,10 +136,13 @@ function validateForm(evt){
 function sendRegRequest(evt){
 	$("#submitButton").attr("disabled", true);
 	var strEmail = $("#emailAddress").val();
+	var strSecondaryEmail = $("#secondaryEmailAddress").val();
 	var strPassword = $("#password1").val();
 	var strPasswordRepeat = $("#password2").val();
 	var strAccountType = $("input[name=accountType]:checked").val();
 	var strName = $("#name").val();
+	var strAddress = $("#address").val();
+	var strDescription = $("#description").val();
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -104,20 +157,43 @@ function sendRegRequest(evt){
 	xmlHttpReq.onreadystatechange = function(){
 		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
 			//parse XML response from server
-			var responseText = parseRegResponse(xmlHttpReq.responseXML);	
+			var responseText = parseRegResponse(xmlHttpReq.responseXML);
 			$("#submitButton").removeAttr("disabled");
 	    	$("#statusText").text(responseText);
 		}};
 
-
 	request = new Request;
 	request.addAction("register");
+	// common parameters
 	request.addParam("email", strEmail);
+	if( strSecondaryEmail && strSecondaryEmail != "" )
+		request.addParam("secondaryEmail", strSecondaryEmail);
 	request.addParam("password", strPassword);
 	request.addParam("passwordRepeat", strPasswordRepeat);
 	request.addParam("accountType", strAccountType);
 	request.addParam("name", strName);
-
+	if( strAddress && strAddress != "" )
+		request.addParam("address", strAddress);
+	if( strDescription && strDescription != "" )
+		request.addParam("description", strDescription);
+	
+	// account type specific parameters
+	if( strAccountType == "searcher" ){
+		var eduLevel = $("#eduLevel").val();
+		var strStartingDate = $("#startingDate").val();
+		var strEmpPref = "";
+		$('input[name=empPref]:checked').each(function() {
+			strEmpPref += $(this).val() + " ";
+			});
+		request.addParam("eduLevel", eduLevel);
+		if( strStartingDate && strStartingDate != "")
+			request.addParam("startingDate", strStartingDate);
+		if( strEmpPref && strEmpPref != "")
+			request.addParam("empPref", strEmpPref);
+	}
+	else{
+		// no poster specific fields currently
+	}
 	//send the request to servlet
 	xmlHttpReq.open("POST","./ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -131,6 +207,7 @@ function sendRegRequest(evt){
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
 		 $("input").attr("disabled", true);
 		 $("#submitButton").text("Return to Home Page");

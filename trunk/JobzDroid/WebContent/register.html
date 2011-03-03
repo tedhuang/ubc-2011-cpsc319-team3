@@ -25,24 +25,38 @@
 <div id="regpage">
   <div class="regbox">
 	<h3 class="heading-text">Create a JobzDroid Account</h3>
-		<table>
+		<table id="regTable">
 			<tbody>
 			  <tr>
 			    <td class="clean"></td>
 			  </tr>
 			  <tr>
-    			<td style="width: 65px;">
-      			  <div id="fname_l" class="force-no-break label">
-          		  Email Address:
+			  	<td>** are required fields</td>
+			  </tr>
+			  <tr>
+    			<td style="width: 155px;">
+      			  <div" class="force-no-break label">
+          		  ** Primary Email address:
        			  </div>
     			</td>
 			    <td style="width: 172px">
-			        <div id="fname_r">
+			        <div>
 			            <input type="text" class="textinput" id="emailAddress" maxlength="50" tabindex="11">
 			      		<span id="emailError" class="errorTag"></span>
 			        </div>
 			    </td>
-			    <td>			    	
+			  </tr>
+			  <tr>
+    			<td>
+      			  <div" class="force-no-break label">
+          		  Secondary Email address:
+       			  </div>
+    			</td>
+			    <td>
+			        <div>
+			            <input type="text" class="textinput" id="secondaryEmailAddress" maxlength="50" tabindex="11">
+			      		<span id="secondaryEmailError" class="errorTag"></span>
+			        </div>
 			    </td>
 			  </tr>
 			  <tr>
@@ -50,8 +64,8 @@
 			  </tr>
 			<tr>
 			    <td class="label force-no-break">
-			        <div id="choose_pwd">
-			            Password:
+			        <div>
+			            ** Password:
 			        </div>
 			    </td> 
 			    <td>
@@ -61,8 +75,8 @@
 			</tr>
 			<tr>
 			    <td class="label force-no-break">
-			        <div id="choose_pwd">
-			            Confirm Password:
+			        <div>
+			            ** Confirm password:
 			        </div>
 			    </td> 
 			    <td>
@@ -72,17 +86,17 @@
 			</tr>
 			<tr>
 				<td class="label force-no-break">
-			        <div id="choose_pwd">
-			            You Are A:
+			        <div>
+			            ** You are a:
 			        </div>
-				<td><input type="radio" name="accountType" value="searcher" checked="checked" />Searcher 
-					<input type="radio" name="accountType" value="poster" />Poster <br />
+				<td><input type="radio" name="accountType" value="searcher" checked="checked" />Job Searcher 
+					<input type="radio" name="accountType" value="poster" />Job Poster <br />
 				</td>
 			</tr>
 			<tr>
 			    <td class="label force-no-break">
 			        <div id="nameLabel">
-			            Name:
+			            ** Name:
 			        </div>
 			    </td> 
 			    <td>
@@ -90,10 +104,69 @@
 			        <span id="nameError" class="errorTag"></span>
 			    </td>
 			</tr>
+			<tr>
+			    <td class="label force-no-break">
+			        <div>
+			            Address:
+			        </div>
+			    </td> 
+			    <td>
+			        <input type="text" id="address" class="textinput" maxlength="100" tabindex="14">
+			    </td>
+			</tr>
+			<tr>
+			    <td class="label force-no-break">
+			        <div>
+			            Self description:
+			        </div>
+			    </td> 
+			    <td>
+			        <textarea id="description" class="textinput" rows="6" cols="35" tabindex="14"></textarea>
+			        <span id="descInfo"></span>
+			    </td>
+			</tr>
+			<tr class="accountTypeSpecific">
+			    <td class="label force-no-break">
+			        <div>
+			           ** Education level:
+			        </div>
+			    </td> 
+			    <td>
+			        <select id="eduLevel">
+					  <option value="0">None</option>
+					  <option value="1">B.Sc</option>
+					  <option value="2">M.Sc</option>
+					  <option value="3">Ph.D</option>
+					</select>
+			    </td>
+			</tr>
+			<tr class="accountTypeSpecific">
+			    <td class="label force-no-break">
+			        <div>
+			            Starting date (yyyy-mm-dd):
+			        </div>
+			    </td> 
+			    <td>
+			        <input type="text" id="startingDate" class="textinput" maxlength="50" tabindex="14">
+			        <span id="startingDateError" class="errorTag"></span>
+			    </td>
+			</tr>
+			<tr class="accountTypeSpecific">
+			    <td class="label force-no-break">
+			        <div>
+			            Employment preference:
+			        </div>
+			    </td> 
+			    <td>
+					<input type="checkbox" name="empPref" value="full" /> Full time 
+					<input type="checkbox" name="empPref" value="part" /> Part time 
+					<input type="checkbox" name="empPref" value="intern" /> Internship 
+			    </td>
+			</tr>
 		</tbody>
 	</table>
 		
-		<p align="center"><button id="submitButton" type="button">Create Account!</button></p>
+		<p align="center"><button id="submitButton" type="button">Create Account</button></p>
 		<!--TODO STYLE THE BUTTON-->
 		<p id="statusText" align="center"></p>
         <br>

@@ -21,6 +21,23 @@ Request.prototype.toString = function(){
 	return this.str;
 };
 
+/***
+ * Displays the amount of available character spaces left in a text area.
+ * @param textid Id of the text area.
+ * @param limit Maximum chars allowed in the text area.
+ * @param infodiv Id of tag displaying text limit info.
+ */
+function limitChars(textId, limit, infoTag){
+	var text = $('#'+textId).val(); 
+	var textLength = text.length;
+	if(textLength > limit) {
+		$('#' + infoTag).text('Cannot write more than '+limit+' characters!');
+		$('#'+textId).val(text.substr(0,limit));
+	}
+	else 
+		$('#' + infoTag).text('You have '+ (limit - textLength) +' characters left.');
+}
+
 /***********************************************
 * Drop Down Date select script- by JavaScriptKit.com
 * This notice MUST stay intact for use
@@ -53,8 +70,6 @@ function populatedropdown(dayfield, monthfield, yearfield){
 	}
 	yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true); //select today's year
 }
-
-
 
 /***********************************************************************************************
 						LightBox Functions
