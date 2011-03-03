@@ -43,7 +43,7 @@ function validateForm(evt){
 		var strPasswordPattern = /^([A-Za-z0-9_\-\.]){5,15}$/;
 		var password = $(this).val();
 		if(strPasswordPattern.test(password) == false) {
-			$("#password1Error").text("Password must be 5 to 15 characters long, and cannot contain special characters.");
+			$("#password1Error").text("Must be 5 - 15 non-special characters.");
 		}
 		else{
 			$("#password1Error").text("");
@@ -84,6 +84,7 @@ function validateForm(evt){
 
 // sends account reg request to the corresponding servlet
 function sendRegRequest(evt){
+	$("#submitButton").attr("disabled", true);
 	var strEmail = $("#emailAddress").val();
 	var strPassword = $("#password1").val();
 	var strPasswordRepeat = $("#password2").val();
@@ -103,7 +104,8 @@ function sendRegRequest(evt){
 	xmlHttpReq.onreadystatechange = function(){
 		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
 			//parse XML response from server
-			var responseText = parseRegResponse(xmlHttpReq.responseXML);		   
+			var responseText = parseRegResponse(xmlHttpReq.responseXML);	
+			$("#submitButton").removeAttr("disabled");
 	    	$("#statusText").text(responseText);
 		}};
 
@@ -117,21 +119,25 @@ function sendRegRequest(evt){
 	request.addParam("name", strName);
 
 	//send the request to servlet
-	xmlHttpReq.open("POST","../ServletAccount", true);
+	xmlHttpReq.open("POST","./ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	
 	//update status text
-	$("#statusText").text("Sending Request...");
+	$("#statusText").text("Processing... Please wait.");
 }
 
 // parses response from server
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 /*
-	 if(result == "true"){
-		 window.location="./userRegistration.html";
-	 }*/
+	 if(boolResult == "true"){
+		 $("input").attr("disabled", true);
+		 $("#submitButton").text("Return to Home Page");
+		 $("#submitButton").unbind("click", sendRegRequest);
+		 $("#submitButton").bind("click", function(){
+			 window.location = "./index.html";
+		 });
+	 }
 	 return strMsg;
 }
