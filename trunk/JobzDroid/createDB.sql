@@ -30,3 +30,10 @@ CREATE TABLE tableLocationProfile (
 	CONSTRAINT FOREIGN KEY (`idAccount`) REFERENCES `tableAccount` (`idAccount`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+DROP TABLE IF EXISTS tableSearcherEmpPref;
+CREATE TABLE tableSearcherEmpPref (
+    idAccount       		INTEGER NOT NULL, 
+    empPref     			VARCHAR(20) NOT NULL,
+    PRIMARY KEY (idAccount, empPref),
+    CONSTRAINT FOREIGN KEY (`idAccount`) REFERENCES `tableAccount` (`idAccount`) ON DELETE CASCADE ON UPDATE CASCADE
+);

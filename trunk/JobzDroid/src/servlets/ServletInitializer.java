@@ -38,6 +38,7 @@ public class ServletInitializer extends HttpServlet {
 	        	systemManager.removeExpiredEmailVerifications();
 	        	systemManager.removeExpiredPwResetRequests();
 	        	systemManager.removeExpiredSessionKeys();
+	        	systemManager.removeExpiredPendingAccounts();
 	        	systemManager.removeExpiredInactiveJobAds();
 	        	systemManager.makeInactiveExpiredJobAds();
 	        }
