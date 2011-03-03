@@ -29,9 +29,9 @@
 
 <h3>Edit Profile Test Page</h3>
 <br>
-	AccountID:
-	<input id="accountID" type="text"  size="20"><br>
-<button id="getProfileButton" type="button" onclick="getProfile()">Submit</button>
+AccountID:
+<input id="accountID" type="text"  size="20"><br>
+<button id="getProfileButton" type="button" onclick="getProfileById()">Submit</button>
 
 <br>
 
@@ -71,6 +71,10 @@
 				<option value="part">Part-Time</option>
 				<option value="intern">Internship</option>
 			</select>
+			
+	Start Date:
+	
+	
 </div>
 
 

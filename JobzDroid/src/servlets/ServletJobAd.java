@@ -40,7 +40,8 @@ public class ServletJobAd extends HttpServlet {
 	private enum EnumAction	{
 		//Add new functions here
 		createJobAdvertisement,
-		searchJobAdvertisement
+		searchJobAdvertisement,
+		getJobAdById
 		
 	}
 	
@@ -49,11 +50,13 @@ public class ServletJobAd extends HttpServlet {
 
 	}
 	
+	/*
+	 * Helper function to calculate time in milli seconds
+	 */
 	private long calculateDate(int year, String month, int day){
 		
 		long resultTime = -1;
 		int monthNum = -1;
-		int daysInMonth;
 		Calendar cal = Calendar.getInstance();
 		
 		//Convert string month representation to numerical representation
@@ -123,6 +126,9 @@ public class ServletJobAd extends HttpServlet {
 			case searchJobAdvertisement:
 				
 				break;
+			case getJobAdById:
+				getJobAdById(request, response);
+				break;
 			default:
 				System.out.println("Error: failed to process request - action not found");
 				break;
@@ -133,6 +139,97 @@ public class ServletJobAd extends HttpServlet {
 	}
 	
 	
+	private void getJobAdById(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		
+		String message = "Create Job Advertisement Failed";
+		boolean isSuccessful = false;
+		
+		String jobAdId = request.getParameter("jobAdId");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+		
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"SELECT * FROM tableJobAd WHERE idJobAd=" + jobAdId;
+			
+			System.out.println("getJobAdById query:" + query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			if (result.first()){
+				System.out.println("getProfile successful");
+				message = "getProfile successful";
+				
+				//Fill in the fields of the jobAd object
+				
+				jobAd.jobAdId = result.getInt("idJobAd");
+				jobAd.ownerID = result.getInt("idAccount");
+				jobAd.jobAdTitle = result.getString("title");
+				jobAd.jobAdDescription = result.getString("description");
+				jobAd.expiryDate = result.getLong("expiryDate");
+				jobAd.startingDate = result.getLong("dateStarting");
+				jobAd.creationDate = result.getLong("datePosted");
+				jobAd.status = result.getString("status");
+				jobAd.contactInfo = result.getString("contactInfo");
+				jobAd.educationReq = result.getInt("educationRequired");
+				jobAd.tags = result.getString("tags");
+				jobAd.numberOfViews = result.getInt("numberOfViews");
+				jobAd.isApproved = result.getBoolean("isApproved");
+				
+				
+			}
+			else{ //Error case
+				isSuccessful = false;
+				message = "Error: profile not found with ID=" + jobAdId;
+				System.out.println("Error: profile not found with ID=" + jobAdId);
+			}
+			
+			
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.getErrorLogger().severe("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append(jobAd.toXMLContent() );
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+
+
+
 	/**
 	 * Creates a new job advertisement entry in the database with the given values
 	 * @param jobAdvertisementTitle
@@ -183,7 +280,6 @@ public class ServletJobAd extends HttpServlet {
 		System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
 		
 		Connection conn = dbManager.getConnection();	
-		
 		Statement stmt = null;
 		
 		try {
