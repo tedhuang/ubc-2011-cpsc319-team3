@@ -183,7 +183,7 @@ function sendRegRequest(evt){
 		var strStartingDate = $("#startingDate").val();
 		var strEmpPref = "";
 		$('input[name=empPref]:checked').each(function() {
-			strEmpPref += $(this).val() + " ";
+			strEmpPref += $(this).val() + "_";
 			});
 		request.addParam("eduLevel", eduLevel);
 		if( strStartingDate && strStartingDate != "")
@@ -210,6 +210,8 @@ function parseRegResponse(responseXML){
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
 		 $("input").attr("disabled", true);
+		 $("select").attr("disabled", true);
+		 $("textarea").attr("disabled", true);
 		 $("#submitButton").text("Return to Home Page");
 		 $("#submitButton").unbind("click", sendRegRequest);
 		 $("#submitButton").bind("click", function(){

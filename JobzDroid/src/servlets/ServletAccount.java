@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -139,6 +140,8 @@ public class ServletAccount extends HttpServlet {
 		String name = request.getParameter("name");
 		String address = request.getParameter("address");
 		String description = request.getParameter("description");
+		String startingDate = request.getParameter("startingDate");
+		String empPref = request.getParameter("empPref");
 		int eduLevel = -1;
 		if( accountType.equals("searcher") ){
 			try{
@@ -148,8 +151,6 @@ public class ServletAccount extends HttpServlet {
 				message = "Bad education level input.";
 				allGood = false;
 			}
-			String startingDate = request.getParameter("startingDate");
-			String empPref = request.getParameter("empPref");
 		}
 		else{
 			// no poster specific fields currently
@@ -200,7 +201,8 @@ public class ServletAccount extends HttpServlet {
 			// check if email is unique
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
-				accountCreated = createAccount(email, password, accountType, name, uuid, SystemManager.expiryTimeEmailVerification);
+				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, uuid, 
+						SystemManager.expiryTimeEmailVerification, address, description, eduLevel, startingDate, empPref);
 
 				if(accountCreated){
 					//send verification email to new user
@@ -426,26 +428,42 @@ public class ServletAccount extends HttpServlet {
 	 * @param expiryTimeEmailRegistration Time before the registration verification expires
 	 * @return boolean indicating whether account was successfully created
 	 */
-	private boolean createAccount(String email, String password, String accountType, String name, UUID uuid, long expiryTimeEmailRegistration) {
+	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, String name, UUID uuid, 
+			long expiryTimeEmailRegistration, String address, String description, int eduLevel, String startingDate, String empPref) {
 		Connection conn = dbManager.getConnection();
-		Statement stmt = null;
+		PreparedStatement pst = null;
 		ResultSet rs = null;
 		
 		email = Utility.checkInputFormat(email);
 		password = Utility.checkInputFormat(password);
 		accountType = Utility.checkInputFormat(accountType);
 		name = Utility.checkInputFormat(name);
+		if(secondaryEmail != null)
+			secondaryEmail = Utility.checkInputFormat(secondaryEmail);
+		if(address != null)
+			address = Utility.checkInputFormat(address);
+		if(description != null)
+			description = Utility.checkInputFormat(description);
 		
 		try {
-			stmt = conn.createStatement();
 			long currentTime = Utility.getCurrentTime();
 			int idAccount;
-					
+			long startingDateLong = -1;
 			// update account table, and set account status to pending
-			String query = "INSERT INTO tableAccount(Email, Password, Type, Status, dateTimeCreated) VALUES " + 
-	  		"('" + email + "',md5('" + password + "'),'" + accountType + "','" + "pending" + "','" + currentTime + "');";			
+            String query = "INSERT INTO tableAccount(email, secondaryEmail, password, type, status, dateTimeCreated)" +
+            		" VALUES(?,?,md5(?),?,'pending',?);";
+            pst = conn.prepareStatement(query);
+            pst.setString(1, email);
+            if(secondaryEmail == null)
+            	pst.setNull(2, java.sql.Types.VARCHAR);
+            else
+            	pst.setString(2, secondaryEmail);
+            pst.setString(3, password);
+            pst.setString(4, accountType);
+            pst.setLong(5, currentTime);
+            
+			int rowsInserted = pst.executeUpdate();
 			// if successful, 1 row should be inserted
-			int rowsInserted = stmt.executeUpdate(query);
 			if (rowsInserted != 1)
 				return false;
 			
@@ -457,23 +475,80 @@ public class ServletAccount extends HttpServlet {
 			// add entry to email verification table
 			long expiryTime = currentTime + expiryTimeEmailRegistration;			
 			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
-	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
+	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";	
+			pst = conn.prepareStatement(query);
 			// if successful, 1 row should be inserted
-			rowsInserted = stmt.executeUpdate(query);
+			rowsInserted = pst.executeUpdate(query);
 			if (rowsInserted != 1)
 				return false;
 			// add entry to user profile table
 			if(accountType.equals("searcher")){
-				query = "INSERT INTO tableProfileSearcher(idAccount, name) VALUES " + 
-		  		"('" + idAccount + "','" + name + "');";
-				rowsInserted = stmt.executeUpdate(query);
+				// update profile table
+				if(startingDate != null){
+					startingDateLong = Utility.dateStringToLong(startingDate);
+					if(startingDateLong == -1)
+						return false;
+				}
+				query = "INSERT INTO tableProfileSearcher(idAccount, name, selfDescription, educationLevel, address, startingDate) VALUES " + 
+		  		"(?,?,?,?,?,?);";
+	            pst = conn.prepareStatement(query);
+	            pst.setInt(1, idAccount);
+	            pst.setString(2, name);
+	            if(description == null)
+	            	pst.setNull(3, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(3, description);
+	            
+	            pst.setInt(4, eduLevel);
+	            
+	            if(address == null)
+	            	pst.setNull(5, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(5, address);
+	            
+	            if(startingDate == null)
+	            	pst.setNull(6, java.sql.Types.BIGINT);
+	            else
+	            	pst.setLong(6, startingDateLong);
+	            
+				rowsInserted = pst.executeUpdate();
 				if (rowsInserted != 1)
 					return false;
+				
+				// update employment Preference table
+				if(empPref != null){
+					String prefs[] = empPref.split("_");
+					String pref;
+					for(int i = 0; i < prefs.length; i++){
+						pref = prefs[i].trim();
+						if(!pref.equals("")){
+							query = "INSERT INTO tableSearcherEmpPref(idAccount, empPref) VALUES " + 
+					  		"(?,?);";
+				            pst = conn.prepareStatement(query);
+				            pst.setInt(1, idAccount);
+				            pst.setString(2, pref);
+				            pst.executeUpdate();
+						}
+					}
+				}
 			}
 			else if(accountType.equals("poster")){
-				query = "INSERT INTO tableProfilePoster(idAccount, name) VALUES " + 
-		  		"('" + idAccount + "','" + name + "');";
-				rowsInserted = stmt.executeUpdate(query);
+				query = "INSERT INTO tableProfilePoster(idAccount, name, selfDescription, address) VALUES " + 
+		  		"(?,?,?,?);";
+	            pst = conn.prepareStatement(query);
+	            pst.setInt(1, idAccount);
+	            pst.setString(2, name);
+	            if(description == null)
+	            	pst.setNull(3, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(3, description);
+	            
+	            if(address == null)
+	            	pst.setNull(4, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(4, address);
+	            
+				rowsInserted = pst.executeUpdate();
 				if (rowsInserted != 1)
 					return false;
 			}
@@ -492,11 +567,11 @@ public class ServletAccount extends HttpServlet {
 	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
-	            if (stmt != null)
-	                stmt.close();
+	            if (pst != null)
+	                pst.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.getErrorLogger().severe("Cannot close PreparedStatement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }

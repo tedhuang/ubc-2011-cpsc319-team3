@@ -20,6 +20,7 @@ public class SystemManager {
 	public static long expiryTimeSession = 1 * 60 * 60 * 1000; 						// default 1 hour
 	public static long expiryTimeEmailVerification = 60 * 60 * 1000;				// default 60 minutes
 	public static long expiryTimeForgetPasswordReset = 60 * 60 * 1000;  			// default 60 minutes
+	public static long expiryTimePendingAccount = 60 * 60 * 1000;  					// default 60 minutes
 	public static long timeBeforeRemovingExpiredInactiveJobAds = 7 * 24 * 60 * 60 * 1000;	// default 7 days
 	public static boolean autoRemoveExpiredInactiveJobAds = true;					// default auto remove expired inactive job ads
 	public static long timeIntervalAutomatedTasks = 10 * 60 * 1000;					// default 10 minutes
@@ -34,7 +35,7 @@ public class SystemManager {
 	public static String dbURL = "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
 	public static String dbUser = "blitzcriegteam";
 	public static String dbPassword = "cs319team3";
-	public static int maxDBConnectionPoolSize = 50;
+	public static int maxDBConnectionPoolSize = 0;									// 0 means no limit
 	
 	/***********************************************************************************************************************/
 	
@@ -79,6 +80,7 @@ public class SystemManager {
 			expiryTimeSession = Long.parseLong(config.getProperty("expiryTimeSession").trim()) * 60 * 1000;
 			expiryTimeEmailVerification = Long.parseLong(config.getProperty("expiryTimeEmailVerification").trim()) * 60 * 1000;
 			expiryTimeForgetPasswordReset = Long.parseLong(config.getProperty("expiryTimeForgetPasswordReset").trim()) * 60 * 1000;
+			expiryTimePendingAccount = Long.parseLong(config.getProperty("expiryTimePendingAccount").trim()) * 60 * 1000;
 			timeIntervalAutomatedTasks = Long.parseLong(config.getProperty("timeIntervalAutomatedTasks").trim()) * 60 * 1000;
 			timeBeforeRemovingExpiredInactiveJobAds =
 				Long.parseLong(config.getProperty("timeBeforeRemovingExpiredInactiveJobAds").trim()) * 24 * 3600 * 1000;			// unit: day -> millisecond
@@ -166,6 +168,35 @@ public class SystemManager {
 		try {
 			stmt = conn.createStatement();
 			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime + SystemManager.sessionRenewPeriodAfterExpiry) + "';";
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
+	 * Removes all entries inside account table with status “pending” AND dateTimeCreated < (current time - expiryTimePendingAccount).
+	 */
+	public void removeExpiredPendingAccounts(){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		String query = "";
+		long currentTime = Utility.getCurrentTime();
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tableAccount WHERE dateTimeCreated<'" + (currentTime - expiryTimePendingAccount) + "'&& status='pending'" + ";";
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {

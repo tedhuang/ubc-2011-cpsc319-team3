@@ -3,6 +3,10 @@ package classes;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Calendar;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -94,6 +98,24 @@ public class Utility {
 	        System.out.println("Failed to get error logger: " + e.getMessage());
 	      }
 	    return logger;
+	}
+	
+	/****
+	 * Converts a date string into a long.
+	 * @param dateString Date string with format yyyy/MM/dd
+	 * @return A long integer representing the date.
+	 */
+	public static long dateStringToLong(String dateString){
+		DateFormat df = new SimpleDateFormat("yyyy/MM/dd"); 
+		long dateLong = -1;
+		try { 
+			Date date = df.parse(dateString);
+			dateLong = date.getTime();
+		} 
+		catch (ParseException e) { 
+			getErrorLogger().severe("Failure while converting date string to long: " + e.getMessage()); 
+		} 
+		return dateLong;
 	}
 	
 	/***
