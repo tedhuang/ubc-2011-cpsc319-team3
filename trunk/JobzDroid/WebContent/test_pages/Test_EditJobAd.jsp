@@ -21,67 +21,71 @@
 
 <body onload="document.getElementById('jobAdDetails').style.display='none'">
 
+AccountID:
+<input id="jobAdId" type="text"  size="20"><br>
+<button id="getProfileButton" type="button" onclick="getJobAdById()">Submit</button>
+
+
+
 <div id="jobAdDetails">
-
-Title: <input id="jobTitle" type="text" name="jobTitle" size="20"><br>
-
-Description:  <br>
-<textarea id="jobDescription" rows="4" cols="20">
-</textarea> <br>
-
-Education Requirement: 
-<select id="educationRequirement" name="educationRequirement">
-			<option value="0">None</option>
-			<option value="1">B.Sc.</option>
-			<option value="2">M.Sc.</option>
-			<option value="3">Ph.D.</option>
-		</select>
-			
-<br>
-Job Location(s) (separated by comma): <br>
-Need to integrate with Google Map <br>
-<!-- Need to integrate with Google Map
-<input id="jobLocation" type="text" name="jobLocation" size="20"><br> -->
-<br>
-
-Contact Info: <input id="contactInfo" type="text" name="contactInfo" size="20"><br>
-<br>
-
-Tags: <input id="tags" type="text" name="tags" size="20"><br>
-
-
-Starting Date:  
-	<form action="" name="formStartingDate">
-	<select id="startingDay">
-	</select> 
-	<select id="startingMonth">
-	</select> 
-	<select id="startingYear">
-	</select> 
-	</form>
-	<script type="text/javascript">
-		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-		window.onload=function(){
-		populatedropdown("startingDay", "startingMonth", "startingYear");
-		};
-	</script> 
+	Title: <input id="jobTitle" type="text" name="jobTitle" size="20"><br>
+	
+	Description:  <br>
+	<textarea id="jobDescription" rows="4" cols="20">
+	</textarea> <br>
+	
+	Education Requirement: 
+	<select id="educationRequirement" name="educationRequirement">
+				<option value="0">None</option>
+				<option value="1">B.Sc.</option>
+				<option value="2">M.Sc.</option>
+				<option value="3">Ph.D.</option>
+			</select>
+				
 	<br>
-
-Expire In... : 
-	<form action="" name="formExpiryDate">
-	<select id="expiryDay">
-	</select> 
-	<select id="expiryMonth">
-	</select> 
-	<select id="expiryYear">
-	</select> 
-	</form>
-	<script type="text/javascript">
-		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-		populatedropdown("expiryDay", "expiryMonth", "expiryYear");
-	</script>
+	Job Location(s) (separated by comma): <br>
+	Need to integrate with Google Map <br>
+	<!-- Need to integrate with Google Map
+	<input id="jobLocation" type="text" name="jobLocation" size="20"><br> -->
 	<br>
-
+	
+	Contact Info: <input id="contactInfo" type="text" name="contactInfo" size="20"><br>
+	<br>
+	
+	Tags: <input id="tags" type="text" name="tags" size="20"><br>
+	
+	
+	Starting Date:  
+		<form action="" name="formStartingDate">
+		<select id="startingDay">
+		</select> 
+		<select id="startingMonth">
+		</select> 
+		<select id="startingYear">
+		</select> 
+		</form>
+		<script type="text/javascript">
+			//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
+			window.onload=function(){
+			populatedropdown("startingDay", "startingMonth", "startingYear");
+			};
+		</script> 
+		<br>
+	
+	Expire In... : 
+		<form action="" name="formExpiryDate">
+		<select id="expiryDay">
+		</select> 
+		<select id="expiryMonth">
+		</select> 
+		<select id="expiryYear">
+		</select> 
+		</form>
+		<script type="text/javascript">
+			//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
+			populatedropdown("expiryDay", "expiryMonth", "expiryYear");
+		</script>
+		<br>
 </div>
 
 

@@ -94,7 +94,6 @@ public class ServletProfile extends HttpServlet{
 		int educationLevel;
 		
 		
-		
 	}
 	
 	

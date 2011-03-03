@@ -4,6 +4,7 @@ public class JobAdvertisement {
 
 	public int 		jobAdId;
 	public int		ownerID;
+	public int		educationReq;
 	public int		numberOfViews;
 	public String	jobAdTitle;
 	public String	location;
@@ -20,6 +21,7 @@ public class JobAdvertisement {
 	public JobAdvertisement() {
 		jobAdId 		= -1;
 		ownerID			= -1;
+		educationReq	= 0;
 		numberOfViews	= 0;
 		jobAdTitle 		= null;
 		location		= null;
@@ -36,6 +38,7 @@ public class JobAdvertisement {
 	public JobAdvertisement(int AdId,
 							int opId,
 							int numViews,
+							int eduReq,
 							String title,
 							String loc,
 							String t,
@@ -58,8 +61,29 @@ public class JobAdvertisement {
 		creationDate	= cDate;
 		status			= initialStatus;
 		numberOfViews	= numViews;
+		educationReq	= eduReq;
 		jobAdDescription= description;
 		isApproved		= isAppr;
+		
+	}
+	
+	public String toXMLContent(){
+		
+		return "\t\t<auction" +
+		" jobAdId=\"" + jobAdId + "\"" +
+		" jobAdTitle=\"" + jobAdTitle + "\"" +
+		" location=\"" + location  + "\"" +
+		" tags=\"" + tags + "\"" +
+		" contactInfo=\"" + contactInfo + "\"" +
+		" expiryDate=\"" + expiryDate + "\"" +
+		" startingDate=\"" + startingDate + "\"" +
+		" creationDate=\"" + creationDate + "\"" +
+		" status=\"" + status + "\"" +
+		" numberOfViews=\"" + numberOfViews + "\"" +
+		" educationReq=\"" + educationReq + "\"" +
+		" jobAdDescription=\"" + jobAdDescription + "\"" +
+		" isApproved=\"" + isApproved + "\"" +
+		"/>\n";
 		
 	}
  	

@@ -42,7 +42,6 @@ AccountID: (need to make this be handled in the back)
 <input id="accountID" type="text" size="20"><br>
 
 <div id="formSearcher">
-<form>
 	Name: 
 	<input id="searcherName" type="text" size="20"><br>
 	
@@ -72,20 +71,36 @@ AccountID: (need to make this be handled in the back)
 	Document:<br>
 	~Pending Implementation~<br>
 	
-	Employment Preference:
+	Employment Preference: TODO:change to checkbox
 	<select id="empPref" name="empPref">
 				<option value="none">None</option>
 				<option value="full">Full-Time</option>
 				<option value="part">Part-Time</option>
 				<option value="intern">Internship</option>
 			</select>
-</form>
+			
+	Preferred Starting Date:  
+	<form action="" name="startDate">
+	<select id="searcherStartDay">
+	</select> 
+	<select id="searcherStartMonth">
+	</select> 
+	<select id="searcherStartYear">
+	</select> 
+	</form>
+	<script type="text/javascript">
+		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
+		window.onload=function(){
+		populatedropdown("startingDay", "startingMonth", "startingYear");
+		};
+	</script> 
+	<br>
+			
 </div>
 
 <br>
 
 <div id="formPoster" >
-<form>
 	Name: 
 	<input id="posterName" type="text" size="20"><br>
 	
@@ -99,9 +114,8 @@ AccountID: (need to make this be handled in the back)
 	<textarea id="posterDescripton" rows="4" cols="20"></textarea> 
 	<br>
 	
-	Affliation
-	<input id="affiliation" type="text"  size="20"><br>
-</form>
+	Location: <br>
+	~To be integrated with Google Map~
 </div>
 
 <br>

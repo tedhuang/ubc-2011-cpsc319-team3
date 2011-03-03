@@ -33,7 +33,7 @@ function createProfile(){
 	var strPosterSecEmail = document.getElementById("posterSecEmail").value;
 	var strPosterContactInfo = document.getElementById("posterContactInfo").value;
 	var strPosterDescripton = document.getElementById("posterDescripton").value;
-	var strAffiliation = document.getElementById("affiliation").value;
+	//var strAffiliation = document.getElementById("affiliation").value;
 	
 	//Poster = 1, Searcher = 2
 	var intAccountType = document.getElementById("accountType").value; 
@@ -90,7 +90,7 @@ function createProfile(){
 		request.addParam("posterSecEmail",strPosterSecEmail);
 		request.addParam("posterContactInfo",strPosterContactInfo);
 		request.addParam("posterDescription",strPosterDescripton);
-		request.addParam("affiliation",strAffiliation);
+		//request.addParam("affiliation",strAffiliation);
 	}
 	else{
 		alert("Please select an account type before submitting");
@@ -123,6 +123,7 @@ function editProfile(){
 	var strSearcherContactInfo = document.getElementById("searcherContactInfo").value;
 	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
 	var strEmpPref = document.getElementById("empPref").value;
+	var strPreferredStartDate = document.getElementById("startDate");
 	var intEducationLevel = document.getElementById("educationLevel").value;
 	
 	
@@ -130,7 +131,6 @@ function editProfile(){
 	var strPosterSecEmail = document.getElementById("posterSecEmail").value;
 	var strPosterContactInfo = document.getElementById("posterContactInfo").value;
 	var strPosterDescripton = document.getElementById("posterDescripton").value;
-	var strAffiliation = document.getElementById("affiliation").value;
 	
 	//Poster = 1, Searcher = 2
 	var intAccountType = document.getElementById("accountType").value; 
@@ -187,7 +187,6 @@ function editProfile(){
 		request.addParam("posterSecEmail",strPosterSecEmail);
 		request.addParam("posterContactInfo",strPosterContactInfo);
 		request.addParam("posterDescription",strPosterDescripton);
-		request.addParam("affiliation",strAffiliation);
 	}
 	else{
 		alert("Please select an account type before submitting");
@@ -210,7 +209,7 @@ function editProfile(){
 
 
 
-function getProfile(){
+function getProfileById(){
 	
 	document.getElementById("getProfileButton").disabled=true;
 	var intAccountID = document.getElementById("accountID").value;
@@ -246,7 +245,7 @@ function getProfile(){
 		    //parse XML response from server
 		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
 	    	document.getElementById("feedback").innerHTML=responseText;
-
+	    	loadProfileDetails(xmlhttp.responseXML);
 	    }
 	  };	
 }

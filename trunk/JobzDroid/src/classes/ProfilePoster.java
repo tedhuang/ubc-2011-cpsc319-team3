@@ -9,7 +9,7 @@ public class ProfilePoster {
 	public String secondaryEmail;
 	public String contactInfo;
 	public String selfDescription;
-	public String affliation;
+	public String location;
 
 	public ProfilePoster(){
 		
@@ -22,7 +22,8 @@ public class ProfilePoster {
 							String secEmail,
 							String cInfo,
 							String sDescription,
-							String affl){
+							String loc
+							){
 		
 		accountID = accID;
 		accountType = accType;
@@ -31,8 +32,22 @@ public class ProfilePoster {
 		secondaryEmail = secEmail;
 		contactInfo = cInfo;
 		selfDescription =sDescription;
-		affliation = affl;
+		location = loc;
 
+		
+	}
+	
+	public String toXMLContent(){
+		
+		return "\t\t<auction" +
+		" accountID=\"" + accountID + "\"" +
+		" accountType=\"" + accountType + "\"" +
+		" name=\"" + name  + "\"" +
+		" email=\"" + email + "\"" +
+		" secondaryEmail=\"" + secondaryEmail + "\"" +
+		" contactInfo=\"" + contactInfo + "\"" +
+		" selfDescription=\"" + selfDescription + "\"" +
+		"/>\n";
 		
 	}
 	
