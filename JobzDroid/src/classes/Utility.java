@@ -3,6 +3,7 @@ package classes;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -13,6 +14,11 @@ import java.util.regex.Pattern;
  * Utility library for other java classes
  */
 public class Utility {
+	
+	private enum strMonths {
+		Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sept, Oct, Nov, Dec
+	}
+	
 	/***
 	 * Determines whether a given string matches a regular expression pattern.
 	 * @param string String to be validated.
@@ -32,6 +38,45 @@ public class Utility {
 	public static long getCurrentTime(){
 		return new java.util.Date().getTime();
 	}
+	
+	
+	/**
+	 * Helper function to calculate time in milli seconds given year, month and day
+	 */
+	public static long calculateDate(int year, String month, int day){
+		
+		long resultTime = -1;
+		int monthNum = -1;
+		Calendar cal = Calendar.getInstance();
+		
+		//Convert string month representation to numerical representation
+		switch( strMonths.valueOf(month) ){
+		case Jan: monthNum = Calendar.JANUARY;
+		case Feb: monthNum = Calendar.FEBRUARY;
+		case Mar: monthNum = Calendar.MARCH;
+		case Apr: monthNum = Calendar.APRIL;
+		case May: monthNum = Calendar.MAY;
+		case Jun: monthNum = Calendar.JUNE;
+		case Jul: monthNum = Calendar.JULY;
+		case Aug: monthNum = Calendar.AUGUST;
+		case Sept: monthNum = Calendar.SEPTEMBER;
+		case Oct: monthNum = Calendar.OCTOBER;
+		case Nov: monthNum = Calendar.NOVEMBER;
+		case Dec: monthNum = Calendar.DECEMBER;
+		}
+		//Calculate the number of days in that specific month
+		cal.set(year, monthNum, day);
+
+		//Calculate the total time in milliseconds (starting at unix time)
+		resultTime = cal.getTimeInMillis();
+		
+		System.out.println("Result time: " + resultTime);
+		
+		return resultTime;
+	}
+    
+	
+	
 	
 	/***
 	 * Find or create a logger for logging errors. If a logger has already been created with the name "JobzDroid", then it is returned.

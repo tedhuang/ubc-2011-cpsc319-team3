@@ -10,41 +10,52 @@
 
 <script language="JavaScript">
 
+//window.onload=initializePage();
+
   function showJobAdDetails(){
      document.getElementById("jobAdDetails").style.display = "block";
   }
+  
+  function initializePage(){
+	  alert("test");
+	  document.getElementById("jobAdDetails").style.display="none";
+	  //document.getElementById("jobTitle").disabled=true;
+  }
+  
 </script>
 
 
 </head>
 
 
-<body onload="document.getElementById('jobAdDetails').style.display='none'">
+<body onload="intializePage()">
 
+<br>
 AccountID:
 <input id="jobAdId" type="text"  size="20"><br>
-<button id="getProfileButton" type="button" onclick="getJobAdById()">Submit</button>
+<button id="getJobAdButton" type="button" onclick="getJobAdById()">Submit</button>
 
 
 
 <div id="jobAdDetails">
-	Title: <input id="jobTitle" type="text" name="jobTitle" size="20"><br>
+	Title: <input id="jobTitle" type="text" name="jobTitle" size="20" ><br>
+	
+	Current Status:
+	<div id=status>Unknown</div> <br>
+	
+	Approval Status:
+	<div id=isApproved>Unknown</div> <br>
 	
 	Description:  <br>
-	<textarea id="jobDescription" rows="4" cols="20">
+	<textarea id="jobDescription" type="text" rows="4" cols="20" >
 	</textarea> <br>
 	
 	Education Requirement: 
-	<select id="educationRequirement" name="educationRequirement">
-				<option value="0">None</option>
-				<option value="1">B.Sc.</option>
-				<option value="2">M.Sc.</option>
-				<option value="3">Ph.D.</option>
-			</select>
-				
+	<div id="educationReq">Unknown</div>
+	
 	<br>
 	Job Location(s) (separated by comma): <br>
-	Need to integrate with Google Map <br>
+	~Need to integrate with Google Map~ <br>
 	<!-- Need to integrate with Google Map
 	<input id="jobLocation" type="text" name="jobLocation" size="20"><br> -->
 	<br>
@@ -53,9 +64,10 @@ AccountID:
 	<br>
 	
 	Tags: <input id="tags" type="text" name="tags" size="20"><br>
+	<br>
 	
-	
-	Starting Date:  
+	Starting Date:  <br>
+	~TODO: finish this~<!-- 
 		<form action="" name="formStartingDate">
 		<select id="startingDay">
 		</select> 
@@ -71,8 +83,10 @@ AccountID:
 			};
 		</script> 
 		<br>
-	
-	Expire In... : 
+	 -->
+	 
+	Expire In... :  <br>
+	~TODO: finish this~ <!-- 
 		<form action="" name="formExpiryDate">
 		<select id="expiryDay">
 		</select> 
@@ -86,10 +100,26 @@ AccountID:
 			populatedropdown("expiryDay", "expiryMonth", "expiryYear");
 		</script>
 		<br>
+	 -->
+	 	
+	Created On:<br>
+	~TODO: complete this~<br>
+	<br>
+	Number of Views:<br>
+	<div id=numViews>Unknown</div>
+		
+		
 </div>
 
-
+<br>
+<button id="editJobAdButton" type="button" onclick="editJobAd()">Submit</button>
+<div id="feedback"><h3>Feedback Area</h3></div>
 
 </body>
 
 </html>
+
+
+
+
+

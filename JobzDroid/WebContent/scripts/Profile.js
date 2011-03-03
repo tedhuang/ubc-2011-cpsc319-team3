@@ -21,17 +21,14 @@ function createProfile(){
 	document.getElementById("submitProfile").disabled=true;
 	
 	
-	var strSearcherName =  document.getElementById("searcherName").value;
-	var strSearcherSecEmail = document.getElementById("searcherSecEmail").value;
-	var strSearcherContactInfo = document.getElementById("searcherContactInfo").value;
+	var strSearcherPhone = document.getElementById("searcherPhone").value;
 	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
 	var strEmpPref = document.getElementById("empPref").value;
 	var intEducationLevel = document.getElementById("educationLevel").value;
 	
 	
 	var strPosterName = document.getElementById("posterName").value;
-	var strPosterSecEmail = document.getElementById("posterSecEmail").value;
-	var strPosterContactInfo = document.getElementById("posterContactInfo").value;
+	var strPosterPhone = document.getElementById("posterPhone").value;
 	var strPosterDescripton = document.getElementById("posterDescripton").value;
 	//var strAffiliation = document.getElementById("affiliation").value;
 	
@@ -78,8 +75,7 @@ function createProfile(){
 	if(intAccountType == "2" ){
 		alert("account type = searcher");
 		request.addParam("searcherName",strSearcherName);
-		request.addParam("searcherSecEmail",strSearcherSecEmail);
-		request.addParam("searcherContactInfo",strSearcherContactInfo);
+		request.addParam("searcherPhone",strSearcherPhone);
 		request.addParam("searcherDescripton",strSearcherDescripton);
 		request.addParam("empPref",strEmpPref);
 		request.addParam("educationLevel",intEducationLevel);
@@ -87,8 +83,7 @@ function createProfile(){
 	}else if(intAccountType == "1" ){
 		alert("account type = poster");
 		request.addParam("posterName",strPosterName);
-		request.addParam("posterSecEmail",strPosterSecEmail);
-		request.addParam("posterContactInfo",strPosterContactInfo);
+		request.addParam("posterPhone",strPosterPhone);
 		request.addParam("posterDescription",strPosterDescripton);
 		//request.addParam("affiliation",strAffiliation);
 	}
@@ -119,8 +114,7 @@ function editProfile(){
 	
 	
 	var strSearcherName =  document.getElementById("searcherName").value;
-	var strSearcherSecEmail = document.getElementById("searcherSecEmail").value;
-	var strSearcherContactInfo = document.getElementById("searcherContactInfo").value;
+	var strSearcherPhone = document.getElementById("searcherPhone").value;
 	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
 	var strEmpPref = document.getElementById("empPref").value;
 	var strPreferredStartDate = document.getElementById("startDate");
@@ -128,8 +122,7 @@ function editProfile(){
 	
 	
 	var strPosterName = document.getElementById("posterName").value;
-	var strPosterSecEmail = document.getElementById("posterSecEmail").value;
-	var strPosterContactInfo = document.getElementById("posterContactInfo").value;
+	var strPosterPhone = document.getElementById("posterPhone").value;
 	var strPosterDescripton = document.getElementById("posterDescripton").value;
 	
 	//Poster = 1, Searcher = 2
@@ -175,8 +168,7 @@ function editProfile(){
 	if(intAccountType == "2" ){
 		alert("account type = searcher");
 		request.addParam("searcherName",strSearcherName);
-		request.addParam("searcherSecEmail",strSearcherSecEmail);
-		request.addParam("searcherContactInfo",strSearcherContactInfo);
+		request.addParam("searcherPhone",strSearcherPhone);
 		request.addParam("searcherDescripton",strSearcherDescripton);
 		request.addParam("empPref",strEmpPref);
 		request.addParam("educationLevel",intEducationLevel);
@@ -184,8 +176,7 @@ function editProfile(){
 	}else if(intAccountType == "1" ){
 		alert("account type = poster");
 		request.addParam("posterName",strPosterName);
-		request.addParam("posterSecEmail",strPosterSecEmail);
-		request.addParam("posterContactInfo",strPosterContactInfo);
+		request.addParam("posterPhone",strPosterPhone);
 		request.addParam("posterDescription",strPosterDescripton);
 	}
 	else{

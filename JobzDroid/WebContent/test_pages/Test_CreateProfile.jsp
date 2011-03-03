@@ -11,6 +11,20 @@
 
 <script language="JavaScript">
 
+
+/***********************************************
+* Drop Down Date select script- by JavaScriptKit.com
+* This notice MUST stay intact for use
+* Visit JavaScript Kit at http://www.javascriptkit.com/ for this script and more
+***********************************************/
+
+  //window.onload=initializePage();
+  function initializePage(){
+	  //alert(  document.getElementById("formPoster"));	
+	  document.getElementById("formPoster").style.display="none"; 
+	  document.getElementById("formSearcher").style.display="none";
+  }
+
   function showPosterForm(){
      document.getElementById("formPoster").style.display = "block";
      document.getElementById("formSearcher").style.display= "none";
@@ -19,6 +33,13 @@
   function showSearcherform(){
       document.getElementById("formSearcher").style.display = "block";
       document.getElementById("formPoster").style.display = "none";
+	  populatedropdown("startingDay", "startingMonth", "startingYear");
+	
+	  populatedropdown( document.getElementById("searcherStartDay"),
+			 		    document.getElementById("startingMonth"),
+			  		    document.getElementById("startingYear")
+						);
+
   }
   
 </script>
@@ -28,8 +49,7 @@
 </head>
 
 
-
-<body onload="document.getElementById('formPoster').style.display='none'; document.getElementById('formSearcher').style.display='none'">
+<body onload="initializePage()">
 
 <h3>Select Account Type:</h3>
 <form>
@@ -45,17 +65,14 @@ AccountID: (need to make this be handled in the back)
 	Name: 
 	<input id="searcherName" type="text" size="20"><br>
 	
-	Secondary E-mail:
-	<input id="searcherSecEmail" type="text" size="20"><br>
-	
-	Contact Info:
-	<input id="searcherContactInfo" type="text"  size="20"><br>
+	Phone Number:
+	<input id="searcherPhone" type="text"  size="20"><br>
 	
 	Self Description:<br>
 	<textarea id="searcherDescripton" rows="4" cols="20"></textarea> 
 	<br>
 	
-	Location: <br>
+	Address: <br>
 	~To be integrated with Google Map~
 	
 	Level of Education:<br>
@@ -90,9 +107,6 @@ AccountID: (need to make this be handled in the back)
 	</form>
 	<script type="text/javascript">
 		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-		window.onload=function(){
-		populatedropdown("startingDay", "startingMonth", "startingYear");
-		};
 	</script> 
 	<br>
 			
@@ -104,17 +118,14 @@ AccountID: (need to make this be handled in the back)
 	Name: 
 	<input id="posterName" type="text" size="20"><br>
 	
-	Secondary E-mail:
-	<input id="posterSecEmail" type="text" size="20"><br>
-	
-	Contact Info:
-	<input id="posterContactInfo" type="text"  size="20"><br>
+	Phone Number:
+	<input id="posterPhone" type="text"  size="20"><br>
 	
 	Self Description:<br>
 	<textarea id="posterDescripton" rows="4" cols="20"></textarea> 
 	<br>
 	
-	Location: <br>
+	Address: <br>
 	~To be integrated with Google Map~
 </div>
 

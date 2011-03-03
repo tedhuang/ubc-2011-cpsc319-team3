@@ -7,9 +7,9 @@ public class ProfileSearcher {
 	public String name;
 	public String email;
 	public String secondaryEmail;
-	public String contactInfo;
+	public String phone;
 	public String selfDescription;
-	public String location;
+	public String address;
 	public String docLink;
 	public String employmentPreference;
 	public long preferredStartDate;
@@ -25,8 +25,7 @@ public class ProfileSearcher {
 							String accType,
 							String searcherName,
 							String searcherEmail,
-							String secEmail,
-							String cInfo,
+							String phoneNum,
 							String sDescription,
 							String documentLink,
 							String empPref,
@@ -38,12 +37,11 @@ public class ProfileSearcher {
 		accountType = accType;
 		name = searcherName;
 		email = searcherEmail;
-		secondaryEmail = secEmail;
-		contactInfo = cInfo;
+		phone = phoneNum;
 		selfDescription =sDescription;
 		docLink = documentLink;
 		employmentPreference = empPref;
-		location = loc;
+		address = loc;
 		preferredStartDate = prefStartDate;
 		educationLevel = eduLvl;
 		
@@ -51,17 +49,16 @@ public class ProfileSearcher {
 	
 	public String toXMLContent(){
 		
-		return "\t\t<auction" +
+		return "\t\t<profileSearcher" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
 		" email=\"" + email + "\"" +
-		" secondaryEmail=\"" + secondaryEmail + "\"" +
-		" contactInfo=\"" + contactInfo + "\"" +
+		" phone=\"" + phone + "\"" +
 		" selfDescription=\"" + selfDescription + "\"" +
 		" docLink=\"" + docLink + "\"" +
 		" employmentPreference=\"" + employmentPreference + "\"" +
-		" location=\"" + location + "\"" +
+		" address=\"" + address + "\"" +
 		" preferredStartDate=\"" + preferredStartDate + "\"" +
 		" educationLevel=\"" + educationLevel + "\"" +
 		"/>\n";

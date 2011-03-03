@@ -7,9 +7,9 @@ public class ProfilePoster {
 	public String name;
 	public String email;
 	public String secondaryEmail;
-	public String contactInfo;
+	public String phone;
 	public String selfDescription;
-	public String location;
+	public String address;
 
 	public ProfilePoster(){
 		
@@ -19,8 +19,7 @@ public class ProfilePoster {
 							String accType,
 							String searcherName,
 							String searcherEmail,
-							String secEmail,
-							String cInfo,
+							String phoneNum,
 							String sDescription,
 							String loc
 							){
@@ -29,24 +28,23 @@ public class ProfilePoster {
 		accountType = accType;
 		name = searcherName;
 		email = searcherEmail;
-		secondaryEmail = secEmail;
-		contactInfo = cInfo;
+		phone = phoneNum;
 		selfDescription =sDescription;
-		location = loc;
+		address = loc;
 
 		
 	}
 	
 	public String toXMLContent(){
 		
-		return "\t\t<auction" +
+		return "\t\t<profilePoster" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
 		" email=\"" + email + "\"" +
-		" secondaryEmail=\"" + secondaryEmail + "\"" +
-		" contactInfo=\"" + contactInfo + "\"" +
+		" phone=\"" + phone + "\"" +
 		" selfDescription=\"" + selfDescription + "\"" +
+		" address=\"" + address + "\"" +
 		"/>\n";
 		
 	}

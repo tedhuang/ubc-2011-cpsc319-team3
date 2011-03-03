@@ -11,7 +11,67 @@ function ParseXMLResponse(responseXML)
 
 function loadJobAdDetails( responseXML ){
 	
+	var jobAd = responseXML.getElementsByTagName("jobAd").item(0);
 	
+        var jobAdId			=	jobAd.getAttribute("jobAdId");
+        var jobAdTitle		=	jobAd.getAttribute("jobAdTitle");
+        var location		=	jobAd.getAttribute("location");
+        var tags			=	jobAd.getAttribute("tags");
+        var contactInfo		=	jobAd.getAttribute("contactInfo");
+        var expiryDate		=	jobAd.getAttribute("expiryDate");
+        var startingDate	=	jobAd.getAttribute("startingDate");
+        var creationDate	=	jobAd.getAttribute("creationDate");
+        var status			=	jobAd.getAttribute("status");
+        var numberOfViews	=	jobAd.getAttribute("numberOfViews");
+        var educationReq	=	jobAd.getAttribute("educationReq");
+        var jobAdDescription=	jobAd.getAttribute("jobAdDescription");
+        var isApproved		=	jobAd.getAttribute("isApproved");
+        
+        
+        if(educationReq == 3){
+        	educationReq = "Ph.D.";
+        } 
+        else if(educationReq = 2){
+        	educationReq = "M.Sc.";
+        } 
+        else if(educationReq = 1){
+        	educationReq = "B.Sc.";
+        } else{
+        	educationReq = "Not Specified";
+        }
+
+//        var colParams = new Array();
+//        colParams[0] = jobAdId;
+//        colParams[1] = jobAdTitle;
+//        colParams[2] = location;
+//        colParams[3] = tags;
+//        colParams[4] = contactInfo;
+//        colParams[5] = expiryDate;
+//        colParams[6] = startingDate;
+//        colParams[7] = creationDate;
+//		colParams[8] = status;
+//		colParams[9] = numberOfViews;
+//		colParams[10] = educationReq;
+//		colParams[11] = jobAdDescription;
+//		colParams[12] = isApproved;
+
+		
+		document.getElementById("jobTitle").innerHTML=jobAdId;
+		document.getElementById("jobAdTitle").innerHTML = jobAdTitle;
+		document.getElementById("location").innerHTML =location;
+		document.getElementById("tags").innerHTML = tags;
+		document.getElementById("contactInfo").innerHTML = contactInfo;
+		document.getElementById("status").innerHTML = status;
+		document.getElementById("numViews").innerHTML = numberOfViews;
+		document.getElementById("educationReq").innerHTML = educationReq;
+		document.getElementById("category").innerHTML = category;
+		document.getElementById("jobAdDescription").innerHTML = jobAdDescription;
+		document.getElementById("isApproved").innerHTML = isApproved;
+		
+		//document.getElementById("expiryDate").innerHTML =  
+		//document.getElementById("startingDate").innerHTML = 
+		//document.getElementById("creationDate").innerHTML = 
+		
 }
 
 
@@ -33,9 +93,7 @@ function getJobAdById()
 	xmlhttp.send(request.toString());
 
 	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
-	
+	document.getElementById("feedback").innerHTML="<h2>Sending getJobAdById Request</h2>";
 	
 	
 	var xmlHttpReq;
@@ -61,6 +119,35 @@ function getJobAdById()
 	  };
 	
 	
+}
+
+
+function editJobAd(){
+	document.getElementById("editJobAdButton").disabled=true;
+	
+	document.getElementById("feedback").innerHTML="<h2>Sending Edit Request</h2>";
+
+	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		    //parse XML response from server
+		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
+	    	document.getElementById("feedback").innerHTML=responseText;
+
+	    }
+	  };
+
 }
 
 
