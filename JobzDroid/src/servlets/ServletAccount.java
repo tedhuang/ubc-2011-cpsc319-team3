@@ -129,19 +129,41 @@ public class ServletAccount extends HttpServlet {
 		String message = "";
 		boolean allGood = true;
 		boolean accountCreated = false;
-		System.out.println("in reg servlet");
 		UUID uuid = UUID.randomUUID();; // verification number
 		// get request parameters
 		String email = request.getParameter("email");
+		String secondaryEmail = request.getParameter("secondaryEmail");
 		String password = request.getParameter("password");
 		String passwordRepeat = request.getParameter("passwordRepeat");
 		String accountType = request.getParameter("accountType");
 		String name = request.getParameter("name");
-				
+		String address = request.getParameter("address");
+		String description = request.getParameter("description");
+		int eduLevel = -1;
+		if( accountType.equals("searcher") ){
+			try{
+				eduLevel = Integer.parseInt(request.getParameter("eduLevel"));
+			}
+			catch(NumberFormatException e){
+				message = "Bad education level input.";
+				allGood = false;
+			}
+			String startingDate = request.getParameter("startingDate");
+			String empPref = request.getParameter("empPref");
+		}
+		else{
+			// no poster specific fields currently
+		}
 		// validate data
 		if( !Utility.validate(email, SystemManager.emailPattern) ){
 			message = "Invalid email address format.";
 			allGood = false;
+		}
+		else if( secondaryEmail != null ){
+			if( !Utility.validate(secondaryEmail, SystemManager.emailPattern) ){
+				message = "Invalid secondary email address format.";
+				allGood = false;
+			}
 		}
 		else if( !Utility.validate(password, SystemManager.pwPattern) ){
 			message = "Invalid password format.";
@@ -164,10 +186,13 @@ public class ServletAccount extends HttpServlet {
 		}
 		else if( !Utility.validate(name, SystemManager.namePattern) ){
 			allGood = false;
-			if(accountType.equals("searcher"))
-				message = "Name cannot contain special characters.";
-			else if(accountType.equals("poster"))
-				message = "Company/organization name cannot contain special characters.";
+			message = "Name cannot contain special characters.";
+		}
+		else if( accountType.equals("searcher")){
+			if( eduLevel < 0 || eduLevel > 3 ){
+				allGood = false;
+				message = "Invalid education level.";
+			}
 		}
 		
 		// if info are all valid, then proceed to do DB updates
