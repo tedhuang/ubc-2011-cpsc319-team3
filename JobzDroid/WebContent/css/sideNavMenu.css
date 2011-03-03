@@ -1,0 +1,143 @@
+/*   
+*/
+
+/*
+div.sideNavMenu #verticalTabFrame{
+   /* -webkit-border-radius: 5px; 
+    -webkit-border-top-left-radius
+    -webkit-border-top-right-radius 
+    -webkit-border-top-right-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-topright   : 8px;
+    -moz-border-radius-bottomright  : 8px; 
+    position: relative;    
+    margin:             0;   
+    border:             0;
+    padding:            10px;   
+    border-left-width: 0 !important;
+	
+    font: normal 12px Verdana, Arial, Helvetica, sans-serif; 
+    color:              #5A5655;   
+    background-color:   #F8F8F8;
+    text-align:left;
+    overflow:auto;   
+  
+float: right;
+    
+}
+*/
+.sideNavMenu{
+	position: fixed;    
+    padding: 0px ;
+    padding-top: 5px;   
+    padding-right: 0px; 
+    padding-left: 0;     
+    top: 120px;
+	left: 0; !important
+	
+/*****The non-fixed style
+	position: relative;    
+    padding: 0px ;
+    padding-top: 5px;   
+    padding-right: 0px; 
+    padding-left: 0;     
+    margin: 0;     
+*******/   
+    display:block;
+    list-style: none;    
+    float: left;
+    width:205px;
+    /*
+height:400px;
+*/ 
+    clear: both;
+    border: 1px solid #CCCCCC;    
+    background: #EEEEEE;
+    -moz-border-radius-topleft      : 8px;
+    -moz-border-radius-bottomleft   : 8px;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;  
+}
+.sideNavMenu li{ 
+	/*
+list-style: none;
+	padding-bottom: 10px;
+	text-align: right;
+*/
+    position: relative; 
+    margin: 0;
+    padding: 0;    
+   /* border-bottom: 0px solid #E0E0E0 !important;*/  
+    border-top: 0px solid #E0E0E0;  
+    border-bottom: 1px solid #E0E0E0;      
+    /*
+float: left;
+*/
+}
+.sideNavMenu li a.topMenu { 
+  display:block;
+  margin:0;
+  padding:3px;
+  text-decoration: none;
+  height:64px;
+  width:200px;
+  color:#0464BB;
+  outline-style:none;
+}
+.sideNavMenu li a.topMenu img { 
+  display:block;
+  margin:0;
+  padding:3px;
+  height:50px;
+  width:50px;
+  float:right;
+}
+.sideNavMenu li a.topMenu h2 { 
+  display:block;
+  font: bold 15px Verdana, Arial, Helvetica, sans-serif;
+  float:left;
+}
+.sideNavMenu  li a.topMenu small { 
+  font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+  float:left;
+}
+.sideNavMenu li a:hover {   
+  color:#FFF; 
+  background: #EA8511; 
+}
+.sideNavMenu li a.topMenu .curTab { 
+  height:65px;
+  color:#EA8511;  
+  background: #F8F8F8;  
+  cursor:text;   
+}
+.sideNavMenu li a.topMenu .dis {
+  color:#CCCCCC;  
+  background: #F8F8F8;  
+  cursor:text;   
+}
+
+/********************SubMenus***********************/
+.sideNavMenu ul {
+	padding: 0;
+	font-size: 12px;
+	margin: 0;
+	
+}
+
+.sideNavMenu ul li {
+	list-style: none;
+	margin: 0;
+	text-align: right;
+	padding: 0;
+	
+}
+
+.sideNavMenu ul li a {
+	padding: 8px 15px;
+	display: block;
+	color: #119f14;
+	font-size: 13px;
+	line-height: 1.2em;
+}
+/**/

@@ -1,4 +1,9 @@
+/*
+	main Style CSS (c) JobzDroid
+	
+*/
 
+/*********************************Basic*********************************************************/
 html, body, div, span,
 h1, h2, h3, h4, h5, h6, 
 p, a, img, strong, ul, li,
@@ -42,13 +47,13 @@ td, th {
 	vertical-align: inherit;
 }
 
-
+/************************ELEMENTS STYLE*********************************************************/
 .main{
 	width: 971px;
     margin: 0 auto;
     overflow: hidden;
 }
-/***********header bar******************************/
+/**********************header bar************************************************************/
 div.header{
 	height: 60px;
 	background: url("../images/header-bg.jpg") repeat-x 0 -12px;
@@ -91,9 +96,9 @@ div.header{
       border          : 1px solid #EA8511; 
       text-decoration : none; 
 }
- /**********ENDOF header Bar*************************/
+/**********ENDOF header Bar**********************************************/
  
-/***********Center Box******************************/
+/*****************Center Box*********************************************/
 .centerbox {
 	
 	margin: 0 auto;
@@ -132,7 +137,7 @@ div.header{
 	margin: 20px 0 0 144px;
 	size: 30;
 }
-/***************FOOTER********************/
+/**************************FOOTER***********************************************************/
 .footer_wrapper {
 	margin: auto;
 	width: 960px;
@@ -143,7 +148,9 @@ div.header{
 	font-size: 11px;
 	margin-left: 15px !important
 }
-/***********Register Page*****************************/
+
+
+/*****************************Register Page***********************************************/
 #regpage{
 	margin: 50px auto;
 	height: inherit;
@@ -182,7 +189,7 @@ div.header{
 }
 
 
-/***********Normal Page**************************/
+/**********************Normal Page************************************************/
 .infoHeader {   
     margin-bottom:             20px;   
     border: 0;
