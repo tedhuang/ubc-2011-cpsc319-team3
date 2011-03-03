@@ -39,17 +39,14 @@ AccountID:
 	Name: 
 	<input id="searcherName" type="text" size="20"><br>
 	
-	Secondary E-mail:
-	<input id="searcherSecEmail" type="text" size="20"><br>
-	
-	Contact Info:
-	<input id="searcherContactInfo" type="text"  size="20"><br>
+	Phone Number:
+	<input id="searcherPhone" type="text"  size="20"><br>
 	
 	Self Description:<br>
 	<textarea id="searcherDescripton" rows="4" cols="20"></textarea> 
 	<br>
 	
-	Location: <br>
+	Address: <br>
 	~To be integrated with Google Map~
 	
 	Level of Education:<br>
@@ -82,18 +79,16 @@ AccountID:
 	Name: 
 	<input id="posterName" type="text" size="20"><br>
 	
-	Secondary E-mail:
-	<input id="posterSecEmail" type="text" size="20"><br>
-	
-	Contact Info:
-	<input id="posterContactInfo" type="text"  size="20"><br>
+	Phone Number:
+	<input id="posterPhone" type="text"  size="20"><br>
 	
 	Self Description:<br>
 	<textarea id="posterDescripton" rows="4" cols="20"></textarea> 
 	<br>
 	
-	Affliation
-	<input id="affiliation" type="text"  size="20"><br>
+	Address:<br>
+	~To Be integrated with Google Map~
+	
 </div>
 
 <br>

@@ -87,9 +87,8 @@ public class ServletProfile extends HttpServlet{
 		int accountType;
 		String name;
 		String secEmail;
-		String contactInfo;
+		String phone;
 		String selfDescription;
-		String affiliation;
 		String empPref;
 		int educationLevel;
 		
@@ -106,9 +105,8 @@ public class ServletProfile extends HttpServlet{
 		
 		String name;
 		String secEmail;
-		String contactInfo;
+		String phone;
 		String selfDescription;
-		String affiliation;
 		String empPref;
 		int educationLevel;
 		
@@ -127,25 +125,22 @@ public class ServletProfile extends HttpServlet{
 				
 				name = request.getParameter("posterName");
 				secEmail = request.getParameter("posterSecEmail");
-				contactInfo = request.getParameter("posterContactInfo");
+				phone = request.getParameter("posterPhone");
 				selfDescription = request.getParameter("posterDescription");
-				affiliation = request.getParameter("affiliation");
 
 				//Check format
 				name = Utility.checkInputFormat( name );
 				secEmail = Utility.checkInputFormat( secEmail );
-				contactInfo = Utility.checkInputFormat( contactInfo );
+				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
-				affiliation = Utility.checkInputFormat( affiliation );
 				
 				String query = 
-					"INSERT INTO tableProfilePoster(name, secondaryEmail, contactInfo, selfDescription, affiliation ) " +
+					"INSERT INTO tableProfilePoster(name, secondaryEmail, phone, selfDescription ) " +
 					"VALUES " + "('" 
 						+ name + "','" 
 						+ secEmail + "','" 
-						+ contactInfo + "','" 
-						+ selfDescription + "','"
-						+ affiliation + 
+						+ phone + "','" 
+						+ selfDescription + 
 					"')";
 				
 				System.out.println("New PosterProfile Query:" + query);
@@ -181,7 +176,7 @@ public class ServletProfile extends HttpServlet{
 				
 				name = request.getParameter("searcherName");
 				secEmail = request.getParameter("searcherSecEmail");
-				contactInfo = request.getParameter("searcherContactInfo");
+				phone = request.getParameter("searcherPhone");
 				selfDescription = request.getParameter("searcherDescripton");
 				empPref = request.getParameter("empPref");
 				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
@@ -191,16 +186,16 @@ public class ServletProfile extends HttpServlet{
 				//Check format
 				name = Utility.checkInputFormat( name );
 				secEmail = Utility.checkInputFormat( secEmail );
-				contactInfo = Utility.checkInputFormat( contactInfo );
+				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
 
-				//TODO: include location
+				//TODO: include address
 				String query = 
-					"INSERT INTO tableProfileSearcher(name, secondaryEmail, contactInfo, selfDescription, empPref, educationLevel) " +
+					"INSERT INTO tableProfileSearcher(name, secondaryEmail, phone, selfDescription, empPref, educationLevel) " +
 					"VALUES " + "('" 
 						+ name + "','" 
 						+ secEmail + "','" 
-						+ contactInfo + "','" 
+						+ phone + "','" 
 						+ selfDescription + "','"
 						+ empPref + "','"
 						+ educationLevel +
@@ -285,9 +280,8 @@ public class ServletProfile extends HttpServlet{
 		
 		String name;
 		String secEmail;
-		String contactInfo;
+		String phone;
 		String selfDescription;
-		String affiliation;
 		String empPref;
 		int educationLevel;
 		
@@ -307,23 +301,20 @@ public class ServletProfile extends HttpServlet{
 				
 				name = request.getParameter("posterName");
 				secEmail = request.getParameter("posterSecEmail");
-				contactInfo = request.getParameter("posterContactInfo");
+				phone = request.getParameter("posterPhone");
 				selfDescription = request.getParameter("posterDescription");
-				affiliation = request.getParameter("affiliation");
 				
 				name = Utility.checkInputFormat( name );
 				secEmail = Utility.checkInputFormat( secEmail );
-				contactInfo = Utility.checkInputFormat( contactInfo );
+				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
-				affiliation = Utility.checkInputFormat( affiliation );
 				
 				String query = 
 					"UPDATE tableProfilePoster SET " 
 					+ "name='" 				+ name + "','" 
 					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "contactInfo='" 		+ contactInfo + "','" 
-					+ "selfDescription='" 	+ selfDescription + "','"
-					+ "affiliation='" 		+ affiliation + "' " +
+					+ "phone='" 		+ phone + "','" 
+					+ "selfDescription='" 	+ selfDescription + 
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
 				
@@ -359,7 +350,7 @@ public class ServletProfile extends HttpServlet{
 			else{
 				name = request.getParameter("searcherName");
 				secEmail = request.getParameter("searcherSecEmail");
-				contactInfo = request.getParameter("searcherContactInfo");
+				phone = request.getParameter("searcherPhone");
 				selfDescription = request.getParameter("searcherDescripton");
 				empPref = request.getParameter("empPref");
 				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
@@ -368,15 +359,15 @@ public class ServletProfile extends HttpServlet{
 				
 				name = Utility.checkInputFormat( name );
 				secEmail = Utility.checkInputFormat( secEmail );
-				contactInfo = Utility.checkInputFormat( contactInfo );
+				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
 
-				//TODO: include location
+				//TODO: include address
 				String query = 
 					"UPDATE tableProfileSearcher SET " 
 					+ "name= '" 			+ name + "','" 
 					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "contactInfo='" 		+ contactInfo + "','" 
+					+ "phone='" 		+ phone + "','" 
 					+ "selfDescription='" 	+ selfDescription + "','"
 					+ "empPref='" 			+ empPref + "','"
 					+ "educationLevel='" 	+ educationLevel + "' " +

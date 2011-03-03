@@ -69,7 +69,7 @@ public class JobAdvertisement {
 	
 	public String toXMLContent(){
 		
-		return "\t\t<auction" +
+		return "\t\t<jobAd" +
 		" jobAdId=\"" + jobAdId + "\"" +
 		" jobAdTitle=\"" + jobAdTitle + "\"" +
 		" location=\"" + location  + "\"" +
