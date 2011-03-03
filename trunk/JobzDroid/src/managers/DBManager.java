@@ -230,6 +230,7 @@ public class DBManager {
 			
 			stmt = conn.createStatement();
 			
+			//Add individual queries onto total query
 			if(keywords == "")
 				keywordQuery = "";
 			else
@@ -260,10 +261,10 @@ public class DBManager {
 			
 			ResultSet result = stmt.getResultSet();
 			
+			//Compile the result into the arraylist
 			while( result.next() ) {
 				JobAdvertisement temp = new JobAdvertisement();
 				
-
 				temp.jobAdId = result.getInt("idJobAd");
 				temp.ownerID = result.getInt("OwnerID");
 				temp.numberOfViews = result.getInt("numberOfViews");
@@ -278,10 +279,8 @@ public class DBManager {
 				temp.jobAdDescription = result.getString("description");				
 				
 				jobAdList.add( temp ); //add to the temporary list
-				
 			}
 			
-
 			stmt.close();
 			
 			System.out.println("Searched Auctions");
@@ -711,5 +710,344 @@ public class DBManager {
 		}
 		return false;
 	}
+
+	
+	
+/*****MOVED TO SERVLET PROFILE - PROFILE FUNCTIONS **************************************/
+	/* MOVED INTO SERVLETPROFILE
+	 * Creates a profile for job poster
+	 */
+//	public boolean createProfilePoster(int accountID, String name, String secEmail,
+//			String contactInfo, String selfDescription, String affiliation) {
+//
+//		Connection conn = getConnection();	
+//		Statement stmt = null;
+//		int idCheck = -1;
+//		
+//		
+//		try {
+//			stmt = conn.createStatement();
+//			
+//			
+//			name = Utility.checkInputFormat( name );
+//			secEmail = Utility.checkInputFormat( secEmail );
+//			contactInfo = Utility.checkInputFormat( contactInfo );
+//			selfDescription = Utility.checkInputFormat( selfDescription );
+//			affiliation = Utility.checkInputFormat( affiliation );
+//			
+//			String query = 
+//				"INSERT INTO tableProfilePoster(idAccount, name, secondaryEmail, contactInfo, selfDescription, affiliation ) " +
+//				"VALUES " + "('" 
+//					+ accountID + "','" 
+//					+ name + "','" 
+//					+ secEmail + "','" 
+//					+ contactInfo + "','" 
+//					+ selfDescription + "','"
+//					+ affiliation + 
+//				"')";
+//			
+//			// if successful, 1 row should be inserted
+//			System.out.println("New PosterProfile Query:" + query);
+//			int rowsInserted = stmt.executeUpdate(query);
+//			
+//			if (rowsInserted == 1){
+//				System.out.println("New Profile Creation success (DB)");
+//			}
+//			else{
+//				stmt.close();
+//				return false;
+//			}
+//			
+//			//Check if profile is created successfully
+//			query = "SELECT accountID FROM tableProfilePoster WHERE " + " accountID='" + accountID + "'"; 
+//			ResultSet result = stmt.executeQuery(query);
+//			if( result.first() )
+//			{
+//				idCheck = result.getInt("accountID");
+//				System.out.println("Profile Created in DB with accountID: " + idCheck);
+//				return true;
+//			}
+//			else
+//			{
+//				System.out.println("Error: result.first() is false ");
+//				return false;
+//			}
+//			
+//		}
+//		catch (SQLException e) {
+//			//TODO log SQL exception
+//			System.out.println("SQL exception : " + e.getMessage());
+//
+//		}
+//		
+//		// close DB objects
+//	    finally {
+//	        try{
+//	            if (stmt != null)
+//	                stmt.close();
+//	        }
+//	        catch (Exception e) {
+//	        	//TODO log "Cannot close Statement"
+//	        	System.out.println("Cannot close Statement : " + e.getMessage());
+//	        }
+//	        try {
+//	            if (conn  != null)
+//	                conn.close();
+//	        }
+//	        catch (SQLException e) {
+//	        	//TODO log Cannot close Connection
+//	        	System.out.println("Cannot close Connection : " + e.getMessage());
+//	        }
+//	    }
+//	    
+//		return false;
+//	}
+//	
+//	
+//	/* MOVED TO SERVLETPROFILE
+//	 * Creates a profile for job searcher
+//	 */
+//	public boolean createProfileSearcher(int accountID, String name, String secEmail,
+//			String contactInfo, String selfDescription, String empPref,
+//			int educationLevel) {
+//
+//		Connection conn = getConnection();	
+//		Statement stmt = null;
+//		int idCheck = -1;
+//		
+//		
+//		try {
+//			stmt = conn.createStatement();
+//			
+//			name = Utility.checkInputFormat( name );
+//			secEmail = Utility.checkInputFormat( secEmail );
+//			contactInfo = Utility.checkInputFormat( contactInfo );
+//			selfDescription = Utility.checkInputFormat( selfDescription );
+//
+//			//TODO: include location
+//			String query = 
+//				"INSERT INTO tableProfileSearcher(idAccount, name, secondaryEmail, contactInfo, selfDescription, empPref, educationLevel) " +
+//				"VALUES " + "('" 
+//					+ accountID + "','" 
+//					+ name + "','" 
+//					+ secEmail + "','" 
+//					+ contactInfo + "','" 
+//					+ selfDescription + "','"
+//					+ empPref + "','"
+//					+ 
+//				"')";
+//			
+//			// if successful, 1 row should be inserted
+//			System.out.println("New SearcherProfile Query:" + query);
+//			int rowsInserted = stmt.executeUpdate(query);
+//			
+//			if (rowsInserted == 1){
+//				System.out.println("New Profile Creation success (DB)");
+//			}
+//			else{
+//				stmt.close();
+//				return false;
+//			}
+//			
+//			//Check if profile is created successfully
+//			query = "SELECT accountID FROM tableProfileSearcher WHERE " + " accountID='" + accountID + "'"; 
+//			ResultSet result = stmt.executeQuery(query);
+//			if( result.first() )
+//			{
+//				idCheck = result.getInt("accountID");
+//				System.out.println("Profile Created in DB with accountID: " + idCheck);
+//				return true;
+//			}
+//			else
+//			{
+//				System.out.println("Error: result.first() is false ");
+//				return false;
+//			}
+//			
+//		}
+//		catch (SQLException e) {
+//			//TODO log SQL exception
+//			System.out.println("SQL exception : " + e.getMessage());
+//
+//		}
+//		
+//		// close DB objects
+//	    finally {
+//	        try{
+//	            if (stmt != null)
+//	                stmt.close();
+//	        }
+//	        catch (Exception e) {
+//	        	//TODO log "Cannot close Statement"
+//	        	System.out.println("Cannot close Statement : " + e.getMessage());
+//	        }
+//	        try {
+//	            if (conn  != null)
+//	                conn.close();
+//	        }
+//	        catch (SQLException e) {
+//	        	//TODO log Cannot close Connection
+//	        	System.out.println("Cannot close Connection : " + e.getMessage());
+//	        }
+//	    }
+//	    
+//		return false;
+//		
+//	}
+//
+//	
+//	/*
+//	 * TODO: FINISH THIS
+//	 * 
+//	 */
+//	public boolean editProfilePoster(int accountID, String name, String secEmail,
+//			String contactInfo, String selfDescription, String affiliation){
+//		
+//		Connection conn = getConnection();	
+//		Statement stmt = null;
+//		
+//		try {
+//			stmt = conn.createStatement();
+//			
+//			
+//			name = Utility.checkInputFormat( name );
+//			secEmail = Utility.checkInputFormat( secEmail );
+//			contactInfo = Utility.checkInputFormat( contactInfo );
+//			selfDescription = Utility.checkInputFormat( selfDescription );
+//			affiliation = Utility.checkInputFormat( affiliation );
+//			
+//			String query = 
+//				"UPDATE tableProfilePoster(idAccount, name, secondaryEmail, contactInfo, selfDescription, affiliation ) " +
+//				"VALUES " + "('" 
+//					+ accountID + "','" 
+//					+ name + "','" 
+//					+ secEmail + "','" 
+//					+ contactInfo + "','" 
+//					+ selfDescription + "','"
+//					+ affiliation + 
+//				"')";
+//			
+//			// if successful, 1 row should be inserted
+//			System.out.println("New PosterProfile Query:" + query);
+//			stmt.executeUpdate(query);
+//			//TODO: implement error check
+//			
+//		}
+//		catch (SQLException e) {
+//			//TODO log SQL exception
+//			System.out.println("SQL exception : " + e.getMessage());
+//
+//		}
+//		
+//		// close DB objects
+//	    finally {
+//	        try{
+//	            if (stmt != null)
+//	                stmt.close();
+//	        }
+//	        catch (Exception e) {
+//	        	//TODO log "Cannot close Statement"
+//	        	System.out.println("Cannot close Statement : " + e.getMessage());
+//	        }
+//	        try {
+//	            if (conn  != null)
+//	                conn.close();
+//	        }
+//	        catch (SQLException e) {
+//	        	//TODO log Cannot close Connection
+//	        	System.out.println("Cannot close Connection : " + e.getMessage());
+//	        }
+//	    }
+//	    
+//		return false;
+//		
+//	}
+//	
+//	public boolean editProfileSearcher(int accountID, String name, String secEmail,
+//			String contactInfo, String selfDescription, String empPref,
+//			int educationLevel){
+//		
+//	Connection conn = getConnection();	
+//	Statement stmt = null;
+//	
+//	
+//	try {
+//		stmt = conn.createStatement();
+//		
+//		name = Utility.checkInputFormat( name );
+//		secEmail = Utility.checkInputFormat( secEmail );
+//		contactInfo = Utility.checkInputFormat( contactInfo );
+//		selfDescription = Utility.checkInputFormat( selfDescription );
+//
+//		//TODO: include location
+//		String query = 
+//			"UPDATE tableProfileSearcher(idAccount, name, secondaryEmail, contactInfo, selfDescription, empPref, educationLevel) " +
+//			"VALUES " + "('" 
+//				+ accountID + "','" 
+//				+ name + "','" 
+//				+ secEmail + "','" 
+//				+ contactInfo + "','" 
+//				+ selfDescription + "','"
+//				+ empPref + "','"
+//				+ 
+//			"')";
+//		
+//		// if successful, 1 row should be inserted
+//		System.out.println("New SearcherProfile Query:" + query);
+//		stmt.executeUpdate(query);
+//		//TODO: implment error check
+//		
+//	}
+//	catch (SQLException e) {
+//		//TODO log SQL exception
+//		System.out.println("SQL exception : " + e.getMessage());
+//
+//	}
+//	
+//	// close DB objects
+//    finally {
+//        try{
+//            if (stmt != null)
+//                stmt.close();
+//        }
+//        catch (Exception e) {
+//        	//TODO log "Cannot close Statement"
+//        	System.out.println("Cannot close Statement : " + e.getMessage());
+//        }
+//        try {
+//            if (conn  != null)
+//                conn.close();
+//        }
+//        catch (SQLException e) {
+//        	//TODO log Cannot close Connection
+//        	System.out.println("Cannot close Connection : " + e.getMessage());
+//        }
+//    }
+//    
+//		return false;
+//	}
+//	
+//	
+//
+///************************ END OF PROFILE FUNCTIONS *********************************/
+//
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
