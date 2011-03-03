@@ -129,6 +129,7 @@ public class ServletAccount extends HttpServlet {
 		String message = "";
 		boolean allGood = true;
 		boolean accountCreated = false;
+		System.out.println("in reg servlet");
 		UUID uuid = UUID.randomUUID();; // verification number
 		// get request parameters
 		String email = request.getParameter("email");
