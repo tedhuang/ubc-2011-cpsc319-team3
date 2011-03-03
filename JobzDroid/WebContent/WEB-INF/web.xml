@@ -51,4 +51,15 @@
     <servlet-name>ServletInitializer</servlet-name>
     <url-pattern>/ServletInitializer</url-pattern>
   </servlet-mapping>
+  <servlet>
+  	<description>Handles functions for profile</description>
+  	<display-name>ServletProfile</display-name>
+  	<servlet-name>ServletProfile</servlet-name>
+  	<servlet-class>servlets.ServletProfile</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>ServletProfile</servlet-name>
+  	<url-pattern>/ServletProfile</url-pattern>
+  </servlet-mapping>
 </web-app>

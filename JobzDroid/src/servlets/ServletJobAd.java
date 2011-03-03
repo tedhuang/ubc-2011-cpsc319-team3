@@ -100,7 +100,7 @@ public class ServletJobAd extends HttpServlet {
 		requestProcess(request,response);
 	}
 
-	public void requestProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void requestProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		
 		String action = request.getParameter("action");
 		System.out.println(action);
@@ -117,13 +117,12 @@ public class ServletJobAd extends HttpServlet {
 		//Check which function the request is calling from the servlet
 		switch( EnumAction.valueOf(action) ){
 			case createJobAdvertisement:
-				if( !createJobAdvertisement(request) ){
-					//TODO: implement error handling
-					System.out.println("Error: Create Job Advertisement Failed");
-				}
-				System.out.println("New Job Advertisement Created");
-				break;
+				createJobAdvertisement(request, response);
 				
+				break;
+			case searchJobAdvertisement:
+				
+				break;
 			default:
 				System.out.println("Error: failed to process request - action not found");
 				break;
@@ -142,12 +141,17 @@ public class ServletJobAd extends HttpServlet {
 	 * @param contactInfo
 	 * @param strTags
 	 * @return idJobAd
+	 * @throws IOException 
 	 */
-	public boolean createJobAdvertisement(HttpServletRequest request){
+	private void createJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		//initialize return statements
+		String message = "Create Job Advertisement Failed";
+		boolean isSuccessful = false;
 		
 		String jobAdvertisementTitle = request.getParameter("strTitle");
 		String jobDescription = request.getParameter("strDescription");
-		String jobLocation = request.getParameter("strJobLocation");
+		//String jobLocation = request.getParameter("strJobLocation");
 		String contactInfo = request.getParameter("strContactInfo");
 		String strTags = request.getParameter("strTags");
 		
@@ -173,7 +177,7 @@ public class ServletJobAd extends HttpServlet {
 		
 		System.out.println(jobAdvertisementTitle);
 		System.out.println(jobDescription);
-		System.out.println(jobLocation);
+		//System.out.println(jobLocation);
 		System.out.println(contactInfo);
 		System.out.println(strTags);
 		System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
@@ -187,19 +191,18 @@ public class ServletJobAd extends HttpServlet {
 			
 			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
 			jobDescription = Utility.checkInputFormat( jobDescription );
-			jobLocation = Utility.checkInputFormat( jobLocation );
+			//jobLocation = Utility.checkInputFormat( jobLocation );
 			contactInfo = Utility.checkInputFormat( contactInfo );
 			strTags = Utility.checkInputFormat( strTags );
 			
 			String query = 
-				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, location, contactInfo, educationRequired, tags ) " +
+				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, tags ) " +
 				"VALUES " + "('" 
 					+ jobAdvertisementTitle + "','" 
 					+ jobDescription + "','" 
 					+ millisExpiryDate + "','" 
 					+ millisStartingDate + "','" 
 					+ millisDateCreated + "','"
-					+ jobLocation + "','" 
 					+ contactInfo + "','" 
 					+ educationRequirement + "','"
 					+ strTags + 
@@ -211,10 +214,11 @@ public class ServletJobAd extends HttpServlet {
 			
 			if (rowsInserted == 1){
 				System.out.println("New JobAd Creation success (DB)");
+				isSuccessful = true;
+				message = "Create Job Advertisement Successful";
 			}
 			else{
 				Utility.getErrorLogger().warning("New JobAd insert in DB failed");
-				return false;
 			}
 			
 			
@@ -242,13 +246,21 @@ public class ServletJobAd extends HttpServlet {
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 		
-		return true;
 	}
 	
 	
 	
-	public boolean searchJobAdvertisement(HttpServletRequest request){
+	public boolean searchJobAdvertisement(HttpServletRequest request, HttpServletResponse response){
 		
 		//String searchTitle = request.getParameter("strTitle");
 		//String strTags = request.getParameter("strTags");
@@ -259,8 +271,6 @@ public class ServletJobAd extends HttpServlet {
 		int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
 		
 		//TODO: implement parse "strSearchText" for title and keywords
-		
-		
 		
 		
 		
