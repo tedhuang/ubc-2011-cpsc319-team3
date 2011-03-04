@@ -11,8 +11,9 @@
 </head>
 <body>
 
-<div class="header">
-		<a class="logo" title="home" href="https://localhost:8080/Tryouts/319UI/home.html">
+<div class="main">
+	  <div class="header">
+		<a id="logo" title="home" href="http://localhost:8080/Tryouts/319UI/home.html">
 	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png">
 		</a>
 		<ul id="topnav" class="topnav">
@@ -20,7 +21,9 @@
 		    <li><a href="#" class="btn">RSS</a></li>
 		    <li><a href="#" class="btn">View Job Ads</a></li>
 		</ul>
-</div>
+
+	  </div>
+	  
 
 <div id="regpage">
   <div class="regbox">
@@ -135,11 +138,11 @@
 			    </td>
 			</tr>
 			<tr class="accountTypeSpecific">
-			    <td class="label force-no-break">
+			    <td class="label">
 			            Starting date (yyyy-mm-dd):
 			    </td> 
 			    <td>
-			        <input type="text" id="startingDate" class="textinput" maxlength="10" tabindex="14">
+			        <input type="text" id="startingDate" class="textinput" maxlength="50" tabindex="14">
 			        <span id="startingDateError" class="errorTag"></span>
 			    </td>
 			</tr>
@@ -160,7 +163,8 @@
 		<!--TODO STYLE THE BUTTON-->
 		<p id="statusText" align="center"></p>
         <br>
- </div>
-</div>
+	</div>
+  </div>
+</div> <!-- ENDOF MAIN-->
 </body>
 </html>
