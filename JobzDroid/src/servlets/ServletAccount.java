@@ -139,6 +139,7 @@ public class ServletAccount extends HttpServlet {
 		String accountType = request.getParameter("accountType");
 		String name = request.getParameter("name");
 		String address = request.getParameter("address");
+		String phone = request.getParameter("phone");
 		String description = request.getParameter("description");
 		String startingDate = request.getParameter("startingDate");
 		String empPref = request.getParameter("empPref");
@@ -156,8 +157,12 @@ public class ServletAccount extends HttpServlet {
 			// no poster specific fields currently
 		}
 		// validate data
-		if( !Utility.validate(email, SystemManager.emailPattern) ){
-			message = "Invalid email address format.";
+		if( email == null ){
+			message = "Email address is required.";
+			allGood = false;
+		}
+		else if( !Utility.validate(email, SystemManager.emailPattern) ){
+			message = "Invalid email address.";
 			allGood = false;
 		}
 		else if( secondaryEmail != null ){
@@ -166,28 +171,39 @@ public class ServletAccount extends HttpServlet {
 				allGood = false;
 			}
 		}
+		else if( password == null ){
+			message = "Password is required.";
+			allGood = false;
+		}	
 		else if( !Utility.validate(password, SystemManager.pwPattern) ){
 			message = "Invalid password format.";
 			allGood = false;
-		}		
-		else if( !accountType.equals("searcher") && !accountType.equals("poster") ){
-			message = "Invalid account type.";
+		}	
+		else if( passwordRepeat == null ){
+			message = "Please repeat your password.";
 			allGood = false;
-		}
+		}	
 		else if( !password.equals(passwordRepeat) ){
 			message = "Passwords do not match.";
 			allGood = false;
 		}
-		else if( name.length() < 1 ){
+		else if( !accountType.equals("searcher") && !accountType.equals("poster") ){
+			message = "Invalid account type.";
 			allGood = false;
-			if(accountType.equals("searcher"))
-				message = "Name must not be empty.";
-			else if(accountType.equals("poster"))
-				message = "Company/organization name must not be empty.";
+		}
+		else if( name == null ){
+			allGood = false;
+			message = "Name is required.";
 		}
 		else if( !Utility.validate(name, SystemManager.namePattern) ){
 			allGood = false;
-			message = "Name cannot contain special characters.";
+			message = "Invalid name.";
+		}		
+		else if( phone != null){
+			if( !Utility.validate(phone, SystemManager.phonePattern) ){
+				allGood = false;
+				message = "Invalid phone number.";
+			}
 		}
 		else if( accountType.equals("searcher")){
 			if( eduLevel < 0 || eduLevel > 3 ){

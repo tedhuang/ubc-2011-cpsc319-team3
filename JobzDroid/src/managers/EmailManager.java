@@ -12,12 +12,6 @@ import classes.Utility;
 import java.util.*;
 
 public class EmailManager {
-
-	private static final String CRAIGSBAY_EMAIL = "craigsbayauctionhouse@gmail.com";
-	private static final String CRAIGSBAY_EMAIL_PW = "craigsbayrocks";
-	private static final String GMAIL_SMTP_HOST = "smtp.gmail.com";
-	private static final String GMAIL_PORT = "465";
-	
 	public EmailManager() {}
 	
 	/***
@@ -77,13 +71,13 @@ public class EmailManager {
 	 */
 	private void sendEmail(String address, String title, String body) {
 		Properties properties = new Properties();
-		properties.put("mail.smtp.user", CRAIGSBAY_EMAIL);
-		properties.put("mail.smtp.host", GMAIL_SMTP_HOST);
-		properties.put("mail.smtp.port", GMAIL_PORT);
+		properties.put("mail.smtp.user", SystemManager.systemEmailAddress);
+		properties.put("mail.smtp.host", SystemManager.systemEmailSMTPHost);
+		properties.put("mail.smtp.port", SystemManager.systemEmailPort);
 		properties.put("mail.smtp.starttls.enable", "true");
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.debug", "true");
-		properties.put("mail.smtp.socketFactory.port", GMAIL_PORT);
+		properties.put("mail.smtp.socketFactory.port", SystemManager.systemEmailPort);
 		properties.put("mail.smtp.socketFactory.class",	"javax.net.ssl.SSLSocketFactory");
 		properties.put("mail.smtp.socketFactory.fallback", "false");
 //		SecurityManager security = System.getSecurityManager();
@@ -109,7 +103,7 @@ public class EmailManager {
 	private class SMTPAuthenticator extends javax.mail.Authenticator {
 		@Override
 		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(CRAIGSBAY_EMAIL, CRAIGSBAY_EMAIL_PW);
+			return new PasswordAuthentication(SystemManager.systemEmailAddress, SystemManager.systemEmailPw);
 		}
 	}
 }
