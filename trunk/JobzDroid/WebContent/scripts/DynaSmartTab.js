@@ -143,7 +143,6 @@
 	                    lastTab.after('<li id="'+  tabid + '">' +
 	                    			  '<a href=#'+ frameid + '>' + 
 	                    			  '<span class="close">X</span>' +
-	                    			  '<img class=logoImage2 border=0 width=50px src=images/Step1.png>'+
 	                    			  '<h2>' + title + '<br /><small>This is tab\'s description</small>'+
 	                    			  '</h2></a></li>');
 	                    // make a new frame

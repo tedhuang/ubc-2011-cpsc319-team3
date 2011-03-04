@@ -4,10 +4,10 @@
 		
 		
 		return this.each(function(){
-			obj = $(this);
-			var topMenus = $("li > a", obj).get(); //get all top menus
-			var subMenus = $("li > ul", obj).get();
-			var sliding = options.sliding;
+				navMenu  = $(this);
+			var topMenus = $("li > a", navMenu).get(); //get all top menus
+			var subMenus = $("li > ul", navMenu).get();
+			var sliding  = options.sliding;
 			
 			
 			
@@ -26,7 +26,7 @@
 			});
 			
 		  if(sliding){
-				 obj.bind("mouseenter", function(e){
+				 navMenu.bind("mouseenter", function(e){
 					$(this).stop(true).animate(
 							{
 								'left': '0px'
@@ -36,7 +36,7 @@
 					);
 					});
 					
-				obj.bind("mouseleave", function(e){
+				navMenu.bind("mouseleave", function(e){
 					hideNavMenu();
 					
 				});
@@ -50,8 +50,8 @@
  /*********************STARTOF FUNCTION GROUP*************************************************/
 		 function hideAllSubs(){
 			 
-			 $(subMenus, obj).each(function(){
-				 $($(this), obj).hide();
+			 $(subMenus, navMenu).each(function(){
+				 $($(this), navMenu).hide();
 			 });
 		 }
 		 
@@ -60,7 +60,7 @@
 		 }
 		 
 		 function hideNavMenu(){
-			 obj
+			 navMenu
 			 .delay(3500)
 			 .animate(
 					 {
