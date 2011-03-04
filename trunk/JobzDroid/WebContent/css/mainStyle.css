@@ -47,33 +47,76 @@ td, th {
 	vertical-align: inherit;
 }
 
+div{
+	display:block;
+}
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+	overflow: hidden;
+	float: none;
+
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+.force-no-break {
+	white-space: nowrap;
+}
 /************************ELEMENTS STYLE*********************************************************/
 .main{
-	width: 971px;
-    margin: 0 auto;
-    overflow: hidden;
+	
+	width		: 980px;
+	height		: auto;
+    margin		: 0 auto;
+    overflow	: hidden;
+	position	: relative;
+	max-width	: 1600px; 
+	min-width	: 600px;
+	
 }
 /**********************header bar************************************************************/
 div.header{
 	height: 60px;
+	width :	980px;
 	background: url("../images/header-bg.jpg") repeat-x 0 -12px;
+	position: relative;
 }
 
-.header .logo{
-	bottom: 15px;
-    display: block;
-    float: left;
-    margin: 0 0 0 15px;
+#logo{
+	position: absolute;
+	padding : 0 0 0 1em;
+	bottom	: 0;
 }
 
 #topnav {
-	width:400px;
-	bottom: 20px;
-	clear: right;
-	float: right;
+	position: absolute;
+	/*
+	width	: 400px;
+	*/
+	right	: 10px;
+	clear	: right;
+	float	: right;
 	list-style: none;
-	margin: 11px 0 0 0;
-	padding: 0;
+	padding	: 0;
+	display	:inline;
+	
+}
+#topnav li{
+	float: left;
 }
 #topnav a.btn{
       width                 : 100px;
@@ -96,14 +139,37 @@ div.header{
       border          : 1px solid #EA8511; 
       text-decoration : none; 
 }
+
+.header #topnav li a, #topnav li strong {
+		font-size: 11px;
+		display: block;
+		float: left;
+		padding: 6px;
+		margin: 3px 0 0 8px;
+		overflow: visible;
+		text-decoration: none;
+}
+#topnav li a img.link-icon{ 
+  display:block;
+  margin:-2px 0 0 0;
+  padding-right:8px;
+  /*
+height:50px;
+  width:50px;
+*/
+  float:left;
+  position: center left;
+}
 /**********ENDOF header Bar**********************************************/
  
-/*****************Center Box*********************************************/
+/*****************Index Center Box*********************************************/
 .centerbox {
 	
 	margin: 0 auto;
 	height: inherit;
-	width: 971px;
+	
+	width: 980px;
+
 	position: relative;
 		
 }
@@ -150,7 +216,7 @@ div.header{
 }
 
 
-/*****************************Register Page***********************************************/
+/*****************************User Registering Page***********************************************/
 #regpage{
 	margin: 50px auto;
 	height: inherit;
@@ -174,7 +240,6 @@ div.header{
 
 .regbox table td {
 	padding: 3px 0px 3px 5px;
-	color: #666;
 	vertical-align: middle;
 	font-size: 11px;
 }
@@ -184,12 +249,10 @@ div.header{
 	text-align: right;
 	font-weight: normal;
 }
-.force-no-break {
-	white-space: nowrap;
-}
 
 
-/**********************Normal Page************************************************/
+
+/**********************USER HOME Page************************************************/
 .infoHeader {   
     margin-bottom:             20px;   
     border: 0;
@@ -240,4 +303,26 @@ div.header{
       text-align            : center;
       border                : 1px solid #EA8511;    
       text-decoration       : none; 
+}
+
+/**************************Registered Users Pagese*********************************************/
+
+div#main-container { 
+	min-height: 600px; 
+	background: #fff; 
+	width: 980px; 
+	margin: 0 auto; 
+	padding: 5px 0 0 0;
+}
+
+#content { 
+	padding-bottom: 1em;
+	padding-top: 1em;
+	margin-left: 5em;
+	margin-bottom: 3em; 
+	min-height: 550px; 
+}
+
+#info-tab{
+	
 }
