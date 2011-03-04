@@ -25,6 +25,9 @@ font-size: 13px;
     font-size: 100%;
     vertical-align: baseline;
 }
+a {
+	text-decoration: none;
+}
 table {
 	display: table;
 	border-collapse: separate;
@@ -79,7 +82,7 @@ html[xmlns] .clearfix {
 /************************ELEMENTS STYLE*********************************************************/
 .main{
 	
-	width		: 980px;
+	width		: 1050px;
 	height		: auto;
     margin		: 0 auto;
     overflow	: hidden;
@@ -91,7 +94,6 @@ html[xmlns] .clearfix {
 /**********************header bar************************************************************/
 div.header{
 	height: 60px;
-	width :	980px;
 	background: url("../images/header-bg.jpg") repeat-x 0 -12px;
 	position: relative;
 }
@@ -167,9 +169,7 @@ height:50px;
 	
 	margin: 0 auto;
 	height: inherit;
-	
 	width: 980px;
-
 	position: relative;
 		
 }
@@ -206,7 +206,7 @@ height:50px;
 /**************************FOOTER***********************************************************/
 .footer_wrapper {
 	margin: auto;
-	width: 960px;
+	width: 980px;
 }
 .footer_wrapper li {
 	float: right;
@@ -318,7 +318,7 @@ div#main-container {
 #content { 
 	padding-bottom: 1em;
 	padding-top: 1em;
-	margin-left: 5em;
+	margin-left: 1em;
 	margin-bottom: 3em; 
 	min-height: 550px; 
 }
