@@ -56,67 +56,71 @@ $("document").ready(function() {
 function validateForm(evt){
 	// case: account type changed (must have at least one selected)
 	if( $(this).is("[name=accountType]") ){
-		if( !$(this).val() ){
+		if( !$(this).val() )
 			alert("Account type not selected!");
-		}
 		$("#nameError").text("");
 	}
 	// case: primary email changed
 	else if( $(this).attr('id') == "emailAddress" ){
 			var strEmailPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,})$/;
 			var strEmailAddress = $(this).val();
-			if(strEmailPattern.test(strEmailAddress) == false) {
+			if(strEmailPattern.test(strEmailAddress) == false) 
 				$("#emailError").text("Invalid Email Address");
-			}
-			else{
+			else
 				$("#emailError").text("");
-			}				
 	}
 	// case: secondary email changed
 	else if( $(this).attr('id') == "secondaryEmailAddress" ){
 		var strEmailPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,})$/;
 		var strEmailAddress = $(this).val();
 		if( strEmailAddress && strEmailAddress != "" ){
-			if(strEmailPattern.test(strEmailAddress) == false) {
+			if(strEmailPattern.test(strEmailAddress) == false) 
 				$("#secondaryEmailError").text("Invalid Email Address");
-			}
+			else
+				$("#secondaryEmailError").text("");
 		}
-		else{
+		else
 			$("#secondaryEmailError").text("");
-		}				
-}
+	}
 	// case: password changed (must be 5-15 non-white-space characters)
 	else if( $(this).attr('id') == "password1" ){
 		var strPasswordPattern = /^([A-Za-z0-9_\-\.]){5,15}$/;
 		var password = $(this).val();
-		if(strPasswordPattern.test(password) == false) {
+		if(strPasswordPattern.test(password) == false)
 			$("#password1Error").text("Must be 5 - 15 non-special characters.");
-		}
-		else{
+		else
 			$("#password1Error").text("");
-		}
 	}
 	// case: pw re-type changed (must be same as pw1)
 	else if( $(this).attr('id') == "password2" ){
 		var password1 = $("#password1").val();
 		var password2 = $(this).val();
-		if(password1 != password2) {
+		if(password1 != password2)
 			$("#password2Error").text("Passwords do not match.");
-		}
-		else{
+		else
 			$("#password2Error").text("");
-		}
 	}
 	// case: name field changed (must not be empty)
 	else if( $(this).attr('id') == "name" ){
 		var strName = $("#name").val();
 		var accountType = $("input[name=accountType]:checked").val();
-		if( !strName || strName == "" ) {
+		if( !strName || strName == "" ) 
 			$("#nameError").text("Name must not be empty.");
-		}
-		else{
+		else
 			$("#nameError").text("");
+	}
+	// case: phone changed
+	else if( $(this).attr('id') == "phone" ){
+		var strPhonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+		var strPhone = $(this).val();
+		if( strPhone && strPhone != "" ){
+			if(strPhonePattern.test(strPhone) == false) 
+				$("#phoneError").text("Invalid Phone Number.");
+			else
+				$("#phoneError").text("");
 		}
+		else
+			$("#phoneError").text("");
 	}
 	// case: starting date changed
 	else if( $(this).attr('id') == "startingDate" ){
@@ -126,9 +130,8 @@ function validateForm(evt){
 			if(strDatePattern.test(strStartingDate) == false)
 				$("#startingDateError").text("Invalid date format.");
 		}
-		else{
+		else
 			$("#startingDateError").text("");
-		}
 	}
 }
 
@@ -142,6 +145,7 @@ function sendRegRequest(evt){
 	var strAccountType = $("input[name=accountType]:checked").val();
 	var strName = $("#name").val();
 	var strAddress = $("#address").val();
+	var strPhone = $("#phone").val();
 	var strDescription = $("#description").val();
 	
 	var xmlHttpReq;
@@ -153,15 +157,19 @@ function sendRegRequest(evt){
 		// IE
 		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	  
-	xmlHttpReq.onreadystatechange = function(){
-		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
-			//parse XML response from server
-			var responseText = parseRegResponse(xmlHttpReq.responseXML);
-			$("#submitButton").removeAttr("disabled");
-	    	$("#statusText").text(responseText);
-		}};
-
+	
+	if(xmlHttpReq){
+		xmlHttpReq.onreadystatechange = function(){
+			if (xmlHttpReq.readyState == 4){
+				if(xmlHttpReq.status == 200){
+					//parse XML response from server
+					var responseText = parseRegResponse(xmlHttpReq.responseXML);
+					$("#submitButton").removeAttr("disabled");
+					$("#statusText").removeClass("errorTag");
+			    	$("#statusText").text(responseText);
+				}
+			}};
+	}
 	request = new Request;
 	request.addAction("register");
 	// common parameters
@@ -174,6 +182,8 @@ function sendRegRequest(evt){
 	request.addParam("name", strName);
 	if( strAddress && strAddress != "" )
 		request.addParam("address", strAddress);
+	if( strPhone && strPhone != "" )
+		request.addParam("phone", strPhone);
 	if( strDescription && strDescription != "" )
 		request.addParam("description", strDescription);
 	
@@ -212,11 +222,14 @@ function parseRegResponse(responseXML){
 		 $("input").attr("disabled", true);
 		 $("select").attr("disabled", true);
 		 $("textarea").attr("disabled", true);
+		 $("#statusText").removeClass("errorTag");
 		 $("#submitButton").text("Return to Home Page");
 		 $("#submitButton").unbind("click", sendRegRequest);
 		 $("#submitButton").bind("click", function(){
 			 window.location = "./index.html";
 		 });
 	 }
+	 else
+		 $("#statusText").addClass("errorTag");
 	 return strMsg;
 }

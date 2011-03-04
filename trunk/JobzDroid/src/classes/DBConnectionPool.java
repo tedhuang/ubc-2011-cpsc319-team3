@@ -77,9 +77,6 @@ public class DBConnectionPool {
         if (connection != null) {
         	connectionsInUse++;
         }
-        System.out.println("-------------------------------------");
-        System.out.println("Connections in use: " + connectionsInUse);
-        System.out.println("Connections in pool: " + freeConnections.size());
         return connection;
     }
     
@@ -91,9 +88,6 @@ public class DBConnectionPool {
         freeConnections.add(connection);
         connectionsInUse--;
         notifyAll();
-        System.out.println("-------------------------------------");
-        System.out.println("Connections in use: " + connectionsInUse);
-        System.out.println("Connections in pool: " + freeConnections.size());
     }
 
     /***

@@ -29,6 +29,7 @@ public class SystemManager {
 	public static String emailPattern = "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
 	public static String pwPattern = "^[_A-Za-z0-9-\\.]{5,15}$";
 	public static String namePattern = "^[_A-Za-z0-9-\\.]+$";
+	public static String phonePattern = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$";
 	
 	// DB connection variables
 	public static String dbDriver = "com.mysql.jdbc.Driver";
@@ -37,6 +38,11 @@ public class SystemManager {
 	public static String dbPassword = "cs319team3";
 	public static int maxDBConnectionPoolSize = 0;									// 0 means no limit
 	
+	// system email variables
+	public static String systemEmailAddress = "craigsbayauctionhouse@gmail.com";
+	public static String systemEmailPw = "craigsbayrocks";
+	public static String systemEmailSMTPHost = "smtp.gmail.com";
+	public static String systemEmailPort = "465";
 	/***********************************************************************************************************************/
 	
 	// singleton instance
@@ -74,7 +80,12 @@ public class SystemManager {
 		dbPassword = config.getProperty("dbPassword");
 		emailPattern = config.getProperty("emailPattern");
 		pwPattern = config.getProperty("pwPattern");
-		namePattern = config.getProperty("namePattern");		
+		namePattern = config.getProperty("namePattern");	
+		phonePattern = config.getProperty("phonePattern");
+		systemEmailAddress = config.getProperty("systemEmailAddress");
+		systemEmailPw = config.getProperty("systemEmailPw");
+		systemEmailSMTPHost = config.getProperty("systemEmailSMTPHost");
+		systemEmailPort = config.getProperty("systemEmailPort");
 		try{
 			sessionRenewPeriodAfterExpiry = Long.parseLong(config.getProperty("sessionRenewPeriodAfterExpiry").trim()) * 60 * 1000;	// unit: minutes -> millisecond
 			expiryTimeSession = Long.parseLong(config.getProperty("expiryTimeSession").trim()) * 60 * 1000;
