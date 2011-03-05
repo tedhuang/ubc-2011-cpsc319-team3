@@ -2,13 +2,13 @@
 */
 
 .sideNavMenu{
-	position: fixed;    
-    padding: 0px ;
-    padding-top: 5px;   
-    padding-right: 0px; 
-    padding-left: 0;     
-    top: 120px;
-	left: 0; !important
+	position		: fixed;    
+    padding			: 0px ;
+    padding-top		: 5px;   
+    padding-right	: 0px; 
+    padding-left	: 0;     
+    top				: 120px;
+	left			: 0; !important
 	
 /*****The non-fixed style
 	position: relative;    
@@ -18,16 +18,18 @@
     padding-left: 0;     
     margin: 0;     
 *******/   
-    display:block;
-    list-style: none;    
-    float: left;
-    width:205px;
+    display			:block;
+    list-style		: none;    
+    float			: left;
+    width			:205px;
     /*
 height:400px;
 */ 
-    clear: both;
-    border: 1px solid #CCCCCC;    
-    background: #EEEEEE;
+    clear			: both;
+    border			: 1px solid #CCCCCC;    
+    background		: #EEEEEE;
+    z-index			: 100;
+    
     -moz-border-radius-topleft      : 8px;
     -moz-border-radius-bottomleft   : 8px;
     -webkit-border-top-left-radius: 5px;
