@@ -9,6 +9,9 @@ import classes.JobAdvertisement;
 import classes.Session;
 import classes.Utility;
 
+/***
+ * Manages the DB connection pool, and provides frequently used database functions.
+ */
 public class DBManager {			
 	private DBConnectionPool connectionPool;
 	// singleton class constructor
