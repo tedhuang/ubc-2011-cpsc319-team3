@@ -99,7 +99,7 @@ public class EmailManager {
 		} 
 		catch (Exception e) {
 			// log error
-			Utility.getErrorLogger().severe("Failed to send email to " + address + " : " + e.getMessage()); 
+			Utility.logError("Failed to send email to " + address + " : " + e.getMessage()); 
 		}
 	}
 	

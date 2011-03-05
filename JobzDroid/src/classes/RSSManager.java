@@ -1,12 +1,15 @@
 package classes;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.sun.syndication.feed.synd.*;
+import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
 import com.sun.syndication.io.XmlReader;
@@ -26,7 +29,7 @@ public class RSSManager {
 	 * @param categories Array of feed categories as Strings.
 	 * @return SyndEntry object.
 	 */
-	public SyndEntry createFeedEntry(String title, String link, Date pubDate, String description, String[] categories){
+	public static SyndEntry createFeedEntry(String title, String link, Date pubDate, String description, String[] categories){
 		SyndEntry entry = new SyndEntryImpl();
 		entry.setTitle(title);
 		entry.setLink(link);
@@ -55,7 +58,7 @@ public class RSSManager {
 	 * @param entries List of feed entries.
 	 * @return SyndFeed object.
 	 */
-	public SyndFeed createFeed(String title, String link, String description, List<SyndEntry> entries){
+	public static SyndFeed createFeed(String title, String link, String description, List<SyndEntry> entries){
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("rss_2.0");
 		feed.setTitle(title);
@@ -70,15 +73,15 @@ public class RSSManager {
 	 * @param feed Input feed.
 	 * @param filename File to write to.
 	 */
-	public void writeFeedToFile(SyndFeed feed, String filename){
+	public static void writeFeedToFile(SyndFeed feed, String filepath){
 		try{
-			Writer writer = new FileWriter("stream.xml");
+			Writer writer = new FileWriter(filepath);
 	        SyndFeedOutput output = new SyndFeedOutput();
 	        output.output(feed,writer);
 	        writer.close();
 		}
 		catch(Exception e){
-			Utility.getErrorLogger().severe("Error writing feed: " + e.getMessage());
+			Utility.logError("Error writing feed: " + e.getMessage());
 		}
 	}
 	
@@ -86,17 +89,15 @@ public class RSSManager {
 	 * Read feed information from the given file, and then write them into a SyndFeed object.
 	 * @param fileURL URL of the feed file.
 	 * @return SyndFeed object.
+	 * @throws IOException 
+	 * @throws FeedException 
+	 * @throws IllegalArgumentException 
 	 */
-	public SyndFeed readFeedFromFile(String fileURL){
-		SyndFeed feed = null;
-		try{
-			URL feedSource = new URL(fileURL);
-	        SyndFeedInput input = new SyndFeedInput();
-	        feed = input.build(new XmlReader(feedSource));
-		}
-		catch(Exception e){
-			Utility.getErrorLogger().severe("Error writing feed: " + e.getMessage());
-		}
+	public static SyndFeed readFeedFromFile(String fileURL) throws IllegalArgumentException, FeedException, IOException{
+		SyndFeed feed;
+		URL feedSource = new URL(fileURL);
+	    SyndFeedInput input = new SyndFeedInput();
+	    feed = input.build(new XmlReader(feedSource));
 		return feed;
 	}
 	
@@ -107,7 +108,7 @@ public class RSSManager {
 	 * @param index Position in the entry list where the entry is being added into.
 	 * @return Feed with new latest entry. 
 	 */
-	public SyndFeed addEntryToFeed(SyndFeed feed, SyndEntry entry, int index){
+	public static SyndFeed addEntryToFeed(SyndFeed feed, SyndEntry entry, int index){
 		SyndFeed outFeed = new SyndFeedImpl();
 		outFeed.setFeedType(feed.getFeedType());
 		outFeed.setTitle(feed.getTitle());
@@ -127,7 +128,7 @@ public class RSSManager {
 	 * @param index Index of the entry to delete.
 	 * @return Feed with specified entry removed.
 	 */
-	public SyndFeed removeEntryFromFeed(SyndFeed feed, int index){
+	public static SyndFeed removeEntryFromFeed(SyndFeed feed, int index){
 		SyndFeed outFeed = new SyndFeedImpl();
 		outFeed.setFeedType(feed.getFeedType());
 		outFeed.setTitle(feed.getTitle());

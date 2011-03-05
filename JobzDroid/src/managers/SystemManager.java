@@ -70,7 +70,7 @@ public class SystemManager {
 	        } 
 		catch (Exception ex) {
 			// log error
-			Utility.getErrorLogger().severe("Error loading configuration file: " + ex.getMessage());
+			Utility.logError("Error loading configuration file: " + ex.getMessage());
 			return;
 	    }
 		// update system variables
@@ -105,7 +105,7 @@ public class SystemManager {
 		}
 		catch(NumberFormatException e){
 			// log error
-			Utility.getErrorLogger().severe("Error parsing configuration file due to number format exception: " + e.getMessage());
+			Utility.logError("Error parsing configuration file due to number format exception: " + e.getMessage());
 		}
 	}
 	
@@ -123,7 +123,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -132,7 +132,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -152,7 +152,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -161,7 +161,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -182,7 +182,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -191,7 +191,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -211,7 +211,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -220,7 +220,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -240,7 +240,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -249,7 +249,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -271,7 +271,7 @@ public class SystemManager {
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -280,7 +280,7 @@ public class SystemManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }

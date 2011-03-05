@@ -87,17 +87,21 @@ public class Utility {
 	 * Otherwise a new logger is created. 
 	 * @return Logger object.
 	 */
-	public static Logger getErrorLogger(){
+	public static void logError(String errorMsg){
 		Logger logger = Logger.getLogger("JobzDroid.error");
 		try {
 	        FileHandler fh = new FileHandler("Errors.log", true);
 	        fh.setFormatter(new SimpleFormatter());
 	        logger.addHandler(fh);
+	        logger.severe(errorMsg);
+	        
+	        fh.flush();
+	        fh.close();
+	        logger.removeHandler(fh);
 	      }
 	      catch (IOException e) {
-	        System.out.println("Failed to get error logger: " + e.getMessage());
+	        System.out.println("Failed to get log error: " + e.getMessage());
 	      }
-	    return logger;
 	}
 	
 	/****
@@ -113,7 +117,7 @@ public class Utility {
 			dateLong = date.getTime();
 		} 
 		catch (ParseException e) { 
-			getErrorLogger().severe("Failure while converting date string to long: " + e.getMessage()); 
+			logError("Failure while converting date string to long: " + e.getMessage()); 
 		} 
 		return dateLong;
 	}
