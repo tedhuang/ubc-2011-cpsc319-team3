@@ -7,14 +7,23 @@
 
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
+<script type="text/javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js'></script>
+<script type="text/javascript">
 
+function loadSessionKeyFromURL() {
+	alert(getSessionKey());
+	document.data.sessionKey.value = getSessionKey();
+	document.getElementById("sessKey").value = getSessionKey();
+	//Remember to add the hidden form inside BODY
+}
+$("document").ready(function() {
+	loadSessionKeyFromURL();
+});
+</script>
 
 </head>
 
-
-
 <body>
-
 
 <br>
 
@@ -62,9 +71,9 @@ Starting Date:
 	</form>
 	<script type="text/javascript">
 		//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-		window.onload=function(){
-		populatedropdown("startingDay", "startingMonth", "startingYear");
-		};
+		$("document").ready(function(){
+			populatedropdown("startingDay", "startingMonth", "startingYear");
+		});
 	</script> 
 	<br>
 
@@ -86,6 +95,14 @@ Expire In... :
 
 <div id="feedback"><h3>Feedback Area</h3></div>
 <button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Create Job Advertisement</button>
+
+
+<form name="data" method="GET" action="">
+<input type="text" name="sessionKey"></input>
+
+</form>
+
+<input id="sessKey"></input>
 
 </body>
 </html>

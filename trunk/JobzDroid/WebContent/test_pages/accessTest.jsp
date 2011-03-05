@@ -7,6 +7,7 @@
 <script src="../scripts/accountAction.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
 <title>Access Test</title>
+
 </head>
 <body>
 
@@ -26,5 +27,21 @@ Password:
 
 <div id="myDiv"><h2>Debug Message for page</h2></div>
 <input id="sessKey">
+
+<form name="data" method="GET" action="Test_JobAd.jsp">
+<input type="hidden" name="sessionKey"/>
+</form>
+
+<script>
+function sendSessionKey()
+{
+  document.data.sessionKey.value = document.getElementById("sessKey").value;
+  document.data.submit();
+}
+</script>
+
+<a href="javascript:sendSessionKey();">Go to Test_JobAd.jsp</a>
+
+
 </body>
 </html>
