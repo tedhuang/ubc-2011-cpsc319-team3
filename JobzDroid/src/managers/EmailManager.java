@@ -11,6 +11,9 @@ import classes.Utility;
 //import java.sql.Array;
 import java.util.*;
 
+/***
+ * Provides functionalities for sending emails.
+ */
 public class EmailManager {
 	public EmailManager() {}
 	
@@ -69,7 +72,7 @@ public class EmailManager {
 	 * @param body Message body of the email.
 	 * @return boolean indicating whether the email was successfully sent.
 	 */
-	private void sendEmail(String address, String title, String body) {
+	public void sendEmail(String address, String title, String body) {
 		Properties properties = new Properties();
 		properties.put("mail.smtp.user", SystemManager.systemEmailAddress);
 		properties.put("mail.smtp.host", SystemManager.systemEmailSMTPHost);
