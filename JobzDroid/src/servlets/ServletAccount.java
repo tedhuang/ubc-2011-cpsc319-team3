@@ -217,7 +217,7 @@ public class ServletAccount extends HttpServlet {
 			// check if email is unique
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
-				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, uuid, 
+				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid, 
 						SystemManager.expiryTimeEmailVerification, address, description, eduLevel, startingDate, empPref);
 
 				if(accountCreated){
@@ -444,7 +444,7 @@ public class ServletAccount extends HttpServlet {
 	 * @param expiryTimeEmailRegistration Time before the registration verification expires
 	 * @return boolean indicating whether account was successfully created
 	 */
-	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, String name, UUID uuid, 
+	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, String name, String phone, UUID uuid, 
 			long expiryTimeEmailRegistration, String address, String description, int eduLevel, String startingDate, String empPref) {
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
@@ -460,6 +460,8 @@ public class ServletAccount extends HttpServlet {
 			address = Utility.checkInputFormat(address);
 		if(description != null)
 			description = Utility.checkInputFormat(description);
+		if(phone != null)
+			phone = Utility.checkInputFormat(phone);
 		
 		try {
 			long currentTime = Utility.getCurrentTime();
@@ -505,27 +507,31 @@ public class ServletAccount extends HttpServlet {
 					if(startingDateLong == -1)
 						return false;
 				}
-				query = "INSERT INTO tableProfileSearcher(idAccount, name, selfDescription, educationLevel, address, startingDate) VALUES " + 
-		  		"(?,?,?,?,?,?);";
+				query = "INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, address, startingDate) VALUES " + 
+		  		"(?,?,?,?,?,?,?);";
 	            pst = conn.prepareStatement(query);
 	            pst.setInt(1, idAccount);
 	            pst.setString(2, name);
-	            if(description == null)
+	            if(phone == null)
 	            	pst.setNull(3, java.sql.Types.VARCHAR);
 	            else
-	            	pst.setString(3, description);
+	            	pst.setString(3, phone);
+	            if(description == null)
+	            	pst.setNull(4, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(4, description);
 	            
-	            pst.setInt(4, eduLevel);
+	            pst.setInt(5, eduLevel);
 	            
 	            if(address == null)
-	            	pst.setNull(5, java.sql.Types.VARCHAR);
+	            	pst.setNull(6, java.sql.Types.VARCHAR);
 	            else
-	            	pst.setString(5, address);
+	            	pst.setString(6, address);
 	            
 	            if(startingDate == null)
-	            	pst.setNull(6, java.sql.Types.BIGINT);
+	            	pst.setNull(7, java.sql.Types.BIGINT);
 	            else
-	            	pst.setLong(6, startingDateLong);
+	            	pst.setLong(7, startingDateLong);
 	            
 				rowsInserted = pst.executeUpdate();
 				if (rowsInserted != 1)
@@ -549,20 +555,26 @@ public class ServletAccount extends HttpServlet {
 				}
 			}
 			else if(accountType.equals("poster")){
-				query = "INSERT INTO tableProfilePoster(idAccount, name, selfDescription, address) VALUES " + 
-		  		"(?,?,?,?);";
+				query = "INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription, address) VALUES " + 
+		  		"(?,?,?,?,?);";
 	            pst = conn.prepareStatement(query);
 	            pst.setInt(1, idAccount);
 	            pst.setString(2, name);
-	            if(description == null)
+	            
+	            if(phone == null)
 	            	pst.setNull(3, java.sql.Types.VARCHAR);
 	            else
-	            	pst.setString(3, description);
+	            	pst.setString(3, phone);
 	            
-	            if(address == null)
+	            if(description == null)
 	            	pst.setNull(4, java.sql.Types.VARCHAR);
 	            else
-	            	pst.setString(4, address);
+	            	pst.setString(4, description);
+	            
+	            if(address == null)
+	            	pst.setNull(5, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(5, address);
 	            
 				rowsInserted = pst.executeUpdate();
 				if (rowsInserted != 1)
