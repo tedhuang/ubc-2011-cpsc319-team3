@@ -155,7 +155,7 @@ public class ServletJobAd extends HttpServlet {
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
-			Utility.getErrorLogger().severe("SQL exception : " + e.getMessage());
+			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
 	    finally {
@@ -275,14 +275,14 @@ public class ServletJobAd extends HttpServlet {
 				message = "Create Job Advertisement Successful";
 			}
 			else{
-				Utility.getErrorLogger().warning("New JobAd insert in DB failed");
+				Utility.logError("New JobAd insert in DB failed");
 			}
 			
 			
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
-			Utility.getErrorLogger().severe("SQL exception : " + e.getMessage());
+			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
 	    finally {

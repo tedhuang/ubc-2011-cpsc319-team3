@@ -24,7 +24,7 @@ public class DBManager {
 			DriverManager.registerDriver(driver);
 		}
 		catch(Exception e){
-			Utility.getErrorLogger().severe("Failed to register JDBC driver: " + e.getMessage());
+			Utility.logError("Failed to register JDBC driver: " + e.getMessage());
 		}
 		// create connection pool
 		connectionPool = new DBConnectionPool
@@ -79,7 +79,7 @@ public class DBManager {
 				return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -88,14 +88,14 @@ public class DBManager {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -126,7 +126,7 @@ public class DBManager {
 			return idAccount;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -135,14 +135,14 @@ public class DBManager {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -181,7 +181,7 @@ public class DBManager {
 				return -1;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -190,14 +190,14 @@ public class DBManager {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -438,7 +438,7 @@ public class DBManager {
 			}
 			else{
 				//TODO Error Handling if no id matches login info
-				Utility.getErrorLogger().info( "could not find matching email / password info" );
+				System.out.println( "could not find matching email / password info" );
 				return null;
 			}
 			
@@ -446,7 +446,7 @@ public class DBManager {
 			
 			newSession = registerSessionKey( newSession );
 			if(newSession.getKey()==null) {
-				Utility.getErrorLogger().severe( "Failed to generate session key on request, returning null" );
+				Utility.logError( "Failed to generate session key on request, returning null" );
 				return null;
 			}
 			else {
@@ -454,7 +454,7 @@ public class DBManager {
 			}
 		}//ENDOF TRY
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		
 		// free DB objects
@@ -464,14 +464,14 @@ public class DBManager {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -499,7 +499,7 @@ public class DBManager {
 
 		}//ENDOF TRY
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 	    finally {
 	        try{
@@ -507,7 +507,7 @@ public class DBManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -519,7 +519,7 @@ public class DBManager {
 			return session;
 		}
 		else {
-			Utility.getErrorLogger().severe("could not insert new session key into DB");
+			Utility.logError("could not insert new session key into DB");
 		}
 		
 		return null;
@@ -546,7 +546,7 @@ public class DBManager {
 			
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 	    finally {
 	        try{
@@ -554,7 +554,7 @@ public class DBManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -581,7 +581,7 @@ public class DBManager {
 			}
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		finally {
 	        try{
@@ -589,7 +589,7 @@ public class DBManager {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }
@@ -651,7 +651,7 @@ public class DBManager {
 			}
 		}
 		catch (SQLException e) {
-				Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+				Utility.logError("SQL exception: " + e.getMessage());
 		}
 	    finally {
 	        try {
@@ -659,14 +659,14 @@ public class DBManager {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        freeConnection(conn);
 	    }

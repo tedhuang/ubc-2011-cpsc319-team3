@@ -583,7 +583,7 @@ public class ServletAccount extends HttpServlet {
 			return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -592,14 +592,14 @@ public class ServletAccount extends HttpServlet {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (pst != null)
 	                pst.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close PreparedStatement: " + e.getMessage());
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -637,7 +637,7 @@ public class ServletAccount extends HttpServlet {
 			return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -646,14 +646,14 @@ public class ServletAccount extends HttpServlet {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -700,7 +700,7 @@ public class ServletAccount extends HttpServlet {
 						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1)
-							Utility.getErrorLogger().severe("Failed to delete row containing the verification number upon successful account activation.");
+							Utility.logError("Failed to delete row containing the verification number upon successful account activation.");
 						return true;
 					}
 				}
@@ -711,7 +711,7 @@ public class ServletAccount extends HttpServlet {
 			return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -720,14 +720,14 @@ public class ServletAccount extends HttpServlet {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -778,7 +778,7 @@ public class ServletAccount extends HttpServlet {
 						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1){
-							Utility.getErrorLogger().severe("Failed to delete row containing the verification number " +
+							Utility.logError("Failed to delete row containing the verification number " +
 									verificationNumber + "in tableEmailVerification upon successfully changing primary email.");
 						}
 						return true;
@@ -790,7 +790,7 @@ public class ServletAccount extends HttpServlet {
 			return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -799,14 +799,14 @@ public class ServletAccount extends HttpServlet {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }
@@ -833,7 +833,7 @@ public class ServletAccount extends HttpServlet {
 			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
 			rowsUpdated = stmt.executeUpdate(query);
 			if(rowsUpdated != 1){
-				Utility.getErrorLogger().severe("Failed to delete entry from tablePasswordReset while resetting password for account" +
+				Utility.logError("Failed to delete entry from tablePasswordReset while resetting password for account" +
 						"ID:" + idAccount +".");
 				}
 			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
@@ -842,7 +842,7 @@ public class ServletAccount extends HttpServlet {
 				return true;
 		}
 		catch (SQLException e) {
-			Utility.getErrorLogger().severe("SQL exception: " + e.getMessage());
+			Utility.logError("SQL exception: " + e.getMessage());
 		}
 		// free DB objects
 	    finally {
@@ -851,14 +851,14 @@ public class ServletAccount extends HttpServlet {
 	                rs.close();
 	        }
 	        catch (Exception e){
-	        	Utility.getErrorLogger().severe("Cannot close ResultSet: " + e.getMessage());
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
 	        }
 	        try{
 	            if (stmt != null)
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	Utility.getErrorLogger().severe("Cannot close Statement: " + e.getMessage());
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
 	        }
 	        dbManager.freeConnection(conn);
 	    }

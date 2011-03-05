@@ -39,7 +39,7 @@ public class DBConnectionPool {
         	connection = DriverManager.getConnection(URL, user, password);
         }
         catch (SQLException e) {
-            Utility.getErrorLogger().severe("Can't create a new connection for " + URL + ": " + e.getMessage());
+        	Utility.logError("Can't create a new connection for " + URL + ": " + e.getMessage());
             return null;
         }
         return connection;
@@ -101,7 +101,7 @@ public class DBConnectionPool {
                 connection.close();
             }
             catch (SQLException e) {
-                Utility.getErrorLogger().severe("Failed to close connection during connection pool release: " + e.getMessage());
+                Utility.logError("Failed to close connection during connection pool release: " + e.getMessage());
             }
         }
         freeConnections.clear();
