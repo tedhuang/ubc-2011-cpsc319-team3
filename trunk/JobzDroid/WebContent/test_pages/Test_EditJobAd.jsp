@@ -15,11 +15,14 @@
   function showJobAdDetails(){
      document.getElementById("jobAdDetails").style.display = "block";
   }
+
+  function enableEdit(){
+	  
+  }
   
   function initializePage(){
-	  alert("test");
 	  document.getElementById("jobAdDetails").style.display="none";
-	  //document.getElementById("jobTitle").disabled=true;
+	  document.getElementById("jobTitle").disabled=true;
   }
   
 </script>
@@ -28,17 +31,25 @@
 </head>
 
 
-<body onload="intializePage()">
+<body onload="initializePage()">
 
 <br>
-AccountID:
+JobID:
 <input id="jobAdId" type="text"  size="20"><br>
 <button id="getJobAdButton" type="button" onclick="getJobAdById()">Submit</button>
 
 
 
 <div id="jobAdDetails">
+
+	<button id="editJobAdButton" type="button" onclick="editJobAd()">Submit Edit</button>
+	<br><br>
+	
+	
 	Title: <input id="jobTitle" type="text" name="jobTitle" size="20" ><br>
+	
+	JobAd ID:
+	<div id=jobAdId>Unknown</div> <br>
 	
 	Current Status:
 	<div id=status>Unknown</div> <br>
@@ -107,12 +118,13 @@ AccountID:
 	<br>
 	Number of Views:<br>
 	<div id=numViews>Unknown</div>
-		
+	<br>
+	<button id="submitEdit" type="button" onclick="editJobAd()">Submit Edit</button>
 		
 </div>
 
-<br>
-<button id="editJobAdButton" type="button" onclick="editJobAd()">Submit</button>
+
+
 <div id="feedback"><h3>Feedback Area</h3></div>
 
 </body>
