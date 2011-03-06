@@ -215,6 +215,16 @@ height:50px;
 	margin-left: 15px !important
 }
 
+.footer_wrapper2 {
+	margin: auto;
+	width: 1050px;
+}
+.footer_wrapper2 li {
+	float: right;
+	list-style-type: none;
+	font-size: 11px;
+	margin-left: 15px !important
+}
 
 /*****************************User Registering Page***********************************************/
 #regpage{
