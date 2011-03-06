@@ -22,10 +22,12 @@ function userLoginRequest()//TODO Recover lightbox element
 	    {
 		    //Gets sessionKey and prints it to div
 			var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+			//var nextPage = (xmlhttp.responseXML.getElementsByTagName("nextPage")[0]).childNodes[0].nodeValue;
 			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
 			
 		    if( sessionKey != "null" ) 
 			    { 	
+//		    		document.sid.action = nextPage;
 					document.getElementById("sessionKey").value = sessionKey;
 					document.sid.submit();
 		    	}
