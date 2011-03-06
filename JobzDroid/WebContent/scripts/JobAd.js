@@ -1,12 +1,65 @@
-function ParseXMLResponse(responseXML)
+function jobAdReqDispatcher(req, outputDiv)
 {
-//	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-//	 var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-//	 
-//	 var response_text = "<h2>AJAX XML response from server: ";
-//	 response_text += result + " " + message + "</h2>";
+	if(outputDiv!=null){
+		switch (req) 
+		{
+			case loadAdList:
+				
+				loadAdList(outputDiv);
+				break;
+				
+				
+			default:
+				break;
+		}
+	}
+}
 
-//	 return response_text;
+function loadAdList(outputDiv){
+	//TODO Testing ONLY, RM after testing
+	$("#ListJobAdButton").attr("disabled", true);
+	
+	request = new Request;
+	request.addAction("loadAdList");
+	request.addSessionID("1234"); //TODO: change this
+	request.addParam("idJobAd", $("#jobAdId").val());
+	
+
+	//change the text while sending the request
+	$("#feedback").html("<h2>Sending getJobAdById Request</h2>");
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6-
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+ 
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function(){
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		    //parse XML response from server
+			var tbody = $("tbody", outputDiv).html("");
+	    	$("#feedback").html("<h2>Successfully finished tasks</h2>");
+	    	$("jobAd",xmlhttp.responseXML).each(function() {//for All returned results
+	    		  var jobAd = $(this);
+	    		  var rowText = "<tr><td>"  + jobAd.attr("creationDate") + 
+	    		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
+	    		  				"</td><td>" + jobAd.attr("contactInfo")  + 
+	    		  				"</td><td>" + jobAd.attr("educationReq") + "</td></tr>";
+	    		  $(rowText).appendTo(tbody);
+	    		   
+	    		  
+	    		});
+	    	$("#ListJobAdButton").attr("disabled", false);
+
+	    }
+	  };
+	  
 }
 
 function loadJobAdDetails( responseXML ){
@@ -56,16 +109,16 @@ function loadJobAdDetails( responseXML ){
 //		colParams[12] = isApproved;
 
 		
-		document.getElementById("jobAdId").innerHTML=jobAdId;
-		document.getElementById("jobTitle").innerHTML = jobAdTitle;
-		//document.getElementById("location").innerHTML =location;
-		document.getElementById("tags").innerHTML = tags;
-		document.getElementById("contactInfo").innerHTML = contactInfo;
-		document.getElementById("status").innerHTML = status;
-		document.getElementById("numViews").innerHTML = numberOfViews;
-		document.getElementById("educationReq").innerHTML = educationReq;
-		document.getElementById("jobDescription").innerHTML = jobAdDescription;
-		document.getElementById("isApproved").innerHTML = isApproved;
+		$("#jobAdId").innerHTML=jobAdId;
+		$("#jobTitle").val(jobAdTitle);
+//		document.getElementById("location").innerHTML =location;
+		$("#tags").val(tags);
+		$("#contactInfo").val( contactInfo);
+		$("#status").innerHTML = status;
+		$("#numViews").innerHTML = numberOfViews; 
+		$("#educationReq").innerHTML = educationReq;
+		$("#jobDescription").val( jobAdDescription);
+		$("#isApproved").innerHTML = isApproved;
 		
 		//document.getElementById("expiryDate").innerHTML =  
 		//document.getElementById("startingDate").innerHTML = 
@@ -77,7 +130,8 @@ function loadJobAdDetails( responseXML ){
 
 function getJobAdById()
 {
-	document.getElementById("getJobAdButton").disabled=true;
+	//TODO Testing ONLY, RM after testing
+	$("#getJobAdButton").attr("disabled", true);
 	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	request = new Request;
@@ -104,12 +158,12 @@ function getJobAdById()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		  alert("inside onready getJobAdbyId");
 		    //parse XML response from server
 		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
 		    loadJobAdDetails(xmlhttp.responseXML);
-			showJobAdDetails();
-	    	document.getElementById("feedback").innerHTML=responseText;
+	    	document.getElementById("feedback").innerHTML="Successfully finished tasks";
+	    	$("#jobAdDetails").show();
+	    	$("#getJobAdButton").attr("disabled", false);
 
 	    }
 	  };
