@@ -12,7 +12,7 @@ $("document").ready(function(){
 /***
  * Displays the map centered around the given location. Also marks the given location.
  */
-function showMap(location) {
+function showMap(location, formatted_address) {
 	var options = { 
 			zoom: 16, 
 			center: location,
@@ -23,8 +23,16 @@ function showMap(location) {
 	// add a marker to the map indicating the location of the address
 	var marker = new google.maps.Marker({
 		map: map,
-		position: location
+		position: location,
+		title: formatted_address
 	});
+	google.maps.event.addListener(marker, 'click', function() {
+		var contentString = "<div><a href='http://www.google.com' target='_blank'>test URL</a></div>";
+		var infowindow = new google.maps.InfoWindow({     
+			content: contentString
+		}); 
+		infowindow.open(map,marker);
+	}); 
 } 
 
 /***
@@ -59,7 +67,7 @@ function listLocationChoices(googleMapsResults){
 	}
 	$("#lookUpTable a").bind("click", function(){
 		var rowNumber = $(this).parent().parent().index();
-		showMap(googleMapsResults[rowNumber].geometry.location);
+		showMap(googleMapsResults[rowNumber].geometry.location, googleMapsResults[rowNumber].formatted_address);
 		return false;
 	});
 	$("#lookUpTable button").bind("click", function(){

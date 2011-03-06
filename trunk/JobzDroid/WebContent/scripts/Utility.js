@@ -71,41 +71,6 @@ function populatedropdown(dayfield, monthfield, yearfield){
 	yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true); //select today's year
 }
 
-/*****************************************************************************************************
- * 					Get Session Key Function
- ****************************************************************************************************/
-function getSessionKey()
-{
-	name = "sessionKey";
-	var start=location.search.indexOf("?"+name+"=");
-	
-	if ( start<0 ){
-		start=location.search.indexOf("&"+name+"=");
-	}
-	if (start<0){
-		return '';
-	}
-	
-	start += name.length+2;
-	
-	var end=location.search.indexOf("&",start)-1;
-	if (end<0) {
-		end=location.search.length;
-	}
-	
-	var result='';
-	for(var i = start;i<=end;i++) {
-		var c = location.search.charAt(i);
-//		next line replaces '+' with ' '
-//		result = result + (c=='+'?' ':c);
-		result = result + (c);
-	}
-	
-	//TODO wipe the sessionKey from address
-	
-	return unescape(result);
-}
-
 /***********************************************************************************************
 						LightBox Functions
  TODO ADD stuff

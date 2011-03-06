@@ -48,8 +48,8 @@ public class ServletAccount extends HttpServlet {
 		requestForgetPassword,
 		emailLinkForgetPassword,
 		resetForgetPassword,
-		requestforlogin,
-		requestforlogout
+		requestForLogin,
+		requestForLogout
 	}
 
 	/**
@@ -106,11 +106,11 @@ public class ServletAccount extends HttpServlet {
 			case resetForgetPassword:
 				resetForgetPassword(request, response);
 				break;
-			case requestforlogin:
+			case requestForLogin:
 				loginReqTaker(request, response);
 				break;
 			
-			case requestforlogout:
+			case requestForLogout:
 				logoutReqTaker(request, response);
 				break;
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
