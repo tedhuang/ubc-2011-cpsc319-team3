@@ -7,6 +7,9 @@ $("document").ready(function() {
 });
 
 function sendPasswordChangeRequest(evt){
+	$("#sendButton").attr("disabled", true);
+	$("#statusText").removeClass("errorTag");	
+	$("#statusText").removeClass("successTag");
 	var strEmail = $("#emailInput").val();
 	
 	var xmlHttpReq;
@@ -21,32 +24,33 @@ function sendPasswordChangeRequest(evt){
 	  
 	xmlHttpReq.onreadystatechange = function(){
 		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
+			$("#sendButton").removeAttr("disabled");
 			//parse XML response from server
-			var responseText = parseRegResponse(xmlHttpReq.responseXML);		   
+			var responseText = parseRegResponse(xmlHttpReq.responseXML);
 	    	$("#statusText").text(responseText);
 		}};
-
 
 	request = new Request;
 	request.addAction("requestForgetPassword");
 	request.addParam("email", strEmail);
 
 	//send the request to servlet
-	xmlHttpReq.open("POST","../ServletAccount", true);
+	xmlHttpReq.open("POST","./ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	
 	//update status text
-	$("#statusText").text("Sending Request...");
+	$("#statusText").text("Processing...This may take a moment.");
 }
 
 // parses response from server
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 /*
-	 if(result == "true"){
-		 window.location="./userRegistration.html";
-	 }*/
+	 if(boolResult == "true"){
+		 $("#statusText").addClass("successTag");
+	 }
+	 else
+		 $("#statusText").addClass("errorTag");
 	 return strMsg;
 }

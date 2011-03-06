@@ -62,4 +62,8 @@
   	<servlet-name>ServletProfile</servlet-name>
   	<url-pattern>/ServletProfile</url-pattern>
   </servlet-mapping>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error.html</location>
+  </error-page>
 </web-app>

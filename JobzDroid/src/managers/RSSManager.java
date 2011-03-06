@@ -18,9 +18,7 @@ import com.sun.syndication.io.XmlReader;
 /***
  * Manages creating, reading and editing RSS 2.0 feeds.
  */
-public class RSSManager {
-	public RSSManager(){}
-	
+public class RSSManager {	
 	/***
 	 * Creates a SyndEntry(ROME) object (RSS feed entry object) with provided parameters.
 	 * @param title Feed entry title.

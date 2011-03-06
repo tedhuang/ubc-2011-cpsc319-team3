@@ -5,6 +5,9 @@ function userLoginRequest()//TODO Recover lightbox element
 {
 //	$("#loginBox").hide();
 //	openbox("sign-inLoading",'',1);
+	$("#submitButton").attr("disabled", true);
+	$("#submitButton").text("Processing...");
+	$("#loginError").text("");
 	var email = document.getElementById("email").value;
 	var password = document.getElementById("password").value;
 	
@@ -34,9 +37,10 @@ function userLoginRequest()//TODO Recover lightbox element
 		    else
 		    	{
 			    	//TODO: implement error handling
-			    	alert("Login Failed");
+		    		$("#submitButton").removeAttr("disabled");
+		    		$("#submitButton").text("Log in");
+					$("#loginError").text("Incorrect Email and password combination.");
 //		    		closePopup("sign-inLoading");
-			    	document.getElementById("myDiv").innerHTML="<h2>Login Failed!</h2>";
 //			    	$("#loginBox").show();
 		    	}
 	    }
