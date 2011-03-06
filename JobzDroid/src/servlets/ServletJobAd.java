@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,7 +42,8 @@ public class ServletJobAd extends HttpServlet {
 		//Add new functions here
 		createJobAdvertisement,
 		searchJobAdvertisement,
-		getJobAdById
+		getJobAdById,
+		loadAdList //search loader(?)
 		
 	}
 	
@@ -91,6 +93,10 @@ public class ServletJobAd extends HttpServlet {
 			case getJobAdById:
 				getJobAdById(request, response);
 				break;
+			case loadAdList:
+				adListLoader(request, response);
+				break;
+				
 			default:
 				System.out.println("Error: failed to process request - action not found");
 				break;
@@ -98,6 +104,116 @@ public class ServletJobAd extends HttpServlet {
 		}
 		
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	private void adListLoader( HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		boolean isSuccessful=false;
+		String message="";
+		int numReq = request.getContentLength();
+		ArrayList <String> reqParaNameList = new ArrayList<String>();
+		ArrayList <String> reqParaValList = new ArrayList<String>();
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+		    //Get the parameters' names
+			String paraName = (String) paramNames.nextElement();
+		    reqParaNameList.add(paraName);
+		    //Get the parameters' values
+		    reqParaValList.add(request.getParameter(paraName));
+		    
+		    System.out.println("Parameter: " + paraName + "\n" +
+		    					"Value: " + request.getParameter(paraName));
+		}
+		
+		String criteria = reqParaNameList.get(0);
+		String condition = reqParaValList.get(0);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+		
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"SELECT idJobAd, title, datePosted, contactInfo, educationRequired " +//TODO JOIN with LOCATION Table
+				"FROM tableJobAd WHERE " + criteria+"=" + condition;
+			
+			System.out.println("getJobAdById query:" + query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			if (result.first()){
+				System.out.println("getJobAd successful by condition" + criteria);
+				message = "getJobAd successful";
+				
+				//Fill in the fields of the jobAd object
+				
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+			//	jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.jobAdTitle		= result.getString("title");
+			//	jobAd.jobAdDescription 	= result.getString("description");
+			//	jobAd.expiryDate		= result.getLong("expiryDate");
+//				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.creationDate 		= result.getLong("datePosted");
+//				jobAd.status 			= result.getString("status");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+//				jobAd.tags 				= result.getString("tags");
+//				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+//				jobAd.isApproved 		= result.getBoolean("isApproved");
+				
+				
+			}
+			else{ //Error case
+				isSuccessful = false;
+				message = "Error: AD not found with ID=" + criteria;
+				System.out.println("Error: AD not found with ID=" + criteria);
+			}
+			
+			
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append(jobAd.toXMLContent() );
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
 	
 	
 	private void getJobAdById(HttpServletRequest request,
@@ -124,31 +240,31 @@ public class ServletJobAd extends HttpServlet {
 			ResultSet result = stmt.getResultSet();
 			
 			if (result.first()){
-				System.out.println("getProfile successful");
-				message = "getProfile successful";
+				System.out.println("getJobAd successful");
+				message = "getJobAd successful";
 				
 				//Fill in the fields of the jobAd object
 				
-				jobAd.jobAdId = result.getInt("idJobAd");
-				jobAd.ownerID = result.getInt("idAccount");
-				jobAd.jobAdTitle = result.getString("title");
-				jobAd.jobAdDescription = result.getString("description");
-				jobAd.expiryDate = result.getLong("expiryDate");
-				jobAd.startingDate = result.getLong("dateStarting");
-				jobAd.creationDate = result.getLong("datePosted");
-				jobAd.status = result.getString("status");
-				jobAd.contactInfo = result.getString("contactInfo");
-				jobAd.educationReq = result.getInt("educationRequired");
-				jobAd.tags = result.getString("tags");
-				jobAd.numberOfViews = result.getInt("numberOfViews");
-				jobAd.isApproved = result.getBoolean("isApproved");
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.status 			= result.getString("status");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.tags 				= result.getString("tags");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+				jobAd.isApproved 		= result.getBoolean("isApproved");
 				
 				
 			}
 			else{ //Error case
 				isSuccessful = false;
-				message = "Error: profile not found with ID=" + jobAdId;
-				System.out.println("Error: profile not found with ID=" + jobAdId);
+				message = "Error: AD not found with ID=" + jobAdId;
+				System.out.println("Error: AD not found with ID=" + jobAdId);
 			}
 			
 			
