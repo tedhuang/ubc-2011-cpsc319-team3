@@ -5,6 +5,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Edit Job Ad</title>
+
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
 
@@ -21,20 +23,18 @@
   }
   
   function initializePage(){
-	  document.getElementById("jobAdDetails").style.display="none";
-	  document.getElementById("jobTitle").disabled=true;
+	  $("#jobAdDetails").hide();
+	  //document.getElementById("jobTitle").disabled=true;
   }
   
 </script>
 
 
 </head>
-
-
 <body onload="initializePage()">
-
+<div id="feedback"><h3>Feedback Area</h3></div>
 <br>
-JobID:
+JobAdID:
 <input id="jobAdId" type="text"  size="20"><br>
 <button id="getJobAdButton" type="button" onclick="getJobAdById()">Submit</button>
 
@@ -123,12 +123,7 @@ JobID:
 		
 </div>
 
-
-
-<div id="feedback"><h3>Feedback Area</h3></div>
-
 </body>
-
 </html>
 
 
