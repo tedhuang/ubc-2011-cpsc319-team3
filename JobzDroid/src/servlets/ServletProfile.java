@@ -135,13 +135,12 @@ public class ServletProfile extends HttpServlet{
 				selfDescription = Utility.checkInputFormat( selfDescription );
 				
 				String query = 
-					"INSERT INTO tableProfilePoster(name, secondaryEmail, phone, selfDescription ) " +
-					"VALUES " + "('" 
-						+ name + "','" 
-						+ secEmail + "','" 
-						+ phone + "','" 
-						+ selfDescription + 
-					"')";
+					"UPDATE tableProfilePoster SET "+ 
+							"name = " + name + "," +
+							"phone = " + phone + "," +
+							"selfDescription = " + selfDescription + "," +
+					"WHERE idAccount=" + accountID;
+					
 				
 				System.out.println("New PosterProfile Query:" + query);
 				int rowsInserted = stmt.executeUpdate(query);
@@ -191,15 +190,12 @@ public class ServletProfile extends HttpServlet{
 
 				//TODO: include address
 				String query = 
-					"INSERT INTO tableProfileSearcher(name, secondaryEmail, phone, selfDescription, empPref, educationLevel) " +
-					"VALUES " + "('" 
-						+ name + "','" 
-						+ secEmail + "','" 
-						+ phone + "','" 
-						+ selfDescription + "','"
-						+ empPref + "','"
-						+ educationLevel +
-					"')";
+					"UPDATE tableProfileSearcher SET "+ 
+						"name = " + name + "," +
+						"phone = " + phone + "," +
+						"selfDescription = " + selfDescription + "," +
+						"educationLevel = " + educationLevel + "," +
+					"WHERE idAccount=" + accountID;
 
 				// if successful, 1 row should be inserted
 				System.out.println("New SearcherProfile Query:" + query);

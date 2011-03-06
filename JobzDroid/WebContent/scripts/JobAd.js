@@ -1,12 +1,12 @@
 function ParseXMLResponse(responseXML)
 {
-	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-	 var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 
-	 var response_text = "<h2>AJAX XML response from server: ";
-	 response_text += result + " " + message + "</h2>";
+//	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
+//	 var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+//	 
+//	 var response_text = "<h2>AJAX XML response from server: ";
+//	 response_text += result + " " + message + "</h2>";
 
-	 return response_text;
+//	 return response_text;
 }
 
 function loadJobAdDetails( responseXML ){
@@ -56,16 +56,15 @@ function loadJobAdDetails( responseXML ){
 //		colParams[12] = isApproved;
 
 		
-		document.getElementById("jobTitle").innerHTML=jobAdId;
-		document.getElementById("jobAdTitle").innerHTML = jobAdTitle;
-		document.getElementById("location").innerHTML =location;
+		document.getElementById("jobAdId").innerHTML=jobAdId;
+		document.getElementById("jobTitle").innerHTML = jobAdTitle;
+		//document.getElementById("location").innerHTML =location;
 		document.getElementById("tags").innerHTML = tags;
 		document.getElementById("contactInfo").innerHTML = contactInfo;
 		document.getElementById("status").innerHTML = status;
 		document.getElementById("numViews").innerHTML = numberOfViews;
 		document.getElementById("educationReq").innerHTML = educationReq;
-		document.getElementById("category").innerHTML = category;
-		document.getElementById("jobAdDescription").innerHTML = jobAdDescription;
+		document.getElementById("jobDescription").innerHTML = jobAdDescription;
 		document.getElementById("isApproved").innerHTML = isApproved;
 		
 		//document.getElementById("expiryDate").innerHTML =  
@@ -82,21 +81,16 @@ function getJobAdById()
 	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	request = new Request;
-	request.addAction("getProfile");
+	request.addAction("getJobAdById");
 	request.addSessionID("1234"); //TODO: change this
 	request.addParam("jobAdId", intJobAdId);
 	
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
 
 	//change the text while sending the request
 	document.getElementById("feedback").innerHTML="<h2>Sending getJobAdById Request</h2>";
 	
 	
-	var xmlHttpReq;
+//	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -110,24 +104,29 @@ function getJobAdById()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
+		  alert("inside onready getJobAdbyId");
 		    //parse XML response from server
 		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
 		    loadJobAdDetails(xmlhttp.responseXML);
+			showJobAdDetails();
 	    	document.getElementById("feedback").innerHTML=responseText;
 
 	    }
 	  };
 	
-	
+	//send the parameters to the servlet with POST
+		xmlhttp.open("POST","../ServletJobAd" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(request.toString());
 }
 
 
 function editJobAd(){
-	document.getElementById("editJobAdButton").disabled=true;
+	document.getElementById("submitEdit").disabled=true;
 	
 	document.getElementById("feedback").innerHTML="<h2>Sending Edit Request</h2>";
 
-	var xmlHttpReq;
+//	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -147,7 +146,7 @@ function editJobAd(){
 
 	    }
 	  };
-
+	  
 }
 
 
