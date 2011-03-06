@@ -4,7 +4,7 @@
 .sideNavMenu{
 	position		: fixed;    
     padding			: 0px ;
-    padding-top		: 5px;   
+    padding-top		: 0px;   
     padding-right	: 0px; 
     padding-left	: 0;     
     top				: 120px;
@@ -21,7 +21,7 @@
     display			:block;
     list-style		: none;    
     float			: left;
-    width			:205px;
+    width			:150px;
     /*
 height:400px;
 */ 
@@ -36,85 +36,70 @@ height:400px;
     -webkit-border-bottom-left-radius: 5px;  
 }
 .sideNavMenu li{ 
-	/*
-list-style: none;
-	padding-bottom: 10px;
-	text-align: right;
-*/
     position: relative; 
     margin: 0;
     padding: 0;    
    /* border-bottom: 0px solid #E0E0E0 !important;*/  
     border-top: 0px solid #E0E0E0;  
     border-bottom: 1px solid #E0E0E0;      
-    /*
-float: left;
-*/
 }
-.sideNavMenu li a.topMenu { 
+
+.sideNavMenu li a{ 
   display:block;
   margin:0;
   padding:3px;
-  text-decoration: none;
-  height:64px;
-  width:200px;
+  height:32px;
   color:#0464BB;
   outline-style:none;
 }
-.sideNavMenu li a.topMenu img { 
+
+
+.sideNavMenu li a img { 
   display:block;
   margin:0;
   padding:3px;
-  height:50px;
-  width:50px;
+  height:25px;
+  width:25px;
   float:right;
 }
-.sideNavMenu li a.topMenu h2 { 
+
+.sideNavMenu li a h2 { 
   display:block;
-  font: bold 15px Verdana, Arial, Helvetica, sans-serif;
+  font: bold 12px Verdana, Arial, Helvetica, sans-serif;
   float:left;
 }
 .sideNavMenu  li a.topMenu small { 
-  font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+  font: normal 8px Verdana, Arial, Helvetica, sans-serif;
   float:left;
 }
 .sideNavMenu li a:hover {   
   color:#FFF; 
   background: #EA8511; 
 }
-.sideNavMenu li a.topMenu .curTab { 
-  height:65px;
-  color:#EA8511;  
-  background: #F8F8F8;  
-  cursor:text;   
-}
-.sideNavMenu li a.topMenu .dis {
-  color:#CCCCCC;  
-  background: #F8F8F8;  
-  cursor:text;   
-}
 
 /********************SubMenus***********************/
-.sideNavMenu ul {
+.sideNavMenu #subMenu{
 	padding: 0;
 	font-size: 12px;
 	margin: 0;
 	
 }
 
-.sideNavMenu ul li {
-	list-style: none;
-	margin: 0;
-	text-align: right;
-	padding: 0;
-	
+.sideNavMenu #subMenu li {
+	list-style		: none;
+	text-align		: right;
+	border-bottom	: none;
 }
 
-.sideNavMenu ul li a {
-	padding: 8px 15px;
-	display: block;
-	color: #119f14;
-	font-size: 13px;
-	line-height: 1.2em;
+.sideNavMenu #subMenu li a {
+	height		: 15px;
+	padding		: 5px 15px;
+	color		: #119f14;
+	font-size	: 13px;
+	line-height	: 1.2em;
+}
+.sideNavMenu #subMenu li a img { 
+  height	:16px;
+  width		:16px;
 }
 /**/

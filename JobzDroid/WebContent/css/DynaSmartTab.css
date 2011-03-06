@@ -23,20 +23,19 @@
 
 .tabPane div{
 	
-	position: relative; 
-  
-    margin:             0;   
+	position		: relative; 
+    margin			: 0;   
     /*height: 300px; 
 	  width:905px;
 	*/
-    font				: normal 12px Verdana, Arial, Helvetica, sans-serif; 
-    color				: #5A5655;   
-    text-align			: left;
+    font			: normal 12px Verdana, Arial, Helvetica, sans-serif; 
+    color			: #5A5655;   
+    text-align		: left;
 	
-	/*-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
     -webkit-border-bottom-right-radius: 5px;
     -moz-border-radius-bottomleft   : 8px;
-    -moz-border-radius-bottomright  : 8px;*/ 
+    -moz-border-radius-bottomright  : 8px;
 	}
 .navBar{
 	position			: relative;
@@ -137,17 +136,29 @@ position: relative;
 	
 }
 
+/********************TabFrame *********************************************************/
 
 #tabFrame{
-	margin			: 0;
-	padding			: 10px; 
-	min-height		: 550px;
-	width			: auto;
+	
+	width			: 100%;
 	background-color: white;
 	display			: inline;
 	float			: left;
 	border			: 1px solid #CCC;
     border-top-width: 0 !important;
+}
+#tabFrame div.subFrame{
+	margin			: 0;
+	padding			: 10px; 
+	min-height		: 550px;
+}
+#tabFrame div.subFrame div{
+	
+	position		: relative; 
+    margin			: 0; 
+	padding			: 0;  
+    font			: normal 12px Verdana, Arial, Helvetica, sans-serif; 
+    text-align		: left;
 }
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/
 
