@@ -7,6 +7,9 @@
 <title>Edit Job Ad</title>
 
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'></script>
+<link href="../css/mainStyle.css" rel="stylesheet" type="text/css">
+<link href="../css/resultTable.css" rel="stylesheet" type="text/css">
+
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
 
@@ -32,13 +35,60 @@
 
 </head>
 <body onload="initializePage()">
+
 <div id="feedback"><h3>Feedback Area</h3></div>
 <br>
 JobAdID:
 <input id="jobAdId" type="text"  size="20"><br>
 <button id="getJobAdButton" type="button" onclick="getJobAdById()">Submit</button>
+<button id="ListJobAdButton" type="button" onclick="jobAdReqDispatcher(loadAdList, resultTable)">Load List</button>
 
-
+<div id="resultTable" class="resultTableDiv">
+	<table>
+		<thead>
+			<tr>
+				<th id="col-viewDate">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Date</div>
+					</div>
+				</th>
+				<th id="col-viewTitle">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Job Title</div>
+					</div>
+				</th>
+				<th id="col-viewCompany">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Company</div>
+					</div>
+				</th>
+				<th id="col-viewLoc">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Location</div>
+					</div>
+				</th>
+				<th id="col-viewAvail">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Availability</div>
+					</div>
+				</th>
+				<th id="col-viewMap">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Map</div>
+					</div>
+				</th>
+				<th id="col-Tools">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Tools</div>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+		</tbody>
+	</table><!--ENDOF TABLE-->
+  </div>
 
 <div id="jobAdDetails">
 
