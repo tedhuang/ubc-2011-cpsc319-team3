@@ -29,10 +29,11 @@
 	  	<img src="http://localhost:8080/JobzDroid/images/home-mid-bg.png"/>
 	    <div class="loginbox">
 	    	<input id="email" title="Username" value=""  maxlength="2048" />
-			<input id="password" type="password"  title="Password" value=""  maxlength="2048" />
-			<button	onclick="userLoginRequest()">Login</button>
+			<input id="password" type="password"  title="Password" value=""  maxlength="2048" /><br/>
+			<button id="submitButton" onclick="userLoginRequest()">Log in</button>
+			<b><span id="loginError" class="errorTag pagefont"></span></b>
 	       <a href="forgetpassword.html">Forgot Your Password?</a>
-		   <br/>
+		   <br/> 
 		   <a href="register.html"><img src="http://localhost:8080/JobzDroid/images/signup.png"/></a>
         </div>
 	  </div>

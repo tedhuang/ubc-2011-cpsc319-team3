@@ -361,7 +361,7 @@ public class ServletAccount extends HttpServlet {
 		}
 		else{
 			result = false;
-			message = "Your entered email address does not exist as an account.";
+			message = "The Email address does not exist.";
 		}
 		// Write XML containing message and result to response
 		StringBuffer XMLResponse = new StringBuffer();	
@@ -378,7 +378,7 @@ public class ServletAccount extends HttpServlet {
 	 * Handles email link click from a forget password request
 	 */
 	private void emailLinkForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		getServletConfig().getServletContext().getRequestDispatcher("/test_pages/ResetForgetPassword.jsp").forward(request,response);
+		getServletConfig().getServletContext().getRequestDispatcher("/ResetForgetPassword.jsp").forward(request,response);
 	}
 	
 	/***

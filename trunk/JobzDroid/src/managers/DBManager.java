@@ -69,7 +69,7 @@ public class DBManager {
 		email = Utility.checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
-			String query = "SELECT idAccount FROM tableAccount " + "WHERE Email='" + email + "';"; 			
+			String query = "SELECT idAccount FROM tableAccount " + "WHERE email='" + email + "';"; 			
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();			
 			// check if ResultSet is empty  

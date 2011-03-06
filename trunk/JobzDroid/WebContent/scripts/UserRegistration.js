@@ -138,6 +138,8 @@ function validateForm(evt){
 // sends account reg request to the corresponding servlet
 function sendRegRequest(evt){
 	$("#submitButton").attr("disabled", true);
+	$("#statusText").removeClass("errorTag");	
+	$("#statusText").removeClass("successTag");
 	var strEmail = $("#emailAddress").val();
 	var strSecondaryEmail = $("#secondaryEmailAddress").val();
 	var strPassword = $("#password1").val();
@@ -165,7 +167,6 @@ function sendRegRequest(evt){
 					//parse XML response from server
 					var responseText = parseRegResponse(xmlHttpReq.responseXML);
 					$("#submitButton").removeAttr("disabled");
-					$("#statusText").removeClass("errorTag");
 			    	$("#statusText").text(responseText);
 				}
 			}};
@@ -210,7 +211,7 @@ function sendRegRequest(evt){
 	xmlHttpReq.send(request.toString());
 	
 	//update status text
-	$("#statusText").text("Processing... Please wait.");
+	$("#statusText").text("Processing...This may take a moment.");
 }
 
 // parses response from server
@@ -222,7 +223,7 @@ function parseRegResponse(responseXML){
 		 $("input").attr("disabled", true);
 		 $("select").attr("disabled", true);
 		 $("textarea").attr("disabled", true);
-		 $("#statusText").removeClass("errorTag");
+		 $("#statusText").addClass("successTag");
 		 $("#submitButton").text("Return to Home Page");
 		 $("#submitButton").unbind("click", sendRegRequest);
 		 $("#submitButton").bind("click", function(){

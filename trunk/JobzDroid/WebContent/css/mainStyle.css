@@ -79,6 +79,21 @@ html[xmlns] .clearfix {
 .force-no-break {
 	white-space: nowrap;
 }
+
+.pagefont {
+	padding: 3px 8px 3px 8px; 
+	vertical-align: middle; 
+	font-size: 13px;
+}
+div.padded{
+	padding: 3px 0px 3px 5px; 
+}
+.errorTag {
+	color:red;
+}
+.successTag {
+	color:green;
+}
 /************************ELEMENTS STYLE*********************************************************/
 .main{
 	

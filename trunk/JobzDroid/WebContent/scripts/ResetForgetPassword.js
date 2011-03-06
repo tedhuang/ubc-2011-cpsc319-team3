@@ -34,6 +34,9 @@ function validatePasswords(evt){
 }
 
 function sendResetPassword(evt){
+	$("#submitButton").attr("disabled", true);
+	$("#statusText").removeClass("errorTag");	
+	$("#statusText").removeClass("successTag");
 	var strPassword = $("#password1").val();
 	var strPasswordRepeat = $("#password2").val();
 	var strIdPasswordReset = $("#idPasswordReset").val();
@@ -50,6 +53,7 @@ function sendResetPassword(evt){
 	  
 	xmlHttpReq.onreadystatechange = function(){
 		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
+			$("#submitButton").removeAttr("disabled");
 			//parse XML response from server
 			var responseText = parseRegResponse(xmlHttpReq.responseXML);		   
 	    	$("#statusText").text(responseText);
@@ -68,16 +72,23 @@ function sendResetPassword(evt){
 	xmlHttpReq.send(request.toString());
 	
 	//update status text
-	$("#statusText").text("Sending Request...");
+	$("#statusText").text("Processing...This may take a moment.");
 }
 
 // parses response from server
 function parseRegResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 /*
-	 if(result == "true"){
-		 window.location="./userRegistration.html";
-	 }*/
+	 if(boolResult == "true"){
+		 $("#statusText").addClass("successTag");
+		 $("input").attr("disabled", true);
+		 $("#submitButton").text("Return to Home Page");
+		 $("#submitButton").unbind("click", sendResetPassword);
+		 $("#submitButton").bind("click", function(){
+			 window.location = "./index.html";
+		 });
+	 }
+	 else
+		 $("#statusText").addClass("errorTag");
 	 return strMsg;
 }
