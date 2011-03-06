@@ -14,9 +14,9 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 
-import classes.RSSManager;
 import classes.Utility;
 
+import managers.RSSManager;
 import managers.SystemManager;
 
 /**

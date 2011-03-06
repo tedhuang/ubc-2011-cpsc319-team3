@@ -1,12 +1,13 @@
-package classes;
+package managers;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import classes.Utility;
 
 import com.sun.syndication.feed.synd.*;
 import com.sun.syndication.io.FeedException;
