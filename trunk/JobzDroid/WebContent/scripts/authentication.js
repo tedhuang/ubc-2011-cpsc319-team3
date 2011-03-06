@@ -25,12 +25,12 @@ function userLoginRequest()//TODO Recover lightbox element
 	    {
 		    //Gets sessionKey and prints it to div
 			var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
-			//var nextPage = (xmlhttp.responseXML.getElementsByTagName("nextPage")[0]).childNodes[0].nodeValue;
+			var action = (xmlhttp.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
 			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
 			
 		    if( sessionKey != "null" ) 
 			    { 	
-//		    		document.sid.action = nextPage;
+		    		document.sid.action = action;
 					document.getElementById("sessionKey").value = sessionKey;
 					document.sid.submit();
 		    	}
@@ -60,7 +60,7 @@ function userLoginRequest()//TODO Recover lightbox element
  ****************************************************************************************************/
 function userLogoutRequest()
 {
-	var sessKey = document.getElementById("sessKey").value;
+	var sessionKey = document.getElementById("sessionKey").value;
 	
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -75,6 +75,7 @@ function userLogoutRequest()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
+		  //TODO change this
 			document.getElementById("header").innerHTML = "You have LOGGED OUT!";   //if logout successfully, redirect to the main page 
 	    }
 	  else //logout failed display error messege
@@ -83,10 +84,10 @@ function userLogoutRequest()
 		 }
 	  };
 	  
-	  var Params = "action=requestForLogout" + "&sessKey=" + sessKey;
+	  var Params = "action=requestForLogout" + "&sessionKey=" + sessionKey;
 
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAccount" ,true);
+	xmlhttp.open("POST","./ServletAccount" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(Params);
 }

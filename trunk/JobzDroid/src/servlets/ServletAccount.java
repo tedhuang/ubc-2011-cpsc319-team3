@@ -295,15 +295,18 @@ public class ServletAccount extends HttpServlet {
 		String pw = request.getParameter("password");
 		System.out.println("user="+ email+ "Password="+ pw);
 		Session currSession = dbManager.startSession(email, pw);
+		String action = "";
+		
 		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
+			action = "home.html";
+			
 			StringBuffer XMLResponse = new StringBuffer();	
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
 			XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
-//			XMLResponse.append("\t<userID>" + userID + "</userID>\n");
-			
+			XMLResponse.append("\t<action>" + action + "</action>\n");
 			XMLResponse.append("</response>\n");
 			response.setContentType("application/xml");
 			response.getWriter().println(XMLResponse);
@@ -315,7 +318,7 @@ public class ServletAccount extends HttpServlet {
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
 			XMLResponse.append("\t<sessionKey>" + null + "</sessionKey>\n");
-//			XMLResponse.append("\t<userID>" + null + "</userID>\n");
+			XMLResponse.append("\t<action>" + action + "</action>\n");
 			XMLResponse.append("</response>\n");
 			response.setContentType("application/xml");
 			response.getWriter().println(XMLResponse);
@@ -325,7 +328,7 @@ public class ServletAccount extends HttpServlet {
 /***************************/
 	private void logoutReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
 		
-		if(dbManager.userLogout(req.getParameter("sessKey").toString())){
+		if(dbManager.userLogout(req.getParameter("sessionKey").toString())){
 			System.out.println("Logout Successfully");
 		}
 		else{
