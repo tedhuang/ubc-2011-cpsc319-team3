@@ -5,7 +5,7 @@
 		
 		return this.each(function(){
 				navMenu  = $(this);
-			var topMenus = $("li > a", navMenu).get(); //get all top menus
+			var topMenus = $("li > a.topMenu", navMenu).get(); //get all top menus
 			var subMenus = $("li > ul", navMenu).get();
 			var sliding  = options.sliding;
 			
@@ -61,7 +61,7 @@
 		 
 		 function hideNavMenu(){
 			 navMenu
-			 .delay(3500)
+			 .delay(2500) //Delay hiding
 			 .animate(
 					 {
 						 'left' : '-150px'

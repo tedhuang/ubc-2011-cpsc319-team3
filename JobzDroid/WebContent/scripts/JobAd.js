@@ -7,12 +7,53 @@ function jobAdReqDispatcher(req, outputDiv)
 				
 				loadAdList(outputDiv);
 				break;
-				
+			
+			case search:
+				searchAd(outputDiv);
+				break;
 				
 			default:
 				break;
 		}
 	}
+}
+
+function searchAd(outputDiv){
+	//TODO Testing ONLY, RM after testing
+	$("#ListJobAdButton").attr("disabled", true);
+	
+	request = new Request;
+	request.addAction("loadAdList");
+	request.addSessionID("1234"); //TODO: change this
+	//TODO AUTO DETECT NUMBER OF INPUTS
+	request.addParam("idJobAd", $("#jobAdId").val());
+	
+
+	//change the text while sending the request
+	$("#feedback").html("<h2>Sending SEARCH Request</h2>");
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6-
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+ 
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	//When request is finished and results passed back
+	xmlhttp.onreadystatechange=function(){
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			$("#feedback").html("<h2>Successfully finished tasks</h2>");
+			//parse XML response from server
+			buildTable("jobAd", outputDiv);
+	    	$("#ListJobAdButton").attr("disabled", false);
+
+	    }
+	  };
+	  
 }
 
 function loadAdList(outputDiv){
@@ -22,7 +63,7 @@ function loadAdList(outputDiv){
 	request = new Request;
 	request.addAction("loadAdList");
 	request.addSessionID("1234"); //TODO: change this
-	request.addParam("idJobAd", $("#jobAdId").val());
+	request.addParam("searchJobAdId", $("#jobAdId").val());
 	
 
 	//change the text while sending the request
@@ -39,27 +80,43 @@ function loadAdList(outputDiv){
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
-	
+	//When request is finished and results passed back
 	xmlhttp.onreadystatechange=function(){
 		if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		    //parse XML response from server
-			var tbody = $("tbody", outputDiv).html("");
-	    	$("#feedback").html("<h2>Successfully finished tasks</h2>");
-	    	$("jobAd",xmlhttp.responseXML).each(function() {//for All returned results
-	    		  var jobAd = $(this);
-	    		  var rowText = "<tr><td>"  + jobAd.attr("creationDate") + 
-	    		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
-	    		  				"</td><td>" + jobAd.attr("contactInfo")  + 
-	    		  				"</td><td>" + jobAd.attr("educationReq") + "</td></tr>";
-	    		  $(rowText).appendTo(tbody);
-	    		   
-	    		  
-	    		});
+			$("#feedback").html("<h2>Successfully finished tasks</h2>");
+			//parse XML response from server
+			buildTable("jobAd", outputDiv);
 	    	$("#ListJobAdButton").attr("disabled", false);
 
 	    }
 	  };
 	  
+}
+/************************************************************************************************
+
+**
+ * 					BUILD TABLE FUNCTION
+ * INSERT RETURNED DATA INTO THE TABLE
+ * @param xmlObj: THE xmlObject name returned from the server
+ * @param outputDiv: The DIV where the table is held
+ 
+
+*************************************************************************************************
+
+*/
+function buildTable(xmlObj, outputDiv){
+	var tbody = $("tbody", outputDiv).html("");
+	$(xmlObj,xmlhttp.responseXML).each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var rowText = "<tr><td>"  + jobAd.attr("creationDate") + 
+		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
+		  				"</td><td>" + jobAd.attr("contactInfo")  + 
+		  				"</td><td>" + jobAd.attr("educationReq") + 
+
+"</td></tr>";
+		  $(rowText).appendTo(tbody);
+		  
+		});
 }
 
 function loadJobAdDetails( responseXML ){
@@ -152,7 +209,6 @@ function getJobAdById()
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-		    //var responseText= ParseXMLResponse(xmlhttp.responseXML);
 		    loadJobAdDetails(xmlhttp.responseXML);
 	    	document.getElementById("feedback").innerHTML="Successfully finished tasks";
 	    	$("#jobAdDetails").show();
@@ -273,76 +329,54 @@ function createJobAdvertisement()
 
 }
 
+function searchJobAdvertisement(outputDiv){
+	
+	request = new Request;
+	request.addAction("searchJobAdvertisement");
+	request.addSessionID("1234"); //TODO: change this
+	
+//	var titleSearch = $("#titleSearch").val();
+//	var eduReqsearch = $("#eduReqsearch").val();
+//	var locSearch = $("#locSearch").val();
+//	var tagsSearch = $("#tagsSearch").val();
+	
+	
+	var searchFields = $(":input", "#searchBox").serializeArray();
+	jQuery.each(searchFields, function(i, field){
+        if(field.value == ""){//DO NOTHING
+        }
+        else{
+        	request.addParam(field.name, field.value); //add parameter to the request 
 
-
-
-function searchJobAdvertisement(){
-	
-	var strSearchText = document.getElementById("searchText").value;
-	//var strEmpType = document.getElementById("empType").value;
-	//var searchEducationReq = document.getElementById("searchEducationReq").value;
-	//var strSearchJobLoc = document.getElementById("searchJobLoc").value;
-	//var strTags = document.getElementById("tags").value;
-	
-	
-	
+according to how many search criteria filled
+        }
+	   });
 	//User Input Check:
-	if(strTitle == null){
-		alert("Must Enter Job Advertisement Title!");
-		return;
-	}
 	
-	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
+		xmlhttp=new XMLHttpRequest();
 	  }
 	else
 	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
+	
+	//send the parameters to the servlet with POST
+	$("#feedback").html("<h2>Sending Request</h2>");
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
-	    	document.getElementById("feedback").innerHTML=responseText;
+		  $("#feedback").html("<h2>Successfully finished tasks</h2>");
+			//parse XML response from server
+			buildTable("jobAd", outputDiv);
 
 	    }
 	  };
 	  
-	  
-	request = new Request;
-	//TODO fix sessionID
-	request.addAction("searchJobAdvertisement");
-	request.addSessionID("1234"); //TODO implement this
-	request.addParam("searchText", strSearchText);
-	//request.addParam("educationRequirement", searchEducationReq);
-	//request.addParam("jobLocation", strSearchJobLoc);
-	//request.addParam("strDescription", strDescription);
-		  
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	  
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
