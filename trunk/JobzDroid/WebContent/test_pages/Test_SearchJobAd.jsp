@@ -32,13 +32,18 @@ Education Requirement:
 			<option value="3">Ph.D.</option>
 		</select>
 
-Job Location(s) (separated by comma): <input id="searchJobLoc" type="text" name="searchJobLoc" size="20"><br>
+Job Location(s) (separated by comma): ~ to be added ~
+<input id="searchJobLoc" type="text" name="searchJobLoc" size="20"><br>
+
+Employment Type: ~ to be added ~
+<div id="empType"></div>
+
 
 <!-- 
 Tags: <input id="searchTags" type="text" name="tags" size="20"><br>
  -->
 
-<button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Search</button>
+<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement()">Search</button>
 <br>
 
 <div id="feedback"><h3>Feedback Area</h3></div>

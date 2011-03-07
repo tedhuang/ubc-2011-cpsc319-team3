@@ -279,12 +279,11 @@ function createJobAdvertisement()
 function searchJobAdvertisement(){
 	
 	var strSearchText = document.getElementById("searchText").value;
-	var searchEducationReq = document.getElementById("searchEducationReq").value;
-	var strSearchJobLoc = document.getElementById("searchJobLoc").value;
-	var strTags = document.getElementById("tags").value;
+	//var strEmpType = document.getElementById("empType").value;
+	//var searchEducationReq = document.getElementById("searchEducationReq").value;
+	//var strSearchJobLoc = document.getElementById("searchJobLoc").value;
+	//var strTags = document.getElementById("tags").value;
 	
-	
-
 	
 	
 	//User Input Check:
@@ -308,23 +307,20 @@ function searchJobAdvertisement(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-//		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
-//	    	document.getElementById("feedback").innerHTML=responseText;
+		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
+	    	document.getElementById("feedback").innerHTML=responseText;
 
 	    }
 	  };
 	  
 	  
-	
 	request = new Request;
 	//TODO fix sessionID
 	request.addAction("searchJobAdvertisement");
 	request.addSessionID("1234"); //TODO implement this
-	request.addParam("strTitle", strTitle);
-	request.addParam("educationRequirement", searchEducationReq);
-	request.addParam("strJobLocation", strSearchJobLoc);
-	request.addParam("strTags", strTags);
 	request.addParam("searchText", strSearchText);
+	//request.addParam("educationRequirement", searchEducationReq);
+	//request.addParam("jobLocation", strSearchJobLoc);
 	//request.addParam("strDescription", strDescription);
 		  
 	
