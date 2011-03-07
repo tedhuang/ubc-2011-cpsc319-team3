@@ -43,6 +43,7 @@ JobAdID:
 <button id="getJobAdButton" type="button" onclick="getJobAdById()">Submit</button>
 <button id="ListJobAdButton" type="button" onclick="jobAdReqDispatcher(loadAdList, resultTable)">Load List</button>
 
+
 <div id="resultTable" class="resultTableDiv">
 	<table>
 		<thead>

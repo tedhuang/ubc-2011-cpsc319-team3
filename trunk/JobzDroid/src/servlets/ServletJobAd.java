@@ -87,13 +87,14 @@ public class ServletJobAd extends HttpServlet {
 				
 				break;
 			case searchJobAdvertisement:
-				
+				searchJobAd(request, response);
 				break;
 			case getJobAdById:
 				getJobAdById(request, response);
 				break;
+				
 			case loadAdList:
-				adListLoader(request, response);
+				searchJobAd(request, response);
 				break;
 				
 			default:
@@ -104,17 +105,108 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
+	private enum EnumCriteria	{
+		//Add new functions here
+		searchTitle,
+		searchCompany,
+		searchEduReq,
+		searchJobAdId,
+		searchJobLoc
+		
+		
+	}
+	private String DBColConvertor(String input){
+		switch (EnumCriteria.valueOf(input)){
+		
+		case searchTitle:
+			return "title";
+			
+		case searchEduReq:
+			return "educationRequired";
+			
+		case searchCompany:
+			return "company";
+		
+		case searchJobAdId:
+			return "idJobAd";
+		
+
+		
+		default:
+		return "";
+		
+		}
+		
+		
+	}
+	
+	private Map<String, String> DBColMapper(HttpServletRequest request){
+		Map<String, String>colMap = new HashMap<String, String>();
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			
+			String paraName = (String) paramNames.nextElement();
+			if( paraName.equals("action")|| paraName.equals("sessionID")){//Not Querying these two
+				//Do Nothing
+			}
+			else{
+				
+				String colName = DBColConvertor(paraName);
+			    //Put the parameters' names and values into the MAP
+				colMap.put(paraName,colName);
+			    
+				//Debug
+			    System.out.println("Parameter: " + paraName + "\n" +
+			    					"Value: " + colMap.get(paraName));
+			}
+		}
+		return colMap;
+	}
+	
+	private String buildQuery(HttpServletRequest request){
+		
+		Map<String, String>paraMap = new HashMap<String, String>();
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			
+			String paraName = (String) paramNames.nextElement();
+			if( paraName.equals("action")|| paraName.equals("sessionID")){//Not Querying these two
+				//Do Nothing
+			}
+			else{
+				String colName = DBColConvertor(paraName); //convert to col names
+			    //Put the parameters' names and values into the MAP
+				paraMap.put(colName,request.getParameter(paraName) );
+			    
+				//Debug
+			    System.out.println("Column: " + colName + "\n" +
+			    					"Value: " + paraMap.get(colName));
+			}
+		}
+		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING listSelQuery!
+		String query ="SELECT idJobAd, title, datePosted, contactInfo, educationRequired FROM tableJobAd WHERE ";
+		StringBuffer buf = new StringBuffer();
+		buf.append(query);
+		int numParas = paraMap.size();
+		String andClause =" AND ";//CAUTION: SPACE IMPORTANT
+       for(Map.Entry<String, String> entry : paraMap.entrySet()){
+            buf.append(entry.getKey()+ " LIKE '%" +entry.getValue()+"%'" + andClause);
+        }
+		query = buf.substring(0, buf.length()- andClause.length()); //remove the last " AND "
+		return query;
+	}
+	
+	/******************************************************************************************************************
+	 * 					ADLISTLOAD
+	 * LOAD JOB AD LIST BY CRITERIAs
+	 ******************************************************************************************************************/
 	private void adListLoader( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		boolean isSuccessful=false;
 		String message="";
-		int numReq = request.getContentLength();
+		
+	/*
 		ArrayList <String> reqParaNameList = new ArrayList<String>();
 		ArrayList <String> reqParaValList = new ArrayList<String>();
 		
@@ -129,20 +221,22 @@ public class ServletJobAd extends HttpServlet {
 		    System.out.println("Parameter: " + paraName + "\n" +
 		    					"Value: " + request.getParameter(paraName));
 		}
-		
 		String criteria = reqParaNameList.get(0);
 		String condition = reqParaValList.get(0);
+		*/
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
 		
+		String query = buildQuery(request);
+		
 		try {
 			stmt = conn.createStatement();
 			
-			String query = 
-				"SELECT idJobAd, title, datePosted, contactInfo, educationRequired " +//TODO JOIN with LOCATION Table
-				"FROM tableJobAd WHERE " + criteria+"=" + condition;
+//			String query = 
+//				"SELECT idJobAd, title, datePosted, contactInfo, educationRequired " +//TODO JOIN with LOCATION Table
+//				"FROM tableJobAd WHERE " + criteria+"=" + condition;
 			
 			System.out.println("getJobAdById query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -150,7 +244,7 @@ public class ServletJobAd extends HttpServlet {
 			ResultSet result = stmt.getResultSet();
 			
 			if (result.first()){
-				System.out.println("getJobAd successful by condition" + criteria);
+				System.out.println("getJobAd successful by QUERY" + query);
 				message = "getJobAd successful";
 				
 				//Fill in the fields of the jobAd object
@@ -174,8 +268,8 @@ public class ServletJobAd extends HttpServlet {
 			}
 			else{ //Error case
 				isSuccessful = false;
-				message = "Error: AD not found with ID=" + criteria;
-				System.out.println("Error: AD not found with ID=" + criteria);
+				message = "Error: AD not found with Query" + query;
+				System.out.println(message);
 			}
 			
 			
@@ -432,27 +526,6 @@ public class ServletJobAd extends HttpServlet {
 	}
 	
 	
-	
-	public boolean searchJobAdvertisement(HttpServletRequest request, HttpServletResponse response){
-		
-		//String searchTitle = request.getParameter("strTitle");
-		//String strTags = request.getParameter("strTags");
-		
-		String jobLocation = request.getParameter("strJobLocation");
-		String searchText = request.getParameter("searchText");
-		
-		int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
-		
-		//TODO: implement parse "strSearchText" for title and keywords
-		
-		
-		
-		
-		return false;
-	}
-		
-	
-	
 	public ArrayList<JobAdvertisement> searchJobAdvertisement(String keywords, //TODO: change keywords to array 
 			  String location, 
 			  String education
@@ -556,6 +629,84 @@ public class ServletJobAd extends HttpServlet {
 		return null;
 		}
 	
+	public void searchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		
+		//tags = Utility.checkInputFormat( tags );
+		//location = Utility.checkInputFormat( location );
+		//education = Utility.checkInputFormat( education );
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {		
+			stmt = conn.createStatement();
+			//Add individual queries onto total query
+			String query = buildQuery(request);
+			System.out.println(query);
+			boolean success = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			//Compile the result into the arraylist
+			while( result.next() ) {
+				JobAdvertisement temp = new JobAdvertisement();
+				
+				temp.jobAdId 			= result.getInt("idJobAd");
+				temp.jobAdTitle			= result.getString("title");
+				temp.creationDate 		= result.getLong("datePosted");
+				temp.contactInfo 		= result.getString("contactInfo");
+				temp.educationReq 		= result.getInt("educationRequired");
+//				temp.tags 				= result.getString("tags");
+				
+				jobAdList.add( temp ); //add to the temporary list
+			}
+			
+			stmt.close();
+			
+			System.out.println("Searched Auctions");
+//			return jobAdList;
+			
+		} catch (SQLException e1) {
+		e1.printStackTrace();
+		}
+		
+		
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+//		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//		XMLResponse.append("\t<message>" + message + "</message>\n");
+		Iterator<JobAdvertisement> itr = jobAdList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		}
 	
 }
 

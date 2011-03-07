@@ -72,7 +72,7 @@
                 }
                 
                 function updateTabFrameSet(){
-                	return tabFrames = $("#tabFrame",obj).find('div').get();
+                	return tabFrames = $("#tabFrame",obj).find('div.subFrame').get(); //TODO Will have problem
                 }
                 
                 function hideAllFrames(){
@@ -128,9 +128,9 @@
                 	if(!found){
 
                 		$.each(tabFrames, function(){
-                    		if($($(this),obj).attr("id")== frameid){
+                    		if($($(this),obj).attr("id")== frameid){//make sure the old tabFrame is removed
                     			$(this).remove();
-                    			return;
+                    			return false;
                     		}
                     	});
                 		
@@ -143,17 +143,16 @@
 	                    lastTab.after('<li id="'+  tabid + '">' +
 	                    			  '<a href=#'+ frameid + '>' + 
 	                    			  '<span class="close">X</span>' +
-	                    			  '<h2>' + title + '<br /><small>This is tab\'s description</small>'+
-	                    			  '</h2></a></li>');
+	                    			  '<h2>' + title + '</h2></a></li>');
 	                    // make a new frame
-	                    lastFrame.after('<div class="tabFrame" id="' + frameid + '">THIS IS THE TAB FRAME' +
+	                    lastFrame.after('<div class="subFrame" id="' + frameid + '">THIS IS THE TAB FRAME' +
 	                    				'</div>');
 	                    $($("#"+frameid),obj).append('<div id="' + frameContentid + '"></div>');
 	                    $($("#"+frameContentid),obj).html("This is the Content of Tab"+ frameContentid);
 	                    updateTabSet();
 	                    updateCloseBtn();
 	                    showTab();
-	                    return true;
+	                    return false;
                 	}//ENDOF NEW TAB CREATION
                   }//ENDOF TABNUM CHECK IF
                   else{
