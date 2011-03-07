@@ -196,7 +196,7 @@ function getJobAdById()
 	
 	request = new Request;
 	request.addAction("getJobAdById");
-	request.addSessionID("1234"); //TODO: change this
+	request.addSessionKey(document.getElementById("sessionKey").value ); //TODO: change this
 	request.addParam("jobAdId", intJobAdId);
 	
 
@@ -303,18 +303,19 @@ function createJobAdvertisement()
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
+		  var message = xmlhttp.responseXML.getElementById("message");
+		  var result = xmlhttp.responseXML.getElementById("result");
+		    var responseText= result + ": " + message;
 	    	document.getElementById("feedback").innerHTML=responseText;
-
 	    }
 	  };
 	
 	  
 	
 	request = new Request;
-	//TODO fix sessionID
 	request.addAction("createJobAdvertisement");
-	request.addSessionID("1234"); //TODO implement this
+	alert(document.getElementById("sessionKey").value);
+	request.addSessionKey( document.getElementById("sessionKey").value );
 	request.addParam("strTitle", strTitle);
 	request.addParam("strDescription", strDescription);
 	request.addParam("educationRequirement", educationRequirement);
@@ -330,6 +331,7 @@ function createJobAdvertisement()
 	
 		  
 	//send the parameters to the servlet with POST
+	//TODO will need to change this to ./ServletJobAd
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
@@ -343,7 +345,7 @@ function searchJobAdvertisement(outputDiv){
 	
 	request = new Request;
 	request.addAction("searchJobAdvertisement");
-	request.addSessionID("1234"); //TODO: change this
+	request.addSessionKey(document.getElementById("sessionKey").value); //TODO implement this
 	
 	var searchFields = $(":input", "#searchBox").serializeArray();
 	jQuery.each(searchFields, function(i, field){
@@ -382,3 +384,4 @@ function searchJobAdvertisement(outputDiv){
 	  };
 	  
 }
+

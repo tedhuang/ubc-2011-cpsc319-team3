@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<script src="../scripts/accountAction.js" type="text/javascript"></script>
+<script src="../scripts/testAuthentication.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
 <title>Access Test</title>
 
@@ -31,6 +31,10 @@ Password:
 <form name="data" method="GET" action="Test_JobAd.jsp">
 <input type="hidden" name="sessionKey"/>
 </form>
+
+	<form name="sid" method="get" action="">
+		<input type="hidden" id="sessionKey" name="sessionKey"/>
+	</form>
 
 <script>
 function sendSessionKey()

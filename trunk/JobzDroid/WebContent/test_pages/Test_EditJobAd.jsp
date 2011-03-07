@@ -131,6 +131,10 @@ JobAdID:
 	Starting Date:  <br>
 	<div id=startingDate></div>
 
+	<form name="sid" method="get" action="">
+		<input id="sessionKey" name="sessionKey"/>
+	</form>
+
 	Expiring on:  <br>
 	<div id=expiryDate></div>
 	
@@ -138,6 +142,7 @@ JobAdID:
 	<div id=creationDate></div>
 	
 </div>
+>>>>>>> .r142
 </body>
 </html>
 

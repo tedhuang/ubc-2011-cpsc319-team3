@@ -499,9 +499,12 @@ public class DBManager {
 //			long expiryTime = 0;
 			Session currSession = null;
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery( "SELECT * FROM tableSession, tableAccount "+
-					"idAccount.tableAccount=idAccount.tableSession" + 
-					"WHERE sessionKey.tableSession='"+key+"' && " );
+			String queryCode =
+				"SELECT * FROM tableSession INNER JOIN tableAccount USING (idAccount)";
+			
+			
+			
+			rs = stmt.executeQuery( queryCode );
 			
 			if(rs.first()){
 				//get expiryTime to check it later
