@@ -52,18 +52,39 @@
     <url-pattern>/ServletInitializer</url-pattern>
   </servlet-mapping>
   <servlet>
-  	<description>Handles functions for profile</description>
-  	<display-name>ServletProfile</display-name>
-  	<servlet-name>ServletProfile</servlet-name>
-  	<servlet-class>servlets.ServletProfile</servlet-class>
-  	<load-on-startup>1</load-on-startup>
+    <description>Handles functions for profile</description>
+    <display-name>ServletProfile</display-name>
+    <servlet-name>ServletProfile</servlet-name>
+    <servlet-class>servlets.ServletProfile</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>ServletProfile</servlet-name>
-  	<url-pattern>/ServletProfile</url-pattern>
+    <servlet-name>ServletProfile</servlet-name>
+    <url-pattern>/ServletProfile</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletErrorHandler</display-name>
+    <servlet-name>ServletErrorHandler</servlet-name>
+    <servlet-class>servlets.ServletErrorHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletErrorHandler</servlet-name>
+    <url-pattern>/ServletErrorHandler</url-pattern>
+  </servlet-mapping>  <error-page>
+    <error-code>403</error-code>
+    <location>/ServletErrorHandler</location>
+  </error-page>
   <error-page>
     <error-code>404</error-code>
-    <location>/error.html</location>
+    <location>/ServletErrorHandler</location>
+  </error-page>
+    <error-page>
+    <error-code>500</error-code>
+    <location>/ServletErrorHandler</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/ServletErrorHandler</location>
   </error-page>
 </web-app>
