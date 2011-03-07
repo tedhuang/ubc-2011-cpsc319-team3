@@ -8,7 +8,7 @@
 <link href="css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js' type='text/javascript'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'></script><!--DO NOT CHANGE THIS LINE-->
 <script type="text/javascript" src="scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="scripts/authentication.js"></script>
@@ -17,10 +17,13 @@
     $(document).ready(function(){
     	// Smart Tab 
 		//ADD "sliding:false" to parameter to stop hiding effect
-  		$('#sideMenu').sideNavMenu({});		
+  		$('#sideMenu').sideNavMenu({sliding:false});
+		
 		$('#tabs').DynaSmartTab({});
 		loadSessionKeyFromURL();
 		});
+		
+	
 </script>
 </head><body>
 	
@@ -50,10 +53,9 @@
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a href="#" class="topMenu"><!--Refer to the DIV below-->
-				<img class='logoImage2' border="0" width="50px" src="images/Step1.png"/>
-				<h2>Tab 1<br />
-				<small>tab's description</small></h2>
+			<a href="#" class="just-link">
+				<img src="images/Step1.png">
+				<h2>New Job Ad</h2>
 			</a>
 			<ul>
 				<li><a>Submenu1</a></li>
@@ -62,11 +64,10 @@
 	
 		<li>
 			<a href="normalpage.html" class="topMenu">
-				<img class='logoImage2' border="0" width="50px" src="images/Step2.png"/>
-				<h2>Ad Management<br />
-				<small>tab's description</small></h2>
+				<img src="images/Step2.png">
+				<h2>Ad Management</h2>
 			</a>
-			<ul>
+			<ul id="subMenu">
 				<li><a href="#">Active</a></li>
 				<li><a href="#">Draft</a></li>
 				<li><a href="#">Pending</a></li>
@@ -76,18 +77,14 @@
 	
 		<li>
 			<a href="#" class="topMenu">
-				<img class='logoImage2' border="0" width="50px" src="images/Step3.png"/>
-				<h2>Tab 3<br />
-				<small>tab's description</small></h2>
+				<img src="images/Step4.png">
+				<h2>Help & Feeds</h2>
 			</a>
-	    </li>
-		
-		<li>
-			<a href="#" class="topMenu">
-				<img class='logoImage2' border="0" width="50px" src="images/Step4.png"/>
-				<h2>FAQ btn<br />
-				<small>tab's description</small></h2>
-			</a>
+			<ul id="subMenu">
+				<li><a href="#">RSS</a></li>
+				<li><a href="#">NEWS</a></li>
+				<li><a href="#">FAQ</a></li>
+			</ul>
 		</li>
   	</ul><!--ENDOF SideMenu-->
 
@@ -99,7 +96,7 @@
   	  <div class="navBar">
 		<ul>
   			<li id="tab1">
-  				<a href="#tabs-1"><h2>OVERVIEW</h2></a>
+  				<a href="#tabs-1"><h2>Home</h2></a>
 			</li>
   			<li id="tab2">
   				<a href="#tabframe_tab2"><span class="close">X</span><h2>Tab 2</h2></a>
@@ -109,7 +106,7 @@
 	
 	
   <div id="tabFrame">
-	<div id="tabs-1">
+	<div id="tabs-1" class="subFrame">
             <h2>Tab 1 Content</h2>
 			<input type="text" name="tabName"/>
 			<a href=# onclick="addTab();">CLICK TO ADD TAB</a>	
@@ -126,7 +123,8 @@
             Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>         			
         </div>
-  		<div id="tabframe_tab2">
+		
+  		<div id="tabframe_tab2" class="subFrame">
             <h2>Tab 2 Content</h2>	
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
@@ -136,23 +134,13 @@
             </p>     
         </div>    
 		
-		<div id="tabs-3">
-            <h2>Tab 3 Content</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-        </div>
-		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  
 	
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->
 </div><!--ENDOF MAIN-->
-	<form name="sid" method="get" action="">
+	<form name="sid" method="get" action="home.html">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
 </body>
