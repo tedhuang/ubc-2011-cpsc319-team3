@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -73,8 +74,8 @@ public class ServletAccount extends HttpServlet {
 			EnumAction.valueOf(action);
 		}
 		catch(Exception e){
-			forwardErrorPage(request, response);
-			return;
+		//	forwardErrorPage(request, response);
+			throw new ServletException("Invalid account servlet action.");
 		}
 		
 		switch( EnumAction.valueOf(action) ){
@@ -88,7 +89,7 @@ public class ServletAccount extends HttpServlet {
 				break;
 			// request for a primary email change
 			case requestEmailChange:
-			
+				requestEmailChange(request, response);
 				break;				
 			// verify email for changing primary email
 			case verifyEmailChange:
@@ -114,10 +115,6 @@ public class ServletAccount extends HttpServlet {
 				logoutReqTaker(request, response);
 				break;
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
-			
-			default:
-				forwardErrorPage(request, response);
-				break;
 		}
 	}
 	
@@ -217,8 +214,8 @@ public class ServletAccount extends HttpServlet {
 			// check if email is unique
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
-				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid, 
-						SystemManager.expiryTimeEmailVerification, address, description, eduLevel, startingDate, empPref);
+				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid,
+						address, description, eduLevel, startingDate, empPref);
 
 				if(accountCreated){
 					//send verification email to new user
@@ -249,35 +246,73 @@ public class ServletAccount extends HttpServlet {
 	}
 	
 	/***
-	 * Calls DB manager to activate account.
+	 * Handles account activation link click from an email.
 	 */
 	private void activateAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
 		boolean accountActivated = activateAccount(verificationNumber);
 		if(accountActivated){
-			//TODO redirect to actual page
-			PrintWriter out = response.getWriter();
-		    out.println("Congratulations, your account has successfully been activated!");
-		    out.close();
+			RequestDispatcher dispatcher = request.getRequestDispatcher("accountActivationSuccess.html");
+			dispatcher.forward(request, response);
 		}
 		else
-			forwardErrorPage(request, response);
+			throw new ServletException("Failed account activation action.");
 	}
 	
 	/***
-	 * Calls DB manager to verify email change
+	 * Handles primary email change requests.
+	 */
+	private void requestEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionID");
+		String newEmail = request.getParameter("newEmail");		
+		UUID uuid = UUID.randomUUID();; // verification number
+		boolean result = false;
+		String message = "";
+		
+		// check if email is unique
+		boolean isUnique = !dbManager.checkEmailExists(newEmail);
+		if(isUnique){
+			boolean requestAdded = addEmailChangeRequest(sessionKey, newEmail, uuid);			
+			if(requestAdded){
+				//send verification email to new email
+				//TODO
+			//	emailManager.sendAccountActivationEmail(email, name, uuid);
+				emailManager.sendPrimaryEmailChangeVerificationEmail("luolw123@hotmail.com", uuid);
+				message = "Email change request successful! An email has been sent to your inbox, " +
+						"please follow the instructions to change your primary Email within "
+				+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
+				result = true;
+			}
+			else
+				message = "Failed email change request. Please try again later.";
+		}
+		else{
+			message = "This Email address has already been used. Please choose another one.";
+		}	
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	/***
+	 * Verifies an email change link click from an email.
 	 */
 	private void verifyEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
 		boolean emailChanged = verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
-			//TODO redirect to actual page
-			PrintWriter out = response.getWriter();
-		    out.println("Congratulations, your primary email has successfully been changed!");
-		    out.close();
+			RequestDispatcher dispatcher = request.getRequestDispatcher("emailChangeSuccess.html");
+			dispatcher.forward(request, response);
 		}
 		else
-			forwardErrorPage(request, response);
+			throw new ServletException("Failed verify email change action.");
 	}
 	
 
@@ -340,7 +375,7 @@ public class ServletAccount extends HttpServlet {
 	
 
 	/***
-	 * Calls DB manager to add a password request entry, sends an email containing the password reset link
+	 * Adds a password request entry, sends an email containing the password reset link
 	 * to the user, and then returns the results to the user in the response.
 	 */
 	private void requestForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -386,6 +421,7 @@ public class ServletAccount extends HttpServlet {
 	
 	/***
 	 * Final step of forget password procedure. Final validation of request and updates user password.
+	 * Updates password if all checks pass.
 	 */
 	private void resetForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		// get request parameters
@@ -426,13 +462,6 @@ public class ServletAccount extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
-	/***
-	 * Forwards current request to error page.
-	 */
-	private void forwardErrorPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		getServletConfig().getServletContext().getRequestDispatcher("/error.html").forward(request,response);
-	}
-	
 	/********************************* HELPER FUNCTIONS *************************************************/
 
 	/***
@@ -444,11 +473,11 @@ public class ServletAccount extends HttpServlet {
 	 * @param accountType Account type
 	 * @param name Person/Company name 
 	 * @param uuid randomly generated unique verification number for email
-	 * @param expiryTimeEmailRegistration Time before the registration verification expires
+	 * @param expiryTimeEmailVerification Time before the registration verification expires
 	 * @return boolean indicating whether account was successfully created
 	 */
 	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, String name, String phone, UUID uuid, 
-			long expiryTimeEmailRegistration, String address, String description, int eduLevel, String startingDate, String empPref) {
+			String address, String description, int eduLevel, String startingDate, String empPref) {
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -494,7 +523,7 @@ public class ServletAccount extends HttpServlet {
 				return false;
 						
 			// add entry to email verification table
-			long expiryTime = currentTime + expiryTimeEmailRegistration;			
+			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;			
 			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
 	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";	
 			pst = conn.prepareStatement(query);
@@ -735,6 +764,65 @@ public class ServletAccount extends HttpServlet {
 	        dbManager.freeConnection(conn);
 	    }
 		return false;	
+	}
+	
+	/***
+	 * Identifies the user with the session key, and then adds an entry inside email verification table with the verification number
+	 * and the pending email.
+	 * @param sessionKey Session key of the user requesting for email change.
+	 * @param newEmail New email address to change to.
+	 * @return boolean indicating whether adding the email change was successful
+	 */
+	private boolean addEmailChangeRequest(String sessionKey, String newEmail, UUID uuid){
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		newEmail = Utility.checkInputFormat(newEmail);
+		long currentTime = Utility.getCurrentTime();
+		
+		try {
+			// get accout id from sessionKey	
+			Session session = dbManager.getSessionByKey(sessionKey);
+			int idAccount = session.getIdAccount();
+			// add entry to email verification table
+			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;	
+            String query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime, emailPending)" +
+    		" VALUES(?,?,?,?);";
+            pst = conn.prepareStatement(query);
+		    pst.setString(1, uuid.toString());
+		    pst.setInt(2, idAccount);
+		    pst.setLong(3, expiryTime);
+		    pst.setString(4, newEmail);
+			// if successful, 1 row should be inserted
+			int rowsInserted = pst.executeUpdate(query);
+			if (rowsInserted != 1)
+				return false;
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;		
 	}
 	
 	/***
