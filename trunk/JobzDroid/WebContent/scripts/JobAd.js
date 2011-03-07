@@ -71,9 +71,9 @@ function loadJobAdDetails( responseXML ){
         var location		=	jobAd.getAttribute("location");
         var tags			=	jobAd.getAttribute("tags");
         var contactInfo		=	jobAd.getAttribute("contactInfo");
-        var expiryDate		=	jobAd.getAttribute("expiryDate");
-        var startingDate	=	jobAd.getAttribute("startingDate");
-        var creationDate	=	jobAd.getAttribute("creationDate");
+        var expiryDateMs	=	jobAd.getAttribute("expiryDate");
+        var startingDateMs	=	jobAd.getAttribute("startingDate");
+        var creationDateMs	=	jobAd.getAttribute("creationDate");
         var status			=	jobAd.getAttribute("status");
         var numberOfViews	=	jobAd.getAttribute("numberOfViews");
         var educationReq	=	jobAd.getAttribute("educationReq");
@@ -92,22 +92,14 @@ function loadJobAdDetails( responseXML ){
         } else{
         	educationReq = "Not Specified";
         }
-
-//        var colParams = new Array();
-//        colParams[0] = jobAdId;
-//        colParams[1] = jobAdTitle;
-//        colParams[2] = location;
-//        colParams[3] = tags;
-//        colParams[4] = contactInfo;
-//        colParams[5] = expiryDate;
-//        colParams[6] = startingDate;
-//        colParams[7] = creationDate;
-//		colParams[8] = status;
-//		colParams[9] = numberOfViews;
-//		colParams[10] = educationReq;
-//		colParams[11] = jobAdDescription;
-//		colParams[12] = isApproved;
-
+        
+        
+        var expiryDate = new Date(expiryDateMs);
+        var startingDate = new Date(startingDateMs);
+        var creationDate = new Date(creationDateMs);
+        
+        alert(expiryDate);
+        
 		
 		$("#jobAdId").innerHTML=jobAdId;
 		$("#jobTitle").val(jobAdTitle);
@@ -120,9 +112,10 @@ function loadJobAdDetails( responseXML ){
 		$("#jobDescription").val( jobAdDescription);
 		$("#isApproved").innerHTML = isApproved;
 		
-		//document.getElementById("expiryDate").innerHTML =  
-		//document.getElementById("startingDate").innerHTML = 
-		//document.getElementById("creationDate").innerHTML = 
+		$("expiryDate").innerHTML = expiryDate;
+		$("startingDate").innerHTML = startingDate;
+		$("creationDate").innerHTML = creationDate;
+
 		
 }
 
@@ -131,7 +124,7 @@ function loadJobAdDetails( responseXML ){
 function getJobAdById()
 {
 	//TODO Testing ONLY, RM after testing
-	$("#getJobAdButton").attr("disabled", true);
+	//$("#getJobAdButton").attr("disabled", true);
 	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	request = new Request;
@@ -159,7 +152,7 @@ function getJobAdById()
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
+		    //var responseText= ParseXMLResponse(xmlhttp.responseXML);
 		    loadJobAdDetails(xmlhttp.responseXML);
 	    	document.getElementById("feedback").innerHTML="Successfully finished tasks";
 	    	$("#jobAdDetails").show();
@@ -176,7 +169,7 @@ function getJobAdById()
 
 
 function editJobAd(){
-	document.getElementById("submitEdit").disabled=true;
+	//document.getElementById("submitEdit").disabled=true;
 	
 	document.getElementById("feedback").innerHTML="<h2>Sending Edit Request</h2>";
 
@@ -299,7 +292,6 @@ function searchJobAdvertisement(){
 		alert("Must Enter Job Advertisement Title!");
 		return;
 	}
-	document.getElementById("newJobAdButton").disabled=true;
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
@@ -323,7 +315,6 @@ function searchJobAdvertisement(){
 	  };
 	  
 	  
-	
 	
 	request = new Request;
 	//TODO fix sessionID
