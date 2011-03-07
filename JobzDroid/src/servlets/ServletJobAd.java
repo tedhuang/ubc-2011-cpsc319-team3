@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import classes.JobAdvertisement;
+import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
@@ -412,10 +413,43 @@ public class ServletJobAd extends HttpServlet {
 	 * @throws IOException 
 	 */
 	private void createJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		System.out.println("Entered createJobAdvertisement");
 		
 		//initialize return statements
 		String message = "Create Job Advertisement Failed";
 		boolean isSuccessful = false;
+		
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		
+		//Checks the user's privilege
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		
+		earlyExit: {
+		
+			System.out.println("Entered user sessionKey");
+			
+		if ( userSession == null ) {
+			//TODO session invalid, handle error
+			System.out.println("session is null");
+			message = "Failed to authenticate user session";
+			break earlyExit;
+		}
+		else {
+			//TODO implmement this
+			System.out.println("checking usertype");
+			System.out.println("usertype = " + userSession.getAccountType());
+			if( userSession.getAccountType().equals("poster") ||
+					userSession.getAccountType().equals("admin")) {
+				System.out.print("User has the correct priviliege");
+			}
+			else {
+				message = "User does not have the right privilege";
+				break earlyExit;
+			}
+
+		}
+		
+		System.out.print("User session sucessful for key " + userSession.getKey() );
 		
 		String jobAdvertisementTitle = request.getParameter("strTitle");
 		String jobDescription = request.getParameter("strDescription");
@@ -454,6 +488,8 @@ public class ServletJobAd extends HttpServlet {
 		Statement stmt = null;
 		
 		try {
+			System.out.print("Inserting new Job Ad into DB");
+			
 			stmt = conn.createStatement();
 			
 			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
@@ -485,6 +521,7 @@ public class ServletJobAd extends HttpServlet {
 				message = "Create Job Advertisement Successful";
 			}
 			else{
+				System.out.println("New JobAd Creation failed");
 				Utility.logError("New JobAd insert in DB failed");
 			}
 			
@@ -513,7 +550,8 @@ public class ServletJobAd extends HttpServlet {
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
-	    
+		}//earlyExit:
+
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");

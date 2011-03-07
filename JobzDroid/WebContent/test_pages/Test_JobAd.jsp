@@ -10,19 +10,16 @@
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
+
+<script type="text/javascript" src='../scripts/testAuthentication.js'></script>
+<script type="text/javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js'></script>
+
 <link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
 
 
 <script type="text/javascript">
 
 
-
-function loadSessionKeyFromURL() {
-	alert(getSessionKey());
-	document.data.sessionKey.value = getSessionKey();
-	document.getElementById("sessKey").value = getSessionKey();
-	//Remember to add the hidden form inside BODY
-}
 $("document").ready(function() {
 	loadSessionKeyFromURL();
 });
@@ -104,13 +101,10 @@ Expire In... :
 <button id="newJobAdButton" type="button" onclick="createJobAdvertisement()">Create Job Advertisement</button>
 
 
-<form name="data" method="GET" action="">
-<input type="text" name="sessionKey"></input>
-
-</form>
-
-<input id="sessKey"></input>
-
+	<form name="sid" method="get" action="">
+		<input id="sessionKey" name="sessionKey"/>
+	</form>
+	
 </body>
 </html>
 

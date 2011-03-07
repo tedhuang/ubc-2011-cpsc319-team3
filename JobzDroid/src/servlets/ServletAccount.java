@@ -221,7 +221,7 @@ public class ServletAccount extends HttpServlet {
 					//send verification email to new user
 					//TODO
 				//	emailManager.sendAccountActivationEmail(email, name, uuid);
-					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
+					emailManager.sendAccountActivationEmail("martinku86@gmail.com", name, uuid);
 					message = "Account creation successful! An email has been sent to your inbox, " +
 							"please follow the instructions to activate your account within "
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";

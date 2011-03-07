@@ -2,8 +2,8 @@
 
 /***
  * A string wrapper class that represents xmlhttpsrequest parameters
- * with string manipulation functions (format: action + sessionID + other parameters)
- * Example output: action=register&sessionID=1234&arg1=value1
+ * with string manipulation functions (format: action + addSessionKey + other parameters)
+ * Example output: action=register&addSessionKey=1234&arg1=value1
  */
 function Request(){
 	this.str = "";
@@ -11,8 +11,8 @@ function Request(){
 Request.prototype.addAction = function(action){
 	this.str += "action=" + encodeURIComponent(action);
 };
-Request.prototype.addSessionID = function(sessionID){
-	this.str += "&sessionID=" + encodeURIComponent(sessionID);
+Request.prototype.addSessionKey = function(addSessionKey){
+	this.str += "&sessionKey=" + encodeURIComponent(addSessionKey);
 };
 Request.prototype.addParam = function(param, arg){
 	this.str += "&" + param + "=" + encodeURIComponent(arg);
