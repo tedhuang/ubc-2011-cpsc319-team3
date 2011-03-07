@@ -98,7 +98,7 @@ function loadJobAdDetails( responseXML ){
         var startingDate = new Date(startingDateMs);
         var creationDate = new Date(creationDateMs);
         
-        alert(expiryDate);
+        alert(creationDate);
         
 		
 		$("#jobAdId").innerHTML=jobAdId;
