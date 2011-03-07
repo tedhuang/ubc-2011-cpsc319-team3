@@ -104,19 +104,29 @@ function loadAdList(outputDiv){
 *************************************************************************************************
 
 */
-function buildTable(xmlObj, outputDiv){
-	var tbody = $("tbody", outputDiv).html("");
-	$(xmlObj,xmlhttp.responseXML).each(function() {//for All returned xml obj
+function buildTable(xmlReturnedObj, outputDiv){
+	var tbody  = $("tbody", outputDiv).html("");
+	var xmlObj = $(xmlReturnedObj,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+		$("#feedback").html("<h2>NO Results Found</h2>");
+		if($(tbody).find("tr").get().length > 0){//remove old entries if any
+			$.each()($(tbody).find("tr").get(), function(){
+				$(this).remove();
+			});
+		}
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDate") + 
 		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
 		  				"</td><td>" + jobAd.attr("contactInfo")  + 
 		  				"</td><td>" + jobAd.attr("educationReq") + 
-
-"</td></tr>";
+		  				"</td></tr>";
 		  $(rowText).appendTo(tbody);
 		  
 		});
+	}
 }
 
 function loadJobAdDetails( responseXML ){
@@ -335,20 +345,12 @@ function searchJobAdvertisement(outputDiv){
 	request.addAction("searchJobAdvertisement");
 	request.addSessionID("1234"); //TODO: change this
 	
-//	var titleSearch = $("#titleSearch").val();
-//	var eduReqsearch = $("#eduReqsearch").val();
-//	var locSearch = $("#locSearch").val();
-//	var tagsSearch = $("#tagsSearch").val();
-	
-	
 	var searchFields = $(":input", "#searchBox").serializeArray();
 	jQuery.each(searchFields, function(i, field){
         if(field.value == ""){//DO NOTHING
         }
         else{
-        	request.addParam(field.name, field.value); //add parameter to the request 
-
-according to how many search criteria filled
+        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
         }
 	   });
 	//User Input Check:
