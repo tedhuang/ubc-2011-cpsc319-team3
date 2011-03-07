@@ -128,51 +128,15 @@ JobAdID:
 	<br>
 	
 	Starting Date:  <br>
-	~TODO: finish this~<!-- 
-		<form action="" name="formStartingDate">
-		<select id="startingDay">
-		</select> 
-		<select id="startingMonth">
-		</select> 
-		<select id="startingYear">
-		</select> 
-		</form>
-		<script type="text/javascript">
-			//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-			window.onload=function(){
-			populatedropdown("startingDay", "startingMonth", "startingYear");
-			};
-		</script> 
-		<br>
-	 -->
-	 
-	Expire In... :  <br>
-	~TODO: finish this~ <!-- 
-		<form action="" name="formExpiryDate">
-		<select id="expiryDay">
-		</select> 
-		<select id="expiryMonth">
-		</select> 
-		<select id="expiryYear">
-		</select> 
-		</form>
-		<script type="text/javascript">
-			//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-			populatedropdown("expiryDay", "expiryMonth", "expiryYear");
-		</script>
-		<br>
-	 -->
-	 	
-	Created On:<br>
-	~TODO: complete this~<br>
-	<br>
-	Number of Views:<br>
-	<div id=numViews>Unknown</div>
-	<br>
-	<button id="submitEdit" type="button" onclick="editJobAd()">Submit Edit</button>
-		
-</div>
+	<div id=startingDate></div>
 
+	Expiring on:  <br>
+	<div id=expiryDate></div>
+	
+	Created on:<br>
+	<div id=creationDate></div>
+	
+</div>
 </body>
 </html>
 

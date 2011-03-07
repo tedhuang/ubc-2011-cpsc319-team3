@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
 import java.util.*;
 
 import javax.servlet.ServletException;
@@ -156,20 +155,21 @@ public class ServletJobAd extends HttpServlet {
 				
 				//Fill in the fields of the jobAd object
 				
-				jobAd.jobAdId 			= result.getInt("idJobAd");
-			//	jobAd.ownerID 			= result.getInt("idAccount");
-				jobAd.jobAdTitle		= result.getString("title");
-			//	jobAd.jobAdDescription 	= result.getString("description");
-			//	jobAd.expiryDate		= result.getLong("expiryDate");
-//				jobAd.startingDate 		= result.getLong("dateStarting");
-				jobAd.creationDate 		= result.getLong("datePosted");
-//				jobAd.status 			= result.getString("status");
 				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				
+				
+//				jobAd.ownerID 			= result.getInt("idAccount");
+//				jobAd.jobAdDescription 	= result.getString("description");
+//				jobAd.expiryDate		= result.getLong("expiryDate");
+//				jobAd.startingDate 		= result.getLong("dateStarting");
+//				jobAd.status 			= result.getString("status");
 //				jobAd.tags 				= result.getString("tags");
 //				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 //				jobAd.isApproved 		= result.getBoolean("isApproved");
-				
 				
 			}
 			else{ //Error case
@@ -453,7 +453,108 @@ public class ServletJobAd extends HttpServlet {
 		
 	
 	
-	
+	public ArrayList<JobAdvertisement> searchJobAdvertisement(String keywords, //TODO: change keywords to array 
+			  String location, 
+			  String education
+			  ){ //String tags //TODO: fix up tags search
+
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		String totalQuery;
+		String keywordQuery;
+		String locationQuery;
+		//String tagsQuery;
+		String educationQuery;
+		
+		keywords = Utility.checkInputFormat( keywords );
+		//tags = Utility.checkInputFormat( tags );
+		//location = Utility.checkInputFormat( location );
+		//education = Utility.checkInputFormat( education );
+
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {		
+			stmt = conn.createStatement();
+			
+			//Add individual queries onto total query
+			if(keywords == "")
+				keywordQuery = "";
+			else
+				keywordQuery = "AND title = '" + keywords + "'";
+			
+			if(location == "")
+				locationQuery = "";
+			else
+				locationQuery = " AND location = '" + location + "'";
+			
+			if(education == "")
+				educationQuery = "";
+			else
+				educationQuery = " AND education = '" + education + "'";
+			
+			totalQuery = "SELECT * FROM tableJobAd "
+			+ "WHERE status = 'open' " 
+			+ keywordQuery + locationQuery + educationQuery; 
+			
+			
+			System.out.println(totalQuery);
+			boolean success = stmt.execute(totalQuery);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			//Compile the result into the arraylist
+			while( result.next() ) {
+				JobAdvertisement temp = new JobAdvertisement();
+				
+				temp.jobAdId = result.getInt("idJobAd");
+				temp.ownerID = result.getInt("OwnerID");
+				temp.numberOfViews = result.getInt("numberOfViews");
+				temp.jobAdTitle = result.getString("title");
+				temp.location = result.getString("location");
+				temp.tags = result.getString("tags");
+				temp.contactInfo = result.getString("contactInfo");
+				temp.expiryDate = result.getLong("ExpiryDate");
+				temp.startingDate = result.getLong("startingDate");
+				temp.creationDate = result.getLong("CreationDate");
+				temp.status = result.getString("status");
+				temp.jobAdDescription = result.getString("description");				
+				
+				jobAdList.add( temp ); //add to the temporary list
+			}
+			
+			stmt.close();
+			
+			System.out.println("Searched Auctions");
+			return jobAdList;
+			
+		} catch (SQLException e1) {
+		e1.printStackTrace();
+		}
+		
+		
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+		
+		return null;
+		}
 	
 	
 }
