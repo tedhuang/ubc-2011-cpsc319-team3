@@ -7,8 +7,15 @@
 
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
+<script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js'></script>
+<link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
+
+
 <script type="text/javascript">
+
+
 
 function loadSessionKeyFromURL() {
 	alert(getSessionKey());
@@ -44,9 +51,9 @@ Education Requirement:
 			
 <br>
 Job Location(s) (separated by comma): <br>
-Need to integrate with Google Map <br>
-<!-- Need to integrate with Google Map
-<input id="jobLocation" type="text" name="jobLocation" size="20"><br> -->
+<input id="address" type="text" name="address" size="20"><br>
+<button type="button" onclick="calculateLocation()">Find Location</button><br>
+<table id="lookUpTable"></table><br />
 <br>
 
 

@@ -7,6 +7,9 @@ var geocoder = new google.maps.Geocoder();
 
 $("document").ready(function(){
 	$("#addressTable button").bind("click",calculateLocation);
+	
+	
+	
 });
 
 /***
@@ -41,7 +44,11 @@ function showMap(location, formatted_address) {
 function calculateLocation() {
 	var rowNumber = $(this).parent().parent().index();
 	currAddrNum = rowNumber;
-	var address = $("#address"+rowNumber).text();
+	
+	//CHANGED THIS
+	var address = $("#address"); //$("#address"+rowNumber).text();
+	//var address = $("#address"+rowNumber).text();
+	
 	geocoder.geocode( {'address': address}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			// list results after receiving data
