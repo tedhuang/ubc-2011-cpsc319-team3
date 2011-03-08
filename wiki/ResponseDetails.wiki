@@ -95,3 +95,7 @@ Or we can determine the privlege after switching on "action", before entering th
                 // We will haveto handle the response externally at this point.
 }}}
 Currently, we pass the response inside the handling function.  We may have to handle the response outside the handling function in order for this structure to work.
+
+== More Information ==
+
+There are more information to be added.  Also, check out BasicRequestResponse and RequestDetails to get a wholistic picture how of this entire process works!
