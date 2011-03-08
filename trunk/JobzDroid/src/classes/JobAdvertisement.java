@@ -17,7 +17,9 @@ public class JobAdvertisement {
 	public String	jobAdDescription;
 	public boolean	isApproved;
 	public String	jobAvailability;
+	/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 	public String	creationDateFormatted;
+	public String 	eduReqFormatted;
 	
 	
 	public JobAdvertisement() {
@@ -36,7 +38,9 @@ public class JobAdvertisement {
 		jobAdDescription		= null;
 		isApproved				= false;
 		jobAvailability 		= null;
+		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 		creationDateFormatted	= null;
+		eduReqFormatted			= null;
 	}
 	
 	public JobAdvertisement(int AdId,
@@ -54,7 +58,8 @@ public class JobAdvertisement {
 							String description,
 							boolean isAppr,
 							String jobAvail,
-							String inDateFormatted
+							String inDateFormatted,
+							String eduFormatted
 							){
 		
 		jobAdId 		= AdId;
@@ -71,7 +76,9 @@ public class JobAdvertisement {
 		jobAdDescription= description;
 		isApproved		= isAppr;
 		jobAvailability = jobAvail;
+		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 		creationDateFormatted = inDateFormatted;
+		eduReqFormatted		  = eduFormatted;
 		
 	}
 	
@@ -87,7 +94,10 @@ public class JobAdvertisement {
 		" expiryDate=\"" + expiryDate + "\"" +
 		" startingDate=\"" + startingDate + "\"" +
 		" creationDate=\"" + creationDate + "\"" +
+		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************///TODO DO WE NEED THE NON-FORMAT VAR?
 		" creationDateFormatted=\"" + creationDateFormatted + "\"" +
+		" eduReqFormatted=\"" + eduReqFormatted + "\"" +
+		/******************************************************************/
 		" status=\"" + status + "\"" +
 		" numberOfViews=\"" + numberOfViews + "\"" +
 		" educationReq=\"" + educationReq + "\"" +

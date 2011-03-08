@@ -17,11 +17,15 @@
 </head>
 
 <body>
-<form id="searchBox">
+
 		<h2>Job Advertisement Search</h2> <br>
-		
-		<h3>Search input: </h3>
-		<input id="searchKeyword" type="text" name="searchKeyword" size="40"><br>
+<form id="qkSearchForm">		
+		<h3>Quick Search AKA keyword search: </h3>
+		<input id="quickSearchBox" type="text" name="quickSearch" size="40"><br>
+		<button id="qSearchButton" type="button" onclick="quickSearchJobAd(resultTable)">Quick Search</button>
+</form>
+<form id="searchForm">		
+		<div id="advSearch">Advance Search Goes Below
 		<h3>Search title: </h3>
 		<input id="titleSearch" type="text" name="searchTitle" size="40"><br>
 		

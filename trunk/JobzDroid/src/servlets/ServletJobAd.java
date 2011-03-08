@@ -108,124 +108,7 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 	
-	/************************************************************************************
-	 * 	This is the input forms' name, be sure to be matched
-	 ************************************************************************************/
-	private enum EnumCriteria	{
-		
-		searchTitle,
-		searchCompany,
-		searchEduReq,
-		searchJobAdId,
-		searchJobLoc,
-		searchFT,
-		searchPT,
-		searchIS
-		
-		
-	}
 	
-	/**************************************************************************************
-	 * 			DBColConvertor Function
-	 *  Convert input form's name into corrsponding DB columns
-	 * @param input
-	 * @return
-	 **************************************************************************************/
-	private String DBColConvertor(String input){
-		switch (EnumCriteria.valueOf(input)){
-		
-		case searchTitle:
-			return "title";
-			
-		case searchEduReq:
-			return "educationRequired";
-			
-		case searchCompany:
-			return "company";
-		
-		case searchJobAdId:
-			return "idJobAd";
-			
-		case searchPT:
-			return "jobAvailability";
-			
-		case searchFT:
-			return "jobAvailability";
-			
-		case searchIS:
-			return "jobAvailability";
-		
-
-		
-		default:
-		return "";
-		
-		}
-		
-		
-	}
-	
-	/*****************************************************************************************************************
-	 * 					buildQuery Function
-	 * Dynamically making the query as the user's interests
-	 * @param request
-	 * @return
-	 *****************************************************************************************************************/
-	private String buildQuery(HttpServletRequest request){
-		
-		Map<String, String>paraMap = new HashMap<String, String>();
-		
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-			
-			String paraName = (String) paramNames.nextElement();
-			if( paraName.equals("action")){//Not Querying this
-				//Do Nothing
-			}
-			else{
-				String colName = DBColConvertor(paraName); //convert to col names
-			    //Put the parameters' names and values into the MAP
-				if(colName.equals("jobAvailability")){
-					if(paraMap.get(colName)!=null){
-						
-						// If it is search by job availability
-						//CAUTION: MIDDLE SPACE IMPORTANT
-						String curVal = paraMap.get(colName);
-						curVal = curVal.substring(0, curVal.length()-1);
-						String jobAvailTerm = curVal+ ", '" + request.getParameter(paraName) + "')";
-						paraMap.put(colName, jobAvailTerm);
-					}
-					else{
-						paraMap.put(colName,"(\'"+request.getParameter(paraName)+"\')" );
-					}
-				}
-				else{
-						paraMap.put(colName,request.getParameter(paraName) );
-				}
-			    
-				//Debug
-			    System.out.println("Column: " + colName + "\n" +
-			    					"Value: " + paraMap.get(colName));
-			}
-		}
-		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING listSelQuery!
-		String query ="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd WHERE ";
-		StringBuffer buf = new StringBuffer();
-		buf.append(query);
-		String andClause =" AND ";//CAUTION: SPACE IMPORTANT
-		String inClause = " IN ";//CAUTION: SPACE IMPORTANT
-       for(Map.Entry<String, String> entry : paraMap.entrySet()){
-    	   
-           if(entry.getKey().equals("jobAvailability")){//if search by the availability term use IN
-        	   buf.append(entry.getKey()+ inClause + entry.getValue() + andClause);
-           }
-           else{//CAUTION: SPACE IMPORTANT
-        	   buf.append(entry.getKey()+ " LIKE '%" +entry.getValue()+"%'" + andClause);
-           }
-        }
-		query = buf.substring(0, buf.length()- andClause.length()); //remove the last " AND "
-		return query;
-	}
 	
 	/******************************************************************************************************************
 	 * 					ADLISTLOAD
@@ -259,7 +142,7 @@ public class ServletJobAd extends HttpServlet {
 		Statement stmt = null;
 		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
 		
-		String query = buildQuery(request);
+		String query = buildSearchQuery(request);
 		
 		try {
 			stmt = conn.createStatement();
@@ -368,6 +251,7 @@ public class ServletJobAd extends HttpServlet {
 				message = "getJobAd successful";
 				
 				//Fill in the fields of the jobAd object
+				
 				jobAd.jobAdId 			= result.getInt("idJobAd");
 				jobAd.ownerID 			= result.getInt("idAccount");
 				jobAd.jobAdTitle		= result.getString("title");
@@ -381,6 +265,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.tags 				= result.getString("tags");
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 				jobAd.isApproved 		= result.getBoolean("isApproved");
+				
 				
 			}
 			else{ //Error case
@@ -779,10 +664,12 @@ public class ServletJobAd extends HttpServlet {
 		try {		
 			stmt = conn.createStatement();
 			//Add individual queries onto total query
-			String query = buildQuery(request);
-			System.out.println(query);
-			boolean success = stmt.execute(query);
+			String query = buildSearchQuery(request);
 			
+			//DEBUG
+			System.out.println(query);
+			
+			stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
 			
 			//Compile the result into the arraylist
@@ -793,8 +680,8 @@ public class ServletJobAd extends HttpServlet {
 				temp.jobAdTitle				= result.getString("title");
 				temp.creationDateFormatted 	= Utility.dateConvertor(result.getLong("datePosted"));
 				temp.contactInfo 			= result.getString("contactInfo");
-				temp.educationReq 			= result.getInt("educationRequired");
-				temp.jobAvailability 		= result.getString("jobAvailability");
+				temp.eduReqFormatted 		= Utility.degreeConvertor(result.getInt("educationRequired"));
+				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
 //				temp.tags 					= result.getString("tags");
 				
 				jobAdList.add( temp ); //add to the temporary list
@@ -833,8 +720,6 @@ public class ServletJobAd extends HttpServlet {
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
-//		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-//		XMLResponse.append("\t<message>" + message + "</message>\n");
 		Iterator<JobAdvertisement> itr = jobAdList.iterator();
 	    while (itr.hasNext()) {//iterate through all list and append to xml
 	    	XMLResponse.append(itr.next().toXMLContent() ); 
@@ -845,16 +730,220 @@ public class ServletJobAd extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 		}
 	
-}
-
-
-
-
-
-
-
-
-
-
-
-
+	/*****************************************************************************************************************
+	 * 					buildSearchQuery Function
+	 * Dynamically making the query as the user's interests
+	 * Callee Function:  DBColConvertor
+	 * Caller Function:  searchJobAd
+	 *****************************************************************************************************************/
+	private String buildSearchQuery(HttpServletRequest request){
+		
+		Map<String, String>paraMap = new HashMap<String, String>();
+		boolean qkSearch=false;
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			
+			String paraName = (String) paramNames.nextElement();
+			if( paraName.equals("action")){//Not Querying this
+				//Do Nothing
+			}
+			else{
+				String colName = DBColConvertor(paraName); //convert to col names
+			    //Put the parameters' names and values into the MAP
+				if(colName.equals("jobAvailability")){
+					if(paraMap.get(colName)!=null){
+						
+						// If it is search by job availability
+						//CAUTION: MIDDLE SPACE IMPORTANT
+						String curVal = paraMap.get(colName);
+						curVal = curVal.substring(0, curVal.length()-1);
+						String jobAvailTerm = curVal+ ", '" + request.getParameter(paraName) + "')";
+						paraMap.put(colName, jobAvailTerm);
+					}
+					else{
+						paraMap.put(colName,"(\'"+request.getParameter(paraName)+"\')" );
+					}
+				}
+				else{
+						paraMap.put(colName,request.getParameter(paraName) );
+				}
+			    
+				//Debug
+			    System.out.println("Column: " + colName + "\n" +
+			    					"Value: " + paraMap.get(colName));
+			}
+		}
+		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
+		String query 			="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd WHERE ";
+		String panicQuery		="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd";
+		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
+		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
+		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
+		String likeKeyword		= " LIKE "; 	//CAUTION: SPACE IMPORTANT
+		String regExKeyword 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
+		String whereKeyword		= " WHERE ";	//CAUTION: SPACE IMPORTANT
+		String orderByKeyword	= " ORDER BY "; //CAUTION: SPACE IMPORTANT
+		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
+		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
+		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT
+		boolean panic = false;
+		
+		StringBuffer queryBuf = new StringBuffer();
+		queryBuf.append(query);
+		
+       for(Map.Entry<String, String> entry : paraMap.entrySet()){
+    	   
+    	   if(!(entry.getKey().equals("quickSearch"))){
+	    	   switch(EnumJobTableCol.valueOf(entry.getKey())){
+	    	   
+	    	   case title:
+	    			queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+	    			break;
+	    			//CAUTION: SPACE IMPORTANT
+	    	   case jobAvailability: //if search by the availability term use IN
+	    		    queryBuf.append(entry.getKey()+ inKeyword + entry.getValue() + andKeyword);
+	            	break;
+	           
+	    	   case educationRequired:
+	    		    queryBuf.append(entry.getKey()+ "=" + entry.getValue() + andKeyword);
+	    		    break;
+	    	   case tags:
+	    		   queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+	    		   break;
+//	    	   case location:
+//	    		   queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+//	    		   break;
+	    		   
+	    	   default: //panic //TODO NOT WORKING NEED TO FIX 
+	    		   panic= true;
+	    		   System.out.println("PANIC ACTION!");
+	    		   queryBuf.setLength(0);
+	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
+	    		   query = queryBuf.toString();
+	    		   break;
+	    	  }//ENDOF SWITCH
+    	   }//ENDOF IF NOT QUICK SEARCH
+    	   
+    	   else{//Perform quick search
+    		   qkSearch=true;
+    		   wordRegExBuffer.insert(9,entry.getValue());
+    		   for(EnumJobTableCol col : EnumJobTableCol.values()){
+    			   
+    			   switch (col){
+    			   
+    			   case undefine:
+    				   break;
+    			   	case idJobAd:
+    				   break;
+    				   
+    			   	case educationRequired:
+    			   		if (Utility.degreeConvertor(entry.getValue())!=0){
+//    			   			queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
+    			   			queryBuf.insert(query.length(), col + "=" + Utility.degreeConvertor(entry.getValue()) + orKeyword); //Extract to the edu level
+    			   		}
+    			   	   break;
+    			   	   
+    			   	case jobAvailability:
+    			   		if(Utility.jobTypeTranslator(true,entry.getValue())!=null){
+    			   			queryBuf.insert(query.length(), col + "='" + Utility.jobTypeTranslator(true,entry.getValue())+"'" + orKeyword); //Extract to the Job Type
+    			   			}
+    			   		break;
+    			   		
+    			   	 default:
+    			   		queryBuf.append(col + regExKeyword + wordRegExBuffer.toString() + orKeyword);
+    			   		break;
+    			   }
+    		   }//ENDOF FOR EACH-ENUM-COL
+		  
+    	   }
+        }//ENDOF FOR-MAP LOOP
+       
+       
+    	   if (!panic){
+	  			
+	  			if(!qkSearch){
+	  				queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
+	  			}
+	  			else{
+	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
+	  			}
+	  			queryBuf.append(orderByKeyword + "datePosted" + descKeyword);//TODO Can have pages using limited
+	  			query = queryBuf.toString();
+			}
+       
+		return query;
+	}
+	/**************************************************************************************
+	 * 			DBColConvertor Function
+	 *  Convert input form's name into corrsponding DB columns
+	 * @param input
+	 * @return
+	 **************************************************************************************/
+	private String DBColConvertor(String input){
+		switch (EnumCriteria.valueOf(input)){
+		
+		case searchTitle:
+			return "title";
+			
+		case searchEduReq:
+			return "educationRequired";
+			
+		case searchCompany:
+			return "company";
+		
+		case searchJobAdId:
+			return "idJobAd";
+			
+		case searchPT:
+			return "jobAvailability";
+			
+		case searchFT:
+			return "jobAvailability";
+			
+		case searchIS:
+			return "jobAvailability";
+		
+		case quickSearch:
+			return "quickSearch";
+		
+		default:
+		return "undefine";
+		
+		}
+	}
+	/************************************************************************************
+	 * 	This is the input forms' name, be sure to be matched
+	 ************************************************************************************/
+	private enum EnumCriteria	{
+		
+		searchTitle,
+		searchCompany,
+		searchEduReq,
+		searchJobAdId,
+		searchJobLoc,
+		searchFT,
+		searchPT,
+		searchIS,
+		quickSearch,
+		
+		undefine
+		
+	}
+	private enum EnumJobTableCol{
+		
+		title,
+	//	company, 
+		educationRequired,
+	//	location,
+		jobAvailability,
+		tags,
+		idJobAd,
+		
+		undefine
+	}
+	
+	
+	
+	
+}//ENDOF SERVLETJobAD
