@@ -102,6 +102,8 @@ function sendSessionKey()
 	  };
 }}}
 
+  * For implmentation details of above code, see /WebContent/index.html which includes /WebContent/scripts/authentication.js
+
 Once you entered the new page, you will notice that the URL will now contain a new parameter "sessionKey=...".  That is the session key, and the new page must implement code to read this from the URL and stores it inside a new hidden form.  It may also be wise to remove the parameter, which we will talk about later.
 
   * code that reads the sessionKey from URL.  loadSessionKeyFromURL() is already coded, simply import authentication.js
@@ -117,6 +119,8 @@ $("document").ready(function() {
 });
 </script>
 }}}
+
+  * for real implementation, see /WebContent/home.html
 
 == send session key for server call that requires one ==
 
@@ -137,4 +141,3 @@ Now you can get session key from server, pass session key between pages, and sen
 == Removing SessionKey from URL ==
 
 TO BE MADE
-
