@@ -159,7 +159,7 @@ function editProfile(){
 	
 	
 	request = new Request;
-	request.addAction("createProfile");
+	request.addAction("editProfile");
 	request.addSessionID("1234"); //TODO integrate session key
 	request.addParam("accountType", intAccountType); 	//Poster = 1, Searcher = 2
 	request.addParam("accountID", intAccountID);

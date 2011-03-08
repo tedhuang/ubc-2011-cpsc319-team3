@@ -2,7 +2,7 @@
  * Javascript file for GoogleMaps functions
  */
 var map;
-var latitude, longitude, currAddrNum;
+var latitude, longitude, currAddrNum, address;
 var geocoder = new google.maps.Geocoder(); 
 
 $("document").ready(function(){
@@ -46,8 +46,12 @@ function calculateLocation() {
 	currAddrNum = rowNumber;
 	
 	//CHANGED THIS
-	var address = $("#address"); //$("#address"+rowNumber).text();
+	address = $("#address").val(); //$("#address"+rowNumber).text();
 	//var address = $("#address"+rowNumber).text();
+	
+	if(address == ""){
+		alert("Please input an address");
+	}
 	
 	geocoder.geocode( {'address': address}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
@@ -64,7 +68,9 @@ function calculateLocation() {
  * List results from Google maps, and bind functions to buttons in dynamically generated table elements
  */
 function listLocationChoices(googleMapsResults){
+	$("#resultTableTitle").text("Select a location:");
 	$("#lookUpTable tr").remove();
+	
 	var i;
 	for (i = 0; i < googleMapsResults.length; i++){
 		var currentResult = googleMapsResults[i];
@@ -81,8 +87,27 @@ function listLocationChoices(googleMapsResults){
 		var rowNumber = $(this).parent().parent().index();
 		latitude = googleMapsResults[rowNumber].geometry.location.lat();
 		longitude = googleMapsResults[rowNumber].geometry.location.lng();
-		$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
 		
-		//TODO send request to save data in DB
+		//$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
+		$("#longitude").text("Longitude: " + longitude);
+		$("#latitude").text("Latitude: " + latitude);
+		
+		
 	});
 }
+
+function getAddress(){
+	return address;	
+}
+
+function getLongitude(){
+	return longitude;
+}
+
+function getLatitude(){
+	return latitude;
+}
+
+
+
+
