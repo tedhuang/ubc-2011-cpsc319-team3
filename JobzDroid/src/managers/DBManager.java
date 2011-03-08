@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import classes.Account;
 import classes.DBConnectionPool;
 import classes.JobAdvertisement;
 import classes.Session;
@@ -103,27 +104,40 @@ public class DBManager {
 	}
 	
 	/***
-	 * Returns the account ID associated with the input email address. 
-	 * Returns -1 if email address doesn't exist in the account table.
+	 * Returns the account object with the input email address. 
+	 * Returns null if email address doesn't exist in the account table.
 	 * @param email Email address to be queried.
-	 * @return Account ID associated with the input email address. Returns -1 if not found.
+	 * @return Account object with the input email address. Returns null if not found.
 	 */
-	public int getIdAcccountFromEmail(String email){
+	public Account getAcccountFromEmail(String email){
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		String query = "";
-		int idAccount = -1;		
+		
+		Account account = null;
+		int idAccount;
+		String secondaryEmail, type, status;
+		long dateTimeCreated;
+		
 		email = Utility.checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
-			// get account id of the account just created
-			query = "SELECT idAccount FROM tableAccount WHERE email='" + email + "';";
+			query = "SELECT idAccount, secondaryEmail, type, status, dateTimeCreated FROM tableAccount WHERE email='" + email + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
-			if(rs.first())
+			if(rs.first()){
 				idAccount = rs.getInt("idAccount");
-			return idAccount;
+				if(rs.getObject("secondaryEmail") == null)
+					secondaryEmail = "";
+				else
+					secondaryEmail = rs.getString("secondaryEmail");
+				type = rs.getString("type");
+				status = rs.getString("status");
+				dateTimeCreated = rs.getLong("dateTimeCreated");
+				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated);
+				return account;
+			}
 		}
 		catch (SQLException e) {
 			Utility.logError("SQL exception: " + e.getMessage());
@@ -146,7 +160,7 @@ public class DBManager {
 	        }
 	        freeConnection(conn);
 	    }
-		return idAccount;
+		return account;
 	}
 	
 	/**
@@ -516,11 +530,9 @@ public class DBManager {
 											rs.getLong("expiryTime") );
 			}
 			else{
-				stmt.close();
 				return null;
 				// Error Handling
 			}
-			stmt.close();
 			
 			long currentTime = Utility.getCurrentTime();
 			if( currSession.getExpiryTime() >= currentTime ) {
