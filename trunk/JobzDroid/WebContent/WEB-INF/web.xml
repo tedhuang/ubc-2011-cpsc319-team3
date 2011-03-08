@@ -71,7 +71,8 @@
   <servlet-mapping>
     <servlet-name>ServletErrorHandler</servlet-name>
     <url-pattern>/ServletErrorHandler</url-pattern>
-  </servlet-mapping>  <error-page>
+  </servlet-mapping>
+  <error-page>
     <error-code>403</error-code>
     <location>/ServletErrorHandler</location>
   </error-page>
@@ -79,7 +80,7 @@
     <error-code>404</error-code>
     <location>/ServletErrorHandler</location>
   </error-page>
-    <error-page>
+  <error-page>
     <error-code>500</error-code>
     <location>/ServletErrorHandler</location>
   </error-page>
@@ -87,4 +88,14 @@
     <exception-type>java.lang.Exception</exception-type>
     <location>/ServletErrorHandler</location>
   </error-page>
+  <servlet>
+    <description>Handles all admin actions</description>
+    <display-name>ServletAdmin</display-name>
+    <servlet-name>ServletAdmin</servlet-name>
+    <servlet-class>servlets.ServletAdmin</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletAdmin</servlet-name>
+    <url-pattern>/ServletAdmin</url-pattern>
+  </servlet-mapping>
 </web-app>

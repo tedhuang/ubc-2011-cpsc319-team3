@@ -1,7 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import classes.Account;
 import classes.Session;
 import classes.Utility;
 
@@ -24,7 +24,7 @@ import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletAccount
- * Handles all account related requests, including registration, log-in, forget password, email verification
+ * Handles all account related requests, including registration, log-in, forget password, email verification and so on.
  */
 public class ServletAccount extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -497,7 +497,7 @@ public class ServletAccount extends HttpServlet {
 		
 		try {
 			long currentTime = Utility.getCurrentTime();
-			int idAccount;
+			int idAccount = -1;
 			long startingDateLong = -1;
 			// update account table, and set account status to pending
             String query = "INSERT INTO tableAccount(email, secondaryEmail, password, type, status, dateTimeCreated)" +
@@ -518,7 +518,9 @@ public class ServletAccount extends HttpServlet {
 				return false;
 			
 			// get account id of the account just created
-			idAccount = dbManager.getIdAcccountFromEmail(email);
+			Account acc = dbManager.getAcccountFromEmail(email);
+			if(acc != null)
+				idAccount = acc.getIdAccount();
 			if(idAccount == -1)
 				return false;
 						
@@ -654,10 +656,15 @@ public class ServletAccount extends HttpServlet {
 		email = Utility.checkInputFormat(email);
 		String query = "";
 		int rowsInserted;
+		int idAccount = -1;
 		try {
 			stmt = conn.createStatement();
 			long currentTime = Utility.getCurrentTime();
-			int idAccount = dbManager.getIdAcccountFromEmail(email);
+			Account acc = dbManager.getAcccountFromEmail(email);
+			if(acc != null)
+				idAccount = acc.getIdAccount();
+			if(idAccount == -1)
+				return false;
 			// add entry to password reset table
 			long expiryTime = currentTime + expiryTimeForgetPasswordRequest;			
 			query = "INSERT INTO tablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
@@ -783,9 +790,13 @@ public class ServletAccount extends HttpServlet {
 		long currentTime = Utility.getCurrentTime();
 		
 		try {
-			// get accout id from sessionKey	
+			// get accout id from sessionKey
+			int idAccount;
 			Session session = dbManager.getSessionByKey(sessionKey);
-			int idAccount = session.getIdAccount();
+			if(session != null)
+				idAccount = session.getIdAccount();
+			else
+				return false;
 			// add entry to email verification table
 			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;	
             String query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime, emailPending)" +

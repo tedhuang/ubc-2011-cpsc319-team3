@@ -2,10 +2,10 @@ package classes;
 
 public class Session {
 
-	String	sessionKey;
-	int		idAccount;
-	String	accountType;
-	long	expiryTime;
+	private String sessionKey;
+	private int	idAccount;
+	private String accountType;
+	private long expiryTime;
 	
 	public Session( String key, int id, String type, long expiry ) {
 		sessionKey	= key;
