@@ -25,7 +25,7 @@ function loadAdList(outputDiv){
 	
 	request = new Request;
 	request.addAction("loadAdList");
-	request.addSessionID("1234"); //TODO: change this
+	request.addSessionID("1234"); //TODO: change to addSessionKey
 	request.addParam("searchJobAdId", $("#jobAdId").val());
 	
 
@@ -99,7 +99,7 @@ function loadJobAdDetails( responseXML ){
 	
         var jobAdId			=	jobAd.getAttribute("jobAdId");
         var jobAdTitle		=	jobAd.getAttribute("jobAdTitle");
-        var location		=	jobAd.getAttribute("location");
+     // var location		=	jobAd.getAttribute("location");
         var tags			=	jobAd.getAttribute("tags");
         var contactInfo		=	jobAd.getAttribute("contactInfo");
         var expiryDateMs	=	jobAd.getAttribute("expiryDate");
@@ -112,41 +112,55 @@ function loadJobAdDetails( responseXML ){
         var isApproved		=	jobAd.getAttribute("isApproved");
         
         
-        if(educationReq == 3){
-        	educationReq = "Ph.D.";
-        } 
-        else if(educationReq = 2){
-        	educationReq = "M.Sc.";
-        } 
-        else if(educationReq = 1){
-        	educationReq = "B.Sc.";
-        } else{
-        	educationReq = "Not Specified";
-        }
+//        if(educationReq == 3){
+//        	educationReq = "Ph.D.";
+//        } 
+//        else if(educationReq = 2){
+//        	educationReq = "M.Sc.";
+//        } 
+//        else if(educationReq = 1){
+//        	educationReq = "B.Sc.";
+//        } else{
+//        	educationReq = "Not Specified";
+//        }
         
         
         var expiryDate = new Date(expiryDateMs);
         var startingDate = new Date(startingDateMs);
         var creationDate = new Date(creationDateMs);
         
-        alert(creationDate);
-        
+		if(isApproved){
+			isApproved = "Yes";
+		}
+		else
+			isApproved = "No";
 		
-		$("#jobAdId").innerHTML=jobAdId;
+
 		$("#jobTitle").val(jobAdTitle);
-//		document.getElementById("location").innerHTML =location;
 		$("#tags").val(tags);
 		$("#contactInfo").val( contactInfo);
-		$("#status").innerHTML = status;
-		$("#numViews").innerHTML = numberOfViews; 
-		$("#educationReq").innerHTML = educationReq;
 		$("#jobDescription").val( jobAdDescription);
-		$("#isApproved").innerHTML = isApproved;
+//		$("#jobAdId").innerHTML = jobAdId;
+//		$("#status").val( status );
+//		$("#numViews").innerHTML = numberOfViews; 
+//		$("#expiryDate").innerHTML = "testest123"; //expiryDate;
+//		$("#startingDate").innerHTML = startingDate;
+//		$("#creationDate").innerHTML = creationDate;
 		
-		$("expiryDate").innerHTML = expiryDate;
-		$("startingDate").innerHTML = startingDate;
-		$("creationDate").innerHTML = creationDate;
-
+		
+		document.getElementById("isApproved").innerHTML = isApproved;
+		document.getElementById("jobAdId").innerHTML = jobAdId;
+		document.getElementById("status").innerHTML = status;
+		document.getElementById("educationReq").value = educationReq;
+		
+		document.getElementById("expiryDate").innerHTML = expiryDate;
+		document.getElementById("startingDate").innerHTML = startingDate;
+		document.getElementById("creationDate").innerHTML = creationDate;
+		
+		document.getElementById("numViews").innerHTML = numberOfViews;
+		
+		
+		//showMap() //TODO: integrate showMap from Google Maps
 		
 }
 
@@ -187,7 +201,6 @@ function getJobAdById()
 	    	document.getElementById("feedback").innerHTML="Successfully finished tasks";
 	    	$("#jobAdDetails").show();
 	    	$("#getJobAdButton").attr("disabled", false);
-
 	    }
 	  };
 	
@@ -200,9 +213,23 @@ function getJobAdById()
 
 function editJobAd(){
 	//document.getElementById("submitEdit").disabled=true;
-	
 	document.getElementById("feedback").innerHTML="<h2>Sending Edit Request</h2>";
 
+	var strTitle 			= document.getElementById("jobTitle").value;
+	var strDescription 		= document.getElementById("jobDescription").value;
+	var educationRequirement= document.getElementById("educationReq").value;
+	var strContactInfo 		= document.getElementById("contactInfo").value;
+	var strTags 			= document.getElementById("tags").value; 
+	
+	var expiryYear 			= document.getElementById("expiryYear").value;
+	var expiryMonth 		= document.getElementById("expiryMonth").value;
+	var expiryDay 			= document.getElementById("expiryDay").value;
+	
+	var startingDay 		= document.getElementById("startingDay").value;
+	var startingMonth 		= document.getElementById("startingMonth").value;
+	var startingYear 		= document.getElementById("startingYear").value;
+	
+	
 //	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari

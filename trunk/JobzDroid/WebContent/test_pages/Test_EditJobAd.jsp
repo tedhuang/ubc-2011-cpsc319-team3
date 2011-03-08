@@ -96,30 +96,34 @@ JobAdID:
 	<button id="editJobAdButton" type="button" onclick="editJobAd()">Submit Edit</button>
 	<br><br>
 	
+	JobAd ID: <span id="jobAdId">Unknown</span> <br/>
+	
+	Current Status: <span id="status">Unknown</span><br/>
+	
+	Approval Status: <span id="isApproved">Unknown</span> <br/>
 	
 	Title: <input id="jobTitle" type="text" name="jobTitle" size="20" ><br>
 	
-	JobAd ID:
-	<div id=jobAdId>Unknown</div> <br>
-	
-	Current Status:
-	<div id=status>Unknown</div> <br>
-	
-	Approval Status:
-	<div id=isApproved>Unknown</div> <br>
-	
 	Description:  <br>
 	<textarea id="jobDescription" type="text" rows="4" cols="20" >
-	</textarea> <br>
+	</textarea> <br/><br/>
 	
 	Education Requirement: 
-	<div id="educationReq">Unknown</div>
+	<select id="educationReq" name="educationReq">
+			<option value="0">None</option>
+			<option value="1">B.Sc.</option>
+			<option value="2">M.Sc.</option>
+			<option value="3">Ph.D.</option>
+		</select>		
 	
-	<br>
+	<br/>
+	<br/>
+	
 	Job Location(s) (separated by comma): <br>
 	~Need to integrate with Google Map~ <br>
-	<!-- Need to integrate with Google Map
-	<input id="jobLocation" type="text" name="jobLocation" size="20"><br> -->
+	<span id="address"></span>
+	<div id="mapCanvas"></div> 
+	
 	<br>
 	
 	Contact Info: <input id="contactInfo" type="text" name="contactInfo" size="20"><br>
@@ -128,21 +132,30 @@ JobAdID:
 	Tags: <input id="tags" type="text" name="tags" size="20"><br>
 	<br>
 	
-	Starting Date:  <br>
-	<div id=startingDate></div>
-
+	Starting Date:  
+	<span id="startingDate"></span>
+	<br/>
+	
+	Expiring on:  
+	<span id="expiryDate"></span>
+	<br/>
+	
+	Created on:
+	<span id="creationDate"></span>
+	<br/>
+	
+	Number of views:
+	<span id="numViews"></span>
+	<br/>
+	
 	<form name="sid" method="get" action="">
 		<input id="sessionKey" name="sessionKey"/>
 	</form>
 
-	Expiring on:  <br>
-	<div id=expiryDate></div>
-	
-	Created on:<br>
-	<div id=creationDate></div>
+
 	
 </div>
->>>>>>> .r142
+
 </body>
 </html>
 
