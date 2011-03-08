@@ -53,6 +53,9 @@ When sending a request, you must specify the servlet you are intending to call. 
 	xmlhttp.send(Params);
 }}}
 
+  * For real implementation samples, see /WebContent/scripts/authentication.js
+
+
 == Sessions ==
 
 Each client may contain a hidden form for storing session key, the client must submit this session key for certain "action".  See RequestDetails for this feature.
@@ -142,3 +145,5 @@ Response should be sent in XML format, and should always contain a "message" and
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 }}}
+
+  * for real implementation sample, see /src/servlets/ServletAccount->userLoginRequest()
