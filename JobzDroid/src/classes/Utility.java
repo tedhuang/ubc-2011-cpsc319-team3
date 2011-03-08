@@ -171,11 +171,70 @@ public class Utility {
 	}
 	
 	
-	public static String degreeConvertor(String numForm){
+	public static String degreeConvertor(int numForm){
 		
-		//Switch (numForm){
+		switch (numForm){
+			case 1:
+				return "Bachelor";
+			case 2:
+				return "Master";
+			case 3:
+				return "Ph.D";
 			
-		//}
-		return null;
+			default:
+				return "Not Specified";
+		}
 	}	
-}
+	
+	public static int degreeConvertor(String input){
+		
+		if(input.equalsIgnoreCase("Ph.D")){
+			return 3;
+		}
+		else{
+			if (input.equalsIgnoreCase("bachelor")){
+					return 1;
+			}
+			else{	
+				if(input.equalsIgnoreCase("master")){//Master
+					return 2;
+				}
+			}//ENDOF INNER ELSE
+		}//ENDOF OUTTER ELSE
+		return 0;
+	}
+	
+	public static String jobTypeTranslator(boolean intoDB, String input){
+	  if(input!=null){
+		  
+		StringBuffer strBuf =new StringBuffer();
+		if(!intoDB){
+			if(input.equalsIgnoreCase("fulltime")||input.equalsIgnoreCase("parttime")){
+		        input = input.substring(0,1).toUpperCase() + input.substring(1).toLowerCase();
+				strBuf.append(input).insert(4, " ");
+				return strBuf.toString();
+			}
+			else{
+					return input;
+			}
+		}
+		
+		else{
+			   if( input.equalsIgnoreCase("full time")|| input.equalsIgnoreCase("part time")){
+				   String str = input.toLowerCase().replaceAll(" t", "T");
+				   return str;
+				 }
+			 
+			 else{
+				if(input.equalsIgnoreCase("internship")){
+					return input;
+				}
+				else{
+					return null;
+				}
+			 }
+		}//ENDOF INNER ELSE
+	  }return "unspecified";
+	}
+	
+}//ENDOF UTILITY CLASS

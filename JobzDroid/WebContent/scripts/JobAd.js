@@ -25,7 +25,7 @@ function loadAdList(outputDiv){
 	
 	request = new Request;
 	request.addAction("loadAdList");
-	request.addSessionID("1234"); //TODO: change to addSessionKey
+	request.addSessionID("1234"); //TODO: change this
 	request.addParam("searchJobAdId", $("#jobAdId").val());
 	
 
@@ -84,7 +84,7 @@ function buildTable(xmlReturnedObj, outputDiv){
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
 		  				"</td><td>" + jobAd.attr("contactInfo")  + 
-		  				"</td><td>" + jobAd.attr("educationReq") + 
+		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAvail") +
 		  				"</td></tr>";
 		  $(rowText).appendTo(tbody);
@@ -350,9 +350,8 @@ function searchJobAdvertisement(outputDiv){
 	
 	request = new Request;
 	request.addAction("searchJobAdvertisement");
-//	request.addSessionKey($("#sessionKey").value); //TODO implement this
 	
-	var searchFields = $(":input", "#searchBox").serializeArray();
+	var searchFields = $(":input", "#searchForm").serializeArray();
 	var emptyCounts=0;
 	jQuery.each(searchFields, function(i, field){
         if(field.value == ""){
@@ -393,3 +392,40 @@ function searchJobAdvertisement(outputDiv){
 		  
 }
 
+function quickSearchJobAd(outputDiv){
+	
+	request = new Request;
+	request.addAction("searchJobAdvertisement");
+	
+//	var searchFields = $("#quickSearchBox", ).serializeArray();
+	if($("#quickSearchBox", "#qkSearchForm" ).val() != ""){ //Check if All NULL
+		
+			request.addParam($("#quickSearchBox", "#qkSearchForm" ).attr("name"), $("#quickSearchBox", "#qkSearchForm" ).val()); //add parameter to the request according to how many search criteria filled
+
+			if (window.XMLHttpRequest)
+			  {// code for IE7+, Firefox, Chrome, Opera, Safari
+				xmlhttp=new XMLHttpRequest();
+			  }
+			else
+			  {// code for IE6, IE5
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			  }
+			
+			//send the parameters to the servlet with POST
+			$("#feedback").html("<h2>Sending Request</h2>");
+			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.send(request.toString());
+			
+			xmlhttp.onreadystatechange=function()
+			  {
+			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			    {
+				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
+					//parse XML response from server
+					buildTable("jobAd", outputDiv);
+		
+			    }
+			  };
+	   }//ENDOF CHECK-ALL-NULL
+}
