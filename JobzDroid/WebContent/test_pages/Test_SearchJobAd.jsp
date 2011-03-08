@@ -38,6 +38,15 @@
 		Job Location(s) (separated by comma): ~ to be added ~
 		<input id="locSearch" type="text" name="searchJobLoc" size="20"><br>
 		
+		Availability
+		
+			<input type="checkbox" name="searchFT" value="fullTime" id="ch1"/>
+		    <label for="ch1">Full Time</label>
+		    <input type="checkbox" name="searchPT" value="partTime" id="ch2"/>
+		    <label for="ch2">Part Time</label>
+		    <input type="checkbox" name="searchIS" value="internship" id="ch3"/>
+		    <label for="ch2">Internship</label>
+		    
 		Employment Type: ~ to be added ~
 		<div id="empType"></div>
 		<!-- 
@@ -67,9 +76,9 @@
 						<div class="headText">Company</div>
 					</div>
 				</th>
-				<th id="col-viewLoc">
+				<th id="col-viewEduReq">
 					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-						<div class="headText">Location</div>
+						<div class="headText">Degree</div>
 					</div>
 				</th>
 				<th id="col-viewAvail">
@@ -77,9 +86,9 @@
 						<div class="headText">Availability</div>
 					</div>
 				</th>
-				<th id="col-viewMap">
+				<th id="col-viewLoc">
 					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-						<div class="headText">Map</div>
+						<div class="headText">Location</div>
 					</div>
 				</th>
 				<th id="col-Tools">

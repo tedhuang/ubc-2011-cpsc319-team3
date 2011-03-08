@@ -16,23 +16,27 @@ public class JobAdvertisement {
 	public String	status;
 	public String	jobAdDescription;
 	public boolean	isApproved;
+	public String	jobAvailability;
+	public String	creationDateFormatted;
 	
 	
 	public JobAdvertisement() {
-		jobAdId 		= -1;
-		ownerID			= -1;
-		educationReq	= 0;
-		numberOfViews	= 0;
-		jobAdTitle 		= null;
-		location		= null;
-		tags			= null;
-		contactInfo		= null;
-		expiryDate		= -1;
-		startingDate	= -1;
-		creationDate	= -1;
-		status			= null;
-		jobAdDescription= null;
-		isApproved		= false;
+		jobAdId 				= -1;
+		ownerID					= -1;
+		educationReq			= 0;
+		numberOfViews			= 0;
+		jobAdTitle 				= null;
+		location				= null;
+		tags					= null;
+		contactInfo				= null;
+		expiryDate				= -1;
+		startingDate			= -1;
+		creationDate			= -1;
+		status					= null;
+		jobAdDescription		= null;
+		isApproved				= false;
+		jobAvailability 		= null;
+		creationDateFormatted	= null;
 	}
 	
 	public JobAdvertisement(int AdId,
@@ -48,7 +52,9 @@ public class JobAdvertisement {
 							long cDate,
 							String initialStatus,
 							String description,
-							boolean isAppr
+							boolean isAppr,
+							String jobAvail,
+							String inDateFormatted
 							){
 		
 		jobAdId 		= AdId;
@@ -64,6 +70,8 @@ public class JobAdvertisement {
 		educationReq	= eduReq;
 		jobAdDescription= description;
 		isApproved		= isAppr;
+		jobAvailability = jobAvail;
+		creationDateFormatted = inDateFormatted;
 		
 	}
 	
@@ -74,10 +82,12 @@ public class JobAdvertisement {
 		" jobAdTitle=\"" + jobAdTitle + "\"" +
 		" location=\"" + location  + "\"" +
 		" tags=\"" + tags + "\"" +
+		" jobAvail=\"" + jobAvailability + "\"" +
 		" contactInfo=\"" + contactInfo + "\"" +
 		" expiryDate=\"" + expiryDate + "\"" +
 		" startingDate=\"" + startingDate + "\"" +
 		" creationDate=\"" + creationDate + "\"" +
+		" creationDateFormatted=\"" + creationDateFormatted + "\"" +
 		" status=\"" + status + "\"" +
 		" numberOfViews=\"" + numberOfViews + "\"" +
 		" educationReq=\"" + educationReq + "\"" +

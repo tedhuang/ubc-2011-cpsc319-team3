@@ -106,16 +106,31 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
+	
+	
+	/************************************************************************************
+	 * 	This is the input forms' name, be sure to be matched
+	 ************************************************************************************/
 	private enum EnumCriteria	{
-		//Add new functions here
+		
 		searchTitle,
 		searchCompany,
 		searchEduReq,
 		searchJobAdId,
-		searchJobLoc
+		searchJobLoc,
+		searchFT,
+		searchPT,
+		searchIS
 		
 		
 	}
+	
+	/**************************************************************************************
+	 * 			DBColConvertor Function
+	 *  Convert input form's name into corrsponding DB columns
+	 * @param input
+	 * @return
+	 **************************************************************************************/
 	private String DBColConvertor(String input){
 		switch (EnumCriteria.valueOf(input)){
 		
@@ -130,6 +145,15 @@ public class ServletJobAd extends HttpServlet {
 		
 		case searchJobAdId:
 			return "idJobAd";
+			
+		case searchPT:
+			return "jobAvailability";
+			
+		case searchFT:
+			return "jobAvailability";
+			
+		case searchIS:
+			return "jobAvailability";
 		
 
 		
@@ -141,29 +165,12 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-	private Map<String, String> DBColMapper(HttpServletRequest request){
-		Map<String, String>colMap = new HashMap<String, String>();
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-			
-			String paraName = (String) paramNames.nextElement();
-			if( paraName.equals("action")|| paraName.equals("sessionID")){//Not Querying these two
-				//Do Nothing
-			}
-			else{
-				
-				String colName = DBColConvertor(paraName);
-			    //Put the parameters' names and values into the MAP
-				colMap.put(paraName,colName);
-			    
-				//Debug
-			    System.out.println("Parameter: " + paraName + "\n" +
-			    					"Value: " + colMap.get(paraName));
-			}
-		}
-		return colMap;
-	}
-	
+	/*****************************************************************************************************************
+	 * 					buildQuery Function
+	 * Dynamically making the query as the user's interests
+	 * @param request
+	 * @return
+	 *****************************************************************************************************************/
 	private String buildQuery(HttpServletRequest request){
 		
 		Map<String, String>paraMap = new HashMap<String, String>();
@@ -172,13 +179,29 @@ public class ServletJobAd extends HttpServlet {
 		while (paramNames.hasMoreElements()) {
 			
 			String paraName = (String) paramNames.nextElement();
-			if( paraName.equals("action")|| paraName.equals("sessionID")){//Not Querying these two
+			if( paraName.equals("action")){//Not Querying this
 				//Do Nothing
 			}
 			else{
 				String colName = DBColConvertor(paraName); //convert to col names
 			    //Put the parameters' names and values into the MAP
-				paraMap.put(colName,request.getParameter(paraName) );
+				if(colName.equals("jobAvailability")){
+					if(paraMap.get(colName)!=null){
+						
+						// If it is search by job availability
+						//CAUTION: MIDDLE SPACE IMPORTANT
+						String curVal = paraMap.get(colName);
+						curVal = curVal.substring(0, curVal.length()-1);
+						String jobAvailTerm = curVal+ ", '" + request.getParameter(paraName) + "')";
+						paraMap.put(colName, jobAvailTerm);
+					}
+					else{
+						paraMap.put(colName,"(\'"+request.getParameter(paraName)+"\')" );
+					}
+				}
+				else{
+						paraMap.put(colName,request.getParameter(paraName) );
+				}
 			    
 				//Debug
 			    System.out.println("Column: " + colName + "\n" +
@@ -186,13 +209,19 @@ public class ServletJobAd extends HttpServlet {
 			}
 		}
 		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING listSelQuery!
-		String query ="SELECT idJobAd, title, datePosted, contactInfo, educationRequired FROM tableJobAd WHERE ";
+		String query ="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd WHERE ";
 		StringBuffer buf = new StringBuffer();
 		buf.append(query);
-		int numParas = paraMap.size();
 		String andClause =" AND ";//CAUTION: SPACE IMPORTANT
+		String inClause = " IN ";//CAUTION: SPACE IMPORTANT
        for(Map.Entry<String, String> entry : paraMap.entrySet()){
-            buf.append(entry.getKey()+ " LIKE '%" +entry.getValue()+"%'" + andClause);
+    	   
+           if(entry.getKey().equals("jobAvailability")){//if search by the availability term use IN
+        	   buf.append(entry.getKey()+ inClause + entry.getValue() + andClause);
+           }
+           else{//CAUTION: SPACE IMPORTANT
+        	   buf.append(entry.getKey()+ " LIKE '%" +entry.getValue()+"%'" + andClause);
+           }
         }
 		query = buf.substring(0, buf.length()- andClause.length()); //remove the last " AND "
 		return query;
@@ -691,19 +720,20 @@ public class ServletJobAd extends HttpServlet {
 			while( result.next() ) {
 				JobAdvertisement temp = new JobAdvertisement();
 				
-				temp.jobAdId 			= result.getInt("idJobAd");
-				temp.jobAdTitle			= result.getString("title");
-				temp.creationDate 		= result.getLong("datePosted");
-				temp.contactInfo 		= result.getString("contactInfo");
-				temp.educationReq 		= result.getInt("educationRequired");
-//				temp.tags 				= result.getString("tags");
+				temp.jobAdId 				= result.getInt("idJobAd");
+				temp.jobAdTitle				= result.getString("title");
+				temp.creationDateFormatted 	= Utility.dateConvertor(result.getLong("datePosted"));
+				temp.contactInfo 			= result.getString("contactInfo");
+				temp.educationReq 			= result.getInt("educationRequired");
+				temp.jobAvailability 		= result.getString("jobAvailability");
+//				temp.tags 					= result.getString("tags");
 				
 				jobAdList.add( temp ); //add to the temporary list
 			}
 			
 			stmt.close();
 			
-			System.out.println("Searched Auctions");
+			System.out.println("Query Successfully Finished");
 //			return jobAdList;
 			
 		} catch (SQLException e1) {
