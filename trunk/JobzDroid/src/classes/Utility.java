@@ -160,4 +160,22 @@ public class Utility {
         } catch (NoSuchAlgorithmException ex) {}
         return res;
     }
+	
+	public static String dateConvertor(long milSecDate){
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milSecDate);
+        return formatter.format(calendar.getTime());
+	}
+	
+	
+	public static String degreeConvertor(String numForm){
+		
+		//Switch (numForm){
+			
+		//}
+		return null;
+	}	
 }
