@@ -44,13 +44,23 @@ Education Requirement:
 			<option value="1">B.Sc.</option>
 			<option value="2">M.Sc.</option>
 			<option value="3">Ph.D.</option>
-		</select>
-			
+		</select>			
+		
 <br>
 Job Location(s) (separated by comma): <br>
+~TODO: Change "Save button" to radio selection~
 <input id="address" type="text" name="address" size="20"><br>
 <button type="button" onclick="calculateLocation()">Find Location</button><br>
-<table id="lookUpTable"></table><br />
+
+<!-- Location Feedback: -->
+<span id=latitude></span> <br>
+<span id=longitude></span><br>
+
+<span id=resultTableTitle></span>
+<table id="lookUpTable"></table><br/>
+===============================================================<br>
+
+
 <br>
 
 

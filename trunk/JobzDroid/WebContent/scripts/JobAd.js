@@ -229,20 +229,27 @@ function editJobAd(){
 
 function createJobAdvertisement()
 {
-	var strTitle = document.getElementById("jobTitle").value;
-	var strDescription = document.getElementById("jobDescription").value;
-	var educationRequirement = document.getElementById("educationRequirement").value;
-	//var strJobLocation = document.getElementById("jobLocation").value;
-	var strContactInfo = document.getElementById("contactInfo").value;
-	var strTags = document.getElementById("tags").value;
+
+	var strTitle 			= document.getElementById("jobTitle").value;
+	var strDescription 		= document.getElementById("jobDescription").value;
+	var educationRequirement= document.getElementById("educationRequirement").value;
+	var strContactInfo 		= document.getElementById("contactInfo").value;
+	var strTags 			= document.getElementById("tags").value;
 	
-	var expiryYear = document.getElementById("expiryYear").value;
-	var expiryMonth = document.getElementById("expiryMonth").value;
-	var expiryDay = document.getElementById("expiryDay").value;
+	var expiryYear 			= document.getElementById("expiryYear").value;
+	var expiryMonth 		= document.getElementById("expiryMonth").value;
+	var expiryDay 			= document.getElementById("expiryDay").value;
 	
-	var startingDay = document.getElementById("startingDay").value;
-	var startingMonth = document.getElementById("startingMonth").value;
-	var startingYear = document.getElementById("startingYear").value;
+	var startingDay 		= document.getElementById("startingDay").value;
+	var startingMonth 		= document.getElementById("startingMonth").value;
+	var startingYear 		= document.getElementById("startingYear").value;
+	
+	//Get values from GoogleMaps.js
+	var strAddress 			= getAddress();
+	var doubleLongitude 	= getLongitude();
+	var doubleLatitude 		= getLatitude();
+	
+	alert("Address is: " + strAddress + " Long: " + doubleLongitude + " Lat:" + doubleLatitude);
 	
 	
 	//User Input Check:
@@ -252,7 +259,31 @@ function createJobAdvertisement()
 	}
 	document.getElementById("newJobAdButton").disabled=true;
 	
-	var xmlHttpReq;
+	
+	var sessionKey = document.getElementById("sessionKey").value;
+	var sessionKey = "4297f44b13955235245b2497399d7a93"; //temporary testing key TODO: remove 
+	 
+	request = new Request;
+	request.addAction("createJobAdvertisement");
+	request.addSessionKey( sessionKey );
+	request.addParam("strTitle", strTitle);
+	request.addParam("strDescription", strDescription);
+	request.addParam("educationRequirement", educationRequirement);
+	request.addParam("strContactInfo", strContactInfo);
+	request.addParam("strTags", strTags);
+	request.addParam("expiryYear", expiryYear);
+	request.addParam("expiryMonth", expiryMonth);
+	request.addParam("expiryDay", expiryDay);
+	request.addParam("startingDay", startingDay);
+	request.addParam("startingMonth", startingMonth);
+	request.addParam("startingYear", startingYear);
+	request.addParam("address", strAddress);
+	request.addParam("longitude", doubleLongitude);
+	request.addParam("latitude", doubleLatitude);
+	
+		  
+//Response Handling:
+//	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -274,26 +305,7 @@ function createJobAdvertisement()
 	    }
 	  };
 	
-	  
 	
-	request = new Request;
-	request.addAction("createJobAdvertisement");
-	alert(document.getElementById("sessionKey").value);
-	request.addSessionKey( document.getElementById("sessionKey").value );
-	request.addParam("strTitle", strTitle);
-	request.addParam("strDescription", strDescription);
-	request.addParam("educationRequirement", educationRequirement);
-	//request.addParam("strJobLocation", strJobLocation);
-	request.addParam("strContactInfo", strContactInfo);
-	request.addParam("strTags", strTags);
-	request.addParam("expiryYear", expiryYear);
-	request.addParam("expiryMonth", expiryMonth);
-	request.addParam("expiryDay", expiryDay);
-	request.addParam("startingDay", startingDay);
-	request.addParam("startingMonth", startingMonth);
-	request.addParam("startingYear", startingYear);
-	
-		  
 	//send the parameters to the servlet with POST
 	//TODO will need to change this to ./ServletJobAd
 	xmlhttp.open("POST","../ServletJobAd" ,true);
@@ -302,6 +314,8 @@ function createJobAdvertisement()
 
 	//change the text while sending the request
 	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
+
 
 }
 

@@ -454,131 +454,162 @@ public class ServletJobAd extends HttpServlet {
 		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
 		
 		earlyExit: {
-		
 			System.out.println("Entered user sessionKey");
-			
-		if ( userSession == null ) {
-			//TODO session invalid, handle error
-			System.out.println("session is null");
-			message = "Failed to authenticate user session";
-			break earlyExit;
-		}
-		else {
-			//TODO implmement this
-			System.out.println("checking usertype");
-			System.out.println("usertype = " + userSession.getAccountType());
-			if( userSession.getAccountType().equals("poster") ||
-					userSession.getAccountType().equals("admin")) {
-				System.out.print("User has the correct priviliege");
-			}
-			else {
-				message = "User does not have the right privilege";
+				
+			if ( userSession == null ) {
+				//TODO session invalid, handle error
+				System.out.println("session is null");
+				message = "Failed to authenticate user session";
 				break earlyExit;
 			}
-
-		}
-		
-		System.out.print("User session sucessful for key " + userSession.getKey() );
-		
-		String jobAdvertisementTitle = request.getParameter("strTitle");
-		String jobDescription = request.getParameter("strDescription");
-		//String jobLocation = request.getParameter("strJobLocation");
-		String contactInfo = request.getParameter("strContactInfo");
-		String strTags = request.getParameter("strTags");
-		
-		int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
-		
-		int expiryYear = Integer.parseInt( request.getParameter("expiryYear"));
-		String expiryMonth = request.getParameter("expiryMonth");
-		int expiryDay =  Integer.parseInt( request.getParameter("expiryDay"));
-		
-		int startingYear =  Integer.parseInt(request.getParameter("startingYear"));
-		String startingMonth = request.getParameter("startingMonth");
-		int startingDay = Integer.parseInt(request.getParameter("startingDay"));
-		
-		long millisExpiryDate = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
-		long millisStartingDate = Utility.calculateDate(startingYear, startingMonth, startingDay);
-		
-		Calendar cal = Calendar.getInstance();
-		
-		long millisDateCreated = cal.getTimeInMillis();
-
-		//TODO: add values for these:
-		//int ownerID;
-		
-		System.out.println(jobAdvertisementTitle);
-		System.out.println(jobDescription);
-		//System.out.println(jobLocation);
-		System.out.println(contactInfo);
-		System.out.println(strTags);
-		System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		try {
-			System.out.print("Inserting new Job Ad into DB");
-			
-			stmt = conn.createStatement();
-			
-			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
-			jobDescription = Utility.checkInputFormat( jobDescription );
-			//jobLocation = Utility.checkInputFormat( jobLocation );
-			contactInfo = Utility.checkInputFormat( contactInfo );
-			strTags = Utility.checkInputFormat( strTags );
-			
-			String query = 
-				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, tags ) " +
-				"VALUES " + "('" 
-					+ jobAdvertisementTitle + "','" 
-					+ jobDescription + "','" 
-					+ millisExpiryDate + "','" 
-					+ millisStartingDate + "','" 
-					+ millisDateCreated + "','"
-					+ contactInfo + "','" 
-					+ educationRequirement + "','"
-					+ strTags + 
-				"')";
-			
-			// if successful, 1 row should be inserted
-			System.out.println("New Job Ad Query:" + query);
-			int rowsInserted = stmt.executeUpdate(query);
-			
-			if (rowsInserted == 1){
-				System.out.println("New JobAd Creation success (DB)");
-				isSuccessful = true;
-				message = "Create Job Advertisement Successful";
-			}
-			else{
-				System.out.println("New JobAd Creation failed");
-				Utility.logError("New JobAd insert in DB failed");
+			else {
+				//TODO implmement this
+				System.out.println("checking usertype");
+				System.out.println("usertype = " + userSession.getAccountType());
+				if( userSession.getAccountType().equals("poster") ||
+						userSession.getAccountType().equals("admin")) {
+					System.out.print("User has the correct priviliege");
+				}
+				else {
+					message = "User does not have the right privilege";
+					break earlyExit;
+				}
+	
 			}
 			
+			System.out.print("User session sucessful for key " + userSession.getKey() );
 			
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
+			String jobAdvertisementTitle = request.getParameter("strTitle");
+			String jobDescription = request.getParameter("strDescription");
+			String contactInfo = request.getParameter("strContactInfo");
+			String strTags = request.getParameter("strTags");
+			
+			int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
+			
+			int expiryYear = Integer.parseInt( request.getParameter("expiryYear"));
+			String expiryMonth = request.getParameter("expiryMonth");
+			int expiryDay =  Integer.parseInt( request.getParameter("expiryDay"));
+			
+			int startingYear =  Integer.parseInt(request.getParameter("startingYear"));
+			String startingMonth = request.getParameter("startingMonth");
+			int startingDay = Integer.parseInt(request.getParameter("startingDay"));
+			
+			long millisExpiryDate = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
+			long millisStartingDate = Utility.calculateDate(startingYear, startingMonth, startingDay);
+			
+			String address = request.getParameter("address");
+			System.out.println("longitude: " + request.getParameter("longitude"));
+			double longitude = Double.parseDouble(request.getParameter("longitude"));
+			double latitude = Double.parseDouble(request.getParameter("latitude"));
+			
+			int jobAdId = -1;
+			
+			Calendar cal = Calendar.getInstance();
+			long millisDateCreated = cal.getTimeInMillis();
+	
+			System.out.println(jobAdvertisementTitle);
+			System.out.println(jobDescription);
+			System.out.println(contactInfo);
+			System.out.println(strTags);
+			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
+			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {
+				System.out.print("Inserting new Job Ad into DB");
+				
+				stmt = conn.createStatement();
+				
+				jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
+				jobDescription = Utility.checkInputFormat( jobDescription );
+				contactInfo = Utility.checkInputFormat( contactInfo );
+				strTags = Utility.checkInputFormat( strTags );
+				
+			//Add new entry with specified paramters into database
+				String query = 
+					"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, tags ) " +
+					"VALUES " + "('" 
+						+ jobAdvertisementTitle + "','" 
+						+ jobDescription + "','" 
+						+ millisExpiryDate + "','" 
+						+ millisStartingDate + "','" 
+						+ millisDateCreated + "','"
+						+ contactInfo + "','" 
+						+ educationRequirement + "','"
+						+ strTags + 
+					"')";
+				
+				// if successful, 1 row should be inserted
+				System.out.println("New Job Ad Query:" + query);
+				int rowsInserted = stmt.executeUpdate(query);
+				
+				if (rowsInserted == 1){
+					System.out.println("New JobAd Creation success (DB)");
+					isSuccessful = true;
+					message = "Create Job Advertisement Successful";
+				}
+				else{
+					System.out.println("New JobAd Creation failed");
+					Utility.logError("New JobAd insert in DB failed");
+				}
+				
+			//Get jobAdId
+				query = "SELECT idJobAd FROM tableJobAd WHERE " +
+						"title='" + jobAdvertisementTitle + "' AND " +
+						"datePosted='" + millisDateCreated + "'";
+				ResultSet result = stmt.executeQuery(query);
+				
+				if(result.first()){
+					jobAdId = result.getInt("idJobAd");
+					System.out.println("Job Ad ID: " + jobAdId);
+					stmt.close();
+				}
+				else{
+					System.out.println("Error: Job Ad ID not found after creation");
+				}
+				
+				
+			//Insert location values into location table
+				query = 
+					"UPDATE tableLocationJobAd SET " 
+					+ "location='" 		+ address + "','" 
+					+ "longitude='" 	+ longitude + "','" 
+					+ "latitude='" 		+ latitude + "','" +
+					"WHERE idJobAd='" 	+ jobAdId + "' ";
+				//Debug print
+				System.out.println("Location Query: "+ query);
+				
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Location Update Failed");
+				}
+				
+				
+			}
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		        }
+		        catch (Exception e) {
+		        	//TODO log "Cannot close Statement"
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	//TODO log Cannot close Connection
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
 		}//earlyExit:
 
 		StringBuffer XMLResponse = new StringBuffer();	
