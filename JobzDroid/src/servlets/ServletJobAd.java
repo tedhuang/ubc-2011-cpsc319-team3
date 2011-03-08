@@ -368,7 +368,6 @@ public class ServletJobAd extends HttpServlet {
 				message = "getJobAd successful";
 				
 				//Fill in the fields of the jobAd object
-				
 				jobAd.jobAdId 			= result.getInt("idJobAd");
 				jobAd.ownerID 			= result.getInt("idAccount");
 				jobAd.jobAdTitle		= result.getString("title");
@@ -383,13 +382,52 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 				jobAd.isApproved 		= result.getBoolean("isApproved");
 				
-				
 			}
 			else{ //Error case
 				isSuccessful = false;
 				message = "Error: AD not found with ID=" + jobAdId;
 				System.out.println("Error: AD not found with ID=" + jobAdId);
 			}
+			
+	/**Get Location values */
+			String address;
+			double longitude;
+			double latitude;
+			
+		//Get Address
+			query = "SELECT address FROM tableLocationJobAd WHERE " +
+					"idJobAd= '" + jobAdId +"'";
+			result = stmt.getResultSet();
+			
+			if(result.first()){
+				address = result.getString("address");
+			} else {
+				System.out.println("Error: failed to find address value");
+			}
+			
+		//Get Longitude
+			query = "SELECT longitude FROM tableLocationJobAd WHERE " +
+					"idJobAd= '" + jobAdId +"'";
+			result = stmt.getResultSet();
+			
+			if(result.first()){
+				longitude = result.getDouble("longitude");
+			} else {
+				System.out.println("Error: failed to find longitude value");
+			}
+			
+		//Get Latitutde
+			query = "SELECT latitude FROM tableLocationJobAd WHERE " +
+					"idJobAd= '" + jobAdId +"'";
+			result = stmt.getResultSet();
+			
+			if(result.first()){
+				latitude = result.getDouble("latitude");
+			} else {
+				System.out.println("Error: failed to find latitude value");
+			}
+			
+//TODO: implement passing those location values back to the client
 			
 			
 		}
