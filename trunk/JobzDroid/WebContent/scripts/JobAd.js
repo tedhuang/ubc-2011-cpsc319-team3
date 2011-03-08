@@ -261,7 +261,7 @@ function createJobAdvertisement()
 	
 	
 	var sessionKey = document.getElementById("sessionKey").value;
-	var sessionKey = "4297f44b13955235245b2497399d7a93"; //temporary testing key TODO: remove 
+	//var sessionKey = "4297f44b13955235245b2497399d7a93"; //temporary testing key TODO: remove 
 	 
 	request = new Request;
 	request.addAction("createJobAdvertisement");
