@@ -45,6 +45,10 @@ public class ServletJobAd extends HttpServlet {
 		searchJobAdvertisement,
 		deleteJobAd,
 		getJobAdById,
+		adminApprove,
+		adminRevertApproval,
+		adminDeleteJobAd,
+		changeJobAdStatus,
 		loadAdList //search loader(?)
 		
 	}
@@ -91,6 +95,7 @@ public class ServletJobAd extends HttpServlet {
 				break;
 			case searchJobAdvertisement:
 				searchJobAd(request, response);
+				
 				break;
 			case getJobAdById:
 				getJobAdById(request, response);
@@ -98,9 +103,23 @@ public class ServletJobAd extends HttpServlet {
 				
 			case loadAdList:
 				searchJobAd(request, response);
+				
 				break;
-			case deleteJobAd:
-				deleteJobAd(request, response);
+			case adminApprove:
+				adminApprove(request, response);
+				
+				break;
+			case adminRevertApproval:
+				adminRevertApproval(request, response);
+				
+				break;
+			case adminDeleteJobAd:
+				adminDeleteJobAd(request, response);
+				
+				break;
+			case changeJobAdStatus:
+				changeJobAdStatus(request, response);
+				
 				break;
 			default:
 				System.out.println("Error: failed to process request - action not found");
@@ -536,7 +555,7 @@ public class ServletJobAd extends HttpServlet {
 		        }
 		    }
 		}//earlyExit:
-
+		
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
@@ -548,12 +567,322 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
+	
+	
 	/*
-	 * Deletes a Job Ad by Id
+	 * Sets the status of the job ad to open and changes the isApproved value to true
 	 */
-	private void deleteJobAd(HttpServletRequest request, HttpServletResponse response){
+	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		/**
+		 * TODO: Implement check session key
+		 */
+		
+		String jobAdId = request.getParameter("jobAdId");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminApprove failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Update isApproved
+			String query = 
+				"UPDATE tableJobAd" + 
+				"SET isApproved='" + true +"'" +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				//Update Status
+				query = 
+					"UPDATE tableJobAd " + 
+					"SET status='" + "open" +"' " +
+					"WHERE idJobAd='" + jobAdId + "'";
+				System.out.println("Update Query: " + query);
 				
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
+				}
+				else{
+					isSuccessful = true;
+					message = "adminApprove worked!";
+				}
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 	}
+	
+	
+	
+	
+	/*
+	 * Sets the status of the job ad to draft and changes the isApproved value to false
+	 */
+	private void adminRevertApproval(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		/**
+		 * TODO: Implement check session key
+		 */
+		
+		String jobAdId = request.getParameter("jobAdId");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminRevertApproval failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Update isApproved
+			String query = 
+				"UPDATE tableJobAd" + 
+				"SET isApproved='" + false +"'" +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				//Update Status
+				query = 
+					"UPDATE tableJobAd " + 
+					"SET status='" + "inactive" +"' " +
+					"WHERE idJobAd='" + jobAdId + "'";
+				
+				System.out.println("Update Query: " + query);
+				
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
+				}
+				else{
+					isSuccessful = true;
+					message = "adminRevertApproval worked!";
+				}
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+	}
+	
+	
+	
+
+	/*
+	 * Permenently removes the job ad by ID from the database
+	 */
+	private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		/**
+		 * TODO: Implement check session key
+		 */
+		
+		String jobAdId = request.getParameter("jobAdId");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminDeleteJobAd failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Delete designed job Ad
+			String query = 
+				"DELETE FROM tableJobAd " + 
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				message = "adminDeleteJobAd worked!";
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+		
+	}
+	
+	
+	private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		String jobAdId = request.getParameter("jobAdId");
+		String status = request.getParameter("status");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "changeJobAdStatus failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Update status
+			String query = 
+				"UPDATE tableJobAd" + 
+				"SET status='" + status +"'" +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				message = "changeJobAdStatus worked!";
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+	}
+	
+	
 	
 	
 	
