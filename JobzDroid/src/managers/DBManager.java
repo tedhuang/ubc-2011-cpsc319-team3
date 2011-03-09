@@ -504,6 +504,7 @@ public class DBManager {
 		Connection conn = getConnection();	
 		Statement stmt = null;
 		ResultSet rs = null;
+		//TODO check if sessionKey is null
 		key = Utility.checkInputFormat(key);
 		
 		try{
