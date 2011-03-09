@@ -98,4 +98,14 @@
     <servlet-name>ServletAdmin</servlet-name>
     <url-pattern>/ServletAdmin</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletDocument</display-name>
+    <servlet-name>ServletDocument</servlet-name>
+    <servlet-class>servlets.ServletDocument</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletDocument</servlet-name>
+    <url-pattern>/ServletDocument</url-pattern>
+  </servlet-mapping>
 </web-app>

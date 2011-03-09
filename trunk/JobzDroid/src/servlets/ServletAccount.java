@@ -332,6 +332,8 @@ public class ServletAccount extends HttpServlet {
 		Session currSession = dbManager.startSession(email, pw);
 		String action = "";
 		
+		// TODO check the account status, only ACTIVE may log in
+		
 		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
