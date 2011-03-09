@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -50,7 +50,8 @@ public class ServletAccount extends HttpServlet {
 		emailLinkForgetPassword,
 		resetForgetPassword,
 		requestForLogin,
-		requestForLogout
+		requestForLogout,
+		initUI
 	}
 
 	/**
@@ -115,6 +116,12 @@ public class ServletAccount extends HttpServlet {
 				logoutReqTaker(request, response);
 				break;
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
+			case initUI:
+				initializeUI(request, response);
+				break;
+				
+			default://TODO ERROR HANDLING
+				break;
 		}
 	}
 	
@@ -332,14 +339,13 @@ public class ServletAccount extends HttpServlet {
 		Session currSession = dbManager.startSession(email, pw);
 		String action = "";
 		
-		// TODO check the account status, only ACTIVE may log in
-		
+		//Following IF/ELSE STMT IS THE FIRST XML WILL BE RETURN TO CLIENT WITH THE SESSION INFO
 		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
 			action = "home.html";
 			
-			StringBuffer XMLResponse = new StringBuffer();	
+			StringBuffer XMLResponse = new StringBuffer();
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
 			XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
@@ -520,7 +526,7 @@ public class ServletAccount extends HttpServlet {
 				return false;
 			
 			// get account id of the account just created
-			Account acc = dbManager.getAcccountFromEmail(email);
+			Account acc = dbManager.getAccountFromEmail(email);
 			if(acc != null)
 				idAccount = acc.getIdAccount();
 			if(idAccount == -1)
@@ -662,7 +668,7 @@ public class ServletAccount extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			long currentTime = Utility.getCurrentTime();
-			Account acc = dbManager.getAcccountFromEmail(email);
+			Account acc = dbManager.getAccountFromEmail(email);
 			if(acc != null)
 				idAccount = acc.getIdAccount();
 			if(idAccount == -1)
@@ -968,4 +974,69 @@ public class ServletAccount extends HttpServlet {
 	    }
 	    return false;
 	}
-}
+	
+	/*********************************************************************************************************************************
+	 * 
+	 *********************************************************************************************************************************/
+	private void initializeUI(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		Session sess = dbManager.getSessionByKey( request.getParameter("sessKey") );
+		if(sess !=null){
+			
+			String uType = sess.getAccountType();
+//			switch (userUI.valueOf(uType)){
+				
+//			case poster:
+				
+//				break;
+				
+//			case searcher:
+//				
+//				break;
+//				
+//			case admin:
+//				
+//				break;
+//			case superAdmin:
+//				
+//				break;
+//			default:
+				//TODO ANTI-HACKING 
+//				break;
+				
+//			}
+		}
+	}
+	
+	
+/*	
+	private static class uiMaker{
+	private static Map<String, String> uiMap = new HashMap <String, String>();
+		final String sideNav 		= "SIDENAV";
+		final String tabs	 		= "TBAS";
+		final String homeTabFrame 	= "HOMETABFRAME";
+		final String searchTabFrame	= "SEARCHTABFRAME";
+		
+		final String posterSideNav ="";
+		final String posterTabs ="";
+		final String posterTabFrames ="";
+		
+//		uiMap.put(sideNav, posterSideNav);
+	
+	private enum userUI{
+		poster(uiMap.get("posterSideNav"), posterTabs, posterTabFrames);
+		private final String sideNavUI; 
+		private final String tabUI;
+		private final String tabFramesUI;
+	 
+		searcher(searcherSideNav, searcherTabs, searcherTabFrames),
+		admin,
+		superAdmin;
+		userUI(String sideNavUI, String tabUI, String tabFramesUI){
+			this.sideNavUI 		= sideNavUI;
+			this.tabUI			= tabUI;
+			this.tabFramesUI 	= tabFramesUI;
+		}
+	  }
+	}//ENDOF uiMaker Class
+*/	
+}//ENDOF CLASS SERVLETACCOUNT

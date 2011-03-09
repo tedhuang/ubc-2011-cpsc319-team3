@@ -990,7 +990,12 @@ public class ServletJobAd extends HttpServlet {
 		
 		return null;
 		}
-	
+	/*****************************************************************************************************************
+	 * 					searchJobAd Function
+	 * 
+	 * FOR QUICK SEARCH AND ADVANCED SEARCH 
+	 * 
+	 *****************************************************************************************************************/
 	public void searchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();

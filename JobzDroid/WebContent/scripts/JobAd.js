@@ -303,6 +303,11 @@ function createJobAdvertisement()
 
 }
 
+/*************************************************************************************
+ * 				searchJobAdvertisement Function
+ * outputDiv => The table container div
+ * 
+ *************************************************************************************/
 function searchJobAdvertisement(outputDiv){
 	
 	request = new Request;

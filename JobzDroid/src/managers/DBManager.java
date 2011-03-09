@@ -109,7 +109,7 @@ public class DBManager {
 	 * @param email Email address to be queried.
 	 * @return Account object with the input email address. Returns null if not found.
 	 */
-	public Account getAcccountFromEmail(String email){
+	public Account getAccountFromEmail(String email){
 		Connection conn = getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -220,48 +220,8 @@ public class DBManager {
 	
 	/****************************************************************************************************/
 	
-	
-
-
-	
-	
-
-//	/**********************************************************************************************************************
-//	 * 											User LogIn FUNCTION
-//	 * @param name
-//	 * @param pw
-//	 * @return 1 if log in successfully
-//	 * 	       -1 otherwise
-//	 **********************************************************************************************************************/
-//	public int userLogIn(String name, String pw)
-//	{
-//		Connection conn = getConnection();	
-//		Statement stmt = null;
-//		try{
-//			stmt = conn.createStatement();
-//			ResultSet rs = stmt.executeQuery( "SELECT UserID FROM UserTable"+
-//					   						  "WHERE UserName='"+name + "'" +
-//					   						  "&&Password ='md5(" + pw + ")'");
-//			if(rs.first()){
-//				
-//				System.out.println(name +"Logged in");
-//				stmt.close();
-//				return 1;
-//			}
-//			else{
-//				return -1;
-//			}
-//		}
-//		catch(SQLException e) {
-//				//TODO Auto-generated catch block
-//				e.printStackTrace();
-//		}
-//		return -1;
-//	}
-//========	
-	
 	/**********************************************************************************************************************
-	 * 											User LogIn FUNCTION
+	 * 											User LogIn FUNCTION(NOT USED(?))
 	 * @param name
 	 * @param pw
 	 * @return 1 if log in successfully
