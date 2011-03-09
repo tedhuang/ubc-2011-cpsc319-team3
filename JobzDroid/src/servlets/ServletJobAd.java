@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import classes.JobAdvertisement;
+import classes.Location;
 import classes.Session;
 import classes.Utility;
 
@@ -42,6 +43,7 @@ public class ServletJobAd extends HttpServlet {
 		//Add new functions here
 		createJobAdvertisement,
 		searchJobAdvertisement,
+		deleteJobAd,
 		getJobAdById,
 		loadAdList //search loader(?)
 		
@@ -97,7 +99,9 @@ public class ServletJobAd extends HttpServlet {
 			case loadAdList:
 				searchJobAd(request, response);
 				break;
-				
+			case deleteJobAd:
+				deleteJobAd(request, response);
+				break;
 			default:
 				System.out.println("Error: failed to process request - action not found");
 				break;
@@ -270,50 +274,32 @@ public class ServletJobAd extends HttpServlet {
 			}
 			else{ //Error case
 				isSuccessful = false;
-				message = "Error: AD not found with ID=" + jobAdId;
-				System.out.println("Error: AD not found with ID=" + jobAdId);
+				message = "Error: Job Ad not found with ID=" + jobAdId;
+				System.out.println("Error: Job Ad not found with ID=" + jobAdId);
 			}
 			
 	/**Get Location values */
-			String address;
-			double longitude;
-			double latitude;
+			ArrayList<Location> locationList = new ArrayList<Location>();
+			Location location = new Location();
 			
-		//Get Address
-			query = "SELECT address FROM tableLocationJobAd WHERE " +
+			query = "SELECT * FROM tableLocationJobAd WHERE " +
 					"idJobAd= '" + jobAdId +"'";
 			result = stmt.getResultSet();
 			
-			if(result.first()){
-				address = result.getString("address");
-			} else {
-				System.out.println("Error: failed to find address value");
+			if(!result.first()){
+				System.out.println("Error: failed to find the inserted location");
+			}
+			else{
+				while(result.next()){
+					//Get Address, Longitude, Latitude
+					location.address = result.getString("location");
+					location.longitude = result.getDouble("longitude");
+					location.latitude = result.getDouble("latitude");	
+				}
+				locationList.add(location);
 			}
 			
-		//Get Longitude
-			query = "SELECT longitude FROM tableLocationJobAd WHERE " +
-					"idJobAd= '" + jobAdId +"'";
-			result = stmt.getResultSet();
-			
-			if(result.first()){
-				longitude = result.getDouble("longitude");
-			} else {
-				System.out.println("Error: failed to find longitude value");
-			}
-			
-		//Get Latitutde
-			query = "SELECT latitude FROM tableLocationJobAd WHERE " +
-					"idJobAd= '" + jobAdId +"'";
-			result = stmt.getResultSet();
-			
-			if(result.first()){
-				latitude = result.getDouble("latitude");
-			} else {
-				System.out.println("Error: failed to find latitude value");
-			}
-			
-//TODO: implement passing those location values back to the client
-			
+			jobAd.locationList = locationList;
 			
 		}
 		catch (SQLException e) {
@@ -487,27 +473,43 @@ public class ServletJobAd extends HttpServlet {
 				if(result.first()){
 					jobAdId = result.getInt("idJobAd");
 					System.out.println("Job Ad ID: " + jobAdId);
-					stmt.close();
 				}
 				else{
 					System.out.println("Error: Job Ad ID not found after creation");
 				}
 				
-				
 			//Insert location values into location table
 				query = 
-					"UPDATE tableLocationJobAd SET " 
-					+ "location='" 		+ address + "','" 
-					+ "longitude='" 	+ longitude + "','" 
-					+ "latitude='" 		+ latitude + "','" +
-					"WHERE idJobAd='" 	+ jobAdId + "' ";
+					"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
+					"VALUES " + "('" 
+					+ address + "','" 
+					+ longitude + "','" 
+					+ latitude + "','" 
+					+ jobAdId +
+				"');";
+				
+				System.out.println("Location table query: " + query);
+				
+				rowsInserted = stmt.executeUpdate(query);
+				
+				System.out.println("Row Inserted: " + rowsInserted);
+				
+				if (rowsInserted == 1){
+					System.out.println("Insert location success");
+					isSuccessful = true;
+				}
+				else{
+					System.out.println("Insert location for new job ad failed");
+					Utility.logError("Insert location for new job ad failed");
+				}
+
+			
 				//Debug print
 				System.out.println("Location Query: "+ query);
 				
 				if( stmt.executeUpdate(query) != 1 ){ //Error Check
 					System.out.println("Error: Location Update Failed");
 				}
-				
 				
 			}
 			catch (SQLException e) {
@@ -545,6 +547,16 @@ public class ServletJobAd extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 		
 	}
+	
+	/*
+	 * Deletes a Job Ad by Id
+	 */
+	private void deleteJobAd(HttpServletRequest request, HttpServletResponse response){
+				
+	}
+	
+	
+	
 	
 	
 	public ArrayList<JobAdvertisement> searchJobAdvertisement(String keywords, //TODO: change keywords to array 
@@ -605,7 +617,7 @@ public class ServletJobAd extends HttpServlet {
 				temp.ownerID = result.getInt("OwnerID");
 				temp.numberOfViews = result.getInt("numberOfViews");
 				temp.jobAdTitle = result.getString("title");
-				temp.location = result.getString("location");
+				//temp.location = result.getString("location");
 				temp.tags = result.getString("tags");
 				temp.contactInfo = result.getString("contactInfo");
 				temp.expiryDate = result.getLong("ExpiryDate");

@@ -15,10 +15,10 @@ $("document").ready(function(){
 /***
  * Displays the map centered around the given location. Also marks the given location.
  */
-function showMap(location, formatted_address) {
+function showMap(LatLng, formatted_address) {
 	var options = { 
 			zoom: 16, 
-			center: location,
+			center: LatLng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP 
 	}; 
 	map = new google.maps.Map(document.getElementById("mapCanvas"), options);
@@ -26,7 +26,7 @@ function showMap(location, formatted_address) {
 	// add a marker to the map indicating the location of the address
 	var marker = new google.maps.Marker({
 		map: map,
-		position: location,
+		position: LatLng,
 		title: formatted_address
 	});
 	google.maps.event.addListener(marker, 'click', function() {
@@ -87,6 +87,7 @@ function listLocationChoices(googleMapsResults){
 		var rowNumber = $(this).parent().parent().index();
 		latitude = googleMapsResults[rowNumber].geometry.location.lat();
 		longitude = googleMapsResults[rowNumber].geometry.location.lng();
+		address = currentResult.formatted_address; 
 		
 		//$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
 		$("#longitude").text("Longitude: " + longitude);

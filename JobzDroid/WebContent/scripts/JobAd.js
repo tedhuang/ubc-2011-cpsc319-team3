@@ -99,7 +99,6 @@ function loadJobAdDetails( responseXML ){
 	
         var jobAdId			=	jobAd.getAttribute("jobAdId");
         var jobAdTitle		=	jobAd.getAttribute("jobAdTitle");
-     // var location		=	jobAd.getAttribute("location");
         var tags			=	jobAd.getAttribute("tags");
         var contactInfo		=	jobAd.getAttribute("contactInfo");
         var expiryDateMs	=	jobAd.getAttribute("expiryDate");
@@ -110,6 +109,9 @@ function loadJobAdDetails( responseXML ){
         var educationReq	=	jobAd.getAttribute("educationReq");
         var jobAdDescription=	jobAd.getAttribute("jobAdDescription");
         var isApproved		=	jobAd.getAttribute("isApproved");
+        
+        var locList			=	jobAd.getAttribute("locationList");
+        
         
         
 //        if(educationReq == 3){
@@ -124,7 +126,6 @@ function loadJobAdDetails( responseXML ){
 //        	educationReq = "Not Specified";
 //        }
         
-        
         var expiryDate = new Date(expiryDateMs);
         var startingDate = new Date(startingDateMs);
         var creationDate = new Date(creationDateMs);
@@ -135,19 +136,11 @@ function loadJobAdDetails( responseXML ){
 		else
 			isApproved = "No";
 		
-
 		$("#jobTitle").val(jobAdTitle);
 		$("#tags").val(tags);
 		$("#contactInfo").val( contactInfo);
 		$("#jobDescription").val( jobAdDescription);
-//		$("#jobAdId").innerHTML = jobAdId;
-//		$("#status").val( status );
-//		$("#numViews").innerHTML = numberOfViews; 
-//		$("#expiryDate").innerHTML = "testest123"; //expiryDate;
-//		$("#startingDate").innerHTML = startingDate;
-//		$("#creationDate").innerHTML = creationDate;
-		
-		
+	
 		document.getElementById("isApproved").innerHTML = isApproved;
 		document.getElementById("jobAdId").innerHTML = jobAdId;
 		document.getElementById("status").innerHTML = status;
