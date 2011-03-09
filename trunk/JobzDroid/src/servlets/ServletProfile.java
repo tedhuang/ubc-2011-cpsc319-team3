@@ -318,7 +318,7 @@ public class ServletProfile extends HttpServlet{
 				int rowsInserted = stmt.executeUpdate(query);
 				
 				if (rowsInserted == 1){
-					System.out.println("New Profile Creation success (DB)");
+					System.out.println("Edit Profile success");
 				}
 				else{
 					System.out.println("Error: row not inserted");
@@ -333,7 +333,7 @@ public class ServletProfile extends HttpServlet{
 					int idCheck = result.getInt("accountID");
 					System.out.println("Profile Created in DB with accountID: " + idCheck);
 					isSuccessful = true;
-					message = "Create new profile success";
+					message = "Edit profile success";
 				}
 				else
 				{
