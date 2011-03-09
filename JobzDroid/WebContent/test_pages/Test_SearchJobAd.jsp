@@ -24,7 +24,7 @@
 		<input id="quickSearchBox" type="text" name="quickSearch" size="40"><br>
 		<button id="qSearchButton" type="button" onclick="quickSearchJobAd(resultTable)">Quick Search</button>
 </form>
-<form id="searchForm">		
+<div id="advSearchForm">		
 		<div id="advSearch">Advance Search Goes Below
 		<h3>Search title: </h3>
 		<input id="titleSearch" type="text" name="searchTitle" size="40"><br>
@@ -58,7 +58,7 @@
 		 -->
 		<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement(resultTable)">Search</button>
 		<br>
-</form>
+</div>
 
 <div id="feedback"><h3>Feedback Area</h3></div>
 <div id="resultTable" class="resultTableDiv">

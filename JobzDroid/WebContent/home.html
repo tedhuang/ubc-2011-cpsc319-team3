@@ -8,7 +8,7 @@
 <link href="css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'></script><!--DO NOT CHANGE THIS LINE-->
+<!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="scripts/authentication.js"></script>
@@ -16,7 +16,7 @@
    
     $(document).ready(function(){
     	// Smart Tab 
-		//ADD "sliding:false" to parameter to stop hiding effect
+		//ADD/RM "sliding:false" to parameter to toggle hiding effect
   		$('#sideMenu').sideNavMenu({sliding:false});
 		
 		$('#tabs').DynaSmartTab({});
@@ -34,7 +34,7 @@
 	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="clearfix">
-		    <li><strong id="displayEmail">Welcome: poster@gmail.com</strong></li>
+		    <li><strong id="displayEmail">Welcome: </strong></li><!--TODO ADD Appending Email method-->
 		    <li>
 		    	<a href="#">
 		    		<img class="link-icon" src="http://localhost:8080/JobzDroid/images/acct-icon.png"/>
