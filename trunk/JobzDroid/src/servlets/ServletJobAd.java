@@ -831,8 +831,8 @@ public class ServletJobAd extends HttpServlet {
 			
 			//Update status
 			String query = 
-				"UPDATE tableJobAd" + 
-				"SET status='" + status +"'" +
+				"UPDATE tableJobAd " + 
+				"SET status='" + status +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
 			//Debug print
