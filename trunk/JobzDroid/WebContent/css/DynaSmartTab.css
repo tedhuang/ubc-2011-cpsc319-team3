@@ -21,27 +21,19 @@
     -moz-border-radius  	: 8px;
 }
 
-.tabPane div{
-	
-	position		: relative; 
-    margin			: 0;   
-    /*height: 300px; 
-	  width:905px;
-	*/
-    font			: normal 12px Verdana, Arial, Helvetica, sans-serif; 
-    color			: #5A5655;   
-    text-align		: left;
-	
-	-webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -moz-border-radius-bottomleft   : 8px;
-    -moz-border-radius-bottomright  : 8px;
-	}
 .navBar{
 	position			: relative;
 	height				: 34px;
 	z-index				: 10;
 	background-color	: #076102;
+	margin				: 0;
+	color				: #5A5655;   
+    text-align			: left;
+	
+	-webkit-border-bottom-left-radius	: 5px;
+    -webkit-border-bottom-right-radius	: 5px;
+    -moz-border-radius-bottomleft   	: 8px;
+    -moz-border-radius-bottomright  	: 8px;
 	/*border-top		: 1px solid #808081;
 	border-bottom		: 1px solid #242425;*/
 }
@@ -140,25 +132,33 @@ position: relative;
 
 #tabFrame{
 	
-	width			: 100%;
-	background-color: white;
-	display			: inline;
-	float			: left;
-	border			: 1px solid #CCC;
-    border-top-width: 0 !important;
+	width				: 100%;
+	background-color	: white;
+	display				: inline;
+	float				: left;
+	border				: 1px solid #CCC;
+    border-top-width	: 0 !important;
+	
+	position			: relative;
+	margin				: 0;
+	
+	-webkit-border-bottom-left-radius	: 5px;
+    -webkit-border-bottom-right-radius	: 5px;
+    -moz-border-radius-bottomleft   	: 8px;
+    -moz-border-radius-bottomright  	: 8px;
 }
 #tabFrame div.subFrame{
 	margin			: 0;
 	padding			: 10px; 
 	min-height		: 550px;
 }
+
 #tabFrame div.subFrame div{
 	
-	position		: relative; 
-    margin			: 0; 
-	padding			: 0;  
+    margin			: 0 auto; 
+	text-align		: left;
     font			: normal 12px Verdana, Arial, Helvetica, sans-serif; 
-    text-align		: left;
 }
+
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/
 

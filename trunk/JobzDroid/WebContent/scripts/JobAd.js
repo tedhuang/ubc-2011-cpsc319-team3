@@ -55,43 +55,7 @@ function loadAdList(outputDiv){
 	  };
 	  
 }
-/************************************************************************************************
 
-**
- * 					BUILD TABLE FUNCTION
- * INSERT RETURNED DATA INTO THE TABLE
- * @param xmlObj: THE xmlObject name returned from the server
- * @param outputDiv: The DIV where the table is held
- 
-
-*************************************************************************************************
-
-*/
-function buildTable(xmlReturnedObj, outputDiv){
-	var tbody  = $("tbody", outputDiv).html("");
-	var xmlObj = $(xmlReturnedObj,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
-		$("#feedback").html("<h2>NO Results Found</h2>");
-		if($(tbody).find("tr").get().length > 0){//remove old entries if any
-			$.each()($(tbody).find("tr").get(), function(){
-				$(this).remove();
-			});
-		}
-	}
-	else{
-		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
-		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
-		  				"</td><td>" + jobAd.attr("contactInfo")  + 
-		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
-		  				"</td><td>" + jobAd.attr("jobAvail") +
-		  				"</td></tr>";
-		  $(rowText).appendTo(tbody);
-		  
-		});
-	}
-}
 
 function loadJobAdDetails( responseXML ){
 	
@@ -344,7 +308,7 @@ function searchJobAdvertisement(outputDiv){
 	request = new Request;
 	request.addAction("searchJobAdvertisement");
 	
-	var searchFields = $(":input", "#searchForm").serializeArray();
+	var searchFields = $(":input", "#advSearchForm").serializeArray();
 	var emptyCounts=0;
 	jQuery.each(searchFields, function(i, field){
         if(field.value == ""){
@@ -367,7 +331,7 @@ function searchJobAdvertisement(outputDiv){
 			
 			//send the parameters to the servlet with POST
 			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.open("POST","./ServletJobAd" ,true);
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
@@ -375,13 +339,15 @@ function searchJobAdvertisement(outputDiv){
 			  {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			    {
-				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
 					//parse XML response from server
 					buildTable("jobAd", outputDiv);
 		
 			    }
 			  };
 	   }//ENDOF CHECK-ALL-NULL
+	   else{
+		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
+	   }
 		  
 }
 
@@ -406,7 +372,7 @@ function quickSearchJobAd(outputDiv){
 			
 			//send the parameters to the servlet with POST
 			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.open("POST","./ServletJobAd" ,true); //PATH TO SERVLET DIFFERS FROM TESTPAGES
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
@@ -421,4 +387,33 @@ function quickSearchJobAd(outputDiv){
 			    }
 			  };
 	   }//ENDOF CHECK-ALL-NULL
+}
+/************************************************************************************************
+ * 					BUILD TABLE FUNCTION
+ * INSERT RETURNED DATA INTO THE TABLE
+ * @param xmlObj: THE xmlObject name returned from the server
+ * @param outputDiv: The DIV where the table is held
+**************************************************************************************************/
+function buildTable(xmlReturnedObj, outputDiv){
+	var tbody  = $("tbody", outputDiv).html("");
+	var xmlObj = $(xmlReturnedObj,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
+		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
+		  				"</td><td>" + jobAd.attr("contactInfo")  + 
+		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
+		  				"</td><td>" + jobAd.attr("jobAvail") +
+		  				"</td><td>" + 
+		  				"</td><td>" +  
+		  				"</td></tr>";
+		  $(rowText).appendTo(tbody);
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
 }

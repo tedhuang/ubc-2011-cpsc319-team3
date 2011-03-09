@@ -50,9 +50,6 @@ td, th {
 	vertical-align: inherit;
 }
 
-div{
-	display:block;
-}
 .clearfix:after {
     content: ".";
     display: block;
@@ -80,7 +77,33 @@ html[xmlns] .clearfix {
 	white-space: nowrap;
 }
 
-.pagefont {
+input,textarea,select {
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:inherit;
+}
+
+input,textarea,select {
+	*font-size:100%;
+}
+h2{
+	font-size		: 15px;
+	margin-top		: 10px;
+	padding-bottom	: 0px;
+	font-weight		: bold;
+	color			: #000000;
+}
+h2.good{
+	color			: #00ff00;
+}
+h2.error{
+	color			: #ff0000;
+}
+h2.info{
+	background-color			: #d2d200;;	
+}
+/************************ENDOF BASIC STRUCTURE**********************************/
+.pagefont {#bebebe#bfbfbf
 	padding: 3px 8px 3px 8px; 
 	vertical-align: middle; 
 	font-size: 13px;
@@ -93,6 +116,24 @@ div.padded{
 }
 .successTag {
 	color:green;
+}
+
+
+.heading-text{
+	text-align		: center;
+	border-bottom	: 1px solid #999;
+	font-weight		: bold;
+	margin-top		: 20px;
+	margin-bottom	: 10px;
+	padding-bottom	: 0px;
+	color			: #237a0e;
+	font-size		: 22px;
+}
+.formFieldLabel {
+	float			: left;
+	font-weight		: bold;
+	margin			: 2px 0 0 0;
+	color			: #5F5F5F;
 }
 /************************ELEMENTS STYLE*********************************************************/
 .main{
@@ -137,7 +178,7 @@ div.header{
 }
 #topnav a.btn{
       width                 : 100px;
-      background            : #677a2c;
+      background            : #076102;
       color                 : #FFF;
       float: left;
 	  margin: 0 0 0 10px;
@@ -151,9 +192,8 @@ div.header{
   }
   
 #topnav a.btn:hover{
-      background      : #EA8511;
+      background      : #9EDB04;
       color           : #FFFFFF;
-      border          : 1px solid #EA8511; 
       text-decoration : none; 
 }
 
@@ -255,10 +295,7 @@ height:50px;
 	margin: 0 auto;
 	border: 1px solid #7D7D7D; 
 }
-.regbox .heading-text{
-	text-align: center;
-	margin-bottom: 1em;
-}
+
 .regbox table td.clean {
 	padding: 0 5px;
 }
@@ -330,7 +367,7 @@ height:50px;
       text-decoration       : none; 
 }
 
-/**************************Registered Users Pagese*********************************************/
+/**************************Registered Users Pages*********************************************/
 
 div#main-container { 
 	min-height: 600px; 
@@ -350,4 +387,102 @@ div#main-container {
 
 #info-tab{
 	
+}
+/***************Search Styles*******************************************/
+#advSearchForm{
+		float: left;
+		width: 100%;
+		margin-bottom: 14px;
+}
+.columnBox{
+	float		: left;
+	margin		: 0px 70px !important;
+	width		: 270px;
+
+}
+
+.formFieldWrapper {
+	margin		: 5px 0 15px 0;
+	padding		: 0;
+	clear		: left;
+	zoom		: 1;
+}
+
+.floatLeftBtn {
+	float: left;
+	padding-left: 5em;
+	margin: 0;	
+}
+/***************Result Table Style**************************************/
+#resultTable table{
+	width			: 100%;
+	margin-bottom	: 1em;
+	border-spacing 	: 0;
+}
+
+.resultTableDiv{
+	clear		: both;
+	position	: relative;
+	width		: 765px;
+	min-height	: 140px;
+	font-size	: 11px;
+	margin		: 0 auto;
+	padding		: 1em;
+	border-top	: 2px solid #004000;
+}
+
+.resultTableDiv thead {
+	cursor: default;
+	overflow: hidden;
+	height: 31px;
+	padding: 0px 0px 0px 0px;
+}
+.resultTableDiv th{
+    background: url("") repeat-x;
+    line-height: 25px;
+    height:31px;
+    margin:0;
+    padding:0;
+}
+
+.resultTableDiv tbody {
+	color: #333;
+}
+.resultTableDiv td {
+	border-right		: 1px solid white;
+	height				: 23px;
+	overflow			: hidden;
+	word-wrap			: break-word;
+	background-color	: white;
+	text-align			: center;
+}
+.resultTableDiv .oddRow td{
+	background-color: #aae2a9;
+}
+
+.headText {
+	padding-left		: 0.33em;
+	padding-right		: 0.33em;
+	padding-top			: 0.5em;
+	float				: left;
+	white-space			: nowrap;
+	overflow			: hidden;
+}
+
+.columnButton{
+    border-left:1px solid #FFFFFF;
+    border-right:0px solid #FFFFFF;
+    height:31px;
+    font-weight:normal;
+    color:#333;
+    margin:0px;
+    padding:0;
+    width: 100%;
+    cursor:pointer;
+}
+
+
+ /***********RESULT TABLE-HEADER COLUNMS*******/
+#col-viewDate{
+	min-width: 68px;
 }
