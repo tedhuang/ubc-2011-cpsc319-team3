@@ -180,7 +180,6 @@ public class Utility {
 				return "Master";
 			case 3:
 				return "Ph.D";
-			
 			default:
 				return "Not Specified";
 		}

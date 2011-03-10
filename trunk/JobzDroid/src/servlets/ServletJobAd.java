@@ -697,7 +697,7 @@ public class ServletJobAd extends HttpServlet {
 		 * TODO: implement session key check
 		 */
 		
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -769,7 +769,7 @@ public class ServletJobAd extends HttpServlet {
 		 * TODO: implement session key check
 		 */
 				
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		String newExpireTime = request.getParameter("expiryDate");
 		
 		Connection conn = dbManager.getConnection();	
@@ -846,7 +846,7 @@ public class ServletJobAd extends HttpServlet {
 		 * TODO: Implement check session key
 		 */
 		
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -933,7 +933,7 @@ public class ServletJobAd extends HttpServlet {
 		 * TODO: Implement check session key
 		 */
 		
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -1021,7 +1021,10 @@ public class ServletJobAd extends HttpServlet {
 		 * TODO: Implement check session key
 		 */
 		
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+
+		
+		System.out.println(jobAdId);
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -1090,7 +1093,7 @@ public class ServletJobAd extends HttpServlet {
 	 */
 	private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-		String jobAdId = request.getParameter("jobAdId");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		String status = request.getParameter("status");
 		
 		Connection conn = dbManager.getConnection();	
@@ -1297,9 +1300,9 @@ public class ServletJobAd extends HttpServlet {
 				
 				temp.jobAdId 				= result.getInt("idJobAd");
 				temp.jobAdTitle				= result.getString("title");
-				temp.creationDateFormatted 	= Utility.dateConvertor(result.getLong("datePosted"));
+				temp.creationDate		 	= result.getLong("datePosted");
 				temp.contactInfo 			= result.getString("contactInfo");
-				temp.eduReqFormatted 		= Utility.degreeConvertor(result.getInt("educationRequired"));
+				temp.educationReq	 		= result.getInt("educationRequired");
 				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
 //				temp.tags 					= result.getString("tags");
 				

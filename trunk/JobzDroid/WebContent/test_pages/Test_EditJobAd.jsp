@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Edit Job Ad</title>
 
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js' type='text/javascript'></script>
+<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>
 <link href="../css/mainStyle.css" rel="stylesheet" type="text/css">
 <link href="../css/resultTable.css" rel="stylesheet" type="text/css">
 <link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
@@ -153,8 +153,6 @@ JobAdID:
 		<input id="sessionKey" name="sessionKey"/>
 	</form>
 
-
-	
 </div>
 
 </body>
