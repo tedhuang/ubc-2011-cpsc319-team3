@@ -32,12 +32,12 @@ public class ProfileSearcher {
 		" docLink=\"" + docLink + "\"" +
 		" employmentPreference=\"" + employmentPreference + "\"" +
 		" preferredStartDate=\"" + preferredStartDate + "\"" +
-		" educationLevel=\"" + educationLevel + "\" + >\n";
+		" educationLevel=\"" + educationLevel + "\" >\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
 			result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
-										 " longitude=\"" + addressList.get(i).longitude + "\" + >\n" );
+										 " longitude=\"" + addressList.get(i).longitude + "\" >\n" );
 		}
 		
 		result = result.concat( "\t\t</profileSearcher>\n" );

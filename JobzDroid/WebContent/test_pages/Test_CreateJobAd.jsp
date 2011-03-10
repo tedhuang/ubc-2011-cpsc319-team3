@@ -5,7 +5,7 @@
 <head> <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Job Ad Creation Test</title>
 
-<script type="text/javascript" src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js'></script>
+<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>

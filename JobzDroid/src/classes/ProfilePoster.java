@@ -23,12 +23,12 @@ public class ProfilePoster {
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
 		" phone=\"" + phone + "\"" +
-		" selfDescription=\"" + selfDescription + "\" + >\n";
+		" selfDescription=\"" + selfDescription + "\" >\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
 			result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
-										 " longitude=\"" + addressList.get(i).longitude + "\" + >\n" );
+										 " longitude=\"" + addressList.get(i).longitude + "\" >\n" );
 		}
 		
 		result = result.concat( "\t\t</profilePoster>\n" );

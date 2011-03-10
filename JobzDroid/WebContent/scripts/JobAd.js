@@ -59,15 +59,17 @@ function loadAdList(outputDiv){
 
 function loadJobAdDetails( responseXML ){
 	
+	//alert(responseXML.getElementsByTagName("jobAd"));
+	
 	var jobAd = responseXML.getElementsByTagName("jobAd").item(0);
 	
         var jobAdId			=	jobAd.getAttribute("jobAdId");
         var jobAdTitle		=	jobAd.getAttribute("jobAdTitle");
         var tags			=	jobAd.getAttribute("tags");
         var contactInfo		=	jobAd.getAttribute("contactInfo");
-        var expiryDateMs	=	jobAd.getAttribute("expiryDate");
-        var startingDateMs	=	jobAd.getAttribute("startingDate");
-        var creationDateMs	=	jobAd.getAttribute("creationDate");
+        var expiryDate		=	jobAd.getAttribute("expiryDateFormatted");
+        var startingDate	=	jobAd.getAttribute("startingDateFormatted");
+        var creationDate	=	jobAd.getAttribute("creationDateFormatted");
         var status			=	jobAd.getAttribute("status");
         var numberOfViews	=	jobAd.getAttribute("numberOfViews");
         var educationReq	=	jobAd.getAttribute("educationReq");
@@ -78,38 +80,23 @@ function loadJobAdDetails( responseXML ){
         
         
         
-//        if(educationReq == 3){
-//        	educationReq = "Ph.D.";
-//        } 
-//        else if(educationReq = 2){
-//        	educationReq = "M.Sc.";
-//        } 
-//        else if(educationReq = 1){
-//        	educationReq = "B.Sc.";
-//        } else{
-//        	educationReq = "Not Specified";
-//        }
-        
-        var expiryDate = new Date(expiryDateMs);
-        var startingDate = new Date(startingDateMs);
-        var creationDate = new Date(creationDateMs);
-        
 		if(isApproved){
 			isApproved = "Yes";
 		}
 		else
 			isApproved = "No";
 		
-		$("#jobTitle").val(jobAdTitle);
-		$("#tags").val(tags);
-		$("#contactInfo").val( contactInfo);
-		$("#jobDescription").val( jobAdDescription);
-	
+		$("#jobTitle").text(jobAdTitle);
+		$("#tags").text(tags);
+		$("#contactInfo").text( contactInfo);
+		$("#jobDescription").text( jobAdDescription);
+		
+		
 		document.getElementById("isApproved").innerHTML = isApproved;
 		document.getElementById("jobAdId").innerHTML = jobAdId;
 		document.getElementById("status").innerHTML = status;
 		document.getElementById("educationReq").value = educationReq;
-		
+			
 		document.getElementById("expiryDate").innerHTML = expiryDate;
 		document.getElementById("startingDate").innerHTML = startingDate;
 		document.getElementById("creationDate").innerHTML = creationDate;
@@ -165,6 +152,7 @@ function getJobAdById()
 		xmlhttp.open("POST","../ServletJobAd" ,true);
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(request.toString());
+		
 }
 
 
@@ -176,7 +164,45 @@ function changeJobAdStatus(){
 
 function adminDeleteJobAd(){
 	
-	//TODO: hook up with UI
+	var sessionKey = document.getElementById("sessionKey").value;
+	var intJobAdId = $("#jobAdId");
+	
+	if( intJobAdId == null ){
+		alert("Job Ad ID is not provided");
+	}
+	
+	request = new Request;
+	request.addAction("adminDeleteJobAd");
+	request.addParam("jobAdId", intJobAdId);
+	
+	//Response Handling:
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		   var message = xmlhttp.responseXML.getElementById("message");
+		   var result = xmlhttp.responseXML.getElementById("result");
+		   var responseText= result + ": " + message;
+		   document.getElementById("feedback").innerHTML=responseText;
+	    }
+	  };
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send( request.toString() );
+
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Delete Request</h2>";
 }
 
 function adminApprove(){
