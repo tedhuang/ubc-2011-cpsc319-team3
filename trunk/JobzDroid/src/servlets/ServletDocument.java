@@ -66,12 +66,19 @@ public class ServletDocument extends HttpServlet {
 			}
 		}
 
+		//TODO check user via sessionKey
+		//TODO parse filename
+		//TODO check size, find entry in DB
+		//TODO Write entry in DB
+		
 		
 	    String name;
 	    String value;
 		
 		// Process the uploaded items
 		Iterator iter = items.iterator();
+		String nextFileName="default";
+		String sessionKey;
 		
 		while (iter.hasNext()) {
 			System.out.println("Process form");
@@ -82,9 +89,18 @@ public class ServletDocument extends HttpServlet {
 			    name = item.getFieldName();
 			    value = item.getString();
 			    
+			    if(name.equals("fileName1")) {
+			    	nextFileName = value;
+			    }
+			    // is this where field is?
+			    if(name.equals("sessionKey")) {
+			    	sessionKey = value;
+			    	System.out.println( sessionKey );
+			    }
+			    
 			    InputStream uploadedStream = item.getInputStream();
 			    uploadedStream.close();
-
+			    
 		    }
 		 // Process a file upload
 		    else {
@@ -95,7 +111,7 @@ public class ServletDocument extends HttpServlet {
 		        boolean isInMemory = item.isInMemory();
 		        long sizeInBytes = item.getSize();
 		        
-		        File uploadedFile = new File( "/JobzDroid/Documents/", fileName );
+		        File uploadedFile = new File( "/JobzDroid/Documents/", nextFileName );
 		        try {
 		        	System.out.println("Writing to File: " + uploadedFile.getAbsolutePath() );
 					item.write(uploadedFile);
