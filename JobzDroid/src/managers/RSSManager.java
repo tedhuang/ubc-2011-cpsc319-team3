@@ -22,22 +22,34 @@ public class RSSManager {
 	/***
 	 * Creates a SyndEntry(ROME) object (RSS feed entry object) with provided parameters.
 	 * @param title Feed entry title.
+	 * @param pubDate Feed entry publish date.
+	 * @param description Feed entry description.
+	 * @return SyndEntry object.
+	 */
+	public static SyndEntry createFeedEntry(String title, Date pubDate, String description){
+		SyndEntry entry = new SyndEntryImpl();
+		entry.setTitle(title);
+		entry.setPublishedDate(pubDate);
+		
+        SyndContent desc = new SyndContentImpl();
+        desc.setType("text/html");
+        desc.setValue(description);
+        entry.setDescription(desc);   
+		return entry;
+	}
+	
+	/***
+	 * Creates a SyndEntry(ROME) object (RSS feed entry object) with provided parameters.
+	 * @param title Feed entry title.
 	 * @param link Feed entry link.
 	 * @param pubDate Feed entry publish date.
 	 * @param description Feed entry description.
 	 * @param categories Array of feed categories as Strings.
 	 * @return SyndEntry object.
 	 */
-	public static SyndEntry createFeedEntry(String title, String link, Date pubDate, String description, String[] categories){
-		SyndEntry entry = new SyndEntryImpl();
-		entry.setTitle(title);
+	public static SyndEntry createFeedEntry(String title, Date pubDate, String description,  String link, String[] categories){
+		SyndEntry entry = createFeedEntry(title, pubDate, description);		
 		entry.setLink(link);
-		entry.setPublishedDate(pubDate);
-		
-        SyndContent desc = new SyndContentImpl();
-        desc.setType("text/html");
-        desc.setValue(description);
-        entry.setDescription(desc);        
         
         List<SyndCategory> catagoryList = new ArrayList<SyndCategory>();
         for(int i = 0; i < categories.length; i++){

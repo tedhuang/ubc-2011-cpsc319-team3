@@ -12,11 +12,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.FeedException;
+
 import classes.Account;
 import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
+import managers.RSSManager;
 
 /**
  * Servlet implementation class ServletAdmin
@@ -416,6 +421,17 @@ public class ServletAdmin extends HttpServlet {
 			if(addNewsEntry(title, content)){
 				result = true;
 				message = "News entry has been successfully posted.";
+				// add entry to the top of news RSS
+				try {
+					SyndFeed newsFeed = RSSManager.readFeedFromFile("http://localhost:8080/JobzDroid/rss/news.xml");
+					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(), content);
+					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
+					RSSManager.writeFeedToFile(newsFeed, "rss/news.xml");
+				} 
+				catch (Exception e) {
+					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
+					message = "News entry has been successfully posted, but there was an error while trying to update RSS for news.";
+				}				
 			}
 			else
 				message = "An error has occured while performing post news action. Please try again later.";
