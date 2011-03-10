@@ -1,3 +1,8 @@
+// read session key from URL on load
+$("document").ready(function(){
+	loadSessionKeyFromURL();
+	});
+
 /*****************************************************************************************************
  * 					LOG IN FUNCTION
  ****************************************************************************************************/
@@ -8,8 +13,8 @@ function userLoginRequest()//TODO Recover lightbox element
 	$("#submitButton").attr("disabled", true);
 	$("#submitButton").text("Processing...");
 	$("#loginError").text("");
-	var email = $("#email").val();
-	var password = $("#password").val();
+	var email = document.getElementById("email").value;
+	var password = document.getElementById("password").value;
 	
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -19,13 +24,7 @@ function userLoginRequest()//TODO Recover lightbox element
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
-
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","./ServletAccount" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(Params);
-
+	  
 	xmlhttp.onreadystatechange=function(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
@@ -35,8 +34,9 @@ function userLoginRequest()//TODO Recover lightbox element
 			
 		    if( sessionKey != "null" ) 
 			    { 	
+					var action = (xmlhttp.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
 		    		document.sid.action = action;
-					document.$("#sessionKey").val( sessionKey );
+					document.getElementById("sessionKey").value = sessionKey;
 					document.sid.submit();
 		    	}
 		    else
@@ -51,6 +51,57 @@ function userLoginRequest()//TODO Recover lightbox element
 	    }
 	  };
 	  
+	var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
+
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","./ServletAccount" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(Params);
+}
+
+/*****************************************************************************************************
+ * 					ADMIN LOG IN FUNCTION
+ ****************************************************************************************************/
+function adminLoginRequest()
+{
+	$("#submitButton").attr("disabled", true);
+	$("#submitButton").text("Processing...");
+	$("#loginError").text("");
+	var strEmail = document.getElementById("email").value;
+	var strPassword = document.getElementById("password").value;
+	
+	if (window.XMLHttpRequest)
+		xmlHttpReq = new XMLHttpRequest();
+	else
+		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+	  
+	xmlHttpReq.onreadystatechange=function(){
+	  if (xmlHttpReq.readyState==4 && xmlHttpReq.status==200)
+	    {
+		    // get sessionKey
+			var sessionKey = (xmlHttpReq.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;			
+		    if( sessionKey != "null" ) { 
+		    	var action = (xmlHttpReq.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
+		    	document.sid.action = action;
+		    	document.getElementById("sessionKey").value = sessionKey;
+		    	document.sid.submit();
+		    }
+		    else {
+	    		$("#submitButton").removeAttr("disabled");
+	    		$("#submitButton").text("Log in");
+				$("#loginError").text("Failed admin login attempt.");
+	    	}
+	    }
+	  };
+	request = new Request;
+	request.addAction("requestForAdminLogin");
+	request.addParam("email", strEmail);
+	request.addParam("password", strPassword);
+
+	//send the parameters to the servlet with POST
+	xmlHttpReq.open("POST","../ServletAdmin" ,true);
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlHttpReq.send(request.toString());
 }
 
 
