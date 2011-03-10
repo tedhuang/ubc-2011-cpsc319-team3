@@ -1,0 +1,119 @@
+package managers;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import classes.Utility;
+import classes.NewsEntry;
+
+/***
+ * Provides functions to execute automated tasks and loading system variables from configuration file.
+ * Singleton class.
+ */
+public class NewsManager {	
+	// singleton instance
+	private DBManager dbManager;
+	private static NewsManager newsManagerInstance = null;
+	protected NewsManager() {
+		dbManager = DBManager.getInstance();
+	}	
+	public static NewsManager getInstance() {
+		if(newsManagerInstance == null)
+			newsManagerInstance = new NewsManager();
+		return newsManagerInstance;
+	}
+		
+	/***
+	 * Adds a news entry to tableNews in the database
+	 * @param title Title of the news.
+	 * @param content Content of the news.
+	 * @return boolean indicating whether the addition was successful.
+	 */
+	public boolean addNewsEntry(String title, String content){
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;		
+		long currentTime = Utility.getCurrentTime();
+		try {
+			String query = "INSERT INTO tableNews(title, content, dateTimePublished)" +
+            		" VALUES(?,?,?);";
+			
+			pst = conn.prepareStatement(query);
+			pst.setString(1, title);
+            pst.setString(2, content);
+            pst.setLong(3, currentTime);
+            
+			int rowsInserted = pst.executeUpdate(query);
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
+	 * Gets, sorts and returns all news entries from the database
+	 * @return ArrayList of sorted news entries. (latest entries at the front) 
+	 */
+	public ArrayList<NewsEntry> loadNewsEntries(){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;		
+		ArrayList<NewsEntry> entries = new ArrayList<NewsEntry>();
+		
+		try {			
+			stmt = conn.createStatement();
+			String query = "SELECT * FROM tableNews;";            
+			stmt.executeQuery(query);
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+        return entries;
+	}
+}

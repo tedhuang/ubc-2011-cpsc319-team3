@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>		
 	<script type="text/javascript" src='http://localhost:8080/JobzDroid/scripts/Utility.js'></script>
 	<script type="text/javascript" src="http://localhost:8080/JobzDroid/scripts/ResetForgetPassword.js"></script>
-	<title>Reset Forget Password Test</title>
+	<title>Reset Forgotten Password</title>
 </head>
 <body>
 	<%	
