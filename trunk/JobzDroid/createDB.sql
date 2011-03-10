@@ -37,3 +37,12 @@ CREATE TABLE tableSearcherEmpPref (
     PRIMARY KEY (idAccount, empPref),
     CONSTRAINT FOREIGN KEY (`idAccount`) REFERENCES `tableAccount` (`idAccount`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+DROP TABLE IF EXISTS tableNews;
+CREATE  TABLE tableNews (
+	idNews 					INT NOT NULL AUTO_INCREMENT ,
+	title					VARCHAR(100) NOT NULL ,
+	content 				VARCHAR(2048) DEFAULT NULL ,
+	dateTimePublished		BIGINT NULL ,
+	PRIMARY KEY (idNews)
+  );

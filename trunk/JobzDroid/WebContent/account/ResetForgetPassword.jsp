@@ -6,7 +6,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="http://localhost:8080/JobzDroid/css/mainStyle.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>		
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>		
 	<script type="text/javascript" src='http://localhost:8080/JobzDroid/scripts/Utility.js'></script>
 	<script type="text/javascript" src="http://localhost:8080/JobzDroid/scripts/ResetForgetPassword.js"></script>
 	<title>Reset Forget Password Test</title>
@@ -19,7 +19,7 @@
 	// if password reset id is invalid or expired, then forward to error page.
 	if (idAccount == -1){
 	%>
-	<jsp:forward page="error.html" />
+	<jsp:forward page="../error.html" />
 	<%
 	}
 	else{

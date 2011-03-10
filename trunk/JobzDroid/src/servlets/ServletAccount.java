@@ -69,12 +69,11 @@ public class ServletAccount extends HttpServlet {
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String action = request.getParameter("action");
-		// forward to error page if request is invalid
+		// throw error if action is invalid
 		try{
 			EnumAction.valueOf(action);
 		}
 		catch(Exception e){
-		//	forwardErrorPage(request, response);
 			throw new ServletException("Invalid account servlet action.");
 		}
 		
@@ -113,10 +112,6 @@ public class ServletAccount extends HttpServlet {
 			
 			case requestForLogout:
 				logoutReqTaker(request, response);
-				break;
-				//dbManager.userLogout("request.getParameter("SessionKey").toString());
-				
-			default://TODO ERROR HANDLING
 				break;
 		}
 	}
@@ -225,7 +220,7 @@ public class ServletAccount extends HttpServlet {
 					//send verification email to new user
 					//TODO
 				//	emailManager.sendAccountActivationEmail(email, name, uuid);
-					emailManager.sendAccountActivationEmail("martinku86@gmail.com", name, uuid);
+					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
 					message = "Account creation successful! An email has been sent to your inbox, " +
 							"please follow the instructions to activate your account within "
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
@@ -256,7 +251,7 @@ public class ServletAccount extends HttpServlet {
 		String verificationNumber = request.getParameter("id");
 		boolean accountActivated = activateAccount(verificationNumber);
 		if(accountActivated){
-			RequestDispatcher dispatcher = request.getRequestDispatcher("accountActivationSuccess.html");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/accountActivationSuccess.html");
 			dispatcher.forward(request, response);
 		}
 		else
@@ -267,7 +262,7 @@ public class ServletAccount extends HttpServlet {
 	 * Handles primary email change requests.
 	 */
 	private void requestEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionID");
+		String sessionKey = request.getParameter("sessionKey");
 		String newEmail = request.getParameter("newEmail");		
 		UUID uuid = UUID.randomUUID();; // verification number
 		boolean result = false;
@@ -312,7 +307,7 @@ public class ServletAccount extends HttpServlet {
 		String verificationNumber = request.getParameter("id");
 		boolean emailChanged = verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
-			RequestDispatcher dispatcher = request.getRequestDispatcher("emailChangeSuccess.html");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/emailChangeSuccess.html");
 			dispatcher.forward(request, response);
 		}
 		else
@@ -421,7 +416,8 @@ public class ServletAccount extends HttpServlet {
 	 * Handles email link click from a forget password request
 	 */
 	private void emailLinkForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		getServletConfig().getServletContext().getRequestDispatcher("/ResetForgetPassword.jsp").forward(request,response);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/account/ResetForgetPassword.jsp");
+		dispatcher.forward(request, response);
 	}
 	
 	/***
@@ -970,7 +966,5 @@ public class ServletAccount extends HttpServlet {
 	        dbManager.freeConnection(conn);
 	    }
 	    return false;
-	}
-	
-	
-}//ENDOF CLASS SERVLETACCOUNT
+	}	
+}

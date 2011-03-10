@@ -129,6 +129,8 @@ function validateForm(evt){
 		if( strStartingDate && strStartingDate != "" ) {
 			if(strDatePattern.test(strStartingDate) == false)
 				$("#startingDateError").text("Invalid date format.");
+			else
+				$("#startingDateError").text("");
 		}
 		else
 			$("#startingDateError").text("");
@@ -206,7 +208,7 @@ function sendRegRequest(evt){
 		// no poster specific fields currently
 	}
 	//send the request to servlet
-	xmlHttpReq.open("POST","./ServletAccount", true);
+	xmlHttpReq.open("POST","../ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	
@@ -227,7 +229,7 @@ function parseRegResponse(responseXML){
 		 $("#submitButton").text("Return to Home Page");
 		 $("#submitButton").unbind("click", sendRegRequest);
 		 $("#submitButton").bind("click", function(){
-			 window.location = "./index.html";
+			 window.location = "../index.html";
 		 });
 	 }
 	 else

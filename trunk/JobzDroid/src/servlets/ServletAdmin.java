@@ -36,6 +36,7 @@ public class ServletAdmin extends HttpServlet {
     
     // Enumerates the action parameter
 	private enum EnumAction	{
+		requestForAdminLogin,
 		ban,
 		unban,
 		createAdmin,
@@ -68,7 +69,9 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		switch( EnumAction.valueOf(action) ){
-			// account registration
+			case requestForAdminLogin:
+				adminLoginReqTaker(request, response);
+				break;
 			case ban:
 				ban(request, response);
 				break;
@@ -82,16 +85,56 @@ public class ServletAdmin extends HttpServlet {
 				deleteAdmin(request, response);
 				break;
 			case postNews:
-				// TODO
+				postNews(request, response);
 				break;
 		}
+	}
+	
+	private void adminLoginReqTaker(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String email = request.getParameter("email");
+		String pw = request.getParameter("password");
+		Session currSession = null;
+		String action = "";
+		Account acc = dbManager.getAccountFromEmail(email);
+		if( acc != null ){
+			String accType = acc.getType();
+			if( accType.equals("admin") || accType.equals("superAdmin"))
+				currSession = dbManager.startSession(email, pw);
+		}
+		
+		if(currSession != null){
+			// if login successful, return credential and sucess message
+			// Write XML to response if DB has return message
+			action = "home_admin.jsp";
+			
+			StringBuffer XMLResponse = new StringBuffer();
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
+			XMLResponse.append("\t<action>" + action + "</action>\n");
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+			
+		}
+		else{
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			XMLResponse.append("\t<sessionKey>" + null + "</sessionKey>\n");
+			XMLResponse.append("\t<action>" + action + "</action>\n");
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+		}
+		
 	}
 	
 	/***
 	 * Handles account ban requests.
 	 */
 	private void ban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionID");
+		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");		
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
@@ -162,7 +205,7 @@ public class ServletAdmin extends HttpServlet {
 	 * Handles account unban requests.
 	 */
 	private void unban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionID");
+		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
@@ -234,7 +277,7 @@ public class ServletAdmin extends HttpServlet {
 	 * Handles create admin requests from the super admin.
 	 */
 	private void createAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionID");
+		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		String password = request.getParameter("password");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
@@ -290,7 +333,7 @@ public class ServletAdmin extends HttpServlet {
 	 * Handles delete admin requests from the super admin.
 	 */
 	private void deleteAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionID");
+		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		accountName = Utility.checkInputFormat(accountName);
@@ -339,6 +382,56 @@ public class ServletAdmin extends HttpServlet {
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 	}
+	
+	/***
+	 * Handles post news requests from admins.
+	 */
+	private void postNews(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionKey");
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");	
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		title = Utility.checkInputFormat(title);
+		content = Utility.checkInputFormat(content);
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// session check
+		Session session = dbManager.getSessionByKey(sessionKey);
+		if(session == null){
+			allGood = false;
+			message = "Unauthorized create admin action.";
+		}
+		else{
+			// check if user is authorized
+			String userType = session.getAccountType();
+			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
+				allGood = false;
+				message = "Unauthorized post news action.";
+			}
+		}
+		
+		if(allGood){
+			if(addNewsEntry(title, content)){
+				result = true;
+				message = "News entry has been successfully posted.";
+			}
+			else
+				message = "An error has occured while performing post news action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
 	
 	/**************************************HELPER FUNCTIONS*******************************************************/
 	
@@ -519,6 +612,57 @@ public class ServletAdmin extends HttpServlet {
 	        try{
 	            if (stmt != null)
 	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
+	 * Creates an admin account with given account name and password.
+	 * @param email Account name to create.
+	 * @param password Password to use.
+	 * @return boolean indicating whether the admin creation was successful.
+	 */
+	private boolean addNewsEntry(String title, String content){
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;		
+		long currentTime = Utility.getCurrentTime();
+		try {
+			String query = "INSERT INTO tableNews(title, content, dateTimePublished)" +
+            		" VALUES(?,?,?);";
+			
+			pst = conn.prepareStatement(query);
+			pst.setString(1, title);
+            pst.setString(2, content);
+            pst.setLong(3, currentTime);
+            
+			int rowsInserted = pst.executeUpdate(query);
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
 	        }
 	        catch (Exception e) {
 	        	Utility.logError("Cannot close Statement: " + e.getMessage());
