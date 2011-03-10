@@ -86,7 +86,6 @@ input,textarea,select {
 input,textarea,select {
 	*font-size:100%;
 }
-
 h2{
 	font-size		: 15px;
 	margin-top		: 10px;
@@ -499,3 +498,37 @@ div#main-container {
 #col-viewDate{
 	min-width: 68px;
 }
+
+/***************Create Job Advertisement *******************************************/
+#createJobAdForm{
+		float: left;
+		width: 100%;
+		margin-bottom: 14px;
+}
+.columnBoxContainer{
+	float		: left;
+	margin		: 0px 70px !important;
+	width		: 700px;
+
+}
+
+.columnBoxThinRight{
+	position: relative;
+	float		: right;
+	right:-30px;
+	top: -285px;
+	<!--width		: 135px;-->
+
+}
+
+.columnBoxThinLeft{
+	position: relative;
+	<!--width		: 135px;-->
+
+}
+
+
+.floatLeftBtn {
+	float: left;
+	padding-left: 5em;
+	margin: 0;	

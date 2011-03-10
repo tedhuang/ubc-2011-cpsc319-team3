@@ -64,7 +64,7 @@ position: relative;
     float			: left;
 	
 	text-align		: center;
-	max-width		: 170px;
+	max-width		: 190px;
   	border-right	: 1px solid #E0E0E0;
 	
 }
@@ -74,7 +74,7 @@ position: relative;
 }
 .navBar li a{ 
 	height			: 30px;
-	width			: 100px;
+	width			: 130px;
     display			: block;
     margin			: 0;
     padding			: 2px;
