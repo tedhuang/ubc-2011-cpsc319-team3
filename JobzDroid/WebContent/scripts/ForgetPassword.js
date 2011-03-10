@@ -35,7 +35,7 @@ function sendPasswordChangeRequest(evt){
 	request.addParam("email", strEmail);
 
 	//send the request to servlet
-	xmlHttpReq.open("POST","./ServletAccount", true);
+	xmlHttpReq.open("POST","../ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	
