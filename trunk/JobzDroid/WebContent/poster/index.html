@@ -4,14 +4,15 @@
 <link rel="SHORTCUT ICON" href="http://localhost:8080/JobzDroid/images/title-icon.png"/>
 <title>AjaxSmart Tab - JobzDroid</title>
 
-<link href="css/mainStyle.css" rel="stylesheet" type="text/css"/>
-<link href="css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
-<link href="css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
+<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="scripts/sideNavMenu.js"></script>
-<script type="text/javascript" src="scripts/DynaSmartTab.js"></script>
-<script type="text/javascript" src="scripts/authentication.js"></script>
+<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
+<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+<script type="text/javascript" src="../scripts/authentication.js"></script>
+<script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript">
    
     $(document).ready(function(){
@@ -32,19 +33,19 @@
 	
   <div class="header">
 		<a id="logo" title="home" href="http://localhost:8080/JobzDroid/">
-	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
+	        <img src="../images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="clearfix">
 		    <li><strong id="displayEmail">Welcome: </strong></li><!--TODO ADD Appending Email method-->
 		    <li>
 		    	<a href="#">
-		    		<img class="link-icon" src="http://localhost:8080/JobzDroid/images/acct-icon.png"/>
+		    		<img class="link-icon" src="../images/icon/acct-icon.png"/>
 		    		Profile
 				</a>
 			</li>
 		    <li>
 		    	<a href="#" onclick="userLogoutRequest()">
-		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="http://localhost:8080/JobzDroid/images/exit.png"/>
+		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="../images/icon/exit.png"/>
 		    		Log out
 				</a>
 			</li>
@@ -54,8 +55,8 @@
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a href="#" class="just-link">
-				<img src="images/Step1.png"/>
+			<a href="#" onclick="$.fn.DynaSmartTab.showUnremovableTab('newAdTab')">
+				<img src="../images/icon/new-post.png">
 				<h2>New Job Ad</h2>
 			</a>
 			<ul>
@@ -65,26 +66,37 @@
 	
 		<li>
 			<a href="normalpage.html" class="topMenu">
-				<img src="images/Step2.png"/>
 				<h2>Ad Management</h2>
 			</a>
 			<ul id="subMenu">
-				<li><a href="#">Active</a></li>
-				<li><a href="#">Draft</a></li>
-				<li><a href="#">Pending</a></li>
-				<li><a href="#">Inactive</a></li>
+				<li><a href="#">
+					<img src="../images/icon/active.png">
+					Active</a>
+				</li>
+				<li><a href="#">
+					<img src="../images/icon/draft.png">
+					Draft</a>
+				</li>
+				<li><a href="#">
+					<img src="../images/icon/pending.png">
+					Pending</a>
+				</li>
+				
+				<li><a href="#">
+					<img src="../images/icon/inactive.png">
+					Inactive</a>
+				</li>
 			</ul>
 		</li>
 	
 		<li>
 			<a href="#" class="topMenu">
-				<img src="images/Step4.png"/>
 				<h2>Help & Feeds</h2>
 			</a>
 			<ul id="subMenu">
-				<li><a href="#">RSS</a></li>
-				<li><a href="#">NEWS</a></li>
-				<li><a href="#">FAQ</a></li>
+				<li><a href="#">RSS<img src="../images/icon/rss.png"></a></li>
+				<li><a href="#">NEWS<img src="../images/icon/news.png"></a></li>
+				<li><a href="#">FAQ<img src="../images/icon/faq.png"></a></li>
 			</ul>
 		</li>
   	</ul><!--ENDOF SideMenu-->
@@ -94,46 +106,164 @@
   <div id="content" class="fixclear">
 	<!--Start tabs-->
 	<div id="tabs" class="tabPane">
-  	  <div class="navBar">
+  	  <div id="navBar" class="navBar">
 		<ul>
-  			<li id="tab1">
-  				<a href="#tabs-1"><h2>Home</h2></a>
+  			<li id="homeTab">
+  				<a href="#home-frame"><h2>Home</h2></a>
 			</li>
-  			<li id="tab2">
-  				<a href="#tabframe_tab2"><span class="close">X</span><h2>Tab 2</h2></a>
+  			<li id="Tab">
+  				<a href="#adMng-frame"><h2>My Ads</h2></a>
+			</li>
+			<li id="newAdTab" class="hideOnly">
+				<span class="close">X</span>
+  				<a href="#newAd-frame"><h2>New Ad</h2></a>
+				
 			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
 	
 	
   <div id="tabFrame">
-	<div id="tabs-1" class="subFrame">
-            <h2>Tab 1 Content</h2>
-			<input type="text" name="tabName"/>
-			<a href=# onclick="addTab();">CLICK TO ADD TAB</a>	
-			<script>
-			    function addTab(){
-			      var value = $("input[name=tabName]").val();
-			      $.fn.DynaSmartTab.addTab(value);
-				}
-			</script>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>         			
+	<div id="home-frame" class="subFrame unremovable">
+            <h2 class="welcome">My Profile Summary</h2>
+			<div id="profileArea">
+				Profile goes here
+			</div>
+            <h2 class="welcome">My Active Ads</h2>
+			 
+			 <div id="activeAdTable" class="resultTableDiv tableClear">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-viewDate">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Date</div>
+							</div>
+						</th>
+						<th id="col-viewTitle">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Job Title</div>
+							</div>
+						</th>
+						<th id="col-viewCompany">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Company</div>
+							</div>
+						</th>
+						<th id="col-viewEduReq">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-viewAvail">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Availability</div>
+							</div>
+						</th>
+						<th id="col-viewLoc">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+						<th id="col-Tools">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Tools</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+			  </div><!--ENDOF DIV RESULT TABLE-->     			
         </div>
 		
-  		<div id="tabframe_tab2" class="subFrame">
-            <h2>Tab 2 Content</h2>	
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>     
-        </div>    
+  		<div id="adMng-frame" class="subFrame unremovable">
+            <div id="adLinks">
+            	<ul>
+            		<li><a href="#">Active<span id="numActive"></span></a></li>
+					<li><a href="#">Draft<span id="numDraft"></span></a></li>
+					<li><a href="#">Pending<span id="numPending"></span></a></li>
+					<li><a href="#">Inactive<span id="numInactive"></span></a></li>
+            	</ul>
+            </div>  
+			<input type="text" name="tabName"/>
+                        <a href=# onclick="addTab();">CLICK TO ADD TAB</a>      
+                        <script>
+                            function addTab(){
+                              var value = $("input[name=tabName]").val();
+                              $.fn.DynaSmartTab.addTab(value);
+                                }
+                        </script>
+        </div> 
+		   
+		<div id="newAd-frame" class="subFrame unremovable">
+          <div id="head-bar">
+				<h2 class="welcome">Create New Ad</h2>
+				<ul>
+					<li><a href="#" class="btn">Save to Draft</a></li>
+		    		<li><a href="#" class="btn">Post it</a></li>
+					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
+					<li><input type = "reset"/>reset</li>
+				</ul>
+		  </div><!--ENDOF headBar-->
+		  <div id="newAdForm" class="newFormContainer">
+		  	<div id="typeInForm" class="fillInForm"> 
+				<div class="field">
+					<label for="title-field" >Ad Title:</label>
+					<input id="title-filed" name="title-field" class="textBox" value="" autocomplete="on"/>
+				</div>
+				<div class="field"> 
+						<label for="contact-field" >Contact Info:</label> 
+						<input id="contact-filed" name="contact-field" class="textBoxL" value="" autocomplete="on"/> 
+					</div>
+					
+					<div class="field"> 
+						<label for="tag-field" >Add Tags:</label> 
+						<input id="tag-field" name="tag-field" class="textBox" value="" autocomplete="on"/> 
+					</div>
+				<div class="field"> 
+						<label for="desc-field" >Job Description:</label> 
+						<textarea id="desc-filed" name="desc-field" class="textarea" value=""></textarea> 
+				</div>
+				
+				</div><!--ENDOF typeInForm-->
+				
+			   <div id="chooseForm" class="fillInForm">
+					<div class="field"> 
+						<label for="edu-field">Minimal Degree Requirement:</label>
+						<select id="edu-field" name="edu-field">
+							<option value="">Choose a degree</option>
+							<option value="1">B.Sc.</option>
+							<option value="2">M.Sc.</option>
+							<option value="3">Ph.D.</option>
+						</select>
+					</div>
+					
+					<div class="field"> 
+						<label>Employment Type:</label>
+						<label for="ft-field" >
+							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field"/>
+							Full Time
+						</label>
+		   				<label for="pt-field">
+							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field"/>
+		    				 Part Time
+						</label>
+						<label for="is-field">
+		    				<input type="checkbox" name="is-field" value="internship" id="is-field"/>
+		   		 			Internship
+						</label>
+					</div>
+					<div class="field"> 
+						<label for="loc-field" >Job Location:</label> 
+						<input id="loc-filed" name="loc-field" class="textBox" value=""/>
+					</div>
+			   </div><!--ENDOF RIGHT CHOOSEFORM-->
+			
+		  </div><!--ENDOF newAdForm-->
+		  
+		</div><!--ENDOF newAd-frame-->
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  
