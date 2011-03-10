@@ -105,7 +105,7 @@ public class ServletAdmin extends HttpServlet {
 		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
-			action = "home_admin.jsp";
+			action = "home.jsp";
 			
 			StringBuffer XMLResponse = new StringBuffer();
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
