@@ -19,7 +19,13 @@ function userLoginRequest()//TODO Recover lightbox element
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
+	var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
+
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","./ServletAccount" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(Params);
+
 	xmlhttp.onreadystatechange=function(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
@@ -46,12 +52,6 @@ function userLoginRequest()//TODO Recover lightbox element
 	    }
 	  };
 	  
-	var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
-
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","./ServletAccount" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(Params);
 }
 
 
