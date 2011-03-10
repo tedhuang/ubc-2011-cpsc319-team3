@@ -33,14 +33,26 @@
      		   
      		   function bindCloseClick(){
      		   	$(closeBtn).bind("click", function(){
-     			  	var tabToRm = $($(this).parents().filter("a"),obj);
+     			  	var tabToRm = $($(this).parent().find("a"),obj);
      			  	if(tabToRm.length>0){
      			  		$.each(tabToRm, function(){
-     			  			$($(this).parent(), obj).remove();
-     			  			$($(this).attr("href"), obj).remove();
-     			  			return;
+     			  			
+     			  			if($($(this).parent(), obj).hasClass("hideOnly")){
+     			  				$($(this).parent(), obj).hide();
+     			  			}
+     			  			else{
+     			  				$($(this).parent(), obj).remove();
+     			  			}
+     			  			
+     			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
+     			  				$($(this).attr("href"), obj).hide();
+     			  			}
+     			  			else{
+     			  					$($(this).attr("href"), obj).remove();
+     			  			}
      			  		});
      			  	}
+     			  	tabNum--;
              	    curTabIdx=0;
              	    showTab();
              	  });
@@ -60,14 +72,14 @@
                 }
                 
                 function updateTabSet(){
-                	tabs = $("ul > li > a", obj);
+                	tabs = $($("ul > li > a ","#navBar"), obj);
                 	bindOnClick();
                 	tabNum=tabs.length;
                 	return tabs;
                 }
                 
                 function updateTabArray(){ // TODO MERGE with updateTabSet
-                	return tabArray = $("ul > li", obj).get();
+                	return tabArray = $($("ul > li","#navBar"), obj).get();
                 	
                 }
                 
@@ -86,7 +98,7 @@
                     $(tabs, obj).removeClass("curTab");
                     $($(curTab, obj), obj).addClass("curTab");
                     $($(curTab, obj).attr("href"), obj).show();
-                    return true;
+                    return false;
                 }
                 
                 function hideTab(tabIdx){
@@ -95,16 +107,44 @@
 //                    showTab();
                     return true;
                 }
+                
+                $.fn.DynaSmartTab.showUnremovableTab=function(tabName){
+                	
+                	var tabToOpen = $('#'+tabName);
+                	var frameToOpen = $(tabToOpen.find('a').attr("href"));
+                	
+                	if(tabToOpen.length>0 && frameToOpen.length >0){
+                		
+	                    var curTab = tabs.eq(curTabIdx); 
+	                    
+	                    var lastTab = $($('li:last',"#navBar"),obj);
+	                	var lastFrame = $(tabFrames.last());
+	                	// hide current tab
+	                	hideTab(curTabIdx); 
+	                	curTabIdx=tabs.length-1;
+	                	if(lastTab.find('a').attr("id")!=tabToOpen.find('a').attr("id") 
+	                			&& 
+	                		lastFrame.find('a').attr("id")!=frameToOpen.find('a').attr("id"))
+	                	{
+	                		lastTab.after(tabToOpen);
+	                    	lastFrame.after(frameToOpen);
+	                	}
+	                	
+	                    showTab();
+	                    return false;
+                }
+               };
                 Array.prototype.last = function() {return this[this.length-1];};
          /*******************************************************************************************************
           * 		ADD TAB FUNCTION
           * -Publicly Accessible
           * @params title: the title of the tab
           * ******************************************************************************************************/  
-                $.fn.DynaSmartTab.addTab=function(title){ //TODO PASS "DESCRIPTION" AS WELL
-                	
-            	var tabid = tabidPrefix+ title;
-            	var frameid = frameidPrefix + title;
+             $.fn.DynaSmartTab.addTab=function(title){ //TODO PASS "DESCRIPTION" AS WELL
+                
+                titleId=title.replace(/\s/g,"");
+            	var tabid = tabidPrefix+ titleId;
+            	var frameid = frameidPrefix + titleId;
             	var frameContentid = frameid +"_content";
             	
                 //Check if the Tab with the title is already opened
@@ -134,7 +174,7 @@
                     		}
                     	});
                 		
-	                	var lastTab = $('li:last',obj);
+	                	var lastTab = $($('li:last',"#navBar"),obj);
 	                	var lastFrame = $(tabFrames.last());
 	                	// hide current tab
 	                	hideTab(curTabIdx); 
@@ -145,8 +185,7 @@
 	                    			  '<span class="close">X</span>' +
 	                    			  '<h2>' + title + '</h2></a></li>');
 	                    // make a new frame
-	                    lastFrame.after('<div class="subFrame" id="' + frameid + '">THIS IS THE TAB FRAME' +
-	                    				'</div>');
+	                    lastFrame.after('<div class="subFrame" id="' + frameid + '"></div>');
 	                    $($("#"+frameid),obj).append('<div id="' + frameContentid + '"></div>');
 	                    $($("#"+frameContentid),obj).html("This is the Content of Tab"+ frameContentid);
 	                    updateTabSet();
@@ -159,7 +198,7 @@
                 	  //TODO ADD TAB FULL NOTIFICATION
                   }
                 };
-                
+            
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF DynaSmartTab

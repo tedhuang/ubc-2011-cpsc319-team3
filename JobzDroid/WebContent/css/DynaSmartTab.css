@@ -113,7 +113,7 @@ position: relative;
   cursor		:text;   
 }
 
-.navBar ul li a span.close{ 
+.navBar ul li span.close{ 
   
   position	: absolute;
   right		: 10px;
@@ -122,7 +122,7 @@ position: relative;
   cursor	: pointer;
 }
 
-.navBar ul li a span:hover{
+.navBar ul li span:hover{
 	font-weight	: bold;
 	color 		: #df0000;;
 	
@@ -150,7 +150,7 @@ position: relative;
 #tabFrame div.subFrame{
 	margin			: 0;
 	padding			: 10px; 
-	min-height		: 550px;
+	min-height		: 450px;
 }
 
 #tabFrame div.subFrame div{
@@ -158,6 +158,64 @@ position: relative;
     margin			: 0 auto; 
 	text-align		: left;
     font			: normal 12px Verdana, Arial, Helvetica, sans-serif; 
+}
+
+#tabFrame div.subFrame .newFormContainer{
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow: auto;
+	/*
+border: 1px solid #DDD;
+	border-width: 0 1px 0 1px;
+*/
+	bottom: 0;
+	background-color: white;
+}
+
+.newFormContainer .fillInForm{
+	float: left;
+	margin-right: 20px;
+	width: 450px;	
+	background-color: whiteSmoke;
+	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));
+}
+
+
+.fillInForm div.field {
+	margin-bottom: 7px;
+	position: relative;
+	clear: both;
+	padding: 0;
+}
+
+.fillInForm div.field label {
+	
+	width: 80px;
+	font-size: 12px;
+	font-weight: bold;
+	display: block;
+	margin-top: 6px;
+	padding: 0 0 0 1px;
+	line-height: 18px;
+	float: left;
+	width: 110px;
+	text-align: left;
+}
+
+.fillInForm div.field input.textBox{
+	border-color: #CCC;
+	width: 340px;
+}
+.fillInForm div.field input.textBoxL{
+	width: 340px;
+	height: 20px;
+}
+.fillInForm div.field textarea{
+	border-color: #CCC;
+	width: 340px;
+	height:100px;
+	
 }
 
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/

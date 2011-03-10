@@ -86,6 +86,7 @@ input,textarea,select {
 input,textarea,select {
 	*font-size:100%;
 }
+
 h2{
 	font-size		: 15px;
 	margin-top		: 10px;
@@ -101,6 +102,13 @@ h2.error{
 }
 h2.info{
 	background-color			: #d2d200;;	
+}
+
+h2.welcome{
+	border-bottom: 2px solid;
+	border-bottom-color: #0C3E74;
+	padding: 0 0 3px;
+	
 }
 /************************ENDOF BASIC STRUCTURE**********************************/
 .pagefont {#bebebe#bfbfbf
@@ -370,7 +378,7 @@ height:50px;
 /**************************Registered Users Pages*********************************************/
 
 div#main-container { 
-	min-height: 600px; 
+	min-height: 450px; 
 	background: #fff; 
 	width: 980px; 
 	margin: 0 auto; 
@@ -382,7 +390,7 @@ div#main-container {
 	padding-top: 1em;
 	margin-left: 1em;
 	margin-bottom: 3em; 
-	min-height: 550px; 
+	min-height: 450px; 
 }
 
 #info-tab{
@@ -414,12 +422,6 @@ div#main-container {
 	margin: 0;	
 }
 /***************Result Table Style**************************************/
-#resultTable table{
-	width			: 100%;
-	margin-bottom	: 1em;
-	border-spacing 	: 0;
-}
-
 .resultTableDiv{
 	clear		: both;
 	position	: relative;
@@ -429,6 +431,17 @@ div#main-container {
 	margin		: 0 auto;
 	padding		: 1em;
 	border-top	: 2px solid #004000;
+}
+
+.tableClear{
+	border		: none;
+	display		: none;
+}
+
+.resultTableDiv table{
+	width			: 100%;
+	margin-bottom	: 1em;
+	border-spacing 	: 0;
 }
 
 .resultTableDiv thead {
