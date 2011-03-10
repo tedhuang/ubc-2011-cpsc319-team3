@@ -64,8 +64,14 @@ Job Location(s) (separated by comma): <br>
 <br>
 
 
-Employment Type: <br>
-Part Time / Full Time / Internship (need to add into table)<br>
+Job Availability <br>
+<select id="jobAvailability" name="jobAvailability">
+			<option value="none">not specified</option>
+			<option value="fullTime">Full Time</option>
+			<option value="partTime">Part Time</option>
+			<option value="internship">Internship</option>
+		</select>
+<br />
 
 
 Contact Info: <input id="contactInfo" type="text" name="contactInfo" size="20"><br>
