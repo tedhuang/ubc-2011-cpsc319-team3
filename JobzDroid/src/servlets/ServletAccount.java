@@ -51,7 +51,6 @@ public class ServletAccount extends HttpServlet {
 		resetForgetPassword,
 		requestForLogin,
 		requestForLogout,
-		initUI
 	}
 
 	/**
@@ -116,8 +115,8 @@ public class ServletAccount extends HttpServlet {
 				logoutReqTaker(request, response);
 				break;
 				//dbManager.userLogout("request.getParameter("SessionKey").toString());
-			case initUI:
-				initializeUI(request, response);
+				
+			default://TODO ERROR HANDLING
 				break;
 		}
 	}
@@ -973,68 +972,5 @@ public class ServletAccount extends HttpServlet {
 	    return false;
 	}
 	
-	/*********************************************************************************************************************************
-	 * 
-	 *********************************************************************************************************************************/
-	private void initializeUI(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		Session sess = dbManager.getSessionByKey( request.getParameter("sessKey") );
-		if(sess !=null){
-			
-			String uType = sess.getAccountType();
-//			switch (userUI.valueOf(uType)){
-				
-//			case poster:
-				
-//				break;
-				
-//			case searcher:
-//				
-//				break;
-//				
-//			case admin:
-//				
-//				break;
-//			case superAdmin:
-//				
-//				break;
-//			default:
-				//TODO ANTI-HACKING 
-//				break;
-				
-//			}
-		}
-	}
 	
-	
-/*	
-	private static class uiMaker{
-	private static Map<String, String> uiMap = new HashMap <String, String>();
-		final String sideNav 		= "SIDENAV";
-		final String tabs	 		= "TBAS";
-		final String homeTabFrame 	= "HOMETABFRAME";
-		final String searchTabFrame	= "SEARCHTABFRAME";
-		
-		final String posterSideNav ="";
-		final String posterTabs ="";
-		final String posterTabFrames ="";
-		
-//		uiMap.put(sideNav, posterSideNav);
-	
-	private enum userUI{
-		poster(uiMap.get("posterSideNav"), posterTabs, posterTabFrames);
-		private final String sideNavUI; 
-		private final String tabUI;
-		private final String tabFramesUI;
-	 
-		searcher(searcherSideNav, searcherTabs, searcherTabFrames),
-		admin,
-		superAdmin;
-		userUI(String sideNavUI, String tabUI, String tabFramesUI){
-			this.sideNavUI 		= sideNavUI;
-			this.tabUI			= tabUI;
-			this.tabFramesUI 	= tabFramesUI;
-		}
-	  }
-	}//ENDOF uiMaker Class
-*/	
 }//ENDOF CLASS SERVLETACCOUNT
