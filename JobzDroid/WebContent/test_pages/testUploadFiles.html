@@ -2,15 +2,31 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252"/>
     <TITLE>File Upload Page</TITLE>
+    <script type="text/javascript">
+    
+    function uploadFile() {
+    	
+    	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
+    	document.fileUploadForm.action = "../ServletDocument"
+    	document.fileUploadForm.submit();
+    }
+    
+    </script>
+    
   </HEAD>
   <BODY>Upload Files
-    <FORM name="filesForm" action="../ServletDocument"
+    <FORM name="fileUploadForm" action="javascript:uploadFile();"
     method="post" enctype="multipart/form-data">
-        File 1:<input type="text" name="fileName1"/><input type="file" name="file1"/><br/>
-        File 2:<input type="file" name="file2"/><br/>
-        File 3:<input type="file" name="file3"/><br/>
         <input type="hidden" name="sessionKey"/>
+        File: <input type="text" name="fileName"/><input type="file" name="file"/><br/>
         <input type="submit" value="upload"/>
     </FORM>
+    
+    
+    	<form name="sid" method="get" action="">
+		<input id="sessionKey" name="sessionKey"/>
+		</form>
+		
+		
   </BODY>
 </HTML>

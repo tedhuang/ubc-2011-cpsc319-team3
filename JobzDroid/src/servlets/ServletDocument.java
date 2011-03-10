@@ -89,7 +89,7 @@ public class ServletDocument extends HttpServlet {
 			    name = item.getFieldName();
 			    value = item.getString();
 			    
-			    if(name.equals("fileName1")) {
+			    if(name.equals("fileName")) {
 			    	nextFileName = value;
 			    }
 			    // is this where field is?
