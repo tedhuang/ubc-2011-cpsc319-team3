@@ -53,9 +53,8 @@ public class SystemManager {
 		dbManager = DBManager.getInstance();
 	}	
 	public static SystemManager getInstance() {
-		if(systemManagerInstance == null) {
+		if(systemManagerInstance == null)
 			systemManagerInstance = new SystemManager();
-		}
 		return systemManagerInstance;
 	}
 

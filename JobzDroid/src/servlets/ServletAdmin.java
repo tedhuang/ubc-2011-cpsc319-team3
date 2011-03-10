@@ -21,6 +21,7 @@ import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
+import managers.NewsManager;
 import managers.RSSManager;
 
 /**
@@ -30,12 +31,14 @@ import managers.RSSManager;
 public class ServletAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private DBManager dbManager;
+	private NewsManager newsManager;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ServletAdmin() {
         super();
+		newsManager = NewsManager.getInstance();
 		dbManager = DBManager.getInstance();
     }
     
@@ -418,15 +421,16 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		if(allGood){
-			if(addNewsEntry(title, content)){
+			if(newsManager.addNewsEntry(title, content)){
 				result = true;
 				message = "News entry has been successfully posted.";
 				// add entry to the top of news RSS
 				try {
-					SyndFeed newsFeed = RSSManager.readFeedFromFile("http://localhost:8080/JobzDroid/rss/news.xml");
+					String newsPath = getServletContext().getRealPath("/rss/news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromFile(newsPath);
 					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(), content);
 					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
-					RSSManager.writeFeedToFile(newsFeed, "rss/news.xml");
+					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 
 				catch (Exception e) {
 					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
@@ -628,57 +632,6 @@ public class ServletAdmin extends HttpServlet {
 	        try{
 	            if (stmt != null)
 	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	Utility.logError("Cannot close Statement: " + e.getMessage());
-	        }
-	        dbManager.freeConnection(conn);
-	    }
-	}
-	
-	/***
-	 * Creates an admin account with given account name and password.
-	 * @param email Account name to create.
-	 * @param password Password to use.
-	 * @return boolean indicating whether the admin creation was successful.
-	 */
-	private boolean addNewsEntry(String title, String content){
-		Connection conn = dbManager.getConnection();
-		PreparedStatement pst = null;
-		ResultSet rs = null;		
-		long currentTime = Utility.getCurrentTime();
-		try {
-			String query = "INSERT INTO tableNews(title, content, dateTimePublished)" +
-            		" VALUES(?,?,?);";
-			
-			pst = conn.prepareStatement(query);
-			pst.setString(1, title);
-            pst.setString(2, content);
-            pst.setLong(3, currentTime);
-            
-			int rowsInserted = pst.executeUpdate(query);
-			// if successful, 1 row should be inserted
-			if (rowsInserted != 1)
-				return false;
-			
-			return true;
-		}
-		catch (SQLException e) {
-			Utility.logError("SQL exception: " + e.getMessage());
-			return false;	
-		}
-		// free DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
-	        }
-	        try{
-	            if (pst != null)
-	                pst.close();
 	        }
 	        catch (Exception e) {
 	        	Utility.logError("Cannot close Statement: " + e.getMessage());
