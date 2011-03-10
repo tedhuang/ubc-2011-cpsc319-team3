@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import classes.Location;
+import classes.ProfilePoster;
+import classes.ProfileSearcher;
 import classes.Utility;
 
 import managers.DBManager;
@@ -29,11 +33,10 @@ public class ServletProfile extends HttpServlet{
 	
 	private enum EnumAction
 	{ 
-		getProfile,
-		//updatePublicProfile,
 		updateAccounttSetting,
 		createProfile,
 		editProfile,
+		getProfileById,
 		searchJobSearcher,
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
@@ -60,7 +63,7 @@ public class ServletProfile extends HttpServlet{
 		String action = request.getParameter("action");
 		switch(EnumAction.getAct(action)){
 		
-			case getProfile:
+			case getProfileById:
 			
 				break;
 			case updateAccounttSetting:
@@ -86,23 +89,189 @@ public class ServletProfile extends HttpServlet{
 	}//ENDOF processReq Func
 	
 	
-	private void getProfile(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+	private void getProfileById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
+		//Poster = 1, Searcher = 2
+		int accountType = Integer.parseInt(request.getParameter("accountType")); 	
 		int accountID = Integer.parseInt(request.getParameter("accountID"));
-		int accountType;
-		String name;
-		String secEmail;
-		String phone;
-		String selfDescription;
-		String empPref;
-		int educationLevel;
+		
+		//Initialize Return statments
+		boolean isSuccessful = false;
+		String message = "Failure to create new profile";
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try{
+			stmt = conn.createStatement();
+			
+		//Get Job Poster Profile			
+			if(accountType == 1){
+				System.out.println("Getting Job Poster Profile");
+				
+				ProfilePoster poster = new ProfilePoster();
+				
+			/**Get field values */
+				String query = 
+					"SELECT * FROM tableProfilePoster WHERE idAccount=" + accountID;
+				
+				System.out.println("getJobAdById query:" + query);
+				isSuccessful = stmt.execute(query);
+				
+				ResultSet result = stmt.getResultSet();
+				
+				if (result.first()){
+					System.out.println("getJobAd successful");
+					message = "getJobAd successful";
+					
+					poster.accountID		= result.getInt("idAccount");
+					poster.name				= result.getString("name");
+					poster.phone		 	= result.getString("phone");
+					poster.selfDescription	= result.getString("selfDescription");
+				}
+				else{ //Error case
+					isSuccessful = false;
+					message = "Error: Profile not found with ID=" + accountID;
+					System.out.println("Error: Profile not found with ID=" + accountID);
+				}
+				
+				
+			/**Get Location values */
+				ArrayList<Location> addressList = new ArrayList<Location>();
+				Location address = new Location();
+				
+				query = "SELECT * FROM tableLocationProfile WHERE " +
+						"idAccount= '" + accountID +"'";
+				result = stmt.getResultSet();
+				
+				if(!result.first()){
+					System.out.println("Error: failed to find the inserted location");
+				}
+				else{
+					while(result.next()){
+						//Get Address, Longitude, Latitude
+						address.address = result.getString("location");
+						address.longitude = result.getDouble("longitude");
+						address.latitude = result.getDouble("latitude");	
+					}
+					addressList.add(address);
+				}
+			
+				poster.addressList= addressList;
+				
+			}
+			
+		//Get Job Searcher Profile
+			else{
+				System.out.println("Getting Job Searcher Profile");
+				
+				ProfileSearcher searcher = new ProfileSearcher();
+				
+				/**Get field values */
+					String query = 
+						"SELECT * FROM tableProfileSearcher WHERE idAccount=" + accountID;
+					
+					System.out.println("getJobAdById query:" + query);
+					isSuccessful = stmt.execute(query);
+					
+					ResultSet result = stmt.getResultSet();
+					
+					if (result.first()){
+						System.out.println("getJobAd successful");
+						message = "getJobAd successful";
+						
+						searcher.accountID			= result.getInt("idAccount");
+						searcher.name				= result.getString("name");
+						searcher.phone		 		= result.getString("phone");
+						searcher.selfDescription	= result.getString("selfDescription");
+						searcher.educationLevel		= result.getInt("educationLevel");
+						searcher.preferredStartDate = result.getLong("startingDate");
+						
+					}
+					else{ //Error case
+						isSuccessful = false;
+						message = "Error: Profile not found with ID=" + accountID;
+						System.out.println("Error: Profile not found with ID=" + accountID);
+					}
+					
+					
+				/**Get Location values */
+					ArrayList<Location> addressList = new ArrayList<Location>();
+					Location address = new Location();
+					
+					query = "SELECT * FROM tableLocationProfile WHERE " +
+							"idAccount= '" + accountID +"'";
+					result = stmt.getResultSet();
+					
+					if(!result.first()){
+						System.out.println("Error: failed to find the inserted location");
+					}
+					else{
+						while(result.next()){
+							//Get Address, Longitude, Latitude
+							address.address = result.getString("location");
+							address.longitude = result.getDouble("longitude");
+							address.latitude = result.getDouble("latitude");	
+						}
+						addressList.add(address);
+					}
+				
+					searcher.addressList= addressList;
+					
+				/** TODO: GET EMPLOYMENT PREFERENCE **/
+				
+					
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+	
+		}
+		
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+	    System.out.println("Checkpoint: End of create profile - Message: " + message);
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 		
 		
 	}
 	
+	
+	
 	private void searchJobSearcher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		
+		
+		
 	}
+	
+	
 	
 	
 	private void createProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -129,7 +298,7 @@ public class ServletProfile extends HttpServlet{
 		try{
 		//Create Job Poster Account
 			if(accountType == 1){
-				System.out.println("Creating Job Poster Account");
+				System.out.println("Creating Job Poster Profile");
 				stmt = conn.createStatement();
 				
 				name = request.getParameter("posterName");
@@ -180,7 +349,7 @@ public class ServletProfile extends HttpServlet{
 			
 		//Create Job Searcher Account
 			else{
-				System.out.println("Creating Job Searcher Account");
+				System.out.println("Creating Job Searcher Profile");
 				
 				name = request.getParameter("searcherName");
 				secEmail = request.getParameter("searcherSecEmail");
