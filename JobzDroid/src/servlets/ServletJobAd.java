@@ -46,9 +46,11 @@ public class ServletJobAd extends HttpServlet {
 		deleteJobAd,
 		getJobAdById,
 		adminApprove,
-		adminRevertApproval,
+		adminDeny,
 		adminDeleteJobAd,
 		changeJobAdStatus,
+		submitJobAdForApproval,
+		extendJobAdExpiry,		
 		loadAdList //search loader(?)
 		
 	}
@@ -109,8 +111,8 @@ public class ServletJobAd extends HttpServlet {
 				adminApprove(request, response);
 				
 				break;
-			case adminRevertApproval:
-				adminRevertApproval(request, response);
+			case adminDeny:
+				adminDeny(request, response);
 				
 				break;
 			case adminDeleteJobAd:
@@ -119,6 +121,14 @@ public class ServletJobAd extends HttpServlet {
 				break;
 			case changeJobAdStatus:
 				changeJobAdStatus(request, response);
+				
+				break;
+			case extendJobAdExpiry:
+				extendJobAdExpiry(request, response);
+				
+				break;
+			case submitJobAdForApproval:
+				submitJobAdForApproval(request, response);
 				
 				break;
 			default:
@@ -130,9 +140,8 @@ public class ServletJobAd extends HttpServlet {
 	}
 	
 	
-	
-	
-	
+
+
 	/******************************************************************************************************************
 	 * 					ADLISTLOAD
 	 * LOAD JOB AD LIST BY CRITERIAs
@@ -570,6 +579,156 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 	/*
+	 * Changes the targetted Job ad status to pending
+	 */
+	private void submitJobAdForApproval(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {	
+		/**
+		 * TODO: implement session key check
+		 */
+		
+		String jobAdId = request.getParameter("jobAdId");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "submitJobAdForApproval failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Update isApproved
+			String query = 
+				"UPDATE tableJobAd " + 
+				"SET status='" + "pending" +"' " +
+				"WHERE idJobAd='" + jobAdId + "'";
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				message = "submitJobAdForApproval worked!";
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+
+	
+	
+	/*
+	 * Updates the expiryDate DB entry of the Job Ad to the new one specified
+	 */
+	private void extendJobAdExpiry(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		/**
+		 * TODO: implement session key check
+		 */
+				
+		String jobAdId = request.getParameter("jobAdId");
+		String newExpireTime = request.getParameter("expiryDate");
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "extendJobAdExpiry failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			//Update isApproved
+			String query = 
+				"UPDATE tableJobAd" + 
+				"SET expiryDate='" + newExpireTime +"' " +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				message = "extendJobAdExpiry worked!";
+				isSuccessful = true;
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+		
+	}
+	
+	
+	
+	
+	/*
 	 * Sets the status of the job ad to open and changes the isApproved value to true
 	 */
 	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -591,7 +750,7 @@ public class ServletJobAd extends HttpServlet {
 			//Update isApproved
 			String query = 
 				"UPDATE tableJobAd" + 
-				"SET isApproved='" + true +"'" +
+				"SET isApproved='" + true +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
 			//Debug print
@@ -654,10 +813,12 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 	
+	
+	
 	/*
 	 * Sets the status of the job ad to draft and changes the isApproved value to false
 	 */
-	private void adminRevertApproval(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void adminDeny(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		/**
 		 * TODO: Implement check session key
 		 */
@@ -676,7 +837,7 @@ public class ServletJobAd extends HttpServlet {
 			//Update isApproved
 			String query = 
 				"UPDATE tableJobAd" + 
-				"SET isApproved='" + false +"'" +
+				"SET isApproved='" + false +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
 			//Debug print
@@ -814,7 +975,9 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-	
+	/*
+	 * Changes the status of the targetted job ad to the specified status
+	 */
 	private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String jobAdId = request.getParameter("jobAdId");

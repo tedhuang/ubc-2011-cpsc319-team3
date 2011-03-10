@@ -34,6 +34,7 @@ public class ServletProfile extends HttpServlet{
 		updateAccounttSetting,
 		createProfile,
 		editProfile,
+		searchJobSearcher,
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
 	{
@@ -72,6 +73,10 @@ public class ServletProfile extends HttpServlet{
 			case editProfile:
 			
 				break;
+			
+			case searchJobSearcher:
+				
+				break;
 			default:
 				System.out.print("Dont you try to hack =D");
 				break;
@@ -92,6 +97,10 @@ public class ServletProfile extends HttpServlet{
 		String empPref;
 		int educationLevel;
 		
+		
+	}
+	
+	private void searchJobSearcher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		
 	}
 	
