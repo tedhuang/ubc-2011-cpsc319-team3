@@ -53,8 +53,8 @@ public class JobAdvertisement {
 		/************ Add a list of location objects to XML ***********/
 		for( int i = 0 ; i < locationList.size() ; i++ ){
 			result.concat("\t\t\t<location address=\"" 	 + locationList.get(i).address + "\"" +
-										  "latitude=\""  + locationList.get(i).latitude + "\"" +
-										  "longitude=\"" + locationList.get(i).longitude + "\" + >\n" );
+										 " latitude=\""  + locationList.get(i).latitude + "\"" +
+										 " longitude=\"" + locationList.get(i).longitude + "\" + >\n" );
 		}
 		
 		result = result.concat("\t\t</jobAd>\n");

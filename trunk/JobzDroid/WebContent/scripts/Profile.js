@@ -12,6 +12,9 @@ function ParseXMLResponse(responseXML)
 function loadProfileDetails(responseXML){
 	var accountType =  responseXML.getElementsByTagName("accountType");
 	//TODO: finish implementing
+	
+	
+	
 }
 
 
