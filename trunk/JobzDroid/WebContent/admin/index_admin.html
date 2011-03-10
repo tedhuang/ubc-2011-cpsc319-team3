@@ -3,11 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-	<title>JobzDrod - Error!</title>	
+	<title>JobzDrod - Admin Login</title>	
 	<link href="http://localhost:8080/JobzDroid/css/mainStyle.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-
 
 <div class="main">
 	  <div class="header">
@@ -22,9 +21,13 @@
 	  </div>
 	  
 	  <br/>	
-	  <h1><b><font size='4'>Congratulations!</font></b></h1>
-	  <br/>
-	  <p class="pagefont"><b>Your account has been successfully activated!</b></p>
+	  <h1><b><font size='4'>Admin Log-in</font></b></h1>
+	  	 <div class="loginbox">
+	    	Account :<input id="email" title="Username" value=""  maxlength="25" /><br/>
+			Password:<input id="password" type="password"  title="Password" value=""  maxlength="15" /><br/>
+			<button id="submitButton" onclick="userLoginRequest()">Log in</button>
+			<b><span id="loginError" class="errorTag pagefont"></span></b>
+        </div>
 	<br/>
 	<hr/>
 </div>

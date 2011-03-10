@@ -119,9 +119,6 @@ public class ServletAccount extends HttpServlet {
 			case initUI:
 				initializeUI(request, response);
 				break;
-				
-			default://TODO ERROR HANDLING
-				break;
 		}
 	}
 	
@@ -219,6 +216,7 @@ public class ServletAccount extends HttpServlet {
 		// if info are all valid, then proceed to do DB updates
 		if(allGood){
 			// check if email is unique
+			email = Utility.checkInputFormat(email);
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
 				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid,
