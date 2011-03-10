@@ -17,7 +17,6 @@ import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
-import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletAdmin
@@ -40,7 +39,8 @@ public class ServletAdmin extends HttpServlet {
 		ban,
 		unban,
 		createAdmin,
-		deleteAdmin
+		deleteAdmin,
+		postNews
 	}
 
 	/**
@@ -59,12 +59,11 @@ public class ServletAdmin extends HttpServlet {
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String action = request.getParameter("action");
-		// forward to error page if request is invalid
+		// throw error if request is invalid
 		try{
 			EnumAction.valueOf(action);
 		}
 		catch(Exception e){
-		//	forwardErrorPage(request, response);
 			throw new ServletException("Invalid account servlet action.");
 		}
 		
@@ -77,10 +76,13 @@ public class ServletAdmin extends HttpServlet {
 				unban(request, response);
 				break;
 			case createAdmin:
-				ban(request, response);
+				createAdmin(request, response);
 				break;
 			case deleteAdmin:
-				ban(request, response);
+				deleteAdmin(request, response);
+				break;
+			case postNews:
+				// TODO
 				break;
 		}
 	}
@@ -91,6 +93,8 @@ public class ServletAdmin extends HttpServlet {
 	private void ban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionID");
 		String email = request.getParameter("email");		
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		email = Utility.checkInputFormat(email);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
@@ -103,7 +107,7 @@ public class ServletAdmin extends HttpServlet {
 		}
 		else {
 			// read account information
-			Account accountToBan = dbManager.getAcccountFromEmail(email);
+			Account accountToBan = dbManager.getAccountFromEmail(email);
 			if(accountToBan == null){
 				allGood = false;
 				message = "Error reading account information.";
@@ -159,7 +163,9 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void unban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionID");
-		String email = request.getParameter("email");		
+		String email = request.getParameter("email");	
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		email = Utility.checkInputFormat(email);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
@@ -172,7 +178,7 @@ public class ServletAdmin extends HttpServlet {
 		}
 		else {
 			// read account information
-			Account accountToUnban = dbManager.getAcccountFromEmail(email);
+			Account accountToUnban = dbManager.getAccountFromEmail(email);
 			if(accountToUnban == null){
 				allGood = false;
 				message = "Error reading account information.";
@@ -223,6 +229,119 @@ public class ServletAdmin extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
+
+	/***
+	 * Handles create admin requests from the super admin.
+	 */
+	private void createAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionID");
+		String accountName = request.getParameter("accountName");
+		String password = request.getParameter("password");	
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		accountName = Utility.checkInputFormat(accountName);
+		password = Utility.checkInputFormat(password);
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// check if account name exists
+		boolean emailExists = dbManager.checkEmailExists(accountName);
+		if(emailExists){
+			allGood = false;
+			message = "This account already exists.";
+		}
+		else {
+			Session session = dbManager.getSessionByKey(sessionKey);
+			if(session == null){			
+					allGood = false;
+					message = "Unauthorized create admin action.";
+			}
+			else{
+				// check if user is authorized
+				String userType = session.getAccountType();
+				if( !userType.equals("superAdmin")){
+					allGood = false;
+					message = "Unauthorized create admin action.";
+				}
+			}
+		}
+		
+		if(allGood){
+			if(createAdminAccount(accountName, password)){
+				result = true;
+				message = "Admin account " + accountName + " has been successfully created.";
+			}
+			else
+				message = "An error has occured while performing create admin action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	/***
+	 * Handles delete admin requests from the super admin.
+	 */
+	private void deleteAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionID");
+		String accountName = request.getParameter("accountName");
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		accountName = Utility.checkInputFormat(accountName);
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// check if account name exists
+		boolean emailExists = dbManager.checkEmailExists(accountName);
+		if(!emailExists){
+			allGood = false;
+			message = "This account does not exist.";
+		}
+		else {
+			Session session = dbManager.getSessionByKey(sessionKey);
+			if(session == null){			
+					allGood = false;
+					message = "Unauthorized delete admin action.";
+			}
+			else{
+				// check if user is authorized
+				String userType = session.getAccountType();
+				if( !userType.equals("superAdmin")){
+					allGood = false;
+					message = "Unauthorized delete admin action.";
+				}
+			}
+		}
+		
+		if(allGood){
+			if(deleteAdminAccount(accountName)){
+				result = true;
+				message = "Admin account " + accountName + " has been successfully deleted.";
+			}
+			else
+				message = "An error has occured while performing delete admin action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	/**************************************HELPER FUNCTIONS*******************************************************/
+	
 	/***
 	 * Bans the given account.
 	 * @param email Account name to ban.
@@ -232,7 +351,6 @@ public class ServletAdmin extends HttpServlet {
 		Connection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;		
-		email = Utility.checkInputFormat(email);
 		
 		try {
 			stmt = conn.createStatement();
@@ -278,11 +396,105 @@ public class ServletAdmin extends HttpServlet {
 		Connection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;		
-		email = Utility.checkInputFormat(email);
 		
 		try {
 			stmt = conn.createStatement();
 			String query = "UPDATE tableAccount SET status='active' WHERE email='" + email + "';";
+            
+			int rowsInserted = stmt.executeUpdate(query);
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
+	 * Creates an admin account with given account name and password.
+	 * @param email Account name to create.
+	 * @param password Password to use.
+	 * @return boolean indicating whether the admin creation was successful.
+	 */
+	private boolean createAdminAccount(String email, String password){
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;		
+		long currentTime = Utility.getCurrentTime();
+		try {
+			String query = "INSERT INTO tableAccount(email, password, type, status, dateTimeCreated)" +
+            		" VALUES(?,md5(?),'admin','active',?);";
+			
+			pst = conn.prepareStatement(query);
+			pst.setString(1, email);
+            pst.setString(2, password);
+            pst.setLong(3, currentTime);
+            
+			int rowsInserted = pst.executeUpdate(query);
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
+	 * Deletes an admin account with given account name.
+	 * @param email Account name to delete.
+	 * @return boolean indicating whether the deletion was successful.
+	 */
+	private boolean deleteAdminAccount(String email){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			String query = "DELETE FROM tableAccount WHERE email='" + email + "';";
             
 			int rowsInserted = stmt.executeUpdate(query);
 			// if successful, 1 row should be inserted

@@ -26,8 +26,8 @@
 	%>	
 	<div class="main">
 	  <div class="header">
-		<a id="logo" title="home" href="home.html">
-	        <img src="images/logo-small.png"/>
+		<a id="logo" title="home" href="http://localhost:8080/JobzDroid/index.html">
+	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
 		    <li><a href="#" class="btn">News</a></li>
