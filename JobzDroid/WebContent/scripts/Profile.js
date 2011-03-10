@@ -10,11 +10,15 @@ function ParseXMLResponse(responseXML)
 }
 
 function loadProfileDetails(responseXML){
+	
 	var accountType =  responseXML.getElementsByTagName("accountType");
+	
 	//TODO: finish implementing
 	
 	
 	
+	
+
 }
 
 
@@ -209,19 +213,10 @@ function getProfileById(){
 	var intAccountID = document.getElementById("accountID").value;
 	
 	request = new Request;
-	request.addAction("getProfile");
-	request.addSessionID("1234");
+	request.addAction("getProfileById");
+	request.addSessionID("1234"); //TODO: CHANGE THIS
 	request.addParam("accountID", intAccountID);
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
 
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
-	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -242,6 +237,17 @@ function getProfileById(){
 	    	loadProfileDetails(xmlhttp.responseXML);
 	    }
 	  };	
+	  
+		//send the parameters to the servlet with POST
+		xmlhttp.open("POST","../ServletProfile" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(request.toString());
+
+		//change the text while sending the request
+		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+		
+	  
+	  
 }
 
 

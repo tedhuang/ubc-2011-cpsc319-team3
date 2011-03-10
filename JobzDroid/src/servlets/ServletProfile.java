@@ -33,7 +33,6 @@ public class ServletProfile extends HttpServlet{
 	
 	private enum EnumAction
 	{ 
-		updateAccounttSetting,
 		createProfile,
 		editProfile,
 		getProfileById,
@@ -64,22 +63,21 @@ public class ServletProfile extends HttpServlet{
 		switch(EnumAction.getAct(action)){
 		
 			case getProfileById:
-			
+				getProfileById(request,response);
 				break;
-			case updateAccounttSetting:
 				
-				break;
 			case createProfile:
 				createProfile(request, response); //implement error checks
 				break;
 				
 			case editProfile:
-			
+				editProfile(request,response);
 				break;
-			
-			case searchJobSearcher:
 				
+			case searchJobSearcher:
+				searchJobSearcher(request,response);
 				break;
+				
 			default:
 				System.out.print("Dont you try to hack =D");
 				break;
@@ -277,15 +275,15 @@ public class ServletProfile extends HttpServlet{
 	private void createProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		System.out.println("Checkpoint: Inside createProfile");
 		
-		//Poster = 1, Searcher = 2
+		//Account Type: Poster = 1, Searcher = 2
 		int accountType = Integer.parseInt(request.getParameter("accountType")); 	
 		int accountID = Integer.parseInt(request.getParameter("accountID"));
 		
 		String name;
-		String secEmail;
 		String phone;
 		String selfDescription;
 		String empPref;
+		long preferredStartDate;
 		int educationLevel;
 		
 		//Initialize Return statments
@@ -296,29 +294,29 @@ public class ServletProfile extends HttpServlet{
 		Statement stmt = null;
 		
 		try{
-		//Create Job Poster Account
+		//Create Job Poster Profile
 			if(accountType == 1){
 				System.out.println("Creating Job Poster Profile");
 				stmt = conn.createStatement();
 				
 				name = request.getParameter("posterName");
-				secEmail = request.getParameter("posterSecEmail");
 				phone = request.getParameter("posterPhone");
 				selfDescription = request.getParameter("posterDescription");
 
 				//Check format
 				name = Utility.checkInputFormat( name );
-				secEmail = Utility.checkInputFormat( secEmail );
 				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
 				
+			//Add new entry with specified paramters into database
 				String query = 
-					"UPDATE tableProfilePoster SET "+ 
-							"name = " + name + "," +
-							"phone = " + phone + "," +
-							"selfDescription = " + selfDescription + "," +
-					"WHERE idAccount=" + accountID;
-					
+					"INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) " + 
+					"VALUES ('"
+						+ accountID + "','"
+						+ name + "','"
+						+ phone + "','"
+						+ selfDescription + 
+					"')";
 				
 				System.out.println("New PosterProfile Query:" + query);
 				int rowsInserted = stmt.executeUpdate(query);
@@ -334,46 +332,45 @@ public class ServletProfile extends HttpServlet{
 				//Check if profile is created successfully
 				query = "SELECT idAccount FROM tableProfilePoster WHERE " + " idAccount='" + accountID + "'"; 
 				ResultSet result = stmt.executeQuery(query);
-				if( result.first() )
-				{
+				if( result.first() ){
 					System.out.println("Profile Created in DB");
 					isSuccessful = true;
 					message = "Create new profile success";
 				}
-				else
-				{
+				else{
 					System.out.println("Error: result.first() is false ");
 				}
-				
 			}
 			
-		//Create Job Searcher Account
+		//Create Job Searcher Profile
 			else{
 				System.out.println("Creating Job Searcher Profile");
 				
 				name = request.getParameter("searcherName");
-				secEmail = request.getParameter("searcherSecEmail");
 				phone = request.getParameter("searcherPhone");
 				selfDescription = request.getParameter("searcherDescripton");
 				empPref = request.getParameter("empPref");
 				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-			
+				preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
+
 				stmt = conn.createStatement();
 				
 				//Check format
 				name = Utility.checkInputFormat( name );
-				secEmail = Utility.checkInputFormat( secEmail );
 				phone = Utility.checkInputFormat( phone );
 				selfDescription = Utility.checkInputFormat( selfDescription );
 
 				//TODO: include address
 				String query = 
-					"UPDATE tableProfileSearcher SET "+ 
-						"name = " + name + "," +
-						"phone = " + phone + "," +
-						"selfDescription = " + selfDescription + "," +
-						"educationLevel = " + educationLevel + "," +
-					"WHERE idAccount=" + accountID;
+					"INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) " + 
+					"VALUES ('"
+						+ accountID + "','"
+						+ name + "','"
+						+ phone + "','"
+						+ selfDescription + 
+						+ educationLevel + "','"
+						+ preferredStartDate + 
+					"')";
 
 				// if successful, 1 row should be inserted
 				System.out.println("New SearcherProfile Query:" + query);
@@ -389,18 +386,14 @@ public class ServletProfile extends HttpServlet{
 				//Check if profile is created successfully
 				query = "SELECT name FROM tableProfileSearcher WHERE " + " idAccount='" + accountID + "'"; 
 				ResultSet result = stmt.executeQuery(query);
-				if( result.first() )
-				{
+				if( result.first() ){
 					System.out.println("Profile Created in DB");
 					isSuccessful =  true;
 					message = "Create new profile success";
 				}
-				else
-				{
+				else{
 					System.out.println("Error: result.first() is false ");
 				}
-				
-				
 			}
 		}
 		catch (SQLException e) {
@@ -408,7 +401,6 @@ public class ServletProfile extends HttpServlet{
 			System.out.println("SQL exception : " + e.getMessage());
 	
 		}
-		
 		// close DB objects
 	    finally {
 	        try{
@@ -448,7 +440,7 @@ public class ServletProfile extends HttpServlet{
 	private void editProfile(HttpServletRequest request, HttpServletResponse response) 
 								throws ServletException, IOException{
 		
-		//Poster = 1, Searcher = 2
+		//Account Type: Poster = 1, Searcher = 2
 		int accountType = Integer.parseInt(request.getParameter("strAccountType")); 	
 		int accountID = Integer.parseInt(request.getParameter("accountID"));
 		
@@ -457,6 +449,7 @@ public class ServletProfile extends HttpServlet{
 		String phone;
 		String selfDescription;
 		String empPref;
+		long preferredStartDate;
 		int educationLevel;
 		
 		//Initialize return statements
@@ -468,7 +461,7 @@ public class ServletProfile extends HttpServlet{
 		Statement stmt = null;
 		
 		try{
-		//Edit Job Poster Account
+		//Edit Job Poster Profile
 			if(accountType == 1){
 
 				stmt = conn.createStatement();
@@ -488,39 +481,24 @@ public class ServletProfile extends HttpServlet{
 					+ "name='" 				+ name + "','" 
 					+ "secondaryEmail='" 	+ secEmail + "','" 
 					+ "phone='" 		+ phone + "','" 
-					+ "selfDescription='" 	+ selfDescription + 
+					+ "selfDescription='" 	+ selfDescription + "' " +
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
 				
 				System.out.println("New PosterProfile Query:" + query);
-				int rowsInserted = stmt.executeUpdate(query);
 				
-				if (rowsInserted == 1){
-					System.out.println("Edit Profile success");
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
 				}
 				else{
-					System.out.println("Error: row not inserted");
-					stmt.close();
-				}
-				
-				//Check if profile is created successfully
-				query = "SELECT accountID FROM tableProfilePoster WHERE " + " accountID='" + accountID + "'"; 
-				ResultSet result = stmt.executeQuery(query);
-				if( result.first() )
-				{
-					int idCheck = result.getInt("accountID");
-					System.out.println("Profile Created in DB with accountID: " + idCheck);
 					isSuccessful = true;
-					message = "Edit profile success";
-				}
-				else
-				{
-					System.out.println("Error: result.first() is false ");
+					message = "Edit Poster Profile success!";
+					System.out.println("Edit Poster Profile success!");
 				}
 				
 			}
 			
-		//Edit Job Searcher Account
+		//Edit Job Searcher Profile
 			else{
 				name = request.getParameter("searcherName");
 				secEmail = request.getParameter("searcherSecEmail");
@@ -528,7 +506,8 @@ public class ServletProfile extends HttpServlet{
 				selfDescription = request.getParameter("searcherDescripton");
 				empPref = request.getParameter("empPref");
 				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-			
+				preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
+				
 				stmt = conn.createStatement();
 				
 				name = Utility.checkInputFormat( name );
@@ -544,36 +523,22 @@ public class ServletProfile extends HttpServlet{
 					+ "phone='" 		+ phone + "','" 
 					+ "selfDescription='" 	+ selfDescription + "','"
 					+ "empPref='" 			+ empPref + "','"
-					+ "educationLevel='" 	+ educationLevel + "' " +
+					+ "educationLevel='" 	+ educationLevel + "','" 
+					+ "startingDate='"	+ preferredStartDate + "' " +
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
 				
 				// if successful, 1 row should be inserted
 				System.out.println("New SearcherProfile Query:" + query);
-				int rowsInserted = stmt.executeUpdate(query);
 				
-				if (rowsInserted == 1){
-					System.out.println("New Profile Creation success (DB)");
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
 				}
 				else{
-					stmt.close();
+					isSuccessful = true;
+					message = "Edit Searcher Profile Success!";
+					System.out.println("Edit Searcher Profile success!");
 				}
-				
-				//Check if profile is created successfully
-				query = "SELECT accountID FROM tableProfileSearcher WHERE " + " accountID='" + accountID + "'"; 
-				ResultSet result = stmt.executeQuery(query);
-				if( result.first() )
-				{
-					int idCheck = result.getInt("accountID");
-					System.out.println("Profile Created in DB with accountID: " + idCheck);
-					isSuccessful =  true;
-				}
-				else
-				{
-					System.out.println("Error: result.first() is false ");
-				}
-				
-				
 			}
 		}
 		catch (SQLException e) {
