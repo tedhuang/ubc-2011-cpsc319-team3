@@ -43,6 +43,7 @@ public class ServletJobAd extends HttpServlet {
 		//Add new functions here
 		createJobAdvertisement,
 		searchJobAdvertisement,
+		editJobAdvertisement,
 		deleteJobAd,
 		getJobAdById,
 		adminApprove,
@@ -91,46 +92,50 @@ public class ServletJobAd extends HttpServlet {
 		
 		//Check which function the request is calling from the servlet
 		switch( EnumAction.valueOf(action) ){
+		
 			case createJobAdvertisement:
 				createJobAdvertisement(request, response);
-				
 				break;
+				
 			case searchJobAdvertisement:
 				searchJobAd(request, response);
-				
 				break;
+			
+			case editJobAdvertisement:
+				editJobAdvertisement(request,response);
+				
 			case getJobAdById:
 				getJobAdById(request, response);
 				break;
 				
 			case loadAdList:
 				searchJobAd(request, response);
-				
 				break;
+				
 			case adminApprove:
 				adminApprove(request, response);
-				
 				break;
+				
 			case adminDeny:
 				adminDeny(request, response);
-				
 				break;
+				
 			case adminDeleteJobAd:
 				adminDeleteJobAd(request, response);
-				
 				break;
+				
 			case changeJobAdStatus:
 				changeJobAdStatus(request, response);
-				
 				break;
+				
 			case extendJobAdExpiry:
 				extendJobAdExpiry(request, response);
-				
 				break;
+				
 			case submitJobAdForApproval:
 				submitJobAdForApproval(request, response);
-				
 				break;
+				
 			default:
 				System.out.println("Error: failed to process request - action not found");
 				break;
@@ -254,7 +259,10 @@ public class ServletJobAd extends HttpServlet {
 	}
 	
 	
-	
+	/*
+	 * Extracts all information from the database of the targetted Job Ad
+	 * and returns it in a JobAdvertisement object ported to XML format
+	 */
 	private void getJobAdById(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		
@@ -368,6 +376,112 @@ public class ServletJobAd extends HttpServlet {
 
 
 
+	private void editJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		//initialize return statements
+		String message = "Create Job Advertisement Failed";
+		boolean isSuccessful = false;
+		
+		int jobAdId 				 = Integer.parseInt(request.getParameter("jobAdId"));
+		
+		String jobAdvertisementTitle = request.getParameter("strTitle");
+		String jobDescription 		 = request.getParameter("strDescription");
+		String contactInfo 			 = request.getParameter("strContactInfo");
+		String strTags 				 = request.getParameter("strTags");
+		String jobAvailability	 	 = request.getParameter("strJobAvailability");
+		
+		int educationRequirement 	 = Integer.parseInt(request.getParameter("educationRequirement"));
+		
+		int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
+		String expiryMonth 			 = request.getParameter("expiryMonth");
+		int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
+		
+		int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
+		String startingMonth 		 = request.getParameter("startingMonth");
+		int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
+				
+		long millisExpiryDate 		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
+		long millisStartingDate 	 = Utility.calculateDate(startingYear, startingMonth, startingDay);
+		
+		String address 				 = request.getParameter("address");
+		double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+		double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
+		
+
+		System.out.println(jobAdvertisementTitle);
+		System.out.println(jobDescription);
+		System.out.println(contactInfo);
+		System.out.println(strTags);
+		System.out.println(" Expire On: " + millisExpiryDate);
+		System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try{
+			stmt = conn.createStatement();
+			
+			String query = 
+				"UPDATE tableJobAd SET " 
+				+ "title='" 			+ jobAdvertisementTitle + "','" 
+				+ "description='" 		+ jobDescription + "','" 
+				+ "expiryDate='" 		+ millisExpiryDate + "','" 
+				+ "dateStarting='" 		+ millisStartingDate + "','" 
+				+ "contactInfo='" 		+ contactInfo + "','" 
+				+ "educationRequired='"	+ educationRequirement + "','" 
+				+ "jobAvailability='" 	+ jobAvailability + "','" 
+				+ "tags='" 				+ strTags + "' " +
+				"WHERE idJobAd='" 		+ jobAdId + "' ";
+				
+			System.out.println("Edit JobAd Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				message = "Edit Job Ad success!";
+				System.out.println("Edit Job Ad success!");
+			}
+	
+			
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+	
+	
 	/**
 	 * Creates a new job advertisement entry in the database with the given values
 	 * @param jobAdvertisementTitle
@@ -403,6 +517,7 @@ public class ServletJobAd extends HttpServlet {
 				//TODO implmement this
 				System.out.println("checking usertype");
 				System.out.println("usertype = " + userSession.getAccountType());
+				
 				if( userSession.getAccountType().equals("poster") ||
 						userSession.getAccountType().equals("admin")) {
 					System.out.print("User has the correct priviliege");
@@ -417,37 +532,36 @@ public class ServletJobAd extends HttpServlet {
 			System.out.print("User session sucessful for key " + userSession.getKey() );
 			
 			String jobAdvertisementTitle = request.getParameter("strTitle");
-			String jobDescription = request.getParameter("strDescription");
-			String contactInfo = request.getParameter("strContactInfo");
-			String strTags = request.getParameter("strTags");
+			String jobDescription 		 = request.getParameter("strDescription");
+			String contactInfo 			 = request.getParameter("strContactInfo");
+			String tags 				 = request.getParameter("strTags");
+			String jobAvailability	 	 = request.getParameter("strJobAvailability");
+
+			int educationRequirement 	 = Integer.parseInt(request.getParameter("strEducationReq"));
 			
-			int educationRequirement = Integer.parseInt(request.getParameter("educationRequirement"));
+			int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
+			String expiryMonth 			 = request.getParameter("expiryMonth");
+			int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
 			
-			int expiryYear = Integer.parseInt( request.getParameter("expiryYear"));
-			String expiryMonth = request.getParameter("expiryMonth");
-			int expiryDay =  Integer.parseInt( request.getParameter("expiryDay"));
+			int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
+			String startingMonth 		 = request.getParameter("startingMonth");
+			int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
 			
-			int startingYear =  Integer.parseInt(request.getParameter("startingYear"));
-			String startingMonth = request.getParameter("startingMonth");
-			int startingDay = Integer.parseInt(request.getParameter("startingDay"));
-			
-			long millisExpiryDate = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
-			long millisStartingDate = Utility.calculateDate(startingYear, startingMonth, startingDay);
-			
-			String address = request.getParameter("address");
-			System.out.println("longitude: " + request.getParameter("longitude"));
-			double longitude = Double.parseDouble(request.getParameter("longitude"));
-			double latitude = Double.parseDouble(request.getParameter("latitude"));
+			Calendar cal 				 = Calendar.getInstance();
+			long millisDateCreated 		 = cal.getTimeInMillis();
+			long millisExpiryDate		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
+			long millisStartingDate		 = Utility.calculateDate(startingYear, startingMonth, startingDay);
+
+			String address 				 = request.getParameter("address");
+			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
 			
 			int jobAdId = -1;
 			
-			Calendar cal = Calendar.getInstance();
-			long millisDateCreated = cal.getTimeInMillis();
-	
 			System.out.println(jobAdvertisementTitle);
 			System.out.println(jobDescription);
 			System.out.println(contactInfo);
-			System.out.println(strTags);
+			System.out.println(tags);
 			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
 			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
 			
@@ -455,18 +569,18 @@ public class ServletJobAd extends HttpServlet {
 			Statement stmt = null;
 			
 			try {
-				System.out.print("Inserting new Job Ad into DB");
+				System.out.println("Inserting new Job Ad into DB");
 				
 				stmt = conn.createStatement();
 				
 				jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
 				jobDescription = Utility.checkInputFormat( jobDescription );
 				contactInfo = Utility.checkInputFormat( contactInfo );
-				strTags = Utility.checkInputFormat( strTags );
+				tags = Utility.checkInputFormat( tags );
 				
 			//Add new entry with specified paramters into database
 				String query = 
-					"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, tags ) " +
+					"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, jobAvailability, tags ) " +
 					"VALUES " + "('" 
 						+ jobAdvertisementTitle + "','" 
 						+ jobDescription + "','" 
@@ -475,19 +589,15 @@ public class ServletJobAd extends HttpServlet {
 						+ millisDateCreated + "','"
 						+ contactInfo + "','" 
 						+ educationRequirement + "','"
-						+ strTags + 
+						+ jobAvailability + "','"
+						+ tags + 
 					"')";
 				
 				// if successful, 1 row should be inserted
-				System.out.println("New Job Ad Query:" + query);
+				System.out.println("New Job Ad Query: " + query);
 				int rowsInserted = stmt.executeUpdate(query);
 				
-				if (rowsInserted == 1){
-					System.out.println("New JobAd Creation success (DB)");
-					isSuccessful = true;
-					message = "Create Job Advertisement Successful";
-				}
-				else{
+				if (rowsInserted != 1){
 					System.out.println("New JobAd Creation failed");
 					Utility.logError("New JobAd insert in DB failed");
 				}
@@ -523,15 +633,15 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Row Inserted: " + rowsInserted);
 				
 				if (rowsInserted == 1){
-					System.out.println("Insert location success");
+					System.out.println("New JobAd Creation success (DB)");
 					isSuccessful = true;
+					message = "Create Job Advertisement Successful";
 				}
 				else{
 					System.out.println("Insert location for new job ad failed");
 					Utility.logError("Insert location for new job ad failed");
 				}
 
-			
 				//Debug print
 				System.out.println("Location Query: "+ query);
 				
@@ -673,7 +783,7 @@ public class ServletJobAd extends HttpServlet {
 			
 			//Update isApproved
 			String query = 
-				"UPDATE tableJobAd" + 
+				"UPDATE tableJobAd " + 
 				"SET expiryDate='" + newExpireTime +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
@@ -749,7 +859,7 @@ public class ServletJobAd extends HttpServlet {
 			
 			//Update isApproved
 			String query = 
-				"UPDATE tableJobAd" + 
+				"UPDATE tableJobAd " + 
 				"SET isApproved='" + true +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
@@ -836,7 +946,7 @@ public class ServletJobAd extends HttpServlet {
 			
 			//Update isApproved
 			String query = 
-				"UPDATE tableJobAd" + 
+				"UPDATE tableJobAd " + 
 				"SET isApproved='" + false +"' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			

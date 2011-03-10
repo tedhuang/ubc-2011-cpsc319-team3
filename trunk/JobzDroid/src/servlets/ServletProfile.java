@@ -264,7 +264,7 @@ public class ServletProfile extends HttpServlet{
 	
 	
 	private void searchJobSearcher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		
+		//TODO: port search from job ad search
 		
 		
 	}
@@ -480,7 +480,7 @@ public class ServletProfile extends HttpServlet{
 					"UPDATE tableProfilePoster SET " 
 					+ "name='" 				+ name + "','" 
 					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "phone='" 		+ phone + "','" 
+					+ "phone='" 			+ phone + "','" 
 					+ "selfDescription='" 	+ selfDescription + "' " +
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
