@@ -18,7 +18,7 @@ public class ProfileSearcher {
 
 	
 	public ProfileSearcher(){
-		
+		accountType = "searcher";
 	}
 	
 	public String toXMLContent(){
@@ -28,7 +28,6 @@ public class ProfileSearcher {
 		addressList.add(loc);
 		
 		String result = "\t\t<profileSearcher" +
-		" accountType=\"" + "2" + "\"" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
@@ -42,7 +41,7 @@ public class ProfileSearcher {
 		for( int i = 0 ; i < addressList.size() ; i++ ){
 			result = result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
-										 " longitude=\"" + addressList.get(i).longitude + "\" >\n" );
+										 " longitude=\"" + addressList.get(i).longitude + "\" ></location>\n" );
 		}
 		
 		result = result.concat( "\t\t</profileSearcher>\n" );
