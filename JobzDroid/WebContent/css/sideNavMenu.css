@@ -51,7 +51,7 @@ height:400px;
   padding		:3px;
   height		:32px;
   color			:#0464BB;
-  outline-style:none;
+  outline-style	:none;
 }
 
 
@@ -62,6 +62,7 @@ height:400px;
   height:30px;
   width:30px;
   float:right;
+  cursor:pointer;
 }
 
 .sideNavMenu li a h2 { 
@@ -75,9 +76,12 @@ height:400px;
 }
 .sideNavMenu li a:hover {   
   color:#FFF; 
-  background: #9EDB04; 
+  background: #9EDB04;
+  
 }
-
+.sideNavMenu li a.topMenu:hover{
+	cursor: default;
+}
 /********************SubMenus***********************/
 .sideNavMenu #subMenu{
 	padding: 0;
