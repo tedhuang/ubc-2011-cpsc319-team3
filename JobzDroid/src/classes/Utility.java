@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -120,6 +121,19 @@ public class Utility {
 			logError("Failure while converting date string to long: " + e.getMessage()); 
 		} 
 		return dateLong;
+	}
+	
+	/***
+	 * Converts a long to a formatted date string.
+	 * @param time Time represented as a long.
+	 * @param timeZone Time zone string. For example "GMT" or "PST".
+	 * @return Formated date string. For example "Thursday, 10 March 2011, 23:20:59 PST"
+	 */
+	public static String longToDateString(long time, String timeZone){
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
+		c.setTimeInMillis(time);
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEEEEEEE, d MMMMMMMM yyyy, HH:mm:ss z");
+		return sdf.format(c.getTime());
 	}
 	
 	/***

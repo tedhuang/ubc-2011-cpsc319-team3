@@ -30,8 +30,8 @@
 	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
-		    <li><a href="#" class="btn">News</a></li>
-		    <li><a href="#" class="btn">RSS</a></li>
+		    <li><a href="http://localhost:8080/JobzDroid/news.jsp" class="btn">News</a></li>
+		    <li><a href="http://localhost:8080/JobzDroid/rss/rss.html" class="btn">RSS</a></li>
 		    <li><a href="#" class="btn">View Job Ads</a></li>
 		</ul>
 	  </div>
