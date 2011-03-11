@@ -24,7 +24,7 @@
 				$(this).next().slideToggle();
 				return false;
 			});
-			
+		
 		  if(sliding){
 				 navMenu.bind("mouseenter", function(e){
 					$(this).stop(true).animate(
