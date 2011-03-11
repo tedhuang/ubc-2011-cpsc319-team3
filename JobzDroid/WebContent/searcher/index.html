@@ -13,7 +13,10 @@
 <script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/JobAd.js"></script>
+<script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
+<script type="text/javascript" src="../scripts/uiBot.js"></script>
+
 <script type="text/javascript">
    
     $(document).ready(function(){
@@ -95,8 +98,11 @@
   			<li id="homeTab">
   				<a href="#home-frame"><h2>Home</h2></a>
 			</li>
-  			<li id="Tab">
+  			<li id="Tab1">
   				<a href="#searchJob-frame"><h2>Jobs</h2></a>
+			</li>
+			<li id="Tab2">
+  				<a href="#profileFrame"><h2>My Profile</h2></a>
 			</li>
 			
 		</ul>
@@ -256,8 +262,18 @@
 					</tbody>
 				</table><!--ENDOF TABLE-->
 			  </div><!--ENDOF DIV RESULT TABLE-->
-			  		
 		</div><!--ENDOF DIV SEARCH TAB-->
+		
+		<div id="profileFrame" class="subFrame">
+			 <div id="profileTable" class="resultTableDiv noBorder">
+			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>	
+			 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>	
+		</div><!--end of TABDETAILFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  

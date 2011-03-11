@@ -271,9 +271,9 @@ function getProfileById(){
 	  //TODO parse returned profile XML
 }
 
-function getProfileBySessionKey(){
-
-	var sessionKey = document.getElementById("sessionKey").value;
+function getProfileBySessionKey(outputDiv, heading){
+  
+	var sessionKey = $("#sessionKey").val();
 	
 	request = new Request;
 	request.addAction("getProfileBySessionKey");
@@ -288,27 +288,18 @@ function getProfileBySessionKey(){
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		    //parse XML response from server
-	    	loadProfileDetails(xmlhttp.responseXML);
+//	    	loadProfileDetails(xmlhttp.responseXML);
+		  buildProfileTb("profile", outputDiv, heading);
+		  	
 	    }
 	  };	
-	  
-		//send the parameters to the servlet with POST
-		xmlhttp.open("POST","../ServletProfile" ,true);
-		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xmlhttp.send(request.toString());
-
-		//change the text while sending the request
-		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-		
-	  //TODO parse returned profile XML
 }
-
-
-
-

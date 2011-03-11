@@ -48,7 +48,7 @@ function loadAdList(outputDiv){
 		if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			$("#feedback").html("<h2>Successfully finished tasks</h2>");
 			//parse XML response from server
-			buildTable("jobAd", outputDiv);
+			buildAdListTb("jobAd", outputDiv);
 	    	$("#ListJobAdButton").attr("disabled", false);
 
 	    }
@@ -410,7 +410,7 @@ function searchJobAdvertisement(outputDiv){
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			    {
 					//parse XML response from server
-					buildTable("jobAd", outputDiv);
+					buildAdListTb("jobAd", outputDiv);
 		
 			    }
 			  };
@@ -452,43 +452,11 @@ function quickSearchJobAd(outputDiv){
 			    {
 				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
 					//parse XML response from server
-					buildTable("jobAd", outputDiv);
+					buildAdListTb("jobAd", outputDiv);
 		
 			    }
 			  };
 	   }//ENDOF CHECK-ALL-NULL
-}
-/************************************************************************************************
- * 					BUILD TABLE FUNCTION
- * INSERT RETURNED DATA INTO THE TABLE
- * @param xmlObj: THE xmlObject name returned from the server
- * @param outputDiv: The DIV where the table is held
-**************************************************************************************************/
-function buildTable(targetXMLTag, outputDiv){
-	var tbody  = $("tbody", outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
-		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
-	}
-	else{
-		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
-		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  
-		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + jobAd.attr("jobAdTitle") +
-		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
-		  				
-		  				"</td><td>" + jobAd.attr("contactInfo")  + 
-		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
-		  				"</td><td>" + jobAd.attr("jobAvail") +
-		  				"</td><td>" + jobAd.children("location").attr("address")+
-		  				"</td><td>" + "</td></tr>";
-		  
-		  $(rowText).appendTo(tbody);
-		});
-		 $("tr:odd", tbody).addClass("oddRow");
-		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
-	}
 }
 
 function getJobAdById(id, outputDiv, heading)
@@ -527,7 +495,7 @@ function getJobAdById(id, outputDiv, heading)
 	    {
 		    //parse XML response from server
 		  $("#detailFB").html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  buildVerticleTable("jobAd", outputDiv, heading);
+		  buildDetailTable("jobAd", outputDiv, heading);
 	    	
 //	    	$("#jobAdDetails").show();
 //	    	$("#getJobAdButton").attr("disabled", false);
@@ -536,34 +504,6 @@ function getJobAdById(id, outputDiv, heading)
 }
 
 function viewDetail(adRow, outputDiv, heading){
-//	alert(adRow.attr("innerHTML"));
-//	var ref= $($(adRow.closest('tr')).find(".hide")).html;
 	getJobAdById(adRow, outputDiv, heading);
 }
 
-function buildVerticleTable(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", outputDiv).html("");
-	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
-	if(jobAd.length==0){//if no results
-		$("#detailFB").html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
-	}
-	else{
-//		xmlObj.each(function() {//for All returned xml obj
-//		  var jobAd = $(this);
-		  $(heading).html(jobAd.attr("jobAdTitle"));
-		  var rowText = "<tr><td>Date Posted</td><td>" 					+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
-		  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
-		  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
-		  				"<tr><td>Job Type</td><td>"						+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
-		  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
-		  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
-		  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
-		  				"<tr class='clean'></tr>" +
-		  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
-		  
-		 $(tbody).append(rowText);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
-		 $("#detailFB").hide();
-	}
-}
