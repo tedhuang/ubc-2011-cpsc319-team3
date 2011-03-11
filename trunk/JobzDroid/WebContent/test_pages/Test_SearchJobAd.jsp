@@ -59,7 +59,7 @@
 		<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement(resultTable)">Search</button>
 		<br>
 </div>
-
+</div>
 <div id="feedback"><h3>Feedback Area</h3></div>
 <div id="resultTable" class="resultTableDiv">
 	<table>

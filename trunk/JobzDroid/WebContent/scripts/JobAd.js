@@ -108,49 +108,6 @@ function loadJobAdDetails( responseXML ){
 
 
 
-function getJobAdById()
-{
-	//TODO Testing ONLY, RM after testing
-	//$("#getJobAdButton").attr("disabled", true);
-	var intJobAdId = document.getElementById("jobAdId").value;
-	
-	request = new Request;
-	request.addAction("getJobAdById");
-	request.addSessionKey(document.getElementById("sessionKey").value ); //TODO: change this
-	request.addParam("jobAdId", intJobAdId);
-	
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending getJobAdById Request</h2>";
-	
-	
-//	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		    loadJobAdDetails(xmlhttp.responseXML);
-	    	document.getElementById("feedback").innerHTML="Successfully finished tasks";
-	    	$("#jobAdDetails").show();
-	    	$("#getJobAdButton").attr("disabled", false);
-	    }
-	  };
-	
-	//send the parameters to the servlet with POST
-		xmlhttp.open("POST","../ServletJobAd" ,true);
-		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xmlhttp.send(request.toString());
-}
 
 
 
@@ -517,15 +474,95 @@ function buildTable(xmlReturnedObj, outputDiv){
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  				"</td><td><span>" + jobAd.attr("jobAdTitle") 	 + 
-		  				"</span></td><td>" + jobAd.attr("contactInfo")  + 
+		  
+		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+")'>" + jobAd.attr("jobAdTitle") +
+		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
+		  				
+		  				"</td><td>" + jobAd.attr("contactInfo")  + 
 		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAvail") +
 		  				"</td><td>" + jobAd.children("location").attr("address")+
 		  				"</td><td>" + "</td></tr>";
+		  
 		  $(rowText).appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}
+
+function getJobAdById(id, outputDiv)
+{
+	//TODO Testing ONLY, RM after testing
+	//$("#getJobAdButton").attr("disabled", true);
+//	var intJobAdId = document.getElementById("jobAdId").value;
+	
+	request = new Request;
+	request.addAction("getJobAdById");
+//	request.addSessionKey(document.getElementById("sessionKey").value ); 
+	request.addParam("jobAdId", id);
+	
+
+	//change the text while sending the request
+	$("#feedback").html("<h2>Sending getJobAdById Request</h2>");
+	
+	
+//	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		    //parse XML response from server
+		  $("#feedback").html("<h2 class='good'> Successfully finished tasks</h2>");	
+		  buildDetailTable("jobAd", outputDiv);
+	    	
+//	    	$("#jobAdDetails").show();
+//	    	$("#getJobAdButton").attr("disabled", false);
+	    }
+	  };
+}
+
+function viewDetail(adRow, outputDiv){
+//	alert(adRow.attr("innerHTML"));
+//	var ref= $($(adRow.closest('tr')).find(".hide")).html;
+	getJobAdById(adRow, outputDiv);
+}
+
+function buildDetailTable(xmlReturnedObj){
+	var tbody  = $( "tbody", "#adDetailTable").html("");
+	var jobAd = $(xmlReturnedObj,xmlhttp.responseXML);
+	if(jobAd.length==0){//if no results
+		$("#adDetailHeading").html("");
+	}
+	else{
+//		xmlObj.each(function() {//for All returned xml obj
+//		  var jobAd = $(this);
+		  $("#adDetailHeading").html(jobAd.attr("jobAdTitle"));
+		  var rowText = "<tr><td>Date Posted</td><td>" 					+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
+		  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
+		  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
+		  				"<tr><td>Job Type</td><td>"						+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
+		  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
+		  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
+		  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
+		  				"<tr class='clean'></tr>" +
+		  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
+		  
+		 $(tbody).append(rowText);
+		 $(tbody).find('tr').addClass("detail");
+		 $("#feedback").html('<h2 class="good">Found '+ jobAd.length +' Records</h2>');
 	}
 }
