@@ -40,4 +40,43 @@ public class Session {
 		expiryTime = expiry;
 	}
 	
+	
+	public boolean checkPrivilege( String authorizedUserType0 ) {
+		if( accountType.equals(authorizedUserType0) ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1 ) {
+		if( accountType.equals(authorizedUserType0) 
+				|| accountType.equals(authorizedUserType1) ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1, String authorizedUserType2 ) {
+		if( accountType.equals(authorizedUserType0) 
+				|| accountType.equals(authorizedUserType1)
+				|| accountType.equals(authorizedUserType2) ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1, String authorizedUserType2,
+									String authorizedUserType3 ) {
+		if( accountType.equals(authorizedUserType0) 
+				|| accountType.equals(authorizedUserType1)
+				|| accountType.equals(authorizedUserType2) 
+				|| accountType.equals(authorizedUserType3) ) {
+			return true;
+		}
+		
+		return false;
+	}
 }

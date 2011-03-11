@@ -335,7 +335,13 @@ public class ServletAccount extends HttpServlet {
 		if(currSession != null){
 			// if login successful, return credential and sucess message
 			// Write XML to response if DB has return message
-			action = "home.html";
+			
+			if( currSession.getAccountType().equals("poster")) {
+				action = "./poster/";
+			}
+			if( currSession.getAccountType().equals("searcher")) {
+				action = "./searcher/";
+			}
 			
 			StringBuffer XMLResponse = new StringBuffer();
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
