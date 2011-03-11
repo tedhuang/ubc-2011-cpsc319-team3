@@ -24,6 +24,7 @@ public class ProfileSearcher {
 	public String toXMLContent(){
 		
 		String result = "\t\t<profileSearcher" +
+		" accountType=\"" + "2" + "\"" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
@@ -35,7 +36,7 @@ public class ProfileSearcher {
 		" educationLevel=\"" + educationLevel + "\" >\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
-			result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
+			result = result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
 										 " longitude=\"" + addressList.get(i).longitude + "\" >\n" );
 		}
