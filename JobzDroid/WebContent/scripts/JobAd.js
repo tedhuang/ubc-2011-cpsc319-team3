@@ -59,8 +59,6 @@ function loadAdList(outputDiv){
 
 function loadJobAdDetails( responseXML ){
 	
-	//alert(responseXML.getElementsByTagName("jobAd"));
-	
 	var jobAd = responseXML.getElementsByTagName("jobAd").item(0);
 	
         var jobAdId			=	jobAd.getAttribute("jobAdId");
@@ -96,7 +94,7 @@ function loadJobAdDetails( responseXML ){
 		document.getElementById("jobAdId").innerHTML = jobAdId;
 		document.getElementById("status").innerHTML = status;
 		document.getElementById("educationReq").value = educationReq;
-			
+		
 		document.getElementById("expiryDate").innerHTML = expiryDate;
 		document.getElementById("startingDate").innerHTML = startingDate;
 		document.getElementById("creationDate").innerHTML = creationDate;
@@ -152,7 +150,6 @@ function getJobAdById()
 		xmlhttp.open("POST","../ServletJobAd" ,true);
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(request.toString());
-		
 }
 
 
@@ -447,7 +444,7 @@ function searchJobAdvertisement(outputDiv){
 			
 			//send the parameters to the servlet with POST
 			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","./ServletJobAd" ,true);
+			xmlhttp.open("POST","../ServletJobAd" ,true);
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
@@ -488,7 +485,7 @@ function quickSearchJobAd(outputDiv){
 			
 			//send the parameters to the servlet with POST
 			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","./ServletJobAd" ,true); //PATH TO SERVLET DIFFERS FROM TESTPAGES
+			xmlhttp.open("POST","../ServletJobAd" ,true); //PATH TO SERVLET DIFFERS FROM TESTPAGES
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
@@ -520,11 +517,11 @@ function buildTable(xmlReturnedObj, outputDiv){
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  				"</td><td>" + jobAd.attr("jobAdTitle") 	 + 
-		  				"</td><td>" + jobAd.attr("contactInfo")  + 
+		  				"</td><td><a>" + jobAd.attr("jobAdTitle") 	 + 
+		  				"</a></td><td>" + jobAd.attr("contactInfo")  + 
 		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAvail") +
-		  				"</td><td>" + 
+		  				"</td><td>" + jobAd.attr("location").attr("address");
 		  				"</td><td>" +  
 		  				"</td></tr>";
 		  $(rowText).appendTo(tbody);

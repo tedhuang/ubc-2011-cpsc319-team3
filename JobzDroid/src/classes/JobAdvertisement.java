@@ -35,7 +35,10 @@ public class JobAdvertisement {
 		String creationDateFormatted;
 		String startingDateFormatted;
 		String expiryDateFormatted;
-			
+		locationList=new ArrayList<Location>();
+		Location loc =new Location("Vancouver");
+		locationList.add(loc);
+		
 		eduReqFormatted = Utility.degreeConvertor(educationReq);
 		
 		creationDateFormatted = Utility.dateConvertor(creationDate);
@@ -69,12 +72,12 @@ public class JobAdvertisement {
 		
 		/************ Add a list of location objects to XML ***********/
 		for( int i = 0 ; i < locationList.size() ; i++ ){
-			result.concat("\t\t<location address=\"" 	 + locationList.get(i).address + "\"" +
+			result=result.concat("\t\t<location address=\"" 	 + locationList.get(i).address + "\"" +
 										 " latitude=\""  + locationList.get(i).latitude + "\"" +
 										 " longitude=\"" + locationList.get(i).longitude + "\" >\n" );
 		}
 		
-		result = result.concat("\t\t</jobAd>\n");
+		result = result.concat("\t</jobAd>\n");
 		
 		System.out.println("JobAdvertisement Object XML:\n" + result);
 		
