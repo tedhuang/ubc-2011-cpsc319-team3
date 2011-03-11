@@ -315,6 +315,7 @@ public class ServletProfile extends HttpServlet{
 			conn = dbManager.getConnection();
 			stmt = conn.createStatement();
 			
+			//TODO add join statement to retrieve email info
 			String query = 
 					"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
 			

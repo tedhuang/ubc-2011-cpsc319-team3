@@ -11,35 +11,35 @@ function ParseXMLResponse(responseXML)
 
 function loadProfileDetails(responseXML){
 	
-	var accountType =  responseXML.getElementsByTagName("accountType");
+	var profile = responseXML.getElementsByTagName("profile").item(0);
 	
-	if( accountType=="searcher" ) {
+	if( profile.getAttribute("accountType") == "searcher" ) {
 		document.getElementById("name").innerHTML
-			= responseXML.getElementsByTagName("name");
+			= profile.getAttribute("name");
 		
 		document.getElementById("email").innerHTML
-			= responseXML.getElementsByTagName("email");
+			= profile.getAttribute("email");
 		
 		document.getElementById("secondaryEmail").innerHTML 
-			= responseXML.getElementsByTagName("secondaryEmail");
+			= profile.getAttribute("secondaryEmail");
 		
 		document.getElementById("educationFormatted").innerHTML 
-			= responseXML.getElementsByTagName("educationFormatted");
+			= profile.getAttribute("educationFormatted");
 		
 		document.getElementById("empPref").innerHTML 
-			= responseXML.getElementsByTagName("empPref");
+			= profile.getAttribute("empPref");
 		
 		document.getElementById("address").innerHTML 
-			= responseXML.getElementsByTagName("address");
+			= profile.getAttribute("address");
 		
 		document.getElementById("startingDate").innerHTML 
-			= responseXML.getElementsByTagName("startingDate");
+			= profile.getAttribute("startingDate");
 		
 		document.getElementById("selfDescription").innerHTML 
-			= responseXML.getElementsByTagName("selfDescription");
+			= profile.getAttribute("selfDescription");
 		
 	}
-	else if ( accountType == "poster" ) {
+	else if ( profile.getAttribute("accountType") == "poster" ) {
 		
 		//TODO implement for poster
 	}

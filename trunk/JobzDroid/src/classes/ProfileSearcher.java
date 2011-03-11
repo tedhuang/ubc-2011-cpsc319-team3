@@ -5,14 +5,17 @@ import java.util.ArrayList;
 public class ProfileSearcher {
 
 	public int accountID;
-	public String accountType;
-	public String name;
-	public String phone;
-	public String selfDescription;
-	public String docLink;
-	public String employmentPreference;
+	public String accountType = "";
+	public String name = "";
+	public String phone = "";
+	public String selfDescription = "";
+	public String docLink = "";
+	public String employmentPreference = "";
 	public long preferredStartDate;
 	public int educationLevel;
+	
+	public String email = "";
+	public String secondaryEmail = "";
 	
 	public ArrayList<Location> addressList;
 
@@ -22,12 +25,12 @@ public class ProfileSearcher {
 	}
 	
 	public String toXMLContent(){
-		
+
 		//Empty location just to avoid null pointers
 		Location loc = new Location("");
 		addressList.add(loc);
 		
-		String result = "\t\t<profileSearcher" +
+		String result = "\t\t<profile" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
 		" name=\"" + name  + "\"" +
@@ -36,7 +39,11 @@ public class ProfileSearcher {
 		" docLink=\"" + docLink + "\"" +
 		" employmentPreference=\"" + employmentPreference + "\"" +
 		" preferredStartDate=\"" + preferredStartDate + "\"" +
-		" educationLevel=\"" + educationLevel + "\" >\n";
+		" educationLevel=\"" + educationLevel + "\"" +
+		" email=\"" + email + "\"" +
+		" secondaryEmail=\"" + secondaryEmail + "\"";
+		
+		result = result + ">\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
 			result = result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
@@ -44,7 +51,7 @@ public class ProfileSearcher {
 										 " longitude=\"" + addressList.get(i).longitude + "\" ></location>\n" );
 		}
 		
-		result = result.concat( "\t\t</profileSearcher>\n" );
+		result = result.concat( "\t\t</profile>\n" );
 		
 		return result;
 	}
