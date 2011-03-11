@@ -470,10 +470,16 @@ div#main-container {
 	background-color	: white;
 	text-align			: center;
 }
-.resultTableDiv tr.detail td{
+.resultTableDiv td.nameCol{
 	border-right		: 1px solid blue;
 	min-width			: 100px;
-	background-color	: white;
+	text-align			: left;
+	padding				: 0.5em;
+	font-weight			: bold;
+}
+.resultTableDiv td.dataCol{
+	border-right		: 1px solid blue;
+	min-width			: 500px;
 	text-align			: left;
 	padding				: 0.5em;
 }
