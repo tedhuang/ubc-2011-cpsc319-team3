@@ -87,11 +87,22 @@ public class NewsManager {
 		Statement stmt = null;
 		ResultSet rs = null;		
 		ArrayList<NewsEntry> entries = new ArrayList<NewsEntry>();
+		int idNews;
+		String title, content;
+		long dateTimePublished;
 		
 		try {			
 			stmt = conn.createStatement();
 			String query = "SELECT * FROM tableNews;";            
-			stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
+		    while (rs.next()) {
+		    	idNews = rs.getInt("idNews");
+		    	title = rs.getString("title");
+		    	content = rs.getString("content");
+		    	dateTimePublished = rs.getLong("dateTimePublished");
+		        NewsEntry entry = new NewsEntry(idNews, title, content, dateTimePublished);
+		        entries.add(entry);
+		    }
 		}
 		catch (SQLException e) {
 			Utility.logError("SQL exception: " + e.getMessage());
