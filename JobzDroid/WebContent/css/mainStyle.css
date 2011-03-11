@@ -436,7 +436,9 @@ div#main-container {
 	border		: none;
 	display		: none;
 }
-
+.displayTable{
+	border		: 2px solid #004000;
+}
 .resultTableDiv table{
 	width			: 100%;
 	margin-bottom	: 1em;
@@ -468,8 +470,21 @@ div#main-container {
 	background-color	: white;
 	text-align			: center;
 }
+.resultTableDiv tr.detail td{
+	border-right		: 1px solid blue;
+	min-width			: 100px;
+	background-color	: white;
+	text-align			: left;
+	padding				: 0.5em;
+}
+.resultTableDiv td.clean {
+	padding: 0 5px;
+}
+.resultTableDiv td.hide{
+	display: none;
+}
 .resultTableDiv td span{
-	
+	margin: 0;
 }
 .resultTableDiv td span:hover{
 	cursor: pointer;

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-<title>JobzDroid | Your Ultimate Database Job Market<</title>
+<title>JobzDroid | Your Ultimate Database Job Market </title>
 
 <link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 <link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css" />
@@ -40,21 +40,24 @@
 	  	  <div id="navBar" class="navBar">
 			<ul>
 	  			<li id="tab1">
-	  				<a href="#advSearchtab"><h2>Search</h2></a>
+	  				<a href="#advSearchFrame"><h2>Search</h2></a>
+				</li>
+				<li id="tab2">
+	  				<a href="#adDetailFrame"><h2>Details</h2></a>
 				</li>
 			</ul>
 		</div><!--ENDOF NAVBAR-->
 	
 	
 		  <div id="tabFrame">
-			<div id="advSearchtab" class="subFrame">
+			<div id="advSearchFrame" class="subFrame">
 				
 			  <div id="advSearchForm" class="content">
 		       	<label class="heading-text">Advanced Search</label>
 			   
 			     <div class="columnBox">
 			     	<div class="formFieldWrapper">
-						<label class="formFieldLabel">Search title: </label><br />
+						<label class="formFieldLabel">Search title: </label><br/>
 						<input id="titleSearch" type="text" name="searchTitle" size="40" />
 					</div>
 					<div class="formFieldWrapper">
@@ -78,7 +81,7 @@
 					</select>
 				</div>
 				<div class="formFieldWrapper">
-					  	 <label class="formFieldLabel">Employment Type:</label>
+					  	 <label class="formFieldLabel">Employment Type:</label><br/>
 								<label for="ftChk">
 									<input type="checkbox" name="searchFT" value="fullTime" id="ftChk"/>
 									Full Time
@@ -145,15 +148,23 @@
 					</tbody>
 				</table><!--ENDOF TABLE-->
 			  </div><!--ENDOF DIV RESULT TABLE-->
-			  		
-		</div><!--ENDOF DIV SEARCH TAB-->			
+			 
+		</div><!--ENDOF DIV SEARCH TAB-->	
+		<div id="adDetailFrame" class="subFrame">
+			 <div id="adDetailTable" class="resultTableDiv ">
+			 <h2 id="adDetailHeading" class="welcome"></h2>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABDETAILFRAME-->  
 	  </div><!--ENDOF TABFRAME-->
-	</div><!--end of tabs DIV-->  
-	
+ 	 </div><!--ENDOF TABS-->
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->
  </div><!--ENDOF DIV MAIN-->
- 
+
 
 </body>
 </html>

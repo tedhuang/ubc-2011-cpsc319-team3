@@ -364,8 +364,6 @@ public class ServletJobAd extends HttpServlet {
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append(jobAd.toXMLContent() );
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
