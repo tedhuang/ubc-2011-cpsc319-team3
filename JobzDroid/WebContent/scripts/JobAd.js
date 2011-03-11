@@ -464,9 +464,9 @@ function quickSearchJobAd(outputDiv){
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
-function buildTable(xmlReturnedObj, outputDiv){
+function buildTable(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", outputDiv).html("");
-	var xmlObj = $(xmlReturnedObj,xmlhttp.responseXML);
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
 		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
 	}
@@ -475,7 +475,7 @@ function buildTable(xmlReturnedObj, outputDiv){
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
 		  
-		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+")'>" + jobAd.attr("jobAdTitle") +
+		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + jobAd.attr("jobAdTitle") +
 		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
 		  				
 		  				"</td><td>" + jobAd.attr("contactInfo")  + 
@@ -491,7 +491,7 @@ function buildTable(xmlReturnedObj, outputDiv){
 	}
 }
 
-function getJobAdById(id, outputDiv)
+function getJobAdById(id, outputDiv, heading)
 {
 	//TODO Testing ONLY, RM after testing
 	//$("#getJobAdButton").attr("disabled", true);
@@ -504,7 +504,7 @@ function getJobAdById(id, outputDiv)
 	
 
 	//change the text while sending the request
-	$("#feedback").html("<h2>Sending getJobAdById Request</h2>");
+	$("#detailFB").html("<h2>Sending getJobAdById Request</h2>");
 	
 	
 //	var xmlHttpReq;
@@ -526,8 +526,8 @@ function getJobAdById(id, outputDiv)
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		    //parse XML response from server
-		  $("#feedback").html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  buildDetailTable("jobAd", outputDiv);
+		  $("#detailFB").html("<h2 class='good'> Successfully finished tasks</h2>");	
+		  buildVerticleTable("jobAd", outputDiv, heading);
 	    	
 //	    	$("#jobAdDetails").show();
 //	    	$("#getJobAdButton").attr("disabled", false);
@@ -535,22 +535,22 @@ function getJobAdById(id, outputDiv)
 	  };
 }
 
-function viewDetail(adRow, outputDiv){
+function viewDetail(adRow, outputDiv, heading){
 //	alert(adRow.attr("innerHTML"));
 //	var ref= $($(adRow.closest('tr')).find(".hide")).html;
-	getJobAdById(adRow, outputDiv);
+	getJobAdById(adRow, outputDiv, heading);
 }
 
-function buildDetailTable(xmlReturnedObj){
-	var tbody  = $( "tbody", "#adDetailTable").html("");
-	var jobAd = $(xmlReturnedObj,xmlhttp.responseXML);
+function buildVerticleTable(targetXMLTag, outputDiv, heading){
+	var tbody  = $( "tbody", outputDiv).html("");
+	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
 	if(jobAd.length==0){//if no results
-		$("#adDetailHeading").html("");
+		$("#detailFB").html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
 	}
 	else{
 //		xmlObj.each(function() {//for All returned xml obj
 //		  var jobAd = $(this);
-		  $("#adDetailHeading").html(jobAd.attr("jobAdTitle"));
+		  $(heading).html(jobAd.attr("jobAdTitle"));
 		  var rowText = "<tr><td>Date Posted</td><td>" 					+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
 		  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
 		  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
@@ -564,6 +564,6 @@ function buildDetailTable(xmlReturnedObj){
 		 $(tbody).append(rowText);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");
 		 $(tbody).find('tr').find('td:last').addClass("dataCol");
-		 $("#feedback").html('<h2 class="good">Found '+ jobAd.length +' Records</h2>');
+		 $("#detailFB").hide();
 	}
 }
