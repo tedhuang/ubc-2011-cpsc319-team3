@@ -562,7 +562,8 @@ function buildDetailTable(xmlReturnedObj){
 		  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
 		  
 		 $(tbody).append(rowText);
-		 $(tbody).find('tr').addClass("detail");
+		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");
 		 $("#feedback").html('<h2 class="good">Found '+ jobAd.length +' Records</h2>');
 	}
 }
