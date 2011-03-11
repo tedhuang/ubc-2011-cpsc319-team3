@@ -468,6 +468,12 @@ div#main-container {
 	background-color	: white;
 	text-align			: center;
 }
+.resultTableDiv td span{
+	
+}
+.resultTableDiv td span:hover{
+	cursor: pointer;
+}
 .resultTableDiv .oddRow td{
 	background-color: #aae2a9;
 }

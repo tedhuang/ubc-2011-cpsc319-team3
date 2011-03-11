@@ -517,13 +517,12 @@ function buildTable(xmlReturnedObj, outputDiv){
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  				"</td><td><a>" + jobAd.attr("jobAdTitle") 	 + 
-		  				"</a></td><td>" + jobAd.attr("contactInfo")  + 
+		  				"</td><td><span>" + jobAd.attr("jobAdTitle") 	 + 
+		  				"</span></td><td>" + jobAd.attr("contactInfo")  + 
 		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAvail") +
-		  				"</td><td>" + jobAd.attr("location").attr("address");
-		  				"</td><td>" +  
-		  				"</td></tr>";
+		  				"</td><td>" + jobAd.children("location").attr("address")+
+		  				"</td><td>" + "</td></tr>";
 		  $(rowText).appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
