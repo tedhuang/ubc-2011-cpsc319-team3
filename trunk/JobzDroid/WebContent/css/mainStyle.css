@@ -436,6 +436,9 @@ div#main-container {
 	border		: none;
 	display		: none;
 }
+.noBorder{
+	border		: none;
+}
 .displayTable{
 	border		: 2px solid #004000;
 }
