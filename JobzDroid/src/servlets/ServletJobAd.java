@@ -303,7 +303,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.educationReq 		= result.getInt("educationRequired");
 				jobAd.tags 				= result.getString("tags");
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
-				jobAd.isApproved 		= result.getBoolean("isApproved");
+//				jobAd.isApproved 		= result.getBoolean("isApproved");
 				
 				
 			}
