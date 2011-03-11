@@ -13,12 +13,37 @@ function loadProfileDetails(responseXML){
 	
 	var accountType =  responseXML.getElementsByTagName("accountType");
 	
-	//TODO: finish implementing
-	
-	
-	
-	
-
+	if( accountType=="searcher" ) {
+		document.getElementById("name").innerHTML
+			= responseXML.getElementsByTagName("name");
+		
+		document.getElementById("email").innerHTML
+			= responseXML.getElementsByTagName("email");
+		
+		document.getElementById("secondaryEmail").innerHTML 
+			= responseXML.getElementsByTagName("secondaryEmail");
+		
+		document.getElementById("educationFormatted").innerHTML 
+			= responseXML.getElementsByTagName("educationFormatted");
+		
+		document.getElementById("empPref").innerHTML 
+			= responseXML.getElementsByTagName("empPref");
+		
+		document.getElementById("address").innerHTML 
+			= responseXML.getElementsByTagName("address");
+		
+		document.getElementById("startingDate").innerHTML 
+			= responseXML.getElementsByTagName("startingDate");
+		
+		document.getElementById("selfDescription").innerHTML 
+			= responseXML.getElementsByTagName("selfDescription");
+		
+	}
+	else if ( accountType == "poster" ) {
+		
+		//TODO implement for poster
+	}
+	//TODO handle errors for invalid account type
 }
 
 
@@ -247,7 +272,6 @@ function getProfileById(){
 }
 
 function getProfileBySessionKey(){
-	
 
 	var sessionKey = document.getElementById("sessionKey").value;
 	
@@ -271,8 +295,6 @@ function getProfileBySessionKey(){
 	    {
 		    //parse XML response from server
 	    	loadProfileDetails(xmlhttp.responseXML);
-	    	
-	    	
 	    }
 	  };	
 	  

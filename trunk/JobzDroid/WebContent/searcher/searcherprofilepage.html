@@ -7,14 +7,14 @@
 	<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>	
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/authentication.js'></script>
+	<script type="text/javascript" src='../scripts/Profile.js'></script>
 	
 	<script type="text/javascript">
    
     $(document).ready(function(){
-
 		loadSessionKeyFromURL();
 		
-		
+		getProfileBySessionKey();
 		});
 		
 	
@@ -49,64 +49,49 @@
 <div id="regpage">
   <div class="regbox">
 	<h3 class="heading-text">Welcome to ________'s Profile Page</h3>
-		<table id="regTable">
+		<table id="profileTable">
 			<tbody>
 			  <tr>
 			    <td class="clean"></td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Full Name:
-    			</td>
-			  </tr>
-			  <tr>
-    			<td class="label">
-          		  Gender:
+          		  Full Name: <div id="name"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Age:
+          		  Primary Email: <div id="email"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Primary Email:
+          		  Secondary Email: <div id="secondaryEmail"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Secondary Email:
+          		  Degrees: <div id="educationFormatted"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Post Secondary:
+          		  Availability: <div id="empPref"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Degrees:
+          		  Current city: <div id="address"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Availability:
+          		  Starting Date: <div id="startingDate"></div>
     			</td>
 			  </tr>
 			  <tr>
     			<td style="width: 155px;" class="label">
-          		  Current city:
-    			</td>
-			  </tr>
-			  <tr>
-    			<td style="width: 155px;" class="label">
-          		  Work Experience:
-    			</td>
-			  </tr>
-			  <tr>
-    			<td style="width: 155px;" class="label">
-          		  Programming Skills:
+          		  Current city: <div id="selfDescription"></div>
     			</td>
 			  </tr>
 			  <tr>

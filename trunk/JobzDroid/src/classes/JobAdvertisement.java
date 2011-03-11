@@ -74,7 +74,7 @@ public class JobAdvertisement {
 		for( int i = 0 ; i < locationList.size() ; i++ ){
 			result=result.concat("\t\t<location address=\"" 	 + locationList.get(i).address + "\"" +
 										 " latitude=\""  + locationList.get(i).latitude + "\"" +
-										 " longitude=\"" + locationList.get(i).longitude + "\" >\n" );
+										 " longitude=\"" + locationList.get(i).longitude + "\" ></location>\n" );
 		}
 		
 		result = result.concat("\t</jobAd>\n");
