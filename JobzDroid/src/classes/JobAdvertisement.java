@@ -16,7 +16,7 @@ public class JobAdvertisement {
 	public long		creationDate;
 	public String	status;
 	public String	jobAdDescription;
-	public boolean	isApproved;
+	public int		isApproved; // 0 = false, 1 = true
 	public String	jobAvailability;
 	
 	public ArrayList<Location> locationList;
@@ -26,7 +26,10 @@ public class JobAdvertisement {
 	//public String 	eduReqFormatted;
 
 	
-	public JobAdvertisement(){	}
+	public JobAdvertisement(){
+		isApproved = 0;
+		status = "inactive";
+	}
 
 	
 	public String toXMLContent(){
