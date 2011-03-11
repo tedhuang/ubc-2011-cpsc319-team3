@@ -174,3 +174,17 @@ function loadSessionKeyFromURL()
 	$("#sessionKey").val(result);
 	//TODO wipe the sessionKey from address
 }
+
+/*****************************************************************************************************
+ * 					Load the URL and Pass the session key via form
+ ****************************************************************************************************/
+function loadPageWithSession( pageURL )
+{		
+	var sessionKey = document.getElementById("sessionKey").value;
+    if( sessionKey != "null" ) {
+    	document.sid.action = pageURL;
+    	document.sid.submit();
+    }
+    else
+    	return false;
+}

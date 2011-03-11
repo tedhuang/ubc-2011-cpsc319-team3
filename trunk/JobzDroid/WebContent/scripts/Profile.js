@@ -204,9 +204,6 @@ function editProfile(){
 	
 }
 
-
-
-
 function getProfileById(){
 	
 	document.getElementById("getProfileButton").disabled=true;
@@ -214,7 +211,7 @@ function getProfileById(){
 	
 	request = new Request;
 	request.addAction("getProfileById");
-	request.addSessionID("1234"); //TODO: CHANGE THIS
+	request.addSessionKey("1234"); //TODO: CHANGE THIS
 	request.addParam("accountID", intAccountID);
 
 	var xmlHttpReq;
@@ -246,10 +243,49 @@ function getProfileById(){
 		//change the text while sending the request
 		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 		
-	  
-	  
+	  //TODO parse returned profile XML
 }
 
+function getProfileBySessionKey(){
+	
+
+	var sessionKey = document.getElementById("sessionKey").value;
+	
+	request = new Request;
+	request.addAction("getProfileBySessionKey");
+	request.addSessionKey(sessionKey);
+
+	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		    //parse XML response from server
+	    	loadProfileDetails(xmlhttp.responseXML);
+	    	
+	    	
+	    }
+	  };	
+	  
+		//send the parameters to the servlet with POST
+		xmlhttp.open("POST","../ServletProfile" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(request.toString());
+
+		//change the text while sending the request
+		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+		
+	  //TODO parse returned profile XML
+}
 
 
 

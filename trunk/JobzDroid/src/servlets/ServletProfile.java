@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import classes.Location;
 import classes.ProfilePoster;
 import classes.ProfileSearcher;
+import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
@@ -37,6 +38,7 @@ public class ServletProfile extends HttpServlet{
 		editProfile,
 		getProfileById,
 		searchJobSearcher,
+		getProfileBySessionKey,
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
 	{
@@ -76,6 +78,10 @@ public class ServletProfile extends HttpServlet{
 				
 			case searchJobSearcher:
 				searchJobSearcher(request,response);
+				break;
+				
+			case getProfileBySessionKey:
+				getProfileBySessionKey(request, response);
 				break;
 				
 			default:
@@ -254,6 +260,168 @@ public class ServletProfile extends HttpServlet{
 		XMLResponse.append("<response>\n");
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
 		XMLResponse.append("\t<message>" + message + "</message>\n");
+		//TODO pass back XML formatted profile data
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+	}
+	
+	
+	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+		
+		//Poster = 1, Searcher = 2
+		String sessionKey = request.getParameter("sessionKey");
+		
+		Session currSession = dbManager.getSessionByKey( sessionKey );
+		
+		//Initialize Return statements
+		boolean isSuccessful = false;
+		String message = "Failure to fetch profile";
+		
+		Connection conn = null;	
+		Statement stmt = null;
+		Object profile = null;
+		
+		earlyExit:
+		{
+		try{
+
+			
+			String acctType = "";
+			
+			ArrayList<Location> profileAddressList = new ArrayList<Location>();
+			
+			if( currSession.checkPrivilege( "searcher") ) {
+				acctType = "Searcher";
+				ProfileSearcher searcher = new ProfileSearcher();
+				searcher.addressList = profileAddressList;
+				profile = searcher;
+			}
+			else if ( currSession.checkPrivilege( "poster") ) {
+				acctType = "Poster";
+				
+				ProfilePoster poster = new ProfilePoster();
+				poster.addressList = profileAddressList;
+				profile = poster;
+			}
+			else {
+				break earlyExit;
+			}
+			
+			System.out.println("Getting Job " + acctType + " Profile");
+			
+			conn = dbManager.getConnection();
+			stmt = conn.createStatement();
+			
+			String query = 
+					"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
+			
+			System.out.println("getJobAdBySessionKey query:" + query);
+			isSuccessful = stmt.execute(query);
+			ResultSet result = stmt.getResultSet();
+				
+			if (result.first()){
+
+				System.out.println("getJobAd successful");
+				message = "getJobAd successful";
+				
+				if ( currSession.getAccountType().equals("searcher") ) {
+					ProfileSearcher searcher = (ProfileSearcher)profile;
+					searcher.accountID			= result.getInt("idAccount");
+					searcher.name				= result.getString("name");
+					searcher.phone		 		= result.getString("phone");
+					searcher.selfDescription	= result.getString("selfDescription");
+					searcher.educationLevel		= result.getInt("educationLevel");
+					searcher.preferredStartDate = result.getLong("startingDate");
+				}
+				if ( currSession.getAccountType().equals("poster") ) {
+					ProfilePoster poster = (ProfilePoster)profile;
+					
+					poster.accountID		= result.getInt("idAccount");
+					poster.name				= result.getString("name");
+					poster.phone		 	= result.getString("phone");
+					poster.selfDescription	= result.getString("selfDescription");
+					
+				}
+					
+			}
+			else{ //Error case
+				isSuccessful = false;
+				message = "Error: Profile not found with ID=" + currSession.getIdAccount();
+				System.out.println("Error: Profile not found with ID=" + currSession.getIdAccount());
+			}
+				
+				
+			/**Get Location values */
+			
+			query = "SELECT * FROM tableLocationProfile WHERE " +
+						"idAccount= '" + currSession.getIdAccount() +"'";
+			
+			result = stmt.getResultSet();
+			
+			ArrayList<Location> fetchedAddressList = new ArrayList<Location>();
+			
+			if(!result.first()){
+					System.out.println("Error: failed to find the inserted location");
+			}
+			else{
+				Location address = new Location();
+				while(result.next()){
+					//Get Address, Longitude, Latitude
+					address.address = result.getString("location");
+					address.longitude = result.getDouble("longitude");
+					address.latitude = result.getDouble("latitude");	
+				}
+				fetchedAddressList.add(address);
+			}
+			
+			profileAddressList = fetchedAddressList;
+			
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			System.out.println("SQL exception : " + e.getMessage());
+	
+		}
+		
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		}//earlyExit:
+	    System.out.println("Checkpoint: End of create profile - Message: " + message);
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		
+		if ( currSession.getAccountType().equals("searcher") ) {
+			XMLResponse.append( ((ProfileSearcher)profile).toXMLContent() );
+		}
+		else if ( currSession.getAccountType().equals("poster") ) {
+			XMLResponse.append( ((ProfilePoster)profile).toXMLContent() );
+		}
+		
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
