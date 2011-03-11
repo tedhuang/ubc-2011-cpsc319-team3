@@ -263,8 +263,7 @@ public class ServletJobAd extends HttpServlet {
 	 * Extracts all information from the database of the targetted Job Ad
 	 * and returns it in a JobAdvertisement object ported to XML format
 	 */
-	private void getJobAdById(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
+	private void getJobAdById(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		String message = "Create Job Advertisement Failed";
 		boolean isSuccessful = false;
