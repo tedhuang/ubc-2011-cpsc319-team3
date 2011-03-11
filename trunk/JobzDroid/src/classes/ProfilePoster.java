@@ -18,6 +18,10 @@ public class ProfilePoster {
 	
 	public String toXMLContent(){
 		
+		//Empty location just to avoid null pointers
+		Location loc = new Location("");
+		addressList.add(loc);
+		
 		String result =  "\t\t<profilePoster" +
 		" accountType=\"" + "1" + "\"" +
 		" accountID=\"" + accountID + "\"" +
@@ -27,7 +31,7 @@ public class ProfilePoster {
 		" selfDescription=\"" + selfDescription + "\" >\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
-			result = result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
+			result = result.concat("\t\t\t<location address=\""  + addressList.get(i).address + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
 										 " longitude=\"" + addressList.get(i).longitude + "\" >\n" );
 		}

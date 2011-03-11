@@ -23,6 +23,10 @@ public class ProfileSearcher {
 	
 	public String toXMLContent(){
 		
+		//Empty location just to avoid null pointers
+		Location loc = new Location("");
+		addressList.add(loc);
+		
 		String result = "\t\t<profileSearcher" +
 		" accountType=\"" + "2" + "\"" +
 		" accountID=\"" + accountID + "\"" +
