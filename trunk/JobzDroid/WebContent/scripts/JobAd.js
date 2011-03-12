@@ -107,6 +107,9 @@ function loadJobAdDetails( responseXML ){
 
 
 
+
+
+
 //TODO: hook up with UI
 function changeJobAdStatus(){
 	
@@ -711,4 +714,57 @@ function getJobAdById(id, outputDiv, heading)
 function viewDetail(adRow, outputDiv, heading){
 	getJobAdById(adRow, outputDiv, heading);
 }
+
+
+function getJobAdByOwner(ownerId, outputDiv, heading){
+	
+	var intOwnerId = document.getElementById("ownerId").value;
+	
+	request = new Request;
+	request.addAction("getJobAdByOwner");
+//	request.addSessionKey(document.getElementById("sessionKey").value ); 
+	request.addParam("ownerId", intOwnerId);
+	
+//	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		  buildOwnerAdTb("jobAd", outputDiv, heading);
+	    }
+	  };
+	  
+	  
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+
+	//change the text while sending the request
+	 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');	
+}
+
+ 
+
+
+
+
+
+
+
+
+
+
 
