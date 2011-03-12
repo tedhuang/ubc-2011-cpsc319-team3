@@ -95,6 +95,7 @@ public class ServletProfile extends HttpServlet{
 	
 	private void getProfileById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
+		//TODO change this later
 		//Poster = 1, Searcher = 2
 		int accountType = Integer.parseInt(request.getParameter("accountType")); 	
 		int accountID = Integer.parseInt(request.getParameter("accountID"));
@@ -221,7 +222,7 @@ public class ServletProfile extends HttpServlet{
 					}
 				
 					searcher.addressList= addressList;
-					
+
 				/** TODO: GET EMPLOYMENT PREFERENCE **/
 				
 					
@@ -271,7 +272,6 @@ public class ServletProfile extends HttpServlet{
 	
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
-		//Poster = 1, Searcher = 2
 		String sessionKey = request.getParameter("sessionKey");
 		
 		Session currSession = dbManager.getSessionByKey( sessionKey );
