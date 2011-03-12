@@ -31,6 +31,44 @@ function buildDetailTable(targetXMLTag, outputDiv, heading){
 	}
 }
 
+
+/************************************************************************************************
+ * 					BUILD TABLE FOR AD LIST
+ * INSERT RETURNED DATA INTO THE TABLE
+ * @param xmlObj: THE xmlObject name returned from the server
+ * @param outputDiv: The DIV where the table is held
+**************************************************************************************************/
+function buildOwnerAdTb(targetXMLTag, outputDiv){
+	var tbody  = $("tbody", outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
+		  
+		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + jobAd.attr("jobAdTitle") +
+		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
+		  				
+		  				"</td><td>" + jobAd.attr("contactInfo")  + 
+		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
+		  				"</td><td>" + jobAd.attr("jobAvail") +
+		  				"</td><td>" + jobAd.children("location").attr("address")+
+		  				"</td><td>" + "</td></tr>";
+		  
+		  $(rowText).appendTo(tbody);
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}
+
+
+
+
+
 /************************************************************************************************
  * 					BUILD TABLE FOR AD LIST
  * INSERT RETURNED DATA INTO THE TABLE
