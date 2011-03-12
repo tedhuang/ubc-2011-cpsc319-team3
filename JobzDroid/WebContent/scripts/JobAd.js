@@ -743,7 +743,7 @@ function getJobAdByOwner(ownerId, outputDiv, heading){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		  buildOwnerAdTb("jobAd", outputDiv, heading);
+		  buildOwnerAdTb("jobAd", outputDiv);
 	    }
 	  };
 	  
