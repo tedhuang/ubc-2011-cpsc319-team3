@@ -67,8 +67,9 @@ public class ServletDocument extends HttpServlet {
 		}
 
 		//TODO check user via sessionKey
-		//TODO parse filename
+		
 		//TODO check size, find entry in DB
+		
 		//TODO Write entry in DB
 		
 		

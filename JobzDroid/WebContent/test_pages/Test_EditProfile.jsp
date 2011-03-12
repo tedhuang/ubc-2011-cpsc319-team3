@@ -5,6 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Edit Profile Test Page</title>
+<!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/Profile.js'></script>
 
@@ -25,15 +26,25 @@
 
 </head>
 
-<body onload="document.getElementById('searcherProfileDetails').style.display='none'; document.getElementById('posterProfileDetails').style.display='none'">
-
 <h3>Edit Profile Test Page</h3>
+
+<br>
+
+	<div id="profileTable" class="resultTableDiv noBorder">
+	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+	<table>
+	<tbody>
+	</tbody>
+	</table>
+	</div>	
+<button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>
+
+<!--  
+
 <br>
 AccountID:
 <input id="accountID" type="text"  size="20"><br>
 <button id="getProfileButton" type="button" onclick="getProfileById()">Submit</button>
-
-<br>
 
 <div id="searcherProfileDetails">
 	Name: 
@@ -95,7 +106,11 @@ AccountID:
 <br>
 <button id="submitEdit" type="button" onclick="editProfile()">Submit</button>
 <div id="feedback"><h3>Feedback Area</h3></div>
+-->
 
+	<form name="sid" method="get" action="">
+		<input  id="sessionKey" name="sessionKey"/>
+	</form>
 
 </body>
 </html>
