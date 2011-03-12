@@ -7,26 +7,14 @@
     padding-top		: 0px;   
     padding-right	: 0px; 
     padding-left	: 0;     
-    top				: 120px;
-	left			: 0; !important
+    top				: 145px;
+	right			: 0; !important
 	
-/*****The non-fixed style
-	position: relative;    
-    padding: 0px ;
-    padding-top: 5px;   
-    padding-right: 0px; 
-    padding-left: 0;     
-    margin: 0;     
-*******/   
-    display			:block;
+    display			: block;
     list-style		: none;    
-    float			: left;
-    width			:150px;
-    /*
-height:400px;
-*/ 
+    float			: right;
+    /*width			: 150px;*/
     clear			: both;
-    border			: 1px solid #CCCCCC;    
     background		: #f5f5f5;
     z-index			: 100;
     
@@ -39,49 +27,49 @@ height:400px;
     position: relative; 
     margin: 0;
     padding: 0;    
-   /* border-bottom: 0px solid #E0E0E0 !important;*/  
-    border-top: 0px solid #E0E0E0;  
-    border-bottom: 1px solid #E0E0E0;      
 }
 
 .sideNavMenu li a{ 
   
   display		:block;
   margin		:0;
-  padding		:3px;
-  height		:32px;
+  padding		: 5px 10px;
+  height		:40px;
+  min-width		:160px;
   color			:#0464BB;
   outline-style	:none;
+  text-align	: right;
 }
 
+.sideNavMenu li a.topMenu{ 
+	border-bottom: 1px solid #E0E0E0;
+}
+.sideNavMenu li a.topMenu:hover{
+	cursor: default;
+}
 
 .sideNavMenu li a img { 
   display:block;
   margin:0;
   padding:3px;
-  height:30px;
-  width:30px;
-  float:right;
-  cursor:pointer;
+  height:40px;
+  width:40px;
+  float:left;
 }
 
 .sideNavMenu li a h2 { 
   display:block;
   font: bold 12px Verdana, Arial, Helvetica, sans-serif;
-  float:left;
 }
-.sideNavMenu  li a.topMenu small { 
+.sideNavMenu  li a small { 
   font: bold 8px Verdana, Arial, Helvetica, sans-serif;
-  float:left;
 }
 .sideNavMenu li a:hover {   
   color:#FFF; 
   background: #9EDB04;
   
 }
-.sideNavMenu li a.topMenu:hover{
-	cursor: default;
-}
+
 /********************SubMenus***********************/
 .sideNavMenu #subMenu{
 	padding: 0;
@@ -98,7 +86,6 @@ height:400px;
 
 .sideNavMenu #subMenu li a {
 	height		: 15px;
-	padding		: 5px 15px;
 	color		: #119f14;
 	font-size	: 13px;
 	line-height	: 1.2em;

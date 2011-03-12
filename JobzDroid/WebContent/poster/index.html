@@ -12,13 +12,16 @@
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
+<script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
+<script type="text/javascript" src="../scripts/uiBot.js"></script>
+
 <script type="text/javascript">
    
     $(document).ready(function(){
     	// Smart Tab 
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
-  		$('#sideMenu').sideNavMenu({sliding:false});
+  		$('#sideMenu').sideNavMenu({});
 		
 		$('#tabs').DynaSmartTab({});
 		// MOVED TO AUTHENTICATION.JS
@@ -55,34 +58,31 @@
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a href="#" onclick="$.fn.DynaSmartTab.showUnremovableTab('newAdTab')">
+			<a class="jsBtn" onclick="$.fn.DynaSmartTab.addShowTab('newAdTab');">
 				<img src="../images/icon/new-post.png"/>
 				<h2>New Job Ad</h2>
 			</a>
-			<ul>
-				<li><a>Submenu1</a></li>
-			</ul>
 		</li>
 	
 		<li>
-			<a href="normalpage.html" class="topMenu">
+			<a class="topMenu">
 				<h2>Ad Management</h2>
 			</a>
 			<ul id="subMenu">
-				<li><a href="#">
+				<li><a class="jsBtn">
 					<img src="../images/icon/active.png"/>
 					Active</a>
 				</li>
-				<li><a href="#">
+				<li><a class="jsBtn">
 					<img src="../images/icon/draft.png"/>
 					Draft</a>
 				</li>
-				<li><a href="#">
+				<li><a class="jsBtn">
 					<img src="../images/icon/pending.png"/>
 					Pending</a>
 				</li>
 				
-				<li><a href="#">
+				<li><a class="jsBtn">
 					<img src="../images/icon/inactive.png"/>
 					Inactive</a>
 				</li>
@@ -90,7 +90,7 @@
 		</li>
 	
 		<li>
-			<a href="#" class="topMenu">
+			<a class="topMenu">
 				<h2>Help & Feeds</h2>
 			</a>
 			<ul id="subMenu">
@@ -111,13 +111,15 @@
   			<li id="homeTab">
   				<a href="#home-frame"><h2>Home</h2></a>
 			</li>
-  			<li id="Tab">
+  			<li id="adMngTab">
   				<a href="#adMng-frame"><h2>My Ads</h2></a>
 			</li>
-			<li id="newAdTab" class="hideOnly">
+			<li id="newAdTab" class="hideOnly iniHidden">
 				<span class="close">X</span>
   				<a href="#newAd-frame"><h2>New Ad</h2></a>
-				
+			</li>
+			<li id="profileTab">
+  				<a href="#profileFrame"><h2>My Profile</h2></a>
 			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
@@ -178,7 +180,7 @@
 			  </div><!--ENDOF DIV RESULT TABLE-->     			
         </div>
 		
-  		<div id="adMng-frame" class="subFrame unremovable">
+  		<div id="adMng-frame" class="subFrame unremovable iniHidden">
             <div id="adLinks">
             	<ul>
             		<li><a href="#">Active<span id="numActive"></span></a></li>
@@ -188,7 +190,7 @@
             	</ul>
             </div>  
 			<input type="text" name="tabName"/>
-                        <a href=# onclick="addTab();">CLICK TO ADD TAB</a>      
+                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
                         <script>
                             function addTab(){
                               var value = $("input[name=tabName]").val();
@@ -260,10 +262,19 @@
 						<input id="loc-filed" name="loc-field" class="textBox" value=""/>
 					</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
-			
 		  </div><!--ENDOF newAdForm-->
-		  
 		</div><!--ENDOF newAd-frame-->
+		
+		<div id="profileFrame" class="subFrame">
+			 <div id="profileTable" class="resultTableDiv noBorder">
+			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>	
+			 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>	
+		</div><!--end of TABPROFILEFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  

@@ -92,6 +92,16 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		  break;
 		  
 		case "poster":
+			
+			$(heading).html( profile.attr("name") + "'s Profile");
+			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
+			  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td></tr>" +
+			  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td></tr>" +
+			  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td></tr>" +
+			  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+			
 		  break;
 		  
 		default:
