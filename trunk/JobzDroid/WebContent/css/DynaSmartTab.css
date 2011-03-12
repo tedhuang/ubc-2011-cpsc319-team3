@@ -58,11 +58,14 @@ position: relative;
     -webkit-border-bottom-left-radius	: 0px;
     -webkit-border-bottom-right-radius	: 0px;  
 }
+.iniHidden{
+	display: none;
+}
 .navBar ul li{ 
     position		: relative; 
     margin			: 0;
     float			: left;
-	
+	cursor			: pointer;
 	text-align		: center;
 	max-width		: 190px;
   	border-right	: 1px solid #E0E0E0;
@@ -72,6 +75,7 @@ position: relative;
   color				: #FFF; 
   background-color  : #9EDB04; 
 }
+
 .navBar li a{ 
 	height			: 30px;
 	width			: 130px;

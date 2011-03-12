@@ -475,8 +475,8 @@ public class DBManager {
 			Session currSession = null;
 			stmt = conn.createStatement();
 			String queryCode =
+//				"SELECT * FROM tableSession INNER JOIN tableAccount USING (idAccount)";
 				"SELECT * FROM tableSession INNER JOIN tableAccount USING (idAccount)";
-			
 			
 			
 			rs = stmt.executeQuery( queryCode );

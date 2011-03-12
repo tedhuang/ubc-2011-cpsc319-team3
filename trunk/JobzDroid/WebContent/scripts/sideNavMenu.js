@@ -29,7 +29,7 @@
 				 navMenu.bind("mouseenter", function(e){
 					$(this).stop(true).animate(
 							{
-								'left': '0px'
+								'right': '0px'
 							},
 							"slow",
 							"swing"
@@ -61,13 +61,13 @@
 		 
 		 function hideNavMenu(){
 			 navMenu
-			 .delay(2500) //Delay hiding
+			 .delay(1700) //Delay hiding
 			 .animate(
 					 {
-						 'left' : '-150px'
+						 'right' : '-121px'
 					 },
 					 
-					 2000,
+					 1500,
 					 "swing",
 					 
 					 function(){

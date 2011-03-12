@@ -109,6 +109,9 @@ h2.welcome{
 	padding: 0 0 3px;
 	
 }
+a.jsBtn{
+	cursor	: pointer;
+}
 /************************ENDOF BASIC STRUCTURE**********************************/
 .pagefont {#bebebe#bfbfbf
 	padding: 3px 8px 3px 8px; 
