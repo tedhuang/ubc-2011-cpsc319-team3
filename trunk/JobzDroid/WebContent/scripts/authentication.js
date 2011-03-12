@@ -185,6 +185,5 @@ function loadPageWithSession( pageURL )
     	document.sid.action = pageURL;
     	document.sid.submit();
     }
-    else
-    	return false;
+    return false;
 }

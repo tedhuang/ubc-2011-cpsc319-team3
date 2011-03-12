@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import classes.Utility;
 import classes.NewsEntry;
@@ -41,13 +42,12 @@ public class NewsManager {
 		try {
 			String query = "INSERT INTO tableNews(title, content, dateTimePublished)" +
             		" VALUES(?,?,?);";
-			
 			pst = conn.prepareStatement(query);
 			pst.setString(1, title);
             pst.setString(2, content);
             pst.setLong(3, currentTime);
             
-			int rowsInserted = pst.executeUpdate(query);
+			int rowsInserted = pst.executeUpdate();
 			// if successful, 1 row should be inserted
 			if (rowsInserted != 1)
 				return false;
@@ -103,6 +103,7 @@ public class NewsManager {
 		        NewsEntry entry = new NewsEntry(idNews, title, content, dateTimePublished);
 		        entries.add(entry);
 		    }
+		    Collections.sort(entries);
 		}
 		catch (SQLException e) {
 			Utility.logError("SQL exception: " + e.getMessage());

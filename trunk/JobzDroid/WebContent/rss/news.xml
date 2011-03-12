@@ -1,11 +1,22 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<rss version="2.0">
-
-<channel>
-  <title>JobzDroid - Site News</title>
-  <link>http://localhost:8080/JobzDroid</link>
-  <description>Site News of Your Ultimate Database Jobs Market</description>
-  <language>en-us</language>
-</channel>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>JobzDroid - Site News</title>
+    <link>http://localhost:8080/JobzDroid/news.jsp</link>
+    <description>Site News of Your Ultimate Database Jobs Market</description>
+    <dc:language>en-us</dc:language>
+    <item>
+      <title>1111111111111111111111111</title>
+      <description>22222222222222222222222</description>
+      <pubDate>Sat, 12 Mar 2011 03:28:14 GMT</pubDate>
+      <dc:date>2011-03-12T03:28:14Z</dc:date>
+    </item>
+    <item>
+      <title>rrrrrrrrrr</title>
+      <description>ddddddd</description>
+      <pubDate>Sat, 12 Mar 2011 03:20:54 GMT</pubDate>
+      <dc:date>2011-03-12T03:20:54Z</dc:date>
+    </item>
+  </channel>
 </rss>
+

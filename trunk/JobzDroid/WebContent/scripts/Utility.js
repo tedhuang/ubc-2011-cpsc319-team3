@@ -38,6 +38,15 @@ function limitChars(textId, limit, infoTag){
 		$('#' + infoTag).text('You have '+ (limit - textLength) +' characters left.');
 }
 
+/***
+ * Trims the given string, removing white spaces at the front and end.
+ * @param stringToTrim String to trim.
+ * @returns String after trim.
+ */
+function trim(stringToTrim) {
+	return stringToTrim.replace(/^\s+|\s+$/g,"");
+}
+
 /***********************************************
 * Drop Down Date select script- by JavaScriptKit.com
 * This notice MUST stay intact for use

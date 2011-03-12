@@ -31,18 +31,23 @@
 	%>	
 		<div class="main">
 		  <div class="header">
-			<a id="logo" title="home" href="http://localhost:8080/JobzDroid/index.html">
-		        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
+			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
+		        <img src="../images/logo-small.png"/>
 			</a>
 			<ul id="topnav" class="topnav">
-			    <li><a href="#" class="btn">News</a></li>
-			    <li><a href="#" class="btn">RSS</a></li>
+			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
+			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>
 		  
 		  <br/>	
 		  <h1><b><font size='4'>Admin Home</font></b></h1>
+		  <a href="#" onclick="loadPageWithSession('postNews.jsp')">Post News</a>
+		  
+		  
+		  <br/>
+		  <hr/>
 		</div>
 	
 		<ul class="footer_wrapper2">

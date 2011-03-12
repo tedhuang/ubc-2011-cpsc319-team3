@@ -4,8 +4,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>Post News</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="../scripts/Utility.js"></script>
+	<script type="text/javascript" src="../scripts/postNews.js"></script>
+	<script type="text/javascript" src="../scripts/authentication.js"></script>
+	<title>Post News</title>
 </head>
 <body>
 	<%	
@@ -27,20 +32,60 @@
 	%>	
 		<div class="main">
 		  <div class="header">
-			<a id="logo" title="home" href="http://localhost:8080/JobzDroid/index.html">
-		        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
+			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
+		        <img src="../images/logo-small.png"/>
 			</a>
 			<ul id="topnav" class="topnav">
-			    <li><a href="#" class="btn">News</a></li>
-			    <li><a href="#" class="btn">RSS</a></li>
+			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
+			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>
 		  
-		  <br/>	
-		  <h1><b><font size='4'>Post News</font></b></h1>
+		  <br/>			  
+		  <div class="regbox">
+			<h3 class="heading-text">Post Site News</h3>
+				<table>
+					<tbody>
+					  <tr>
+					    <td class="clean"></td>
+					  </tr>
+					  <tr>
+		    			<td style="width: 155px;" class="label">
+		          		    Title: 
+		    			</td>
+					    <td style="width: 272px">
+					        <div>
+					            <input type="text" class="textinput" id="newsTitle" size="134" maxlength="100" tabindex="11"/>
+					      		<span id="titleError" class="errorTag"></span>
+					        </div>
+					    </td>
+					  </tr>
+					  <tr>
+					    <td class="clean"></td>
+					  </tr>
+					<tr>
+					    <td class="label">			        
+					        Content:			        
+					    </td> 
+					    <td>
+					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
+					        <span id="contentInfo"></span>
+					    </td>
+					</tr>
+				</tbody>
+			</table>
+				
+			<p align="center"><button id="submitButton" type="button">Submit</button></p>
+			<!--TODO STYLE THE BUTTON-->
+			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>	
+		  </div>	
+		  
+		  <br/>
+		  <hr/>
 		</div>
-	
+		
 		<ul class="footer_wrapper2">
 			<li>
 				©2011 JobzDroid
