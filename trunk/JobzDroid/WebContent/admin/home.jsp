@@ -44,6 +44,7 @@
 		  <br/>	
 		  <h1><b><font size='4'>Admin Home</font></b></h1>
 		  <a href="#" onclick="loadPageWithSession('postNews.jsp')">Post News</a>
+		  <a href="#" onclick="loadPageWithSession('manageJobAd.jsp')">Manage Jobs Advertisements</a>
 		  
 		  
 		  <br/>
