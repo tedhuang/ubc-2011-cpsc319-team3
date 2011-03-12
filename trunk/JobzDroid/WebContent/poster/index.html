@@ -133,7 +133,38 @@
 			</div>
             <h2 class="welcome">My Active Ads</h2>
 			 
-			 <div id="activeAdTable" class="resultTableDiv tableClear">
+			    			
+        </div>
+		
+  		<div id="adMng-frame" class="subFrame unremovable iniHidden">
+            <div id="adLinks">
+            	<ul>
+            		<li><a href="#">Active<span id="numActive"></span></a></li>
+					<li><a href="#">Draft<span id="numDraft"></span></a></li>
+					<li><a href="#">Pending<span id="numPending"></span></a></li>
+					<li><a href="#">Inactive<span id="numInactive"></span></a></li>
+            	</ul>
+            	
+            </div>  
+			<input type="text" name="tabName"/>
+                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
+                        <script>
+                            function addTab(){
+                              var value = $("input[name=tabName]").val();
+                              $.fn.DynaSmartTab.addTab(value);
+                                }
+                        </script>
+        </div> 
+		   
+		<div id="newAd-frame" class="subFrame unremovable">
+          <div id="head-bar">
+				<h2 class="welcome">Create New Ad</h2>
+				<ul>
+					<li><a href="#" class="btn">Save to Draft</a></li>
+		    		<li><a href="#" class="btn">Post it</a></li>
+					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
+					<li><input type = "reset"/>reset</li>
+					<div id="activeAdTable" class="resultTableDiv tableClear">
 				<table>
 					<thead>
 					<tr>
@@ -145,11 +176,6 @@
 						<th id="col-viewTitle">
 							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Job Title</div>
-							</div>
-						</th>
-						<th id="col-viewCompany">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Company</div>
 							</div>
 						</th>
 						<th id="col-viewEduReq">
@@ -177,36 +203,7 @@
 					<tbody>
 					</tbody>
 				</table><!--ENDOF TABLE-->
-			  </div><!--ENDOF DIV RESULT TABLE-->     			
-        </div>
-		
-  		<div id="adMng-frame" class="subFrame unremovable iniHidden">
-            <div id="adLinks">
-            	<ul>
-            		<li><a href="#">Active<span id="numActive"></span></a></li>
-					<li><a href="#">Draft<span id="numDraft"></span></a></li>
-					<li><a href="#">Pending<span id="numPending"></span></a></li>
-					<li><a href="#">Inactive<span id="numInactive"></span></a></li>
-            	</ul>
-            </div>  
-			<input type="text" name="tabName"/>
-                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
-                        <script>
-                            function addTab(){
-                              var value = $("input[name=tabName]").val();
-                              $.fn.DynaSmartTab.addTab(value);
-                                }
-                        </script>
-        </div> 
-		   
-		<div id="newAd-frame" class="subFrame unremovable">
-          <div id="head-bar">
-				<h2 class="welcome">Create New Ad</h2>
-				<ul>
-					<li><a href="#" class="btn">Save to Draft</a></li>
-		    		<li><a href="#" class="btn">Post it</a></li>
-					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
-					<li><input type = "reset"/>reset</li>
+			  </div><!--ENDOF DIV RESULT TABLE-->  
 				</ul>
 		  </div><!--ENDOF headBar-->
 		  <div id="newAdForm" class="newFormContainer">
