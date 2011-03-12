@@ -317,7 +317,9 @@ public class ServletProfile extends HttpServlet{
 			
 			//TODO add join statement to retrieve email info
 			String query = 
-					"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
+//					"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
+				"SELECT * FROM tableProfile"+ acctType +" INNER JOIN tableAccount " + 
+					"USING (idAccount) WHERE idAccount=" + currSession.getIdAccount();
 			
 			System.out.println("getJobAdBySessionKey query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -336,6 +338,8 @@ public class ServletProfile extends HttpServlet{
 					searcher.selfDescription	= result.getString("selfDescription");
 					searcher.educationLevel		= result.getInt("educationLevel");
 					searcher.preferredStartDate = result.getLong("startingDate");
+					searcher.email				= result.getString("email");
+					searcher.secondaryEmail		= result.getString("secondaryEmail");
 				}
 				if ( currSession.getAccountType().equals("poster") ) {
 					ProfilePoster poster = (ProfilePoster)profile;
@@ -344,7 +348,8 @@ public class ServletProfile extends HttpServlet{
 					poster.name				= result.getString("name");
 					poster.phone		 	= result.getString("phone");
 					poster.selfDescription	= result.getString("selfDescription");
-					
+//					poster.email				= result.getString("email");
+//					poster.secondaryEmail		= result.getString("secondaryEmail");
 				}
 					
 			}
