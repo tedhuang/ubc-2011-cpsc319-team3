@@ -12,39 +12,19 @@
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
 
-
-</head>
-
 <script language="JavaScript">
-
-//window.onload=initializePage();
-
   function initializePage(){
 	  $("#jobAdDetails").hide();
 	  //document.getElementById("jobTitle").disabled=true;
   }
-  
 </script>
+
+</head>
+
 
 <body onload="initializePage()">
 
-	<%	
-	DBManager dbManager = DBManager.getInstance();
-	String sessionKey = request.getParameter("sessionKey");
-	Session s = dbManager.getSessionByKey(sessionKey);
-	// if invalid or non-admin session, then forward to error page.
-	if (s == null){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
-	}
-	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
-	}
-	else{ //TODO ADD ADMIN HOME UI
-	%>	
+
 		Select a Job Ad: <br/>
 		Job Ad ID: <input id="jobAdId" type="text" name="jobAdId" size="15"/><br/>
 		<button id="getJobAdButton" type="button" onclick="getJobAdById()">Find Job Ad</button> <br/>
@@ -125,20 +105,10 @@
 		
 		</div>
 		
-		
 			<form name="sid" method="get" action="">
 				<input id="sessionKey" name="sessionKey"/>
 			</form>
-	<%
-	}
-	%>	
-
-
-
-
-
-
-
+					
 
 </body>
 </html>
