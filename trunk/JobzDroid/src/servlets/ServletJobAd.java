@@ -45,6 +45,7 @@ public class ServletJobAd extends HttpServlet {
 		searchJobAdvertisement,
 		editJobAdvertisement,
 		deleteJobAd,
+		getJobAdByOwner,
 		getJobAdById,
 		adminApprove,
 		adminDeny,
@@ -103,6 +104,10 @@ public class ServletJobAd extends HttpServlet {
 			
 			case editJobAdvertisement:
 				editJobAdvertisement(request,response);
+			
+			case getJobAdByOwner:
+				getJobAdByOwner(request, response);
+				break;
 				
 			case getJobAdById:
 				getJobAdById(request, response);
@@ -257,6 +262,133 @@ public class ServletJobAd extends HttpServlet {
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 	}
+	
+
+	
+	
+	
+	
+	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	
+		String message = "Create Job Advertisement Failed";
+		boolean isSuccessful = false;
+		
+		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		String ownerId = request.getParameter("ownerId");
+
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"SELECT * FROM tableJobAd " + 
+				"WHERE idAccount=" + ownerId;
+			
+			System.out.println("getJobAdById query:" + query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			if(!result.first()){
+				message = "Error: No Job Ad found with owner ID =" + ownerId;
+				System.out.println("Error: No Job Ad found with owner ID =" + ownerId);
+			}
+			
+			while(result.next()){
+				
+				//Fill in the fields of the jobAd object
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.status 			= result.getString("status");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.tags 				= result.getString("tags");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+				jobAd.isApproved 		= result.getInt("isApproved");
+				
+			/**Get Location values */
+				ArrayList<Location> locationList = new ArrayList<Location>();
+				Location location = new Location();
+				
+				query = "SELECT * FROM tableLocationJobAd WHERE " +
+						"idJobAd= '" + jobAd.jobAdId +"'";
+				result = stmt.getResultSet();
+				
+				if(!result.first()){
+					System.out.println("Error: failed to find the inserted location");
+				}
+				else{
+					while(result.next()){
+						//Get Address, Longitude, Latitude
+						location.address = result.getString("location");
+						location.longitude = result.getDouble("longitude");
+						location.latitude = result.getDouble("latitude");	
+					}
+					locationList.add(location);
+				}
+				
+				jobAd.locationList = locationList;
+				
+				jobAdList.add(jobAd);
+			
+			}//END OF WHILE LOOP
+			
+			System.out.println("getJobAdByStatus successful");
+			message = "getJobAdByStatus successful";
+			isSuccessful = true;
+
+		} //END OF TRY
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		
+		Iterator<JobAdvertisement> itr = jobAdList.iterator();
+		
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+	
+	
 	
 	
 	/*
