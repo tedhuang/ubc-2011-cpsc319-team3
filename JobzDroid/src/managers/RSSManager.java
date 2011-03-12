@@ -104,7 +104,7 @@ public class RSSManager {
 	 * @throws FeedException 
 	 * @throws IllegalArgumentException 
 	 */
-	public static SyndFeed readFeedFromFile(String fileURL) throws IllegalArgumentException, FeedException, IOException{
+	public static SyndFeed readFeedFromURL(String fileURL) throws IllegalArgumentException, FeedException, IOException{
 		SyndFeed feed;
 		URL feedSource = new URL(fileURL);
 	    SyndFeedInput input = new SyndFeedInput();

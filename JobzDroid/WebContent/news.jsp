@@ -38,13 +38,16 @@
 	  		String formattedDate = Utility.longToDateString(dateTimePublished, "PST");
 	  %>
 	  		<table>
-	  			<thead><%= title %></thead>
+	  			<thead ><%= title %></thead>
 	  			<tr>
 	  				<td><%= formattedDate %></td>
 	  			</tr>
 	  			<tr>
-	  				<td><%= content %></td>
-	  			</tr>
+	  				<td><pre><%= content %></pre></td>
+	  			</tr>	  			
+			  	<tr>
+			  	  <td class="clean"></td>
+			 	</tr>
 	  		</table>
 	  <%		
 	  	}

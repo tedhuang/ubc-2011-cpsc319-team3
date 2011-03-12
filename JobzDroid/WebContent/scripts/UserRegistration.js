@@ -137,7 +137,7 @@ function validateForm(evt){
 	}
 }
 
-// sends account reg request to the corresponding servlet
+// sends account reg request to the account servlet
 function sendRegRequest(evt){
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass("errorTag");	

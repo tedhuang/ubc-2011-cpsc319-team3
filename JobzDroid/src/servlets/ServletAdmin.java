@@ -427,14 +427,14 @@ public class ServletAdmin extends HttpServlet {
 				// add entry to the top of news RSS
 				try {
 					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromFile(newsPath);
+					SyndFeed newsFeed = RSSManager.readFeedFromURL("http://localhost:8080/JobzDroid/rss/news.xml");
 					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(), content);
 					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 
 				catch (Exception e) {
 					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
-					message = "News entry has been successfully posted, but there was an error while trying to update RSS for news.";
+					message = "News entry has been successfully posted, but there was an error updating News RSS.";
 				}				
 			}
 			else

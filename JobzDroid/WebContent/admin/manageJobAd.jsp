@@ -11,7 +11,7 @@
 <script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/JobAd.js'></script>
-
+<script type="text/javascript" src="../scripts/authentication.js"></script>
 <script language="JavaScript">
   function initializePage(){
 	  $("#jobAdDetails").hide();
