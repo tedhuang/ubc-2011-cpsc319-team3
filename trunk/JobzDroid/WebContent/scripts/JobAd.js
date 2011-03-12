@@ -76,8 +76,6 @@ function loadJobAdDetails( responseXML ){
         
         var locList			=	jobAd.getAttribute("locationList");
         
-        
-        
 		if(isApproved){
 			isApproved = "Yes";
 		}
@@ -103,7 +101,6 @@ function loadJobAdDetails( responseXML ){
 		
 		
 		//showMap() //TODO: integrate showMap from Google Maps
-		
 }
 
 
@@ -119,7 +116,7 @@ function changeJobAdStatus(){
 function adminDeleteJobAd(){
 	
 	var sessionKey = document.getElementById("sessionKey").value;
-	var intJobAdId = $("#jobAdId");
+	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -161,12 +158,89 @@ function adminDeleteJobAd(){
 
 function adminApprove(){
 	
-	//TODO: hook up with UI
+	var sessionKey = document.getElementById("sessionKey").value;
+	var intJobAdId = document.getElementById("jobAdId").value;
+	
+	if( intJobAdId == null ){
+		alert("Job Ad ID is not provided");
+	}
+	
+	request = new Request;
+	request.addAction("adminApprove");
+	request.addParam("jobAdId", intJobAdId);
+	
+	//Response Handling:
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		   var message = xmlhttp.responseXML.getElementById("message");
+		   var result = xmlhttp.responseXML.getElementById("result");
+		   var responseText= result + ": " + message;
+		   document.getElementById("feedback").innerHTML=responseText;
+	    }
+	  };
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send( request.toString() );
+
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 }
 
 function adminDeny(){
 	
-	//TODO: hook up with UI
+	var sessionKey = document.getElementById("sessionKey").value;
+	var intJobAdId = document.getElementById("jobAdId").value;
+	
+	if( intJobAdId == null ){
+		alert("Job Ad ID is not provided");
+	}
+	
+	request = new Request;
+	request.addAction("adminDeny");
+	request.addParam("jobAdId", intJobAdId);
+	
+	//Response Handling:
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		   var message = xmlhttp.responseXML.getElementById("message");
+		   var result = xmlhttp.responseXML.getElementById("result");
+		   var responseText= result + ": " + message;
+		   document.getElementById("feedback").innerHTML=responseText;
+	    }
+	  };
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send( request.toString() );
+
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
 }
 
 function extendJobAdExpiry(){

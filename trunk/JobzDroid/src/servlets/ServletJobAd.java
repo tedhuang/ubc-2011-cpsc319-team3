@@ -303,8 +303,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.educationReq 		= result.getInt("educationRequired");
 				jobAd.tags 				= result.getString("tags");
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
-//				jobAd.isApproved 		= result.getBoolean("isApproved");
-				
+				jobAd.isApproved 		= result.getInt("isApproved");
 				
 			}
 			else{ //Error case
@@ -364,6 +363,8 @@ public class ServletJobAd extends HttpServlet {
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append(jobAd.toXMLContent() );
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
@@ -792,6 +793,7 @@ public class ServletJobAd extends HttpServlet {
 			}
 			else{
 				message = "extendJobAdExpiry worked!";
+				System.out.println("extendJobAdExpiry worked!");
 				isSuccessful = true;
 			}
 		}
@@ -854,10 +856,10 @@ public class ServletJobAd extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			
-			//Update isApproved
 			String query = 
 				"UPDATE tableJobAd " + 
-				"SET isApproved='" + true +"' " +
+				"SET isApproved='" + 1 +"', " +
+					"status='" + "open" + "' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
 			//Debug print
@@ -867,20 +869,9 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Error: Update Query Failed");
 			}
 			else{
-				//Update Status
-				query = 
-					"UPDATE tableJobAd " + 
-					"SET status='" + "open" +"' " +
-					"WHERE idJobAd='" + jobAdId + "'";
-				System.out.println("Update Query: " + query);
-				
-				if( stmt.executeUpdate(query) != 1 ){ //Error Check
-					System.out.println("Error: Update Query Failed");
-				}
-				else{
-					isSuccessful = true;
-					message = "adminApprove worked!";
-				}
+				isSuccessful = true;
+				System.out.println("adminApprove worked!");
+				message = "adminApprove worked!";
 			}
 		}
 		catch (SQLException e) {
@@ -941,10 +932,10 @@ public class ServletJobAd extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			
-			//Update isApproved
 			String query = 
 				"UPDATE tableJobAd " + 
-				"SET isApproved='" + false +"' " +
+				"SET isApproved='" + 0 +"', " +
+					"status='" + "inactive" + "' " +
 				"WHERE idJobAd='" + jobAdId + "'";
 			
 			//Debug print
@@ -954,21 +945,9 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Error: Update Query Failed");
 			}
 			else{
-				//Update Status
-				query = 
-					"UPDATE tableJobAd " + 
-					"SET status='" + "inactive" +"' " +
-					"WHERE idJobAd='" + jobAdId + "'";
-				
-				System.out.println("Update Query: " + query);
-				
-				if( stmt.executeUpdate(query) != 1 ){ //Error Check
-					System.out.println("Error: Update Query Failed");
-				}
-				else{
-					isSuccessful = true;
-					message = "adminRevertApproval worked!";
-				}
+				isSuccessful = true;
+				message = "adminDeny worked!";
+				System.out.println("adminDeny worked!");
 			}
 		}
 		catch (SQLException e) {
@@ -1046,6 +1025,7 @@ public class ServletJobAd extends HttpServlet {
 			else{
 				isSuccessful = true;
 				message = "adminDeleteJobAd worked!";
+				System.out.println("adminDeleteJobAd worked!");
 			}
 		}
 		catch (SQLException e) {
