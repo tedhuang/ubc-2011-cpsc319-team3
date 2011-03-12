@@ -668,12 +668,12 @@ function getJobAdById(id, outputDiv, heading)
 {
 	//TODO Testing ONLY, RM after testing
 	//$("#getJobAdButton").attr("disabled", true);
-//	var intJobAdId = document.getElementById("jobAdId").value;
+	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	request = new Request;
 	request.addAction("getJobAdById");
 //	request.addSessionKey(document.getElementById("sessionKey").value ); 
-	request.addParam("jobAdId", id);
+	request.addParam("jobAdId", intJobAdId);
 	
 
 	//change the text while sending the request

@@ -13,7 +13,7 @@
 	<title>Post News</title>
 </head>
 <body>
-	<%	
+	<%	// check session key
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
 	Session s = dbManager.getSessionByKey(sessionKey);
@@ -28,7 +28,7 @@
 		<jsp:forward page="../error.html" />
 	<%
 	}
-	else{ //TODO ADD POST NEWS UI
+	else{
 	%>	
 		<div class="main">
 		  <div class="header">
