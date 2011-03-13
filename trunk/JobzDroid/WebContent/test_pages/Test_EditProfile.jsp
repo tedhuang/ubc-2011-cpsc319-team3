@@ -38,7 +38,7 @@
 	</tbody>
 	</table>
 	</div>	
-<button onclick='getProfileBySessionKey(profileTable, profileHeading)' style="DISPLAY: none;">Get My Profile!</button>
+	<button onclick='getProfileBySessionKey(profileTable, profileHeading)'">Get My Profile!</button>
 
 <!--  
 
