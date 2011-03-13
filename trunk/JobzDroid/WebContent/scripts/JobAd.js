@@ -716,14 +716,16 @@ function viewDetail(adRow, outputDiv, heading){
 }
 
 
-function getJobAdByOwner(ownerId, outputDiv, heading){
+function getJobAdByOwner(outputDiv){
 	
-	var intOwnerId = document.getElementById("ownerId").value;
+	//var intOwnerId = document.getElementById("ownerId").value;
+	
+	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
 	request.addAction("getJobAdByOwner");
 //	request.addSessionKey(document.getElementById("sessionKey").value ); 
-	request.addParam("ownerId", intOwnerId);
+	request.addParam("sessionKey", strSessionKey);
 	
 //	var xmlHttpReq;
 	if (window.XMLHttpRequest)
@@ -748,12 +750,6 @@ function getJobAdByOwner(ownerId, outputDiv, heading){
 	  };
 	  
 	  
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-
-	//change the text while sending the request
-	 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');	
 }
 
  

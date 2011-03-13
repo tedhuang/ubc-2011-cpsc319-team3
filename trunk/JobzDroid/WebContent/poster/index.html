@@ -15,6 +15,7 @@
 <script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/uiBot.js"></script>
+<script type="text/javascript" src="../scripts/JobAd.js"></script>
 
 <script type="text/javascript">
    
@@ -145,26 +146,12 @@
 					<li><a href="#">Inactive<span id="numInactive"></span></a></li>
             	</ul>
             	
-            </div>  
-			<input type="text" name="tabName"/>
-                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
-                        <script>
-                            function addTab(){
-                              var value = $("input[name=tabName]").val();
-                              $.fn.DynaSmartTab.addTab(value);
-                                }
-                        </script>
-        </div> 
-		   
-		<div id="newAd-frame" class="subFrame unremovable">
-          <div id="head-bar">
-				<h2 class="welcome">Create New Ad</h2>
-				<ul>
-					<li><a href="#" class="btn">Save to Draft</a></li>
-		    		<li><a href="#" class="btn">Post it</a></li>
-					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
-					<li><input type = "reset"/>reset</li>
-					<div id="activeAdTable" class="resultTableDiv tableClear">
+            	
+            <button type="button" onclick="getJobAdByOwner(ownerAdTable)">Load Job Ad by Owner</button>
+            
+            
+            	
+            <div id="ownerAdTable" class="resultTableDiv">
 				<table>
 					<thead>
 					<tr>
@@ -204,6 +191,28 @@
 					</tbody>
 				</table><!--ENDOF TABLE-->
 			  </div><!--ENDOF DIV RESULT TABLE-->  
+            	
+            	
+            </div>  
+			<input type="text" name="tabName"/>
+                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
+                        <script>
+                            function addTab(){
+                              var value = $("input[name=tabName]").val();
+                              $.fn.DynaSmartTab.addTab(value);
+                                }
+                        </script>
+        </div> 
+		   
+		<div id="newAd-frame" class="subFrame unremovable">
+          <div id="head-bar">
+				<h2 class="welcome">Create New Ad</h2>
+				<ul>
+					<li><a href="#" class="btn">Save to Draft</a></li>
+		    		<li><a href="#" class="btn">Post it</a></li>
+					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
+					<li><input type = "reset"/>reset</li>
+
 				</ul>
 		  </div><!--ENDOF headBar-->
 		  <div id="newAdForm" class="newFormContainer">
