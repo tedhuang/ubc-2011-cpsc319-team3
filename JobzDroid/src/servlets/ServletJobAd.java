@@ -273,12 +273,16 @@ public class ServletJobAd extends HttpServlet {
 		String message = "Create Job Advertisement Failed";
 		boolean isSuccessful = false;
 		
-		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
-		String ownerId = request.getParameter("ownerId");
+		
+		//Extract ownerID from session key
+		String sessionKey = request.getParameter("sessionKey");
+		Session session = dbManager.getSessionByKey(sessionKey);
+		int ownerId = session.getIdAccount();
 
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
+		Statement stmtLoc = null;
 
 		try {
 			stmt = conn.createStatement();
@@ -287,52 +291,54 @@ public class ServletJobAd extends HttpServlet {
 				"SELECT * FROM tableJobAd " + 
 				"WHERE idAccount=" + ownerId;
 			
-			System.out.println("getJobAdById query:" + query);
+			System.out.println("getJobAdByOwner query:" + query);
 			isSuccessful = stmt.execute(query);
 			
 			ResultSet result = stmt.getResultSet();
 			
-			if(!result.first()){
-				message = "Error: No Job Ad found with owner ID =" + ownerId;
-				System.out.println("Error: No Job Ad found with owner ID =" + ownerId);
-			}
-			
 			while(result.next()){
+				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
 				
 				//Fill in the fields of the jobAd object
 				jobAd.jobAdId 			= result.getInt("idJobAd");
 				jobAd.ownerID 			= result.getInt("idAccount");
-				jobAd.jobAdTitle		= result.getString("title");
-				jobAd.jobAdDescription 	= result.getString("description");
-				jobAd.expiryDate		= result.getLong("expiryDate");
-				jobAd.startingDate 		= result.getLong("dateStarting");
 				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.jobAvailability	= result.getString("jobAvailability");
 				jobAd.status 			= result.getString("status");
-				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.educationReq 		= result.getInt("educationRequired");
-				jobAd.tags 				= result.getString("tags");
-				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 				jobAd.isApproved 		= result.getInt("isApproved");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+
+//				jobAd.jobAdDescription 	= result.getString("description");
+//				jobAd.startingDate 		= result.getLong("dateStarting");
+//				jobAd.contactInfo 		= result.getString("contactInfo");
+//				jobAd.tags 				= result.getString("tags");
 				
 			/**Get Location values */
+				stmtLoc = conn.createStatement();
 				ArrayList<Location> locationList = new ArrayList<Location>();
-				Location location = new Location();
 				
 				query = "SELECT * FROM tableLocationJobAd WHERE " +
 						"idJobAd= '" + jobAd.jobAdId +"'";
-				result = stmt.getResultSet();
 				
-				if(!result.first()){
+				isSuccessful = stmtLoc.execute(query);
+				ResultSet locResult = stmtLoc.getResultSet();
+				
+				if(!locResult.first()){
 					System.out.println("Error: failed to find the inserted location");
 				}
 				else{
-					while(result.next()){
+					while(locResult.next()){
+						Location location = new Location();
+
 						//Get Address, Longitude, Latitude
 						location.address = result.getString("location");
 						location.longitude = result.getDouble("longitude");
 						location.latitude = result.getDouble("latitude");	
+						locationList.add(location);
 					}
-					locationList.add(location);
 				}
 				
 				jobAd.locationList = locationList;
@@ -340,6 +346,11 @@ public class ServletJobAd extends HttpServlet {
 				jobAdList.add(jobAd);
 			
 			}//END OF WHILE LOOP
+			
+			if(jobAdList.isEmpty()){
+				message = "Error: No Job Ad found with owner ID =" + ownerId;
+				System.out.println("Error: No Job Ad found with owner ID =" + ownerId);
+			}
 			
 			System.out.println("getJobAdByStatus successful");
 			message = "getJobAdByStatus successful";
@@ -427,6 +438,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.ownerID 			= result.getInt("idAccount");
 				jobAd.jobAdTitle		= result.getString("title");
 				jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.jobAvailability	= result.getString("jobAvailability");
 				jobAd.expiryDate		= result.getLong("expiryDate");
 				jobAd.startingDate 		= result.getLong("dateStarting");
 				jobAd.creationDate 		= result.getLong("datePosted");
