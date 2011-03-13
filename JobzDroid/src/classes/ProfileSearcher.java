@@ -16,6 +16,7 @@ public class ProfileSearcher {
 	
 	public String email = "";
 	public String secondaryEmail = "";
+	public String educationFormatted = "";
 	
 	public ArrayList<Location> addressList;
 
@@ -30,6 +31,8 @@ public class ProfileSearcher {
 		Location loc = new Location("");
 		addressList.add(loc);
 		
+		educationFormatted = Utility.degreeConvertor( educationLevel );
+		
 		String result = "\t\t<profile" +
 		" accountID=\"" + accountID + "\"" +
 		" accountType=\"" + accountType + "\"" +
@@ -41,7 +44,8 @@ public class ProfileSearcher {
 		" preferredStartDate=\"" + preferredStartDate + "\"" +
 		" educationLevel=\"" + educationLevel + "\"" +
 		" email=\"" + email + "\"" +
-		" secondaryEmail=\"" + secondaryEmail + "\"";
+		" secondaryEmail=\"" + secondaryEmail + "\"" +
+		" educationFormatted=\"" + educationFormatted + "\"";
 		
 		result = result + ">\n";
 		

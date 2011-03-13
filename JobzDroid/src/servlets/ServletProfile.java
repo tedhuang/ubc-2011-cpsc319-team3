@@ -278,7 +278,7 @@ public class ServletProfile extends HttpServlet{
 		
 		//Initialize Return statements
 		boolean isSuccessful = false;
-		String message = "Failure to fetch profile";
+		String message = "Failure to fetch profile by Session Key";
 		
 		Connection conn = null;	
 		Statement stmt = null;
@@ -317,7 +317,7 @@ public class ServletProfile extends HttpServlet{
 			
 			//TODO add join statement to retrieve email info
 			String query = 
-//					"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
+//				"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
 				"SELECT * FROM tableProfile"+ acctType +" INNER JOIN tableAccount " + 
 					"USING (idAccount) WHERE idAccount=" + currSession.getIdAccount();
 			
@@ -413,7 +413,7 @@ public class ServletProfile extends HttpServlet{
 	    }
 	    
 		}//earlyExit:
-	    System.out.println("Checkpoint: End of create profile - Message: " + message);
+	    System.out.println("Checkpoint: End of getPofileBySessionKey - Message: " + message);
 	    
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");

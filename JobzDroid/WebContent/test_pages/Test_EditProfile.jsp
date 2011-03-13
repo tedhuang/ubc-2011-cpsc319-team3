@@ -8,6 +8,7 @@
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src='../scripts/Utility.js'></script>
 <script type="text/javascript" src='../scripts/Profile.js'></script>
+<script type="text/javascript" src="../scripts/uiBot.js"></script>
 
 <script language="JavaScript">
 
@@ -37,7 +38,7 @@
 	</tbody>
 	</table>
 	</div>	
-<button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>
+<button onclick='getProfileBySessionKey(profileTable, profileHeading)' style="DISPLAY: none;">Get My Profile!</button>
 
 <!--  
 
