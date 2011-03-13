@@ -153,3 +153,58 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		 $("#detailFB").hide();
 	}
 }
+
+/********************************************************************************************************************
+ * 						Build a table for profile editing
+ * @param targetXMLTag
+ * @param outputDiv
+ * @param heading
+ *********************************************************************************************************************/
+function buildProfileEditTb(targetXMLTag, outputDiv, heading){
+	var tbody  = $( "tbody", outputDiv).html("");
+	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	if(profile.length==0){//if no results
+		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+	}
+	else{
+		
+		switch(profile.attr("accountType")){
+		
+		case("searcher"):
+			
+		  $(heading).html( profile.attr("name") + "'s Profile");
+		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<input id=\"name\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<input id=\"secondaryEmail\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<input id=\"educationFormatted\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td>"+ "<input id=\"empPref\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<input id=\"address\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td>"+ "<input id=\"startingDate\" type=\"hidden\"/>"+"</tr>" +
+		  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<input id=\"selfDescription\" type=\"text\"/>"+"</tr>" +
+		  				"<button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit()\'>Enable Edit Button</button>"
+		  				"<button id=\"submitButton\" style = \"DISPLAY: none;\">Submit</button>";
+		  break;
+		  
+		case "poster":
+			
+			$(heading).html( profile.attr("name") + "'s Profile");
+			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<input id=\"name\" type=\"hidden\"/>"+"</tr>" +
+			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<input id=\"secondaryEmail\" type=\"hidden\"/>"+"</tr>" +
+			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<input id=\"educationFormatted\" type=\"hidden\"/>"+"</tr>" +
+			  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<input id=\"address\" type=\"hidden\"/>"+"</tr>" +
+			  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<input id=\"selfDescription\" type=\"text\"/>"+"</tr>" +
+			  				"<button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit()\'>Enable Edit Button</button>" +
+			  				"<button id=\"submitButton\" style = \"DISPLAY: none;\">Submit</button>";
+			
+		  break;
+		  
+		default:
+			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+			break;
+		
+		}
+		 $(tbody).append(rowText);
+		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $("#detailFB").hide();
+	}
+}
