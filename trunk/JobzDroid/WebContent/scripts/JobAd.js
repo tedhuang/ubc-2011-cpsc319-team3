@@ -384,7 +384,55 @@ function submitJobAdForApproval(){
 }
 
 
+function createJobAd(){
+		
+		request = new Request;
+		request.addAction("createJobAdvertisement");
+		
+		var searchFields = $(":input", "#newAdForm").serializeArray();
+		var emptyCounts=0;
+		jQuery.each(searchFields, function(i, field){
+	        if(field.value == ""){
+	        	emptyCounts++;
+	        }
+	        else{
+	        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
+	        }
+		   });
+		  //TODO check NULL
+		if (window.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		  }
+		else
+		  {// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		//send the parameters to the servlet with POST
+		//TODO will need to change this to ./ServletJobAd
+		xmlhttp.open("POST","../ServletJobAd" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(request.toString());
+		alert(request.toString());
+		
 
+		//change the text while sending the request
+//		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+		
+		xmlhttp.onreadystatechange=function()
+		  {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    {
+			    //parse XML response from server
+			  	var message = xmlhttp.responseXML.getElementById("message");
+			  	var result = xmlhttp.responseXML.getElementById("result");
+			    var responseText= result + ": " + message;
+		    }
+		  };
+		
+		
+		
+}
 
 
 
@@ -412,7 +460,7 @@ function createJobAdvertisement(){
 	var educationRequirement= $("#edu-field").val;//document.getElementById("educationRequirement").value;
 	var strContactInfo 		= $("#contact-filed").val;//document.getElementById("contactInfo").value;
 	var strTags 			= $("#tag-field").val;//document.getElementById("tags").value;
-	var strJobAvailability 	= $("#").val;//document.getElementById("jobAvailability").value;
+	//var strJobAvailability 	= $("#").val;//document.getElementById("jobAvailability").value;
 	
 	var expiryYear 			= $("#expiryYear").val;//document.getElementById("expiryYear").value;
 	var expiryMonth 		= $("#expiryMonth").val;//document.getElementById("expiryMonth").value;
@@ -461,7 +509,6 @@ function createJobAdvertisement(){
 	request.addParam("latitude", doubleLatitude);
 	
 		  
-//Response Handling:
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
