@@ -167,33 +167,33 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
 	}
 	else{
-		
-		switch(profile.attr("accountType")){
+		var accountType = profile.attr("accountType");
+		switch(accountType){
 		
 		case("searcher"):
 			
 		  $(heading).html( profile.attr("name") + "'s Profile");
-		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<input id=\"name\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<input id=\"secondaryEmail\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<input id=\"educationFormatted\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td>"+ "<input id=\"empPref\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<input id=\"address\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td>"+ "<input id=\"startingDate\" type=\"hidden\"/>"+"</tr>" +
-		  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<input id=\"selfDescription\" type=\"text\"/>"+"</tr>" +
-		  				"<button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit()\'>Enable Edit Button</button>"
-		  				"<button id=\"submitButton\" style = \"DISPLAY: none;\">Submit</button>";
+		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td>"+ "<td><input id=\"empPref\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td>"+ "<td><input id=\"startingDate\" type=\"hidden\"/></td>"+"</tr>" +
+		  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" type=\"text\"/></td>"+"</tr>" +
+		  				"<tr><td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Enable Edit Button</button></td>" + 
+		  				"<td><button id=\"submitButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Submit</button></td></tr>";
 		  break;
 		  
-		case "poster":
+		case ("poster"):
 			
 			$(heading).html( profile.attr("name") + "'s Profile");
-			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<input id=\"name\" type=\"hidden\"/>"+"</tr>" +
-			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<input id=\"secondaryEmail\" type=\"hidden\"/>"+"</tr>" +
-			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<input id=\"educationFormatted\" type=\"hidden\"/>"+"</tr>" +
-			  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<input id=\"address\" type=\"hidden\"/>"+"</tr>" +
-			  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<input id=\"selfDescription\" type=\"text\"/>"+"</tr>" +
-			  				"<button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit()\'>Enable Edit Button</button>" +
-			  				"<button id=\"submitButton\" style = \"DISPLAY: none;\">Submit</button>";
+			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
+			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
+			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +
+			  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" type=\"hidden\"/></td>"+"</tr>" +
+			  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" type=\"text\"/></td>"+"</tr>" +
+			  				"<tr><td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")\'>Enable Edit Button</button></td>" + 
+			  				"<td><button id=\"submitButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Submit</button></td></tr>";
 			
 		  break;
 		  
@@ -208,3 +208,33 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		 $("#detailFB").hide();
 	}
 }
+
+/********************************************************************************************************************
+ * 						Enable Profile Edit
+ *********************************************************************************************************************/
+
+function enableProfileEdit(accountType)
+{
+	switch(accountType)
+	{
+	case ("searcher"):
+		document.getElementById("name").setAttribute("type", "text");
+		document.getElementById("secondaryEmail").setAttribute("type", "text");
+		document.getElementById("educationFormatted").setAttribute("type", "text");
+		document.getElementById("empPref").setAttribute("type", "text");
+		document.getElementById("address").setAttribute("type", "text");
+		document.getElementById("startingDate").setAttribute("type", "text");
+		document.getElementById("selfDescription").setAttribute("type", "text");
+		break;
+	
+	case ("poster"):
+		document.getElementById("name").setAttribute("type", "text");
+		document.getElementById("secondaryEmail").setAttribute("type", "text");
+		document.getElementById("educationFormatted").setAttribute("type", "text");
+		document.getElementById("address").setAttribute("type", "text");
+		document.getElementById("selfDescription").setAttribute("type", "text");
+		break;
+	}
+
+}
+

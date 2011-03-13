@@ -139,7 +139,7 @@ function createProfile(){
 
 
 
-function editProfile(){
+function submitChangeProfile(){
 	
 	//disables button to prevent multiple submit
 	document.getElementById("submitEdit").disabled=true;
@@ -299,7 +299,7 @@ function getProfileBySessionKey(outputDiv, heading){
 	    {
 //	    	loadProfileDetails(xmlhttp.responseXML);
 		  //you can find this in uiBot.js under scripts folder
-		  buildProfileTb("profile", outputDiv, heading);
+		  buildProfileEditTb("profile", outputDiv, heading);
 		  	
 	    }
 	  };	
