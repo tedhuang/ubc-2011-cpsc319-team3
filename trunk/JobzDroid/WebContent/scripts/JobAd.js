@@ -389,21 +389,38 @@ function submitJobAdForApproval(){
 
 
 function createJobAdvertisement(){
-
-	var strTitle 			= document.getElementById("jobTitle").value;
-	var strDescription 		= document.getElementById("jobDescription").value;
-	var educationRequirement= document.getElementById("educationRequirement").value;
-	var strContactInfo 		= document.getElementById("contactInfo").value;
-	var strTags 			= document.getElementById("tags").value;
-	var strJobAvailability 	= document.getElementById("jobAvailability").value;
 	
-	var expiryYear 			= document.getElementById("expiryYear").value;
-	var expiryMonth 		= document.getElementById("expiryMonth").value;
-	var expiryDay 			= document.getElementById("expiryDay").value;
+//	request = new Request;
+//	request.addAction("searchJobAdvertisement");
+//	
+//	var searchFields = $(":input", "#advSearchForm").serializeArray();
+//	var emptyCounts=0;
+//	jQuery.each(searchFields, function(i, field){
+//        if(field.value == ""){
+//        	emptyCounts++;
+//        }
+//        else{
+//        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
+//        }
+//	   });
+//	
+//	   if(emptyCounts != searchFields.length){//Check if All NULL
+//	
+//	
+	var strTitle 			= $("#title-filed").val;
+	var strDescription 		= $("#desc-filed").val;//document.getElementById("jobDescription").value;
+	var educationRequirement= $("#edu-field").val;//document.getElementById("educationRequirement").value;
+	var strContactInfo 		= $("#contact-filed").val;//document.getElementById("contactInfo").value;
+	var strTags 			= $("#tag-field").val;//document.getElementById("tags").value;
+	var strJobAvailability 	= $("#").val;//document.getElementById("jobAvailability").value;
 	
-	var startingDay 		= document.getElementById("startingDay").value;
-	var startingMonth 		= document.getElementById("startingMonth").value;
-	var startingYear 		= document.getElementById("startingYear").value;
+	var expiryYear 			= $("#expiryYear").val;//document.getElementById("expiryYear").value;
+	var expiryMonth 		= $("#expiryMonth").val;//document.getElementById("expiryMonth").value;
+	var expiryDay 			= $("#expiryDay").val;//document.getElementById("expiryDay").value;
+	
+	var startingDay 		= $("#startingDay").val;//document.getElementById("startingDay").value;
+	var startingMonth 		= $("#startingMonth").val;//document.getElementById("startingMonth").value;
+	var startingYear 		= $("#startingYear").val;//document.getElementById("startingYear").value;
 	
 	//Get values from GoogleMaps.js
 	var strAddress 			= getAddress();

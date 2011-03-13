@@ -16,6 +16,9 @@
 <script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/uiBot.js"></script>
 <script type="text/javascript" src="../scripts/JobAd.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
+<script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
+
 
 <script type="text/javascript">
    
@@ -237,7 +240,9 @@
 				
 				</div><!--ENDOF typeInForm-->
 				
+				
 			   <div id="chooseForm" class="fillInForm">
+			   
 					<div class="field"> 
 						<label for="edu-field">Minimal Degree Requirement:</label>
 						<select id="edu-field" name="edu-field">
@@ -247,6 +252,38 @@
 							<option value="3">Ph.D.</option>
 						</select>
 					</div>
+					
+			<div class="field">
+					<label for="exp-field">Starting Date</label>
+					<form id="exp-field" action="" name="formStartingDate">
+					<select id="startingDay">
+					</select> 
+					<select id="startingMonth">
+					</select> 
+					<select id="startingYear">
+					</select> 
+					</form>
+				<script type="text/javascript">
+					//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
+					$("document").ready(function(){
+						populatedropdown("startingDay", "startingMonth", "startingYear");
+					});
+				</script> 
+			</div >	
+			<div class="field">
+				<label for="exp-field">Expiry date</label>
+					<form id = "exp-field" action="" name="formExpiryDate">
+					<select id="expiryDay">
+					</select> 
+					<select id="expiryMonth">
+					</select> 
+					<select id="expiryYear">
+					</select> 
+					</form>
+					<script type="text/javascript">
+						populatedropdown("expiryDay", "expiryMonth", "expiryYear");
+					</script>
+			</div>
 					
 					<div class="field"> 
 						<label>Employment Type:</label>
@@ -266,6 +303,10 @@
 					<div class="field"> 
 						<label for="loc-field" >Job Location:</label> 
 						<input id="loc-filed" name="loc-field" class="textBox" value=""/>
+						<span id=locFeedback></span>
+						<button type="button" onclick="calculateLocation()">Find Location</button><br/>
+						<table id="lookUpTable"></table><br />
+						
 					</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 		  </div><!--ENDOF newAdForm-->
