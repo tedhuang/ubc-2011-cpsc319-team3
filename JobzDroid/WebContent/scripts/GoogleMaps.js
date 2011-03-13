@@ -46,7 +46,7 @@ function calculateLocation() {
 	currAddrNum = rowNumber;
 	
 	//CHANGED THIS
-	address = $("#address").val(); //$("#address"+rowNumber).text();
+	address = $("#loc-filed").val(); //$("#address"+rowNumber).text();
 	//var address = $("#address"+rowNumber).text();
 	
 	if(address == ""){
@@ -90,9 +90,9 @@ function listLocationChoices(googleMapsResults){
 		address = currentResult.formatted_address; 
 		
 		//$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
-		$("#longitude").text("Longitude: " + longitude);
-		$("#latitude").text("Latitude: " + latitude);
-		
+//		$("#longitude").text("Longitude: " + longitude);
+//		$("#latitude").text("Latitude: " + latitude);
+		$("#locFeedback").text("Location saved: " + address);
 		
 	});
 }
