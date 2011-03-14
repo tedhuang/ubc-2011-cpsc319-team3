@@ -80,18 +80,7 @@ function populatedropdown(dayfield, monthfield, yearfield){
 	yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true); //select today's year
 }
 
-function resetFields(formContainer){
-	
-	var temp = $(':input', "#"+formContainer);
-	if(temp.length >0){//TODO ALERT USER TO CONFIRM
-		
-		temp
-		 .not(':button, :submit, :reset, :hidden')
-		 .val('')
-		 .removeAttr('checked')
-		 .removeAttr('selected');
-	}
-}
+
 /***********************************************************************************************
 						LightBox Functions
  TODO ADD stuff

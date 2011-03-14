@@ -31,9 +31,8 @@ function buildDetailTable(targetXMLTag, outputDiv, heading){
 	}
 }
 
-
 /************************************************************************************************
- * 					BUILD TABLE FOR AD LIST
+ * 					BUILD TABLE FOR OWNER's AD LIST
  * INSERT RETURNED DATA INTO THE TABLE
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
@@ -47,15 +46,14 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	else{
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
-		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
-		  
-		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + jobAd.attr("jobAdTitle") +
-		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
-		  				
-		  				"</td><td>" + jobAd.attr("contactInfo")  + 
-		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
-		  				"</td><td>" + jobAd.attr("jobAvail") +
-		  				"</td><td>" + jobAd.children("location").attr("address")+
+		  var rowText = "<tr><td id='td-postedDate'>"  + jobAd.attr("creationDateFormatted") + 
+		  				"</td><td id='td-title'>" +
+		  				"<span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + "</span>" + 
+		  					jobAd.attr("jobAdTitle") + 
+		  				"</td><td id='td-eduReq'>" + jobAd.attr("eduReqFormatted") + 
+		  				"</td><td id='td-jobAvail'>" + jobAd.attr("jobAvail") +
+		  				"</td><td id='td-loc'>" + jobAd.children("location").attr("address")+
+		  				"</td><td id='td-status'>" + jobAd.attr("status")+
 		  				"</td><td>" + "</td></tr>";
 		  
 		  $(rowText).appendTo(tbody);
@@ -65,8 +63,42 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	}
 }
 
+function filterTable(filter, tbContainerId){
+	var tbody  = $("tbody", tbContainerId);
+	var rows   = $('tr', tbody).get();
+	$(rows).each(function(){
+		if($('#td-status', $(this)).html() != filter){
+			$(this).hide();
+		}
+	});
+}
 
-
+function resetFields(formContainer){
+	
+	var temp = $(':input', "#"+formContainer);
+	if(temp.length >0){//TODO ALERT USER TO CONFIRM
+		
+		temp
+		 .not(':button, :submit, :reset, :hidden')
+		 .val('')
+		 .removeAttr('checked')
+		 .removeAttr('selected');
+	}
+	clearError(formContainer);
+}
+function clearError(formContainerId){
+	$($('h2.error', "#"+formContainerId).get()).each(function(){
+		$(this).remove();
+	});
+}
+function bindClearError(){
+	$('.mustNotNull').change(function(){
+		var errorTag = $(this).parent('div').find('h2.error');
+		if(errorTag){
+			errorTag.remove();
+		}
+	});
+}
 
 
 /************************************************************************************************
@@ -86,7 +118,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
 		  
-		  				"</td><td><span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + jobAd.attr("jobAdTitle") +
+		  				"</td><td><span id=\"td-title\">" + jobAd.attr("jobAdTitle") +
 		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
 		  				
 		  				"</td><td>" + jobAd.attr("contactInfo")  + 
@@ -96,7 +128,12 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  				"</td><td>" + "</td></tr>";
 		  
 		  $(rowText).appendTo(tbody);
+		  $("#td-title").click(function(){
+				 viewDetail(jobAd.attr("jobAdId"),adDetailTable,adDetailHeading);
+			 });
 		});
+		//onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'
+		 
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
@@ -153,6 +190,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		 $("#detailFB").hide();
 	}
 }
+
 
 /********************************************************************************************************************
  * 						Build a table for profile editing
@@ -238,3 +276,25 @@ function enableProfileEdit(accountType)
 
 }
 
+/*******************************************************************************************************************************
+ * 		Customize Default DOM ELEMENTS
+ * *****************************************************************************************************************************/
+
+	function setupLabel() {
+	    if ($('.label-cb input').length) {
+	        $('.label-cb').each(function(){ 
+	            $(this).removeClass('cby');
+	        });
+	        $('.label-cb input:checked').each(function(){ 
+	            $(this).parent('label').addClass('cby');
+	        });                
+	    };
+	    if ($('.label-rb input').length) {
+	        $('.label-rb').each(function(){ 
+	            $(this).removeClass('rby');
+	        });
+	        $('.label-rb input:checked').each(function(){ 
+	            $(this).parent('label').addClass('rby');
+	        });
+	    };
+	};

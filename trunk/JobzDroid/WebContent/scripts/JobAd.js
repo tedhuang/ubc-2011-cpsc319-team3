@@ -383,92 +383,109 @@ function submitJobAdForApproval(){
 	
 }
 
-
-function createJobAd(){
-		
-		request = new Request;
+/*************************************************************************************************
+ * 		POSTJOBAD
+ * - IN CHARGE OF SUBMITTING AD OR SAVING DRAFT 
+ * 
+ *************************************************************************************************/
+function postJobAd(mode){
+	var noNullData=false;
+	
+	var sessionKey = $("#sessionKey").val();
+	request = new Request;
+	if(mode=="submit"){
 		request.addAction("createJobAdvertisement");
-		
+		noNullData = checkMandatory("newAdForm");
+	}
+	else if(mode=="draft"){
+		request.addAction("saveJobAdDraft");
+		noNullData = true;
+	}
+	
+	if(noNullData){
+		request.addSessionKey( sessionKey );
 		var searchFields = $(":input", "#newAdForm").serializeArray();
-		var emptyCounts=0;
+		
 		jQuery.each(searchFields, function(i, field){
-	        if(field.value == ""){
-	        	emptyCounts++;
-	        }
-	        else{
-	        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
-	        }
+	          if(field.name=="expireTime-field" || field.name=="startTime-field"){
+	        	request.addParam(field.name, field.value);
+	          }
+	          else{
+				request.addParam(field.name, field.value); //add parameter to the request
+	          }
 		   });
-		  //TODO check NULL
-		if (window.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp=new XMLHttpRequest();
-		  }
-		else
-		  {// code for IE6, IE5
-		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-		  }
-		//send the parameters to the servlet with POST
-		//TODO will need to change this to ./ServletJobAd
+		
+		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		}
+		else{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
 		xmlhttp.open("POST","../ServletJobAd" ,true);
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(request.toString());
-		alert(request.toString());
 		
-
-		//change the text while sending the request
-//		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+		if(mode=="submit"){
+			$("#newAdfb").html("<h2 class='info'>Sending Request...</h2>");
+		}
+		else if(mode=="draft"){
+			$("#newAdfb").html("<h2 class='info'>Saving Draft...</h2>");
+		}
 		
-		xmlhttp.onreadystatechange=function()
-		  {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		    {
-			    //parse XML response from server
-			  	var message = xmlhttp.responseXML.getElementById("message");
-			  	var result = xmlhttp.responseXML.getElementById("result");
-			    var responseText= result + ": " + message;
+		
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			  
+//			  var message = xmlhttp.responseXML.getElementById("message");
+		    $("#newAdfb").html("<h2 class='good'>" + xmlhttp.responseXML.getElementById("message") + "</h2>");
 		    }
-		  };
+		  else{
+			  $("#newAdfb").html("<h2 class='error'>opps something is wrong!</h2>");
+		  }
+		};
 		
 		
-		
+	}//IF MANDATORIES FILLED
 }
 
+function checkMandatory(formContainerId){
+	var count=0;
+	var error = "<h2 class='error'>Hmm...You seem to miss something</h2>";
+	var chkList = $('.mustNotNull', "#"+formContainerId).get();
+	
+	$(chkList).each(function(){
+		if($(this).val()== ""){
+			
+			$(error).insertAfter($(this).siblings('label'));
+		}
+		else{
+			count++;
+		}
+	});
+	if(count==chkList.length){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
+function createJobAdvertisement(){//CAUTION FIELD NAME MODIFIED
 
-function createJobAdvertisement(){
+	var strTitle 			= $("#title-field").val();
+	var strDescription 		= $("#desc-field").val();
+	var educationRequirement= $("#educationRequirement").val();
+	var strContactInfo 		= $("#company-field").val();
+	var strTags 			= $("#tag-field").val();
+	var strJobAvailability 	= $("#jobAvailability").val();
 	
-//	request = new Request;
-//	request.addAction("searchJobAdvertisement");
-//	
-//	var searchFields = $(":input", "#advSearchForm").serializeArray();
-//	var emptyCounts=0;
-//	jQuery.each(searchFields, function(i, field){
-//        if(field.value == ""){
-//        	emptyCounts++;
-//        }
-//        else{
-//        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
-//        }
-//	   });
-//	
-//	   if(emptyCounts != searchFields.length){//Check if All NULL
-//	
-//	
-	var strTitle 			= $("#title-filed").val;
-	var strDescription 		= $("#desc-filed").val;//document.getElementById("jobDescription").value;
-	var educationRequirement= $("#edu-field").val;//document.getElementById("educationRequirement").value;
-	var strContactInfo 		= $("#contact-filed").val;//document.getElementById("contactInfo").value;
-	var strTags 			= $("#tag-field").val;//document.getElementById("tags").value;
-	//var strJobAvailability 	= $("#").val;//document.getElementById("jobAvailability").value;
+	var expiryYear 			= $("#expiryYear").val();
+	var expiryMonth 		= $("#expiryMonth").val();
+	var expiryDay 			= $("#expiryDay").val();
 	
-	var expiryYear 			= $("#expiryYear").val;//document.getElementById("expiryYear").value;
-	var expiryMonth 		= $("#expiryMonth").val;//document.getElementById("expiryMonth").value;
-	var expiryDay 			= $("#expiryDay").val;//document.getElementById("expiryDay").value;
-	
-	var startingDay 		= $("#startingDay").val;//document.getElementById("startingDay").value;
-	var startingMonth 		= $("#startingMonth").val;//document.getElementById("startingMonth").value;
-	var startingYear 		= $("#startingYear").val;//document.getElementById("startingYear").value;
+	var startingDay 		= $("#startingDay").val();
+	var startingMonth 		= $("#startingMonth").val();
+	var startingYear 		= $("#startingYear").val();
 	
 	//Get values from GoogleMaps.js
 	var strAddress 			= getAddress();
@@ -483,10 +500,10 @@ function createJobAdvertisement(){
 		alert("Must Enter Job Advertisement Title!");
 		return;
 	}
-	document.getElementById("newJobAdButton").disabled=true;
+	$("#newJobAdButton").disabled=true;
 	
 	
-	var sessionKey = document.getElementById("sessionKey").value;
+	var sessionKey = $("#sessionKey").val();
 	//var sessionKey = "4297f44b13955235245b2497399d7a93"; //temporary testing key TODO: remove 
 	 
 	request = new Request;
@@ -508,7 +525,6 @@ function createJobAdvertisement(){
 	request.addParam("longitude", doubleLongitude);
 	request.addParam("latitude", doubleLatitude);
 	
-		  
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -526,7 +542,7 @@ function createJobAdvertisement(){
 		  var message = xmlhttp.responseXML.getElementById("message");
 		  var result = xmlhttp.responseXML.getElementById("result");
 		    var responseText= result + ": " + message;
-	    	document.getElementById("feedback").innerHTML=responseText;
+	    	$("#feedback").innerHTML=responseText;
 	    }
 	  };
 	
@@ -538,7 +554,7 @@ function createJobAdvertisement(){
 	xmlhttp.send(request.toString());
 
 	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	$("#feedback").innerHTML="<h2>Sending Request</h2>";
 	
 }
 
@@ -735,12 +751,12 @@ function getJobAdById(id, outputDiv, heading)
 {
 	//TODO Testing ONLY, RM after testing
 	//$("#getJobAdButton").attr("disabled", true);
-	var intJobAdId = document.getElementById("jobAdId").value;
+//	var intJobAdId = document.getElementById("jobAdId").value;
 	
 	request = new Request;
 	request.addAction("getJobAdById");
 //	request.addSessionKey(document.getElementById("sessionKey").value ); 
-	request.addParam("jobAdId", intJobAdId);
+	request.addParam("jobAdId", id);
 	
 
 	//change the text while sending the request

@@ -93,15 +93,9 @@ h2{
 	font-weight		: bold;
 	color			: #000000;
 }
-h2.good{
-	color			: #00ff00;
-}
-h2.error{
-	color			: #ff0000;
-}
-h2.info{
-	background-color			: #d2d200;;	
-}
+h2.good{  color	: #00ff00; }
+h2.error{ color	: #ff0000; }
+h2.info{  background-color : #d2d200;}
 
 h2.welcome{
 	border-bottom: 2px solid;
@@ -109,11 +103,12 @@ h2.welcome{
 	padding: 0 0 3px;
 	
 }
-a.jsBtn{
+
+.jsBtn{/*We will have a Click cursor without <a>!*/
 	cursor	: pointer;
 }
 /************************ENDOF BASIC STRUCTURE**********************************/
-.pagefont {#bebebe#bfbfbf
+.pagefont {
 	padding: 3px 8px 3px 8px; 
 	vertical-align: middle; 
 	font-size: 13px;
@@ -144,6 +139,20 @@ div.padded{
 	font-weight		: bold;
 	margin			: 2px 0 0 0;
 	color			: #5F5F5F;
+}
+/************************CUSTOMIZED BUILD-IN DOM ELEMENT******************************************/
+.has-style .label-cb, .label-rb{
+	padding-left: 34px;
+	height:21px;
+	vertical-align: middle; 
+}
+.has-style .label-rb    	{ background: url(../images/ele-ui/rbn.png) no-repeat; }
+.has-style .label-cb    	{ background: url(../images/ele-ui/cbn.png) no-repeat; }
+.has-style label.cby      	{ background: url(../images/ele-ui/cby.png) no-repeat; }
+.has-style label.rby      	{ background: url(../images/ele-ui/rby.png) no-repeat; }
+.has-style .label-cb input, .has-style .label-rb input  { 
+	position: absolute; 
+	left: -9999px;
 }
 /************************ELEMENTS STYLE*********************************************************/
 .main{
@@ -190,15 +199,15 @@ div.header{
       width                 : 100px;
       background            : #076102;
       color                 : #FFF;
-      float: left;
-	  margin: 0 0 0 10px;
+      float					: left;
+	  margin				: 0 0 0 10px;
       padding               : 5px 5px 5px 5px;
       text-align            : center;
       border                : 1px solid #7D7D7D;    
       text-decoration       : none;
 	  -moz-border-radius    : 8px;
       -webkit-border-radius : 8px;
-	  display: inline; 
+	  display				: inline; 
   }
   
 #topnav a.btn:hover{
@@ -277,7 +286,7 @@ height:50px;
 	float: right;
 	list-style-type: none;
 	font-size: 11px;
-	margin-left: 15px !important
+	margin-left: 15px !important;
 }
 
 .footer_wrapper2 {
@@ -288,7 +297,7 @@ height:50px;
 	float: right;
 	list-style-type: none;
 	font-size: 11px;
-	margin-left: 15px !important
+	margin-left: 15px !important;
 }
 
 /*****************************User Registering Page***********************************************/
@@ -339,7 +348,7 @@ height:50px;
     background-color:   #FAFAFA;    
     text-align:center;
 }
-.infoHeader h1,.infoHeader h2,.infoHeader h3{
+.infoHeader h1, .infoHeader h2, .infoHeader h3{
       margin:0;
       padding:0;
 }
@@ -550,13 +559,13 @@ div#main-container {
 	float		: right;
 	right:-30px;
 	top: -285px;
-	<!--width		: 135px;-->
+	width		: 135px;
 
 }
 
 .columnBoxThinLeft{
 	position: relative;
-	<!--width		: 135px;-->
+	width		: 135px;
 
 }
 

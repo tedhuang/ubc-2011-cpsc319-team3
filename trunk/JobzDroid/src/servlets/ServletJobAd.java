@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import classes.DBColName;
 import classes.JobAdvertisement;
 import classes.Location;
 import classes.Session;
@@ -27,7 +29,7 @@ public class ServletJobAd extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private DBManager dbManager;
-	
+	private DBColName DbDict =	new DBColName();
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -42,11 +44,14 @@ public class ServletJobAd extends HttpServlet {
 	private enum EnumAction	{
 		//Add new functions here
 		createJobAdvertisement,
-		searchJobAdvertisement,
 		editJobAdvertisement,
-		deleteJobAd,
+		saveJobAdDraft,
+		
+		searchJobAdvertisement,
 		getJobAdByOwner,
 		getJobAdById,
+		deleteJobAd,
+		
 		adminApprove,
 		adminDeny,
 		adminDeleteJobAd,
@@ -94,17 +99,26 @@ public class ServletJobAd extends HttpServlet {
 		//Check which function the request is calling from the servlet
 		switch( EnumAction.valueOf(action) ){
 		
-			case createJobAdvertisement:
-				createJobAdvertisement(request, response);
+		/*****************POST AD ACTIONS***********************/
+			case createJobAdvertisement :
+//				createJobAdvertisement(request, response);
+				postJobAd(request, response);
 				break;
 				
+			case editJobAdvertisement:
+				editJobAdvertisement(request,response);
+				break;
+			case saveJobAdDraft:
+				postJobAd(request, response);
+				break;
+			case submitJobAdForApproval://WHY DO WE HAVE THIS?
+				submitJobAdForApproval(request, response);
+				break;
+				
+		/*****************Retrieve AD ACTIONS***********************/		
 			case searchJobAdvertisement:
 				searchJobAd(request, response);
 				break;
-			
-			case editJobAdvertisement:
-				editJobAdvertisement(request,response);
-			
 			case getJobAdByOwner:
 				getJobAdByOwner(request, response);
 				break;
@@ -112,11 +126,12 @@ public class ServletJobAd extends HttpServlet {
 			case getJobAdById:
 				getJobAdById(request, response);
 				break;
-				
+			
 			case loadAdList:
 				searchJobAd(request, response);
 				break;
 				
+		/*****************ADMIN ACTIONS***********************/				
 			case adminApprove:
 				adminApprove(request, response);
 				break;
@@ -133,12 +148,8 @@ public class ServletJobAd extends HttpServlet {
 				changeJobAdStatus(request, response);
 				break;
 				
-			case extendJobAdExpiry:
+			case extendJobAdExpiry://WHY DO WE HAVE THIS?
 				extendJobAdExpiry(request, response);
-				break;
-				
-			case submitJobAdForApproval:
-				submitJobAdForApproval(request, response);
 				break;
 				
 			default:
@@ -1387,12 +1398,12 @@ public class ServletJobAd extends HttpServlet {
 		
 		return null;
 		}
-	/*****************************************************************************************************************
-	 * 					searchJobAd Function
-	 * 
-	 * FOR QUICK SEARCH AND ADVANCED SEARCH 
-	 * 
-	 *****************************************************************************************************************/
+/*****************************************************************************************************************
+ * 					searchJobAd Function
+ * 
+ * FOR QUICK SEARCH AND ADVANCED SEARCH 
+ * 
+ *****************************************************************************************************************/
 	public void searchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
@@ -1473,16 +1484,17 @@ public class ServletJobAd extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 		}
 	
-	/*****************************************************************************************************************
-	 * 					buildSearchQuery Function
-	 * Dynamically making the query as the user's interests
-	 * Callee Function:  DBColConvertor
-	 * Caller Function:  searchJobAd
-	 *****************************************************************************************************************/
+/*****************************************************************************************************************
+ * 					buildSearchQuery Function
+ * Dynamically making the query as the user's interests
+ * Caller Function:  searchJobAd
+ *****************************************************************************************************************/
 	private String buildSearchQuery(HttpServletRequest request){
-		
-		Map<String, String>paraMap = new HashMap<String, String>();
+		Map<String, String>paraMap = new HashMap<String, String>();//col-value
 		boolean qkSearch=false;
+		
+		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
+		Map<String, String> DbCols = DbDict.getColNameMap();
 		
 		Enumeration paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
@@ -1492,7 +1504,7 @@ public class ServletJobAd extends HttpServlet {
 				//Do Nothing
 			}
 			else{
-				String colName = DBColConvertor(paraName); //convert to col names
+				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
 			    //Put the parameters' names and values into the MAP
 				if(colName.equals("jobAvailability")){
 					if(paraMap.get(colName)!=null){
@@ -1509,7 +1521,9 @@ public class ServletJobAd extends HttpServlet {
 					}
 				}
 				else{
+//						paraMap.put(colName,request.getParameter(paraName) );
 						paraMap.put(colName,request.getParameter(paraName) );
+					
 				}
 			    
 				//Debug
@@ -1529,33 +1543,57 @@ public class ServletJobAd extends HttpServlet {
 		String orderByKeyword	= " ORDER BY "; //CAUTION: SPACE IMPORTANT
 		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
 		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
-		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT
+		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
 		boolean panic = false;
 		
 		StringBuffer queryBuf = new StringBuffer();
 		queryBuf.append(query);
 		
        for(Map.Entry<String, String> entry : paraMap.entrySet()){
-    	   
-    	   if(!(entry.getKey().equals("quickSearch"))){
-	    	   switch(EnumJobTableCol.valueOf(entry.getKey())){
+    	   String column = entry.getKey();
+    	   String value = entry.getValue();
+    	   if(!(column.equals("quickSearch"))){
+    		   
+    		   if(DbCols.get(column).equals("title")||DbCols.get(column).equals("tags")){
+    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
+    		   }
+    		   else if(DbCols.get(column).equals("jobAvailability")){
+    			   //if search by the availability term use IN
+   	    		    queryBuf.append(column+ inKeyword + value + andKeyword);
+    		   }
+    		   else if(DbCols.get(column).equals("educationRequired")){
+   	    		    queryBuf.append(column+ "=" + value + andKeyword);
+    		   }
+//    		   else if(DbCols.get(column).equals("location")){
+//    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
+//    		   }
+    		   else{//TODO NOT WORKING NEED TO FIX 
+    			   panic= true;
+	    		   System.out.println("PANIC ACTION!");
+	    		   queryBuf.setLength(0);
+	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
+	    		   query = queryBuf.toString();
+	    		   break;
+    		   }
+    		   /*
+	    	   switch(EnumJobTableCol.valueOf(column)){
 	    	   
 	    	   case title:
-	    			queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+	    			queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
 	    			break;
 	    			//CAUTION: SPACE IMPORTANT
 	    	   case jobAvailability: //if search by the availability term use IN
-	    		    queryBuf.append(entry.getKey()+ inKeyword + entry.getValue() + andKeyword);
+	    		    queryBuf.append(column+ inKeyword + value + andKeyword);
 	            	break;
 	           
 	    	   case educationRequired:
-	    		    queryBuf.append(entry.getKey()+ "=" + entry.getValue() + andKeyword);
+	    		    queryBuf.append(column+ "=" + value + andKeyword);
 	    		    break;
 	    	   case tags:
-	    		   queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+	    		   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
 	    		   break;
 //	    	   case location:
-//	    		   queryBuf.append(entry.getKey()+ regExKeyword + wordRegExBuffer.insert(9,entry.getValue()) + andKeyword);
+//	    		   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
 //	    		   break;
 	    		   
 	    	   default: //panic //TODO NOT WORKING NEED TO FIX 
@@ -1565,12 +1603,23 @@ public class ServletJobAd extends HttpServlet {
 	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
 	    		   query = queryBuf.toString();
 	    		   break;
-	    	  }//ENDOF SWITCH
+	    	  }//ENDOF SWITCH*/
     	   }//ENDOF IF NOT QUICK SEARCH
     	   
-    	   else{//Perform quick search
+    	   else{//Perform quick search, only one value but wild search on all
     		   qkSearch=true;
-    		   wordRegExBuffer.insert(9,entry.getValue());
+    		   wordRegExBuffer.insert(9,value);
+    		   queryBuf.append(DbCols.get("title") 		+ regExKeyword + wordRegExBuffer.toString() + orKeyword);//title
+    		   queryBuf.append(DbCols.get("tags")  		+ regExKeyword + wordRegExBuffer.toString() + orKeyword);//tags
+    		   queryBuf.append(DbCols.get("company")  	+ regExKeyword + wordRegExBuffer.toString() + orKeyword);//tags
+//    		   queryBuf.append(DbCols.get("location") 	+ regExKeyword + wordRegExBuffer.toString() + orKeyword);//location
+    		   if (Utility.degreeConvertor(value)>0){
+    			   queryBuf.insert(query.length(), DbCols.get("educationRequired") + "=" + Utility.degreeConvertor(value) + orKeyword);
+    		   }
+    		   if(Utility.jobTypeTranslator(true,value)!=null){
+		   			queryBuf.insert(query.length(), DbCols.get("jobAvailability") + "='" + Utility.jobTypeTranslator(true,value)+"'" + orKeyword); //Extract to the Job Type
+		   		}
+    		   /*
     		   for(EnumJobTableCol col : EnumJobTableCol.values()){
     			   
     			   switch (col){
@@ -1581,23 +1630,23 @@ public class ServletJobAd extends HttpServlet {
     				   break;
     				   
     			   	case educationRequired:
-    			   		if (Utility.degreeConvertor(entry.getValue())!=0){
+    			   		if (Utility.degreeConvertor(value)!=0){
 //    			   			queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
-    			   			queryBuf.insert(query.length(), col + "=" + Utility.degreeConvertor(entry.getValue()) + orKeyword); //Extract to the edu level
+    			   			queryBuf.insert(query.length(), col + "=" + Utility.degreeConvertor(value) + orKeyword); //Extract to the edu level
     			   		}
     			   	   break;
     			   	   
     			   	case jobAvailability:
-    			   		if(Utility.jobTypeTranslator(true,entry.getValue())!=null){
-    			   			queryBuf.insert(query.length(), col + "='" + Utility.jobTypeTranslator(true,entry.getValue())+"'" + orKeyword); //Extract to the Job Type
+    			   		if(Utility.jobTypeTranslator(true,value)!=null){
+    			   			queryBuf.insert(query.length(), col + "='" + Utility.jobTypeTranslator(true,value)+"'" + orKeyword); //Extract to the Job Type
     			   			}
     			   		break;
     			   		
     			   	 default:
     			   		queryBuf.append(col + regExKeyword + wordRegExBuffer.toString() + orKeyword);
     			   		break;
-    			   }
-    		   }//ENDOF FOR EACH-ENUM-COL
+    			   
+    		   }//ENDOF FOR EACH-ENUM-COL}*/
 		  
     	   }
         }//ENDOF FOR-MAP LOOP
@@ -1617,12 +1666,263 @@ public class ServletJobAd extends HttpServlet {
        
 		return query;
 	}
-	/**************************************************************************************
-	 * 			DBColConvertor Function
-	 *  Convert input form's name into corrsponding DB columns
-	 * @param input
-	 * @return
-	 **************************************************************************************/
+
+/*********************************************************************************************************************
+ * 							Post a job advertisement
+ * Mode:SAVE DRAFT, NEW AD and EDIT AD
+ *
+ *********************************************************************************************************************/
+	private void postJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		//Debug
+		System.out.println("Entered PostJobAdvertisement");
+		//initialize return statements
+		boolean isSuccessful = false;
+		String msg = "";
+		
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		
+		//Checks the user's privilege
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int acctId;
+		
+		earlyExit: {
+			System.out.println("Entered user sessionKey");
+				
+			if ( userSession == null ) {
+				//TODO session invalid, handle error
+				System.out.println("session is null, Failed to authenticate user session");
+				msg = "Are You Logged in? Please Try Re-login";
+				break earlyExit;
+			}
+			else {
+				//TODO implmement this
+				System.out.println("checking usertype");
+				System.out.println("usertype = " + userSession.getAccountType());
+				acctId= userSession.getIdAccount();
+				
+				if( userSession.getAccountType().equals("poster") ||
+						userSession.getAccountType().equals("admin")) {
+					System.out.print("User has the correct priviliege\n");
+				}
+				else {
+					System.out.print( "User does not have the right privilege\n");
+					break earlyExit;
+				}
+			}
+			
+			System.out.print("User Access Granted for key: \n" + userSession.getKey() +"\n" );
+			
+			String query = buildPostQuery(request, acctId);
+			System.out.println(query);
+
+//			String address 				 = request.getParameter("address");
+//			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+//			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
+			
+			
+//			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
+//			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {
+				
+				System.out.println("Processing " + query);
+				stmt = conn.createStatement();
+				
+				int success = stmt.executeUpdate(query);
+				if (success != 1){
+					System.out.println("New JobAd Creation failed");
+					Utility.logError("New JobAd insert in DB failed");
+				}
+				
+				msg = "Action Performed Successfully";
+				//Get jobAdId By Using select the last inserted ID
+				PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+				ResultSet rs = getLastInsertId.executeQuery();
+				int jobAdId = -1;
+				if (rs.next())
+				{
+					jobAdId = rs.getInt("last_insert_id()"); 
+					System.out.println("Retrived: Job Ad ID: " + jobAdId);
+				}
+				else{
+					System.out.println("Error: Job Ad ID not found after creation");
+				}
+			   if(jobAdId != -1){	
+			   	//Insert location values into location table
+//				query = 
+//					"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
+//					"VALUES " + "('" 
+//					+ address + "','" 
+//					+ longitude + "','" 
+//					+ latitude + "','" 
+//					+ jobAdId +
+//				"');";
+//				
+//				System.out.println("Location table query: " + query);
+//				
+//				success = stmt.executeUpdate(query);
+//				
+//				System.out.println("Row Inserted: " + success);
+				
+				if (success == 1){
+					System.out.println("New JobAd Creation success (DB)");
+					isSuccessful = true;
+//					message = "Create Job Advertisement Successful";
+				}
+				else{
+					System.out.println("Insert location for new job ad failed");
+					Utility.logError("Insert location for new job ad failed");
+				}
+
+				//Debug print
+//				System.out.println("Location Query: "+ query);
+				
+//				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//					System.out.println("Error: Location Update Failed");
+//				}
+			  }//ENDOF INSERT INTO LOCATION TABLE 
+			}
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		        }
+		        catch (Exception e) {
+		        	//TODO log "Cannot close Statement"
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	//TODO log Cannot close Connection
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+		}//earlyExit:
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+//		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + msg + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+/**********************************************************************************************************************
+ * 								build Post Query
+ * This function will build query for SUBMIT AD AND SAVE DARFT
+ * @param request
+ * @param IdAcct
+ * @return
+ ***********************************************************************************************************************/
+	private String buildPostQuery(HttpServletRequest request, int IdAcct){
+ 		String query=null;
+		mysqlKeyword queryKeyword 	= new mysqlKeyword(); 
+		Map<String, Object>paraMap	= new HashMap<String, Object>();//col-val
+		StringBuffer queryBuf 		= new StringBuffer();
+		
+		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			
+			String paraName = (String) paramNames.nextElement();
+			if( !paraName.equals("action") && !paraName.equals("sessionKey") ){//Not Post "action"
+				//debug
+				System.out.println("Request: "  + paraName 
+									+ " Value: " +request.getParameter(paraName));
+				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
+			    //debug
+				System.out.println("Column: " + colName) ;
+				//Put the parameters' names and values into the MAP
+				if(colName.equals("dateStarting")||colName.equals("expiryDate")){
+					long aDate=Utility.dateConvertor(request.getParameter(paraName));
+					paraMap.put(colName, aDate);
+				}
+				else{
+					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );
+				}
+				//Debug
+			    System.out.println("Value: " + paraMap.get(colName)+"\n");
+				}//ENDOF IF SET COL-VAL IN PARAMAP
+		  	
+		  }//ENDOF WHILE paramNames.hasMoreElements()
+
+		paraMap.put("idAccount", IdAcct);//set the owner
+		paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the modified time
+			  
+	    String stm1 = queryKeyword.INSERT + queryKeyword.INTO + "tableJobAd " +"(";
+	    String stm2 = "idAccount, title, description, " +
+		   			  "expiryDate, datePosted, dateStarting, " +
+		   			  "contactInfo, educationRequired, jobAvailability, tags)" +
+		   			  queryKeyword.VALUES + "('";
+	    query = stm1+stm2;
+		queryBuf.append(query);
+		if(request.getParameter("action").equals("saveJobAdDraft")){
+		    String stm3 = "status, ";//CAUTION: COMA IMPORTANT
+			queryBuf.insert(stm1.length(), stm3);
+			queryBuf.append("draft', '");//CAUTION: SIGLE QUO & COMA IMPORTANT
+		  }
+		else if(request.getParameter("action").equals("createJobAdvertisement")){//TODO CHCK SYSTEM SETTING IF NEEDS APPROVAL
+		    String stm3 = "status, ";//CAUTION: SIGLE QUO & COMA IMPORTANT
+			queryBuf.insert(stm1.length(), stm3);
+			queryBuf.append("pending', '");//CAUTION: COMA IMPORTANT
+		  }
+		queryBuf.append( paraMap.get("idAccount")); 		queryBuf.append("','");
+		queryBuf.append( paraMap.get("title")); 			queryBuf.append("','");
+		queryBuf.append( paraMap.get("description"));		queryBuf.append("','"); 
+		queryBuf.append( paraMap.get("expiryDate")); 		queryBuf.append("','");
+		queryBuf.append( paraMap.get("datePosted")); 		queryBuf.append("','");
+		queryBuf.append( paraMap.get("dateStarting"));		queryBuf.append("','");
+		queryBuf.append( paraMap.get("contactInfo"));		queryBuf.append("','");
+		queryBuf.append( paraMap.get("educationRequired")); queryBuf.append("','");
+		queryBuf.append( paraMap.get("jobAvailability"));	queryBuf.append("','");
+		queryBuf.append( paraMap.get("tags"));				queryBuf.append("')");
+		
+		query = queryBuf.toString();
+		return query;
+	}
+	
+	 final class mysqlKeyword{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
+		String SELECT			="SELECT ";		//CAUTION: SPACE IMPORTANT
+		String INSERT			="INSERT ";		//CAUTION: SPACE IMPORTANT
+		String UPDATE			="UPDATE ";		//CAUTION: SPACE IMPORTANT
+		String AND 				= " AND ";		//CAUTION: SPACE IMPORTANT
+		String IN 				= " IN ";		//CAUTION: SPACE IMPORTANT
+		String OR				= " OR "; 		//CAUTION: SPACE IMPORTANT
+		String LIKE				= " LIKE "; 	//CAUTION: SPACE IMPORTANT
+		String REGEXP		 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
+		String WHERE			= " WHERE ";	//CAUTION: SPACE IMPORTANT
+		String ORDER			= " ORDER BY "; //CAUTION: SPACE IMPORTANT
+		String LIMIT			= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
+		String DESC				= " DESC "; 	//CAUTION: SPACE IMPORTANT
+		String INTO				= " INTO "; 	//CAUTION: SPACE IMPORTANT
+		String FROM				= " FROM "; 	//CAUTION: SPACE IMPORTANT
+		String VALUES			= " VALUES "; 	//CAUTION: SPACE IMPORTANT
+		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
+//		StringBuffer 
+		private mysqlKeyword(){
+		}
+	}
+/**************************************************************************************
+ * 			DBColConvertor Function (***DEPRECATED TO BE REMOVED***)
+ *  Convert input form's name into corresponding DB columns
+ * @param input
+ * @return
+ **************************************************************************************/
 	private String DBColConvertor(String input){
 		switch (EnumCriteria.valueOf(input)){
 		
