@@ -63,10 +63,10 @@
 		String filepath = document.getDocPath();
 		
 		BufferedInputStream inputStream = null;
-		ServletOutputStream outStream = null;
-
+		%>
+			<p>Download starting...</p>
+		<%
 		try{
-			outStream = response.getOutputStream();
 			File file = new File( filepath + filename);
 			
 			//set response headers
@@ -80,7 +80,7 @@
 
 			//read from the file; write to the ServletOutputStream
 			while((readBytes = inputStream.read()) != -1)
-				outStream.write(readBytes);
+				out.write(readBytes);
 		} 
 		catch(IOException e) {
 			System.out.println("An error has occured while user " + s.getIdAccount()
@@ -89,9 +89,7 @@
 					+ " is downloading file " + filepath + filename + " : " + e.getMessage());		        
 		} 
 		finally {
-		    //close input/output streams
-		    if (outStream != null)		    	
-		    	outStream.close();
+		    //close input stream
 		    if (inputStream != null)
 		    	inputStream.close();		         
 		}

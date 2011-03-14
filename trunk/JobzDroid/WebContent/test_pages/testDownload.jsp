@@ -28,7 +28,7 @@
 			throw new ServletException(e.getMessage());		        
 		} 
 		finally {
-		    //close input/output streams
+		    //close input stream
 		    if (inputStream != null)
 		    	inputStream.close();		         
 		}
