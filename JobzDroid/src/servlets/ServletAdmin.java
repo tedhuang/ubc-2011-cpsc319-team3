@@ -409,7 +409,7 @@ public class ServletAdmin extends HttpServlet {
 		Session session = dbManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
-			message = "Unauthorized create admin action.";
+			message = "Unauthorized post news action.";
 		}
 		else{
 			// check if user is authorized

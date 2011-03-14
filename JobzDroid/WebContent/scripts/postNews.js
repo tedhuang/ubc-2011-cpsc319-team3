@@ -4,7 +4,7 @@
 
 $("document").ready(function() {
 	// client side error checking
-	$("input").bind("change", validateInput);
+	$("#newsTitle").bind("change", validateInput);
 	// allow content to have maximum 2048 characters
 	$("#newsContent").bind("keyup", function(){
 		limitChars('newsContent', 2048, 'contentInfo');
@@ -28,8 +28,7 @@ function validateInput(evt){
 // send post news request
 function postNews(evt){
 	$("#submitButton").attr("disabled", true);
-	$("#statusText").removeClass("errorTag");	
-	$("#statusText").removeClass("successTag");
+	$("#statusText").removeClass();	
 	var strNewsTitle = trim($("#newsTitle").val());
 	var strNewsContent = $("#newsContent").val();
 	var strSessionKey = $("#sessionKey").val();
@@ -76,14 +75,10 @@ function parseRegResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
-		 $("input").attr("disabled", true);
-		 $("textarea").attr("disabled", true);
 		 $("#statusText").addClass("successTag");
-		 $("#submitButton").text("Post more News");
-		 $("#submitButton").unbind("click", postNews);
-		 $("#submitButton").bind("click", function(){
-			 window.location.reload(true);
-		 });
+		 $("#submitButton").removeAttr("disabled");
+		 $("#newsTitle").val("");
+		 $("#newsContent").val("");
 	 }
 	 else
 		 $("#statusText").addClass("errorTag");

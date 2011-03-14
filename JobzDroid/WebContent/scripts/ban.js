@@ -1,6 +1,7 @@
 /**
  * Javascript for Ban User Page (admin)
  */
+var submittedUser = "";
 
 $("document").ready(function() {
 	// send request to admin servlet on submit
@@ -58,8 +59,9 @@ function sendBanRequest(evt){
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
-	
-	//update status text
+		
+	//update status text and submitted email
+	submittedUser = strUserName;	
 	$("#statusText").text("Processing...This may take a moment.");
 }
 
@@ -70,7 +72,7 @@ function parseRegResponse(responseXML){
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
-		 window.location.reload(true);
+		 loadPageWithSession('ban.jsp');
 	 }
 	 else
 		 $("#statusText").addClass("errorTag");
