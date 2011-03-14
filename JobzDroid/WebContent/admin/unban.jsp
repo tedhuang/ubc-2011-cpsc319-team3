@@ -9,8 +9,8 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
-	<script type="text/javascript" src="../scripts/ban.js"></script>
-	<title>Ban User</title>
+	<script type="text/javascript" src="../scripts/unban.js"></script>
+	<title>Unban User</title>
 </head>
 <body>
 	<%	// check session key
@@ -46,8 +46,8 @@
 		  
 		  <br/>			  
 		  <div class="regbox">
-			<h3 class="heading-text">Ban User</h3>
-			<h1><b><font size='4'>Active Users</font></b></h1>
+			<h3 class="heading-text">Unban User</h3>
+			<h1><b><font size='4'>Banned Users</font></b></h1>
 				<table id="userTable">
 					<thead>
 						<tr>
@@ -57,12 +57,12 @@
 							<th>Account Creation Date</th>
 						</tr>
 					</thead>
-					<%	// display all active searcher poster accounts
+					<%	// display all banned searcher poster accounts
 						String email, secondaryEmail, type, strDateTimeCreated, emailID;
 						long dateTimeCreated;
 						for(int i = 0; i < users.size(); i++){
 							Account acc = users.get(i);
-							if( acc.getStatus().equals("active") ){
+							if( acc.getStatus().equals("banned") ){
 								email = acc.getEmail();
 								secondaryEmail = acc.getSecondaryEmail();
 								if( secondaryEmail == null)
@@ -98,7 +98,7 @@
 					        </div>
 					    </td>
 					    <td>
-		          		    <button id="submitButton" type="button">Ban Hammer</button>
+		          		    <button id="submitButton" type="button">Unban</button>
 		    			</td>
 					  </tr>
 					  <tr>

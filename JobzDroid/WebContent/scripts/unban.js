@@ -1,10 +1,10 @@
 /**
- * Javascript for Ban User Page (admin)
+ * Javascript for Unban User Page (admin)
  */
 
 $("document").ready(function() {
 	// send request to admin servlet on submit
-	$("#submitButton").bind("click", sendBanRequest);
+	$("#submitButton").bind("click", sendUnbanRequest);
 });
 
 function copyEmailToInput(email){
@@ -16,11 +16,11 @@ function viewProfile(){
 }
 
 // send ban request to admin servlet
-function sendBanRequest(evt){
+function sendUnbanRequest(evt){
 	var strUserName = trim($("#userName").val());
 	var strSessionKey = $("#sessionKey").val();
 	// ask user to confirm first
-    var b = confirm("Are you sure to ban user " + strUserName + "?");
+    var b = confirm("Are you sure to unban user " + strUserName + "?");
     if (b == false)
         return false;
 
@@ -50,7 +50,7 @@ function sendBanRequest(evt){
 			}};
 	}
 	request = new Request;
-	request.addAction("ban");
+	request.addAction("unban");
 	request.addSessionKey(strSessionKey);
 	request.addParam("email", strUserName);
 	

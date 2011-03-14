@@ -9,7 +9,7 @@ $("document").ready(function() {
 	$("#newsContent").bind("keyup", function(){
 		limitChars('newsContent', 2048, 'contentInfo');
 	});
-	// send request to registeration servlet on submit
+	// send request to admin servlet on submit
 	$("#submitButton").bind("click", postNews);
 });
 
@@ -25,7 +25,7 @@ function validateInput(evt){
 	}
 }
 
-//sends account reg request to the corresponding servlet
+// send post news request
 function postNews(evt){
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass("errorTag");	

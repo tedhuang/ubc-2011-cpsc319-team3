@@ -2,11 +2,9 @@ package managers;
 
 import java.sql.*;
 import java.util.*;
-import java.util.UUID;
 
 import classes.Account;
 import classes.DBConnectionPool;
-import classes.JobAdvertisement;
 import classes.Session;
 import classes.Utility;
 
@@ -161,6 +159,59 @@ public class DBManager {
 	        freeConnection(conn);
 	    }
 		return account;
+	}
+	
+	/***
+	 * Returns an array list of all accounts of type searcher and poster
+	 * @return An array list of all accounts of type searcher and poster.
+	 */
+	public ArrayList<Account> getSearcherPosterAccounts(){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		
+		ArrayList<Account> accounts = new ArrayList<Account>();
+		int idNews;
+		String email, secondaryEmail, type, status;
+		long dateTimeCreated;
+		try {			
+			stmt = conn.createStatement();
+			query = "SELECT * FROM tableAccount WHERE type='searcher' OR type='poster';";            
+			rs = stmt.executeQuery(query);
+		    while (rs.next()) {
+		    	idNews = rs.getInt("idAccount");
+		    	email = rs.getString("email");
+		    	secondaryEmail = rs.getString("secondaryEmail");
+		    	type = rs.getString("type");
+		    	status = rs.getString("status");
+		    	dateTimeCreated = rs.getLong("dateTimeCreated");
+		        Account acc = new Account(idNews, email, secondaryEmail, type, status, dateTimeCreated);
+		        accounts.add(acc);
+		    }
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+		return accounts;
 	}
 	
 	/**
