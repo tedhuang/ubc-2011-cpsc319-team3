@@ -70,7 +70,7 @@ function parseRegResponse(responseXML){
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
-		 window.location.reload(true);
+		 loadPageWithSession('unban.jsp');
 	 }
 	 else
 		 $("#statusText").addClass("errorTag");

@@ -57,6 +57,7 @@
 							<th>Account Creation Date</th>
 						</tr>
 					</thead>
+					<tbody>
 					<%	// display all active searcher poster accounts
 						String email, secondaryEmail, type, strDateTimeCreated, emailID;
 						long dateTimeCreated;
@@ -72,7 +73,7 @@
 								strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
 								%>
 									<tr>
-										<td ><a href="#" onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
+										<td><a href="#" onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
 										<td><%= secondaryEmail %></td>
 										<td><%= type %></td>
 										<td><%= strDateTimeCreated %></td>
@@ -82,6 +83,7 @@
 							}
 						}
 					%>
+					</tbody>
 				</table>
 				<table>
 					<tbody>

@@ -48,6 +48,7 @@
 		  <a href="#" onclick="loadPageWithSession('ban.jsp')">Ban User</a>
 		  <a href="#" onclick="loadPageWithSession('unban.jsp')">Unban User</a>
 		  
+		  <a href="#" onclick="userLogoutRequest()">Log out</a>
 		  <br/>
 		  <hr/>
 		</div>

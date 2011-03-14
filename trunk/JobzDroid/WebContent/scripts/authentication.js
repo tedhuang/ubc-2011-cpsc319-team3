@@ -114,19 +114,19 @@ function userLogoutRequest()
 	
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
+	  xmlhttp = new XMLHttpRequest();
 	  }
 	else
 	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	  }
 	  
 	xmlhttp.onreadystatechange=function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
 	    {
-		  //TODO change this
-			document.getElementById("header").innerHTML = "You have LOGGED OUT!";   //if logout successfully, redirect to the main page 
+		  window.location = "../index.html";
+		  return false;
 	    }
 	  else //logout failed display error messege
 		 {
@@ -137,7 +137,7 @@ function userLogoutRequest()
 	  var Params = "action=requestForLogout" + "&sessionKey=" + sessionKey;
 
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","./ServletAccount" ,true);
+	xmlhttp.open("POST","../ServletAccount" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(Params);
 }

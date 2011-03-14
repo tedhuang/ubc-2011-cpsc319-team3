@@ -600,9 +600,9 @@ public class DBManager {
  * TODO sync DB name
  ****************************************************************************************************************************************/
 	public boolean userLogout(String sessionKey){
-		Connection conn=getConnection();
-		Statement stmt=null;
-		int done=-1; 
+		Connection conn = getConnection();
+		Statement stmt = null;
+		int done = -1; 
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		try
 		{
