@@ -27,7 +27,9 @@
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
   		$('#sideMenu').sideNavMenu({});
 		
-		$('#tabs').DynaSmartTab({});
+    	$('#tabs').DynaSmartTab({});
+		
+    	bindClearError();
 		// MOVED TO AUTHENTICATION.JS
 		//	loadSessionKeyFromURL();
 		});
@@ -143,10 +145,10 @@
   		<div id="adMng-frame" class="subFrame unremovable iniHidden">
             <div id="adLinks">
             	<ul>
-            		<li><a href="#">Active<span id="numActive"></span></a></li>
-					<li><a href="#">Draft<span id="numDraft"></span></a></li>
-					<li><a href="#">Pending<span id="numPending"></span></a></li>
-					<li><a href="#">Inactive<span id="numInactive"></span></a></li>
+            		<li><a class="jsBtn" onclick="filterTable('open', ownerAdTable)">Open<span id="numActive"></span></a></li>
+					<li><a class="jsBtn">Draft<span id="numDraft"></span></a></li>
+					<li><a class="jsBtn">Pending<span id="numPending"></span></a></li>
+					<li><a class="jsBtn">Inactive<span id="numInactive"></span></a></li>
             	</ul>
             	
             	
@@ -185,7 +187,7 @@
 						</th>
 						<th id="col-Tools">
 							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Tools</div>
+								<div class="headText">Status</div>
 							</div>
 						</th>
 					</tr>
@@ -210,22 +212,21 @@
 		<div id="newAd-frame" class="subFrame unremovable">
           <div id="head-bar">
 				<h2 class="welcome">Create New Ad</h2>
-				<ul>
-					<li><a href="#" class="btn">Save to Draft</a></li>
-		    		<li><a href="#" onclick="createJobAd()">Post it</a></li>
-					<li><a href="#" onclick="resetFields('newAdForm');"> Reset Fields</a></li>
+					<span id="newAdfb">Feed Back Area</span>
+					<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft</a>
+		    		<a class="jsBtn" onclick="postJobAd('submit')">Post it</a>
+					<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
 
-				</ul>
 		  </div><!--ENDOF headBar-->
 		  <div id="newAdForm" class="newFormContainer">
 		  	<div id="typeInForm" class="fillInForm"> 
 				<div class="field">
 					<label for="title-field" >Ad Title:</label>
-					<input id="title-filed" name="title-field" class="textBox" value="" />
+					<input id="title-filed" name="title-field" class="textBox mustNotNull" value="" />
 				</div>
 				<div class="field"> 
-						<label for="contact-field" >Contact Info:</label> 
-						<input id="contact-filed" name="contact-field" class="textBoxL" value="" /> 
+						<label for="contact-field" >Company:</label> 
+						<input id="contact-filed" name="company-field" class="textBoxL mustNotNull" value="" /> 
 					</div>
 					
 					<div class="field"> 
@@ -234,27 +235,26 @@
 					</div>
 				<div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-filed" name="desc-field" class="textarea"></textarea> 
+						<textarea id="desc-filed" name="desc-field" class="textarea mustNotNull"></textarea> 
 				</div>
 				
 				</div><!--ENDOF typeInForm-->
 				
-				
-			   <div id="chooseForm" class="fillInForm">
-			   
-					<div class="field"> 
-						<label for="edu-field">Minimal Degree Requirement:</label>
-						<select id="edu-field" name="edu-field">
-							<option value="">Choose a degree</option>
-							<option value="1">B.Sc.</option>
-							<option value="2">M.Sc.</option>
-							<option value="3">Ph.D.</option>
-						</select>
-					</div>
+		<div id="chooseForm" class="fillInForm">
+			<div class="field"> 
+				<label for="edu-field">Minimal Degree Requirement:</label>
+				<select id="edu-field" name="edu-field">
+					<option value="">Choose a degree</option>
+					<option value="1">B.Sc.</option>
+					<option value="2">M.Sc.</option>
+					<option value="3">Ph.D.</option>
+				</select>
+			</div>
 					
 			<div class="field">
-					<label for="exp-field">Starting Date</label>
-					<form id="exp-field" action="" name="formStartingDate">
+					<label for="startTime-field">Starting Date</label>
+					<input id="tag-field" name="startTime-field" class="textBox mustNotNull" value=""/>
+					<!--  <form id="exp-field" action="" name="formStartingDate">
 					<select id="startingDay">
 					</select> 
 					<select id="startingMonth">
@@ -267,11 +267,13 @@
 					$("document").ready(function(){
 						populatedropdown("startingDay", "startingMonth", "startingYear");
 					});
-				</script> 
+				</script> -->
 			</div >	
 			<div class="field">
-				<label for="exp-field">Expiry date</label>
-					<form id = "exp-field" action="" name="formExpiryDate">
+				<label for="expireTime-field">Expiry date</label>
+				<input id="tag-field" name="expireTime-field" class="textBox mustNotNull" value=""/>
+				
+				<!--  	<form id = "exp-field" action="" name="formExpiryDate">
 					<select id="expiryDay">
 					</select> 
 					<select id="expiryMonth">
@@ -281,32 +283,34 @@
 					</form>
 					<script type="text/javascript">
 						populatedropdown("expiryDay", "expiryMonth", "expiryYear");
-					</script>
+					</script>-->
 			</div>
 					
 					<div class="field"> 
 						<label>Employment Type:</label>
 						<label for="ft-field" >
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field"/>
+							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
 							Full Time
 						</label>
 		   				<label for="pt-field">
-							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field"/>
+							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
 		    				 Part Time
 						</label>
 						<label for="is-field">
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field"/>
+		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
 		   		 			Internship
 						</label>
 					</div>
-					<div class="field"> 
+					<!--  <div class="field"> 
 						<label for="loc-field" >Job Location:</label> 
-						<input id="loc-filed" name="loc-field" class="textBox" value=""/>
+						<input id="address" name="loc-field" class="textBox" value=""/>
+						<input id="lat-field" name="lat-field" class="textBox" value=""/>
+						<input id="lng-field" name="lgn-field" class="textBox" value=""/>
 						<span id=locFeedback></span>
 						<button type="button" onclick="calculateLocation()">Find Location</button><br/>
 						<table id="lookUpTable"></table><br />
-						
 					</div>
+					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 		  </div><!--ENDOF newAdForm-->
 		</div><!--ENDOF newAd-frame-->

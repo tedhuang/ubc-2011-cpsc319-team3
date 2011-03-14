@@ -175,15 +175,33 @@ public class Utility {
         return res;
     }
 	
+	
+	/*************************************************************************************
+	 * 			Date Convention Function Group
+	 *************************************************************************************/
 	public static String dateConvertor(long milSecDate){
 		
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milSecDate);
         return formatter.format(calendar.getTime());
 	}
-	
+//////////////////////////////////////////////////////////////////////////////////
+	public static long dateConvertor(String date){
+			
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
+		
+		try { 
+			Date aDate = df.parse(date);
+			return aDate.getTime();
+		} 
+		catch (ParseException e) { 
+			logError("Failure while converting date string to long: " + e.getMessage()); 
+		}
+		return 0;
+	}
+/******************ENDOF Date Convention********************************************************/
 	
 	public static String degreeConvertor(int numForm){
 		
@@ -204,17 +222,15 @@ public class Utility {
 		if(input.equalsIgnoreCase("Ph.D")){
 			return 3;
 		}
+		else if(input.equalsIgnoreCase("bachelor")){
+			return 1;
+		}
+		else if(input.equalsIgnoreCase("master")){
+			return 2;
+		}
 		else{
-			if (input.equalsIgnoreCase("bachelor")){
-					return 1;
-			}
-			else{	
-				if(input.equalsIgnoreCase("master")){//Master
-					return 2;
-				}
-			}//ENDOF INNER ELSE
-		}//ENDOF OUTTER ELSE
-		return 0;
+			return -1;
+		}
 	}
 	
 	public static String jobTypeTranslator(boolean intoDB, String input){
