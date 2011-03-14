@@ -225,7 +225,7 @@ public class ServletAdmin extends HttpServlet {
 		boolean emailExists = dbManager.checkEmailExists(email);
 		if(!emailExists){
 			allGood = false;
-			message = "Account does not exist.";
+			message = "Account " + email + " does not exist.";
 		}
 		else {
 			// read account information
@@ -235,11 +235,11 @@ public class ServletAdmin extends HttpServlet {
 				message = "Error reading account information.";
 			}
 			else{
-				String accountStatusToUnban = accountToUnban.getType();
+				String accountStatusToUnban = accountToUnban.getStatus();
 				// check if account status is banned
 				if( !accountStatusToUnban.equals("banned") ){
 					allGood = false;
-					message = "Account is not banned.";
+					message = "Account " + email + " is not banned.";
 				}
 				else{
 					// check session key

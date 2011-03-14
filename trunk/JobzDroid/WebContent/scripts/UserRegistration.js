@@ -48,7 +48,7 @@ $("document").ready(function() {
 	$("#description").bind("keyup", function(){
 		limitChars('description', 250, 'descInfo');
 	});
-	// send request to registeration servlet on submit
+	// send request to account servlet on submit
 	$("#submitButton").bind("click",sendRegRequest);
 });
 

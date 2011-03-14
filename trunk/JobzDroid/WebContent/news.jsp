@@ -27,6 +27,7 @@
 	  
 	  <br/>	
 	  <h1><b><font size='4'>Site News</font></b></h1>
+	  <table>
 	  <%
 	  // read news entries
 	  	for(int i = 0; i < entries.size(); i++){
@@ -37,21 +38,22 @@
 	  		// display publish date in PST
 	  		String formattedDate = Utility.longToDateString(dateTimePublished, "PST");
 	  %>
-	  		<table>
-	  			<thead ><%= title %></thead>
-	  			<tr>
-	  				<td><%= formattedDate %></td>
-	  			</tr>
-	  			<tr>
-	  				<td><pre><%= content %></pre></td>
-	  			</tr>	  			
-			  	<tr>
-			  	  <td class="clean"></td>
-			 	</tr>
-	  		</table>
+  			<tr style="font-weight:bold">
+  				<td><%= title %></td>
+  			</tr>
+  			<tr>
+  				<td><%= formattedDate %></td>
+  			</tr>
+  			<tr>
+  				<td><pre><%= content %></pre></td>
+  			</tr>	  			
+		  	<tr>
+		  	  <td class="clean"></td>
+		 	</tr>
 	  <%		
 	  	}
 	  %>
+	  </table>
 	  <br/>
 	  <hr/>
 	</div>

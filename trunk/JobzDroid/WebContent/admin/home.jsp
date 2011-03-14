@@ -46,6 +46,7 @@
 		  <a href="#" onclick="loadPageWithSession('postNews.jsp')">Post News</a>
 		  <a href="#" onclick="loadPageWithSession('manageJobAd.jsp')">Manage Jobs Advertisements</a>
 		  <a href="#" onclick="loadPageWithSession('ban.jsp')">Ban User</a>
+		  <a href="#" onclick="loadPageWithSession('unban.jsp')">Unban User</a>
 		  
 		  <br/>
 		  <hr/>
