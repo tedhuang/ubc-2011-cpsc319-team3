@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -176,9 +177,9 @@ public class Utility {
     }
 	
 	
-	/*************************************************************************************
-	 * 			Date Convention Function Group
-	 *************************************************************************************/
+/*******************************************************************************************************************
+ * 							Date Convention Function Group
+ *******************************************************************************************************************/
 	public static String dateConvertor(long milSecDate){
 		
 		DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -189,17 +190,29 @@ public class Utility {
 	}
 //////////////////////////////////////////////////////////////////////////////////
 	public static long dateConvertor(String date){
-			
+	  boolean goodFormat=false;
+	  long dateInMs=0;
+	  if(date!=null){
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
-		
-		try { 
-			Date aDate = df.parse(date);
-			return aDate.getTime();
-		} 
-		catch (ParseException e) { 
-			logError("Failure while converting date string to long: " + e.getMessage()); 
+		StringTokenizer st=new StringTokenizer(date, "/");
+		if(st.countTokens()==3){//we know the delimiters format is right
+			try { 
+				Date aDate = df.parse(date);
+				goodFormat=true;
+				dateInMs = aDate.getTime();
+			} 
+			catch (ParseException e) { 
+				logError("Failure while converting date string to long: " + e.getMessage()); 
+			}
 		}
-		return 0;
+	    if(!goodFormat){//some other bad format, we do a default setting: one month
+	    		Calendar cal = Calendar.getInstance();
+	            // Add 1 month to the calendar
+	            cal.add(Calendar.MONTH, 1);
+	            dateInMs=cal.getTimeInMillis();
+	    }
+	  }
+	  return dateInMs;
 	}
 /******************ENDOF Date Convention********************************************************/
 	
