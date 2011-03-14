@@ -7,8 +7,13 @@
 <link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
 <link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="../css/jq-ui/jquery.ui.datepicker.css"/>
+<link rel="stylesheet" href="../css/jq-ui/jquery.ui.theme.css"/>
+<!-- <link rel="stylesheet" href="../css/jq-ui/jquery.ui.base.css"/>-->
 
-<!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<!--CAUTION: DO NOT CHANGE THIS LINE!--><script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="../scripts/jq-ui/jquery.ui.core.js"></script>
+<script src="../scripts/jq-ui/jquery.ui.datepicker.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
@@ -33,9 +38,13 @@
 		// MOVED TO AUTHENTICATION.JS
 		//	loadSessionKeyFromURL();
 		});
-		
-	
 </script>
+<script>
+	$(function() {
+		$( "#startTime-field" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
+		$( "#expireTime-field" ).datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
+		});
+	</script>
 </head><body>
 	
 <div class="main">
@@ -253,7 +262,7 @@
 					
 			<div class="field">
 					<label for="startTime-field">Starting Date</label>
-					<input id="tag-field" name="startTime-field" class="textBox mustNotNull" value=""/>
+					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
 					<!--  <form id="exp-field" action="" name="formStartingDate">
 					<select id="startingDay">
 					</select> 
@@ -271,7 +280,7 @@
 			</div >	
 			<div class="field">
 				<label for="expireTime-field">Expiry date</label>
-				<input id="tag-field" name="expireTime-field" class="textBox mustNotNull" value=""/>
+				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
 				
 				<!--  	<form id = "exp-field" action="" name="formExpiryDate">
 					<select id="expiryDay">
