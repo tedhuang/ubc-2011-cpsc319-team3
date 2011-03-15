@@ -23,11 +23,11 @@ Request.prototype.toString = function(){
 
 // removes table rows that do not start with the given filter's value
 function applyFilter(tableID, filterID){
-	$("#" + tableID + " tr").show();
+	$("#" + tableID + " tbody tr").show();
 	var filterValue = $("#"+filterID).val();
 	if(!filterValue || filterValue == "")
 		return false;	
-	$("#" + tableID + " tr:not([title^='" + filterValue + "'])").hide();
+	$("#" + tableID + " tbody tr:not([title^='" + filterValue + "'])").hide();
 }
 /***
  * Displays the amount of available character spaces left in a text area.

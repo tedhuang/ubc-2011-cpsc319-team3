@@ -229,73 +229,55 @@ function submitChangeProfile(){
 	
 }
 
-function getProfileById(){
-	
-	document.getElementById("getProfileButton").disabled=true;
-	var intAccountID = document.getElementById("accountID").value;
+function getProfileById(idAccount, outputDiv, heading){
+	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
 	request.addAction("getProfileById");
-	request.addSessionKey("1234"); //TODO: CHANGE THIS
-	request.addParam("accountID", intAccountID);
+	request.addSessionKey(strSessionKey);
+	request.addParam("accountID", idAccount);
 
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
+	  xmlhttp = new XMLHttpRequest();
 	else
-	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
 	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
-	    	document.getElementById("feedback").innerHTML=responseText;
-	    	loadProfileDetails(xmlhttp.responseXML);
+	xmlhttp.onreadystatechange = function(){
+	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			//you can find this in uiBot.js under scripts folder
+			buildProfileTb("profile", outputDiv, heading);
 	    }
 	  };	
 	  
-		//send the parameters to the servlet with POST
-		xmlhttp.open("POST","../ServletProfile" ,true);
-		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xmlhttp.send(request.toString());
-
-		//change the text while sending the request
-		document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-		
-	  //TODO parse returned profile XML
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
 }
 
 function getProfileBySessionKey(outputDiv, heading){
   
-	var sessionKey = $("#sessionKey").val();
+	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
 	request.addAction("getProfileBySessionKey");
-	request.addSessionKey(sessionKey);
+	request.addSessionKey(strSessionKey);
 
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
+	  xmlhttp = new XMLHttpRequest();
 	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
+	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletProfile" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	
-	xmlhttp.onreadystatechange=function()
+	xmlhttp.onreadystatechange = function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
 	    {
 //	    	loadProfileDetails(xmlhttp.responseXML);
 		  //you can find this in uiBot.js under scripts folder
