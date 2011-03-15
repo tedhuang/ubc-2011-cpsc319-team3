@@ -28,6 +28,24 @@ public class DBColName{
 	};
 	private Map<String, String>tbJobAdColMap=new HashMap<String, String>();
 	
+	
+	
+	private final String[]tbProfileColArray={
+			"idAccount",
+			"name",
+			"phone",
+			"selfDescription", 
+			"educationlevel",
+			"startingDate"
+	};
+	private Map<String, String>tbProfileColMap=new HashMap<String, String>();
+		
+		
+
+
+/*
+ * PROFILE SEARCH MAPPING
+ */
 	private final String[]searchAdFields={
 			/************************************************************************************
 			 * Those are input forms' name, MUST be matched
@@ -56,6 +74,8 @@ public class DBColName{
 	};
 	private Map<String, String>searchAdFieldsMap=new HashMap<String, String>();
 	
+	
+	
 	private final String[]adEditFields={
 			/************************************************************************************
 			 * Those are input forms' name, MUST be matched
@@ -77,10 +97,33 @@ public class DBColName{
 	};
 	private Map<String, String>adEditFieldsMap=new HashMap<String, String>();
 	
+	
+	
+/*
+ * PROFILE SEARCH MAPPING
+ */
+	private final String[]searchProfileFields={
+			/************************************************************************************
+			 * Those are input forms' name, MUST be matched
+			 * Entries Starts With NO means CLIENTS CANNOT DO SUCH REQUEST (YET)
+			 ************************************************************************************/
+			"searchName",
+			"searchEducation",
+			
+		//TODO:figure out how to include:
+			//"searchEmploymentPref", 
+			//"searchLocation",
+
+	};
+	private Map<String, String>searchProfileFieldsMap=new HashMap<String, String>();
+	
+	
+	
 	public DBColName(){
 		initColMap();
 		makeAdPostDict();
 		makeSearchAdDict();
+		makeSearchProfileDict();
 	}
 	
 	private void initColMap(){
@@ -92,56 +135,85 @@ public class DBColName{
 		return tbJobAdColMap;
 	}
 	public Map <String, String> getDict(String action){
+		//JobAd Functions:
 		if(action.equals("searchJobAdvertisement")){
-			return colDictSearch;
+			return colDictSearchJobAd;
 		}
 		else if(action.equals("createJobAdvertisement")||action.equals("saveJobAdDraft")){
-			return colDictEdit;
+			return colDictEditJobAd;
+		}
+		
+		//Profile Functions:
+		else if(action.equals("searchProfile")){
+			return colDictSearchProfile;
 		}
 		
 		return null;
 	}
 	
-	private static Map <String, String> colDictEdit=new HashMap<String, String>();
+	
+/*
+ * PROFILE SEARCH MAPPING
+ */
+	private static Map <String, String> colDictSearchProfile=new HashMap<String,String>();
+	private void makeSearchProfileDict(){ 
+		for(int i=0; i<searchProfileFields.length; i++){
+			searchProfileFieldsMap.put(searchProfileFields[i], searchProfileFields[i]);
+		}
+		
+		colDictSearchProfile.put(searchProfileFieldsMap.get("searchName"), 				tbProfileColMap.get("name"));
+		colDictSearchProfile.put(searchProfileFieldsMap.get("searchEducation"), 		tbProfileColMap.get("educationlevel"));
+	
+	//TODO: Add these:
+//		colDictSearchProfile.put(searchProfileFieldsMap.get("searchLocation"), 			tbProfileColMap.get("location"));
+//		colDictSearchProfile.put(searchProfileFieldsMap.get("searchEmploymentPref"), 	tbProfileColMap.get("employmentPref"));
+
+		
+		colDictSearchProfile = Collections.unmodifiableMap(colDictSearchProfile);
+	}
+	
+	
+	
+	private static Map <String, String> colDictEditJobAd=new HashMap<String, String>();
 	private void makeAdPostDict(){
 		for(int i=0; i<adEditFields.length; i++){
 			adEditFieldsMap.put(adEditFields[i], adEditFields[i]);
 		}
 		
-		colDictEdit.put(adEditFieldsMap.get("title-field"), 		tbJobAdColMap.get("title"));
-		colDictEdit.put(adEditFieldsMap.get("desc-field"), 			tbJobAdColMap.get("description"));
-		colDictEdit.put(adEditFieldsMap.get("startTime-field"),		tbJobAdColMap.get("dateStarting"));
-		colDictEdit.put(adEditFieldsMap.get("company-field"), 		tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
-		colDictEdit.put(adEditFieldsMap.get("edu-field"),			tbJobAdColMap.get("educationRequired"));
-		colDictEdit.put(adEditFieldsMap.get("ft-field"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictEdit.put(adEditFieldsMap.get("is-field"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictEdit.put(adEditFieldsMap.get("pt-field"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictEdit.put(adEditFieldsMap.get("tag-field"), 			tbJobAdColMap.get("tags"));
-		colDictEdit.put(adEditFieldsMap.get("expireTime-field"),	tbJobAdColMap.get("expiryDate"));
+		colDictEditJobAd.put(adEditFieldsMap.get("title-field"), 		tbJobAdColMap.get("title"));
+		colDictEditJobAd.put(adEditFieldsMap.get("desc-field"), 		tbJobAdColMap.get("description"));
+		colDictEditJobAd.put(adEditFieldsMap.get("startTime-field"),	tbJobAdColMap.get("dateStarting"));
+		colDictEditJobAd.put(adEditFieldsMap.get("company-field"), 		tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
+		colDictEditJobAd.put(adEditFieldsMap.get("edu-field"),			tbJobAdColMap.get("educationRequired"));
+		colDictEditJobAd.put(adEditFieldsMap.get("ft-field"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictEditJobAd.put(adEditFieldsMap.get("is-field"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictEditJobAd.put(adEditFieldsMap.get("pt-field"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictEditJobAd.put(adEditFieldsMap.get("tag-field"), 			tbJobAdColMap.get("tags"));
+		colDictEditJobAd.put(adEditFieldsMap.get("expireTime-field"),	tbJobAdColMap.get("expiryDate"));
 		//Location?
-		colDictEdit.put(adEditFieldsMap.get("loc-field"), 		"address");
+		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"), 		"address");
 		
-		colDictEdit = Collections.unmodifiableMap(colDictEdit);
+		colDictEditJobAd = Collections.unmodifiableMap(colDictEditJobAd);
 	}
 	
-	private static Map <String, String> colDictSearch=new HashMap<String, String>();
+	private static Map <String, String> colDictSearchJobAd=new HashMap<String, String>();
 	private void makeSearchAdDict(){//CREATE AND EDIT AD
 		for(int i=0; i<searchAdFields.length; i++){
 			searchAdFieldsMap.put(searchAdFields[i], searchAdFields[i]);
 		}
-		colDictSearch.put(searchAdFieldsMap.get("searchTitle"), 		tbJobAdColMap.get("title"));
-		colDictSearch.put(searchAdFieldsMap.get("searchStartDate"),		tbJobAdColMap.get("dateStarting"));
-		colDictSearch.put(searchAdFieldsMap.get("searchCompany"), 		tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
-		colDictSearch.put(searchAdFieldsMap.get("searchEduReq"),		tbJobAdColMap.get("educationRequired"));
-		colDictSearch.put(searchAdFieldsMap.get("searchFT"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictSearch.put(searchAdFieldsMap.get("searchPT"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictSearch.put(searchAdFieldsMap.get("searchIS"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictSearch.put(searchAdFieldsMap.get("searchTags"), 			tbJobAdColMap.get("tags"));
-		colDictSearch.put(searchAdFieldsMap.get("searchStatus"), 		tbJobAdColMap.get("status"));
-		colDictSearch.put(searchAdFieldsMap.get("searchAprv"), 			tbJobAdColMap.get("isApproved"));
-		colDictSearch.put("quickSearch", "quickSearch");
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTitle"), 		tbJobAdColMap.get("title"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStartDate"),		tbJobAdColMap.get("dateStarting"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchCompany"), 		tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchEduReq"),		tbJobAdColMap.get("educationRequired"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchFT"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchPT"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchIS"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTags"), 			tbJobAdColMap.get("tags"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStatus"), 		tbJobAdColMap.get("status"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchAprv"), 			tbJobAdColMap.get("isApproved"));
+		colDictSearchJobAd.put("quickSearch", "quickSearch");
 		
-		colDictSearch = Collections.unmodifiableMap(colDictSearch);
+		colDictSearchJobAd = Collections.unmodifiableMap(colDictSearchJobAd);
 	}
 	
 	
