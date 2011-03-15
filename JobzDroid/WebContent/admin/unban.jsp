@@ -48,62 +48,67 @@
 		  <div class="regbox">
 			<h3 class="heading-text">Unban User</h3>
 			<h1><b><font size='4'>Banned Users</font></b></h1>
-				<table id="userTable">
-					<thead>
-						<tr>
-							<th>Email</th>
-							<th>Secondary Email</th>
-							<th>User Type</th>
-							<th>Account Creation Date</th>
-						</tr>
-					</thead>
-					<%	// display all banned searcher poster accounts
-						String email, secondaryEmail, type, strDateTimeCreated, emailID;
-						long dateTimeCreated;
-						for(int i = 0; i < users.size(); i++){
-							Account acc = users.get(i);
-							if( acc.getStatus().equals("banned") ){
-								email = acc.getEmail();
-								secondaryEmail = acc.getSecondaryEmail();
-								if( secondaryEmail == null)
-									secondaryEmail = "";
-								type = acc.getType();
-								dateTimeCreated = acc.getDateTimeCreated();
-								strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
-								%>
-									<tr>
-										<td ><a href="#" onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
-										<td><%= secondaryEmail %></td>
-										<td><%= type %></td>
-										<td><%= strDateTimeCreated %></td>
-										<td><button onclick="viewProfile()">View Profile</button></td>
-									</tr>
-								<%
-							}
+			<span class="label">
+		          Filter: 
+		    </span>
+			<input type="text" class="textinput" id="filter" size="30"/>
+			
+			<table id="userTable">
+				<thead>
+					<tr>
+						<th>Email</th>
+						<th>Secondary Email</th>
+						<th>User Type</th>
+						<th>Account Creation Date</th>
+					</tr>
+				</thead>
+				<%	// display all banned searcher poster accounts
+					String email, secondaryEmail, type, strDateTimeCreated, emailID;
+					long dateTimeCreated;
+					for(int i = 0; i < users.size(); i++){
+						Account acc = users.get(i);
+						if( acc.getStatus().equals("banned") ){
+							email = acc.getEmail();
+							secondaryEmail = acc.getSecondaryEmail();
+							if( secondaryEmail == null)
+								secondaryEmail = "";
+							type = acc.getType();
+							dateTimeCreated = acc.getDateTimeCreated();
+							strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
+							%>
+								<tr title="<%= email %>">
+									<td ><a href="#userNameInput" onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
+									<td><%= secondaryEmail %></td>
+									<td><%= type %></td>
+									<td><%= strDateTimeCreated %></td>
+									<td><button onclick="viewProfile()">View Profile</button></td>
+								</tr>
+							<%
 						}
-					%>
-				</table>
-				<table>
-					<tbody>
-					  <tr>
-					    <td class="clean"></td>
-					  </tr>
-					  <tr>
-		    			<td class="label">
-		          		    User name (Email address): 
-		    			</td>
-					    <td style="width: 100px">
-					        <div>
-					            <input type="text" class="textinput" id="userName" size="50" maxlength="100" tabindex="11"/>
-					        </div>
-					    </td>
-					    <td>
-		          		    <button id="submitButton" type="button">Unban</button>
-		    			</td>
-					  </tr>
-					  <tr>
-					    <td class="clean"></td>
-					  </tr>
+					}
+				%>
+			</table>
+			<table>
+				<tbody>
+				  <tr>
+				    <td class="clean"></td>
+				  </tr>
+				  <tr>
+	    			<td class="label">
+	          		    User name (Email address): 
+	    			</td>
+				    <td style="width: 100px">
+				        <div>
+				            <input type="text" class="textinput" id="userNameInput" size="50" maxlength="100" tabindex="11"/>
+				        </div>
+				    </td>
+				    <td>
+	          		    <button id="submitButton" type="button">Unban</button>
+	    			</td>
+				  </tr>
+				  <tr>
+				    <td class="clean"></td>
+				  </tr>
 				</tbody>
 			</table>
 			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>

@@ -199,7 +199,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
  * @param heading
  *********************************************************************************************************************/
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", outputDiv).html("");
+	var tbody  = $( "tbody", "#"+outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
 	
 	if(profile.length==0){//if no results
@@ -219,7 +219,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		
 		case("searcher"):
 			
-		  $(heading).html( profile.attr("name") + "'s Profile");
+		  $("#"+heading).html( profile.attr("name") + "'s Profile");
 		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
 		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
 		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +
@@ -233,7 +233,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		  
 		case ("poster"):
 			
-			$(heading).html( profile.attr("name") + "'s Profile");
+			$("#"+heading).html( profile.attr("name") + "'s Profile");
 			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
 			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
 			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +

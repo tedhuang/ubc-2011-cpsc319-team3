@@ -4,21 +4,24 @@
 var submittedUser = "";
 
 $("document").ready(function() {
-	// send request to admin servlet on submit
+	$("#filter").bind("keyup", function(){
+		applyFilter("userTable", "filter");
+	});
 	$("#submitButton").bind("click", sendBanRequest);
 });
 
 function copyEmailToInput(email){
-	$("#userName").val(email);
+	$("#userNameInput").val(email);
 	return false;
 }
 
 function viewProfile(){
+	
 }
 
 // send ban request to admin servlet
 function sendBanRequest(evt){
-	var strUserName = trim($("#userName").val());
+	var strUserName = trim($("#userNameInput").val());
 	var strSessionKey = $("#sessionKey").val();
 	// ask user to confirm first
     var b = confirm("Are you sure to ban user " + strUserName + "?");

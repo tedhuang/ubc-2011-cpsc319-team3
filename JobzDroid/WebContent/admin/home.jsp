@@ -43,10 +43,10 @@
 		  
 		  <br/>	
 		  <h1><b><font size='4'>Admin Home</font></b></h1>
-		  <a href="#" onclick="loadPageWithSession('postNews.jsp')">Post News</a>
-		  <a href="#" onclick="loadPageWithSession('manageJobAd.jsp')">Manage Jobs Advertisements</a>
-		  <a href="#" onclick="loadPageWithSession('ban.jsp')">Ban User</a>
-		  <a href="#" onclick="loadPageWithSession('unban.jsp')">Unban User</a>
+		  <a href="#" onclick="loadPageWithSession('postNews.jsp')">Post News</a><br/>
+		  <a href="#" onclick="loadPageWithSession('manageJobAd.jsp')">Manage Jobs Advertisements</a><br/>
+		  <a href="#" onclick="loadPageWithSession('ban.jsp')">Ban User</a><br/>
+		  <a href="#" onclick="loadPageWithSession('unban.jsp')">Unban User</a><br/>
 		  
 		  <a href="#" onclick="userLogoutRequest()">Log out</a>
 		  <br/>

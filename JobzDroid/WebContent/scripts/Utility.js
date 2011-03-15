@@ -21,6 +21,14 @@ Request.prototype.toString = function(){
 	return this.str;
 };
 
+// removes table rows that do not start with the given filter's value
+function applyFilter(tableID, filterID){
+	$("#" + tableID + " tr").show();
+	var filterValue = $("#"+filterID).val();
+	if(!filterValue || filterValue == "")
+		return false;	
+	$("#" + tableID + " tr:not([title^='" + filterValue + "'])").hide();
+}
 /***
  * Displays the amount of available character spaces left in a text area.
  * @param textid Id of the text area.
