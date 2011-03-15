@@ -201,11 +201,20 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	var tbody  = $( "tbody", outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	
 	if(profile.length==0){//if no results
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
 	}
 	else{
 		var accountType = profile.attr("accountType");
+		var tbCell = $('<td></td>');
+		var inputForm =$('<input/>');
+		var enableEdBtn=$('<button></button>').attr({ type: 'button', 
+													  onclick: 'enableProfileEdit('+accountType+')'
+													  
+													  });
+		
+		
 		switch(accountType){
 		
 		case("searcher"):
