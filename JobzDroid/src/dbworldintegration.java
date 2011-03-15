@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -88,7 +89,7 @@ public void receive(String username,String password)
         store.connect(host, username, password);
         System.out.println("Connected...");
         Folder inbox = store.getDefaultFolder().getFolder("INBOX");
-        inbox.open(Folder.READ_ONLY);
+        inbox.open(Folder.READ_WRITE);
 
         Message[] msg = inbox.getMessages();
         
@@ -102,18 +103,15 @@ public void receive(String username,String password)
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         for (int i = msg.length-1; i >= 0; i--) {
-          //System.out.println("Subject:" + msg[i].getSubject());
-          //System.out.println("Read message? [Y to read / N to end]");
-          //String line = reader.readLine();
-          //if ("Y".equalsIgnoreCase(line))
           String getReplyTo = msg[i].getReplyTo()[0].toString();	
           
           String getSubject = msg[i].getSubject();
-          boolean flag = searchDBWorldAnnPosting(trs, getSubject);
-          
-          if(getReplyTo.contentEquals("dbworld_owner@yahoo.com") && flag)
-          {
-        	  
+          getSubject = getSubject+" ";
+          //invoke searchDBWorldAnnPostings();
+          boolean flagSuccess = searchDBWorldAnnPosting(trs, getSubject);
+/*          
+          if(getReplyTo.contentEquals("dbworld_owner@yahoo.com") && flagSuccess)
+          {	  
         	  System.out.println("From : " + msg[i].getFrom()[0]);
         	  System.out.println("Reply to : "+ msg[i].getReplyTo()[0]);
         	  System.out.println("Subject : " + msg[i].getSubject());
@@ -126,7 +124,20 @@ public void receive(String username,String password)
         	  }
         	  System.out.println();
         	  System.out.println("-----------------------------------------------------");
-          }
+
+          }//end of if statement ^
+*/          
+     	 //Todo: Delete the email
+         System.out.println("Do you want to delete the message? -- " + msg[i].getSubject());
+         String line = reader.readLine();
+         if("Y".equalsIgnoreCase(line)){
+        	 msg[i].setFlag(Flags.Flag.DELETED, true);
+        	 System.out.println("Msg Deleted\n");
+         }
+         else
+        	 System.out.println("Msg kept-proceeding to next msg\n");
+
+
           /**else if ("N".equalsIgnoreCase(line))
           {
           	if (inbox != null) {
@@ -146,6 +157,11 @@ public void receive(String username,String password)
         	}
           }**/
         }//end of forloop
+        
+        //Close connection
+        inbox.close(true);
+        store.close();
+        
     }//end of try block
     catch (Exception e) {
         e.printStackTrace();
@@ -153,7 +169,14 @@ public void receive(String username,String password)
     
  }//end of method receive(String username, String password)
 
-/**method to see if given email is a "job ann" posting in DbWorld website.**/
+/**
+ * " searchDBWorldAnnPosting(NodeList trs, String msgSubject) "
+ * 
+ * @param: NodeList trs - a list of nodes that contain html table rows
+ * @param: String 	msgSubject - email message Subject Heading
+ * This method sees if given email is a "job ann" posting in DbWorld website.
+ *
+ **/
 public boolean searchDBWorldAnnPosting(NodeList trs, String msgSubject){
 	boolean flag=false;
 	try{
@@ -181,12 +204,12 @@ System.out.println("searchDBWorldAnnPosting Method Entered");
 //System.out.println("subjectNodeToString:"+subjectNodeToString);
 //System.out.print("success point\n");
 			//Do stuff with annNode
-String mofo= "The 2011 FTRA International Workshop on Human centric computing, P2P, Grid and Cloud computing";
-String fo= "The 2011 FTRA International Workshop on Human centric computing, P2P, Grid and Cloud computing";
-			if(mofo.contains(fo) && annNodeToString.contains("conf. ann."))
+
+			if(msgSubject.contains(subjectNodeToString) && annNodeToString.contains("job ann."))
 			{
-				//System.out.print("FLAG SET TO BE TRUEEEEEE\n");
+System.out.print("FLAG SET TO BE TRUEEEEEE\n");
 				flag=true;
+				break;
 			}
 			else
 				flag=false;
