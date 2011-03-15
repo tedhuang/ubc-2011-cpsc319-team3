@@ -34,8 +34,6 @@
     	$('#tabs').DynaSmartTab({});
 		
     	bindClearError();
-		// MOVED TO AUTHENTICATION.JS
-		//	loadSessionKeyFromURL();
 		});
 </script>
 <script>
@@ -331,7 +329,7 @@
 					</tbody>
 				</table>
 			 </div>	
-			 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>	
+			 <button onclick="getProfileBySessionKey('profileTable', 'profileHeading')">Get My Profile!</button>	
 		</div><!--end of TABPROFILEFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
