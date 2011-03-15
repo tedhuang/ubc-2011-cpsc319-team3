@@ -4,574 +4,145 @@
 */
 
 /*********************************Basic*********************************************************/
-html, body, div, span,
-h1, h2, h3, h4, h5, h6, 
-p, a, img, strong, ul, li,
-form, label,
-table, tr, th, td 
-{
-    margin: 0;
-    padding: 0;
-    border: 0;
-    outline: 0;
-	font-family: Arial;
-    font-style: normal;
-    /*
-font-size: 13px;
-*/
-    display: block;
-    margin-top: 10px;
-    font-weight: inherit;
-    font-size: 100%;
-    vertical-align: baseline;
+html, body { margin: 0; padding: 0; border: 0; outline: 0; font-family: Arial;
+			 font-style: normal;  font-weight: inherit;    font-size: 100%;    vertical-align: baseline;
 }
-a {
-	text-decoration: none;
-}
-table {
-	display: table;
-	border-collapse: separate;
-	border-spacing: 7px 7px;
-	border-color: gray;
-}
+a {	text-decoration: none;}
+table {	display: table;	border-collapse: separate;	border-spacing: 7px 7px;	border-color: gray; }
 
-tbody {
-	display: table-row-group;
-	vertical-align: middle;
-	border-color: inherit;
-}
-tr {
-	display: table-row;
-	vertical-align: inherit;
-	border-color: inherit;
-}
-td, th {
-	display: table-cell;
-	vertical-align: inherit;
-}
+tbody {	display: table-row-group;	vertical-align: middle;	border-color: inherit;}
+tr {	display: table-row;	vertical-align: inherit;	border-color: inherit;}
+td, th {	display: table-cell;	vertical-align: inherit;}
 
-.clearfix:after {
-    content: ".";
-    display: block;
-    clear: both;
-    visibility: hidden;
-    line-height: 0;
-    height: 0;
-	overflow: hidden;
-	float: none;
+.clearfix:after {    content: ".";    display: block;    clear: both;    visibility: hidden;
+					line-height: 0;    height: 0;	overflow: hidden;	float: none;}
 
-}
+.clearfix {    display: inline-block;}
 
-.clearfix {
-    display: inline-block;
-}
+html[xmlns] .clearfix {    display: block;}
 
-html[xmlns] .clearfix {
-    display: block;
-}
+* html .clearfix {    height: 1%;}
+.force-no-break {	white-space: nowrap;}
 
-* html .clearfix {
-    height: 1%;
-}
-.force-no-break {
-	white-space: nowrap;
-}
+input,textarea,select {	font-family:inherit;	font-size:inherit;	font-weight:inherit;}
 
-input,textarea,select {
-	font-family:inherit;
-	font-size:inherit;
-	font-weight:inherit;
-}
-
-input,textarea,select {
-	*font-size:100%;
-}
-h2{
-	font-size		: 15px;
-	margin-top		: 10px;
-	padding-bottom	: 0px;
-	font-weight		: bold;
-	color			: #000000;
-}
+h2{ font-size: 15px;	margin-top: 10px;	padding-bottom: 0px;	font-weight: bold;	color: #000000;}
 h2.good{  color	: #00ff00; }
 h2.error{ color	: #ff0000; }
 h2.info{  background-color : #d2d200;}
 
-h2.welcome{
-	border-bottom: 2px solid;
-	border-bottom-color: #0C3E74;
-	padding: 0 0 3px;
-	
-}
+h2.welcome{	border-bottom: 2px solid;	border-bottom-color: #0C3E74;	padding: 0 0 3px;}
 
-.jsBtn{/*We will have a Click cursor without <a>!*/
-	cursor	: pointer;
-}
+.jsBtn{/*We will have a Click cursor without <a>!*/	cursor	: pointer;}
 /************************ENDOF BASIC STRUCTURE**********************************/
-.pagefont {
-	padding: 3px 8px 3px 8px; 
-	vertical-align: middle; 
-	font-size: 13px;
-}
-div.padded{
-	padding: 3px 0px 3px 5px; 
-}
-.errorTag {
-	color:red;
-}
-.successTag {
-	color:green;
-}
-
-
-.heading-text{
-	text-align		: center;
-	border-bottom	: 1px solid #999;
-	font-weight		: bold;
-	margin-top		: 20px;
-	margin-bottom	: 10px;
-	padding-bottom	: 0px;
-	color			: #237a0e;
-	font-size		: 22px;
-}
-.formFieldLabel {
-	float			: left;
-	font-weight		: bold;
-	margin			: 2px 0 0 0;
-	color			: #5F5F5F;
-}
+.pagefont {	padding: 3px 8px 3px 8px; 	vertical-align: middle; 	font-size: 13px;}
+div.padded{	padding: 3px 0px 3px 5px; }
+.errorTag {	color:red;}
+.successTag {	color:green;}
+.heading-text{	text-align: center;	border-bottom: 1px solid #999;	font-weight	: bold;	margin-top: 20px; margin-bottom	: 10px;
+				padding-bottom	: 0px;	color: #237a0e;	font-size: 22px;}
+.formFieldLabel {	float: left; font-weight: bold;	margin	: 2px 0 0 0;color: #5F5F5F;}
 /************************CUSTOMIZED BUILD-IN DOM ELEMENT******************************************/
-.has-style .label-cb, .label-rb{
-	padding-left: 34px;
-	height:21px;
-	vertical-align: middle; 
-}
+.has-style .label-cb, .label-rb{padding-left: 34px;	height:21px;	vertical-align: middle;}
 .has-style .label-rb    	{ background: url(../images/ele-ui/rbn.png) no-repeat; }
 .has-style .label-cb    	{ background: url(../images/ele-ui/cbn.png) no-repeat; }
 .has-style label.cby      	{ background: url(../images/ele-ui/cby.png) no-repeat; }
 .has-style label.rby      	{ background: url(../images/ele-ui/rby.png) no-repeat; }
-.has-style .label-cb input, .has-style .label-rb input  { 
-	position: absolute; 
-	left: -9999px;
-}
+.has-style .label-cb input, 
+.has-style .label-rb input  { 	position: absolute; 	left: -9999px;}
 /************************ELEMENTS STYLE*********************************************************/
-.main{
-	
-	width		: 1050px;
-	height		: auto;
-    margin		: 0 auto;
-    overflow	: hidden;
-	position	: relative;
-	max-width	: 1600px; 
-	min-width	: 600px;
-	
-}
+.main{	width: 1050px;	height: auto;  margin: 0 auto; overflow: hidden;position: relative;	max-width: 1600px; 	min-width: 600px;}
 /**********************header bar************************************************************/
-div.header{
-	height: 60px;
-	background: url("../images/header-bg.jpg") repeat-x 0 -12px;
-	position: relative;
-}
+div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg.jpg") repeat-x 0 -12px;	position: relative;}
 
-#logo{
-	position: absolute;
-	padding : 0 0 0 1em;
-	bottom	: 0;
-}
+#logo{	position: absolute;	padding : 0 0 0 1em;bottom	: 0;}
 
-#topnav {
-	position: absolute;
-	/*
-	width	: 400px;
-	*/
-	right	: 10px;
-	clear	: right;
-	float	: right;
-	list-style: none;
-	padding	: 0;
-	display	:inline;
-	
-}
-#topnav li{
-	float: left;
-}
-#topnav a.btn{
-      width                 : 100px;
-      background            : #076102;
-      color                 : #FFF;
-      float					: left;
-	  margin				: 0 0 0 10px;
-      padding               : 5px 5px 5px 5px;
-      text-align            : center;
-      border                : 1px solid #7D7D7D;    
-      text-decoration       : none;
-	  -moz-border-radius    : 8px;
-      -webkit-border-radius : 8px;
-	  display				: inline; 
-  }
+#topnav {position: absolute;/*width	: 400px;*/	right: 10px;clear: right;float: right;list-style: none;	padding	: 0;display	:inline;}
+#topnav li{	float: left;}
+#topnav a.btn{ width : 100px;background : #076102; color  : #FFF; float	: left;	 margin: 0 0 0 10px; padding: 5px 5px 5px 5px;
+      			text-align  : center;  border : 1px solid #7D7D7D; text-decoration : none;-moz-border-radius : 8px; -webkit-border-radius : 8px; display: inline;}
   
-#topnav a.btn:hover{
-      background      : #9EDB04;
-      color           : #FFFFFF;
-      text-decoration : none; 
-}
+#topnav a.btn:hover{ background: #9EDB04; color  : #FFFFFF; text-decoration : none; }
 
-.header #topnav li a, #topnav li strong {
-		font-size: 11px;
-		display: block;
-		float: left;
-		padding: 6px;
-		margin: 3px 0 0 8px;
-		overflow: visible;
-		text-decoration: none;
-}
-#topnav li a img.link-icon{ 
-  display:block;
-  margin:-2px 0 0 0;
-  padding-right:8px;
-  /*
-height:50px;
-  width:50px;
-*/
-  float:left;
-  position: center left;
-}
+.header #topnav li a, #topnav li strong {font-size: 11px;display: block;float: left;padding: 6px;margin: 3px 0 0 8px;overflow: visible;text-decoration: none;}
+#topnav li a img.link-icon{   display:block;  margin:-2px 0 0 0;  padding-right:8px;  /*height:50px;  width:50px;*/
+							  float:left;  background-position: center left;}
 /**********ENDOF header Bar**********************************************/
  
 /*****************Index Center Box*********************************************/
-.centerbox {
-	
-	margin: 0 auto;
-	height: inherit;
-	width: 980px;
-	position: relative;
-		
-}
+.centerbox {	margin: 0 auto;	height: inherit;	width: 980px;	position: relative;}
 
-.centerbox .loginbox{
-    background-image: url("../images/login-box.png");
-	float: right;
-    list-style-type: none;
-    left: 580px;
-    padding: 0;
-    position: absolute;
-    top: 20px;
-	height: 339px;
-	width: 375px;
-	
-}
-.centerbox .loginbox a{
-    font-size: 15px;
-	font-weight: bold;
-	padding: 0px 10px;
-	color: #1e2ef0;
-    display: inline-block;
-    line-height: 27px;
-}
+.centerbox .loginbox{background-image: url("../images/login-box.png");	float: right;  list-style-type: none;  left: 580px;
+						padding: 0;  position: absolute;  top: 20px;height: 339px;	width: 375px;}
+.centerbox .loginbox a{    font-size: 15px;	font-weight: bold;	padding: 0px 10px;	color: #1e2ef0;    display: inline-block;    line-height: 27px;}
 
-.centerbox .loginbox #email{
-	margin: 85px 0 0 144px;
-	size: 30;
-}
-.centerbox .loginbox #password{
-	margin: 20px 0 0 144px;
-	size: 30;
-}
+.centerbox .loginbox #email{	margin: 85px 0 0 144px;	width: 10em;}
+.centerbox .loginbox #password{	margin: 20px 0 0 144px;	width: 10em;}
 /**************************FOOTER***********************************************************/
-.footer_wrapper {
-	margin: auto;
-	width: 980px;
-}
-.footer_wrapper li {
-	float: right;
-	list-style-type: none;
-	font-size: 11px;
-	margin-left: 15px !important;
-}
+.footer_wrapper {	margin: auto;	width: 980px;}
+.footer_wrapper li {	float: right;	list-style-type: none;	font-size: 11px;	margin-left: 15px !important;}
 
-.footer_wrapper2 {
-	margin: auto;
-	width: 1050px;
-}
-.footer_wrapper2 li {
-	float: right;
-	list-style-type: none;
-	font-size: 11px;
-	margin-left: 15px !important;
-}
+.footer_wrapper2 {	margin: auto;	width: 1050px;}
+.footer_wrapper2 li {	float: right;	list-style-type: none;	font-size: 11px;	margin-left: 15px !important;}
 
 /*****************************User Registering Page***********************************************/
-#regpage{
-	margin: 50px auto;
-	height: inherit;
-	width: 520px;
-	position: relative;
-	padding-bottom: 1em;
-	margin-bottom: 3em;
-	min-height: 550px;
-}
-.regbox{
-	margin: 0 auto;
-	border: 1px solid #7D7D7D; 
-}
+#regpage{	margin: 50px auto;	height: inherit;width: 520px;	position: relative;	padding-bottom: 1em;	margin-bottom: 3em;	min-height: 550px;}
+.regbox{	margin: 0 auto;	border: 1px solid #7D7D7D; }
 
-.regbox table td.clean {
-	padding: 0 5px;
-}
+.regbox table td.clean {	padding: 0 5px;}
 
-.regbox table td {
-	padding: 3px 0px 3px 5px;
-	vertical-align: middle;
-	font-size: 11px;
-}
+.regbox table td {	padding: 3px 0px 3px 5px;	vertical-align: middle;	font-size: 11px;}
 
-.regbox table td.label, .regbox table div.label {
-	white-space: nowrap;
-	text-align: right;
-	font-weight: normal;
-}
-
-
-
-/**********************USER HOME Page************************************************/
-.infoHeader {   
-    margin-bottom:             20px;   
-    border: 0;
-    padding:            0px;
-    padding-top:            8px;
-    padding-bottom:            8px;    
-    border-bottom: 1px solid #CCC;
-
-    width:auto;
-    font: normal 12px Verdana, Arial, Helvetica, sans-serif; 
-    color:              #5A5655;   
-    background-color:   #FAFAFA;    
-    text-align:center;
-}
-.infoHeader h1, .infoHeader h2, .infoHeader h3{
-      margin:0;
-      padding:0;
-}
-.infoHeader h3{
-    font: normal 12px Verdana, Arial, Helvetica, sans-serif;
-}
-.infoHeader a.btn{
-      width                 : 100px;
-      -moz-border-radius    : 8px;
-      -webkit-border-radius : 8px;
-      background            : #7D7D7D;
-      color                 : #FFF;
-      margin                : 2px 10px 0px 10px;
-      padding               : 5px 5px 5px 5px;
-      text-align            : center;
-      border                : 1px solid #7D7D7D;    
-      text-decoration       : none; 
-  }
-.infoHeader a.btn:hover{
-      background      : #EA8511;
-      color           : #FFFFFF;
-      border          : 1px solid #EA8511; 
-      text-decoration : none; 
-}
-.infoHeader a.selected{
-      width                 : 100px;
-      -moz-border-radius    : 8px;
-      -webkit-border-radius : 8px;
-      background            : #EA8511;
-      color                 : #FFFFFF;
-      margin                : 2px 10px 0px 10px;
-      padding               : 5px 5px 5px 5px;
-      text-align            : center;
-      border                : 1px solid #EA8511;    
-      text-decoration       : none; 
-}
+.regbox table td.label,
+.regbox table div.label {white-space: nowrap;text-align: right;	font-weight: normal;}
 
 /**************************Registered Users Pages*********************************************/
 
-div#main-container { 
-	min-height: 450px; 
-	background: #fff; 
-	width: 980px; 
-	margin: 0 auto; 
-	padding: 5px 0 0 0;
-}
+div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin: 0 auto; 	padding: 5px 0 0 0;}
 
-#content { 
-	padding-bottom: 1em;
-	padding-top: 1em;
-	margin-left: 1em;
-	margin-bottom: 3em; 
-	min-height: 450px; 
-}
+#content { 	padding-bottom: 1em;padding-top: 1em;	margin-left: 1em;	margin-bottom: 3em; 	min-height: 450px; }
 
-#info-tab{
-	
-}
+#info-tab{}
 /***************Search Styles*******************************************/
-#advSearchForm{
-		float: left;
-		width: 100%;
-		margin-bottom: 14px;
-}
-.columnBox{
-	float		: left;
-	margin		: 0px 70px !important;
-	width		: 270px;
+#advSearchForm{	float: left;width: 100%;margin-bottom: 14px;}
+.columnBox{	float: left;	margin	: 0px 70px !important;	width	: 270px;}
 
-}
+.formFieldWrapper {	margin: 5px 0 15px 0;	padding	: 0;	clear: left;}
 
-.formFieldWrapper {
-	margin		: 5px 0 15px 0;
-	padding		: 0;
-	clear		: left;
-	zoom		: 1;
-}
-
-.floatLeftBtn {
-	float: left;
-	padding-left: 5em;
-	margin: 0;	
-}
+.floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
 /***************Result Table Style**************************************/
-.resultTableDiv{
-	clear		: both;
-	position	: relative;
-	width		: 765px;
-	min-height	: 140px;
-	font-size	: 11px;
-	margin		: 0 auto;
-	padding		: 1em;
-	border-top	: 2px solid #004000;
-}
+.resultTableDiv{clear: both;position: relative;	width: 765px;	min-height	: 140px;font-size	: 11px;	margin: 0 auto;	padding: 1em;	border-top	: 2px solid #004000;}
 
-.tableClear{
-	border		: none;
-	display		: none;
-}
-.noBorder{
-	border		: none;
-}
-.displayTable{
-	border		: 2px solid #004000;
-}
-.resultTableDiv table{
-	width			: 100%;
-	margin-bottom	: 1em;
-	border-spacing 	: 0;
-}
+.tableClear{border	: none;	display	: none;}
+.noBorder{	border: none;}
+.displayTable{	border: 2px solid #004000;}
+.resultTableDiv table{width	: 100%;margin-bottom: 1em;	border-spacing 	: 0;}
 
-.resultTableDiv thead {
-	cursor: default;
-	overflow: hidden;
-	height: 31px;
-	padding: 0px 0px 0px 0px;
-}
-.resultTableDiv th{
-    background: url("") repeat-x;
-    line-height: 25px;
-    height:31px;
-    margin:0;
-    padding:0;
-}
+.resultTableDiv thead {cursor: default;overflow: hidden;height: 31px;padding: 0px 0px 0px 0px;}
+.resultTableDiv th{   background: url("") repeat-x;  line-height: 25px; height:31px;margin:0; padding:0;}
 
-.resultTableDiv tbody {
-	color: #333;
-}
-.resultTableDiv td {
-	border-right		: 1px solid white;
-	height				: 23px;
-	overflow			: hidden;
-	word-wrap			: break-word;
-	background-color	: white;
-	text-align			: center;
-}
-.resultTableDiv td.nameCol{
-	border-right		: 1px solid blue;
-	min-width			: 100px;
-	text-align			: left;
-	padding				: 0.5em;
-	font-weight			: bold;
-}
-.resultTableDiv td.dataCol{
-	border-right		: 1px solid blue;
-	min-width			: 500px;
-	text-align			: left;
-	padding				: 0.5em;
-}
-.resultTableDiv td.clean {
-	padding: 0 5px;
-}
-.resultTableDiv td.hide{
-	display: none;
-}
-.resultTableDiv td span{
-	margin: 0;
-}
-.resultTableDiv td span:hover{
-	cursor: pointer;
-}
-.resultTableDiv .oddRow td{
-	background-color: #aae2a9;
-}
+.resultTableDiv tbody {	color: #333;}
+.resultTableDiv td {border-right: 1px solid white;height: 23px;	overflow: hidden;word-wrap: break-word;
+					background-color: white;text-align: center;}
+.resultTableDiv td.nameCol{	border-right: 1px solid blue;	min-width: 100px;	text-align: left;	padding: 0.5em;	font-weight: bold;}
+.resultTableDiv td.dataCol{	border-right: 1px solid blue;	min-width: 500px;text-align	: left;	padding	: 0.5em;}
+.resultTableDiv td.clean {	padding: 0 5px;}
+.resultTableDiv td.hide{display: none;}
+.resultTableDiv td span{margin: 0;}
+.resultTableDiv td span:hover{	cursor: pointer;}
+.resultTableDiv .oddRow td{	background-color: #aae2a9;}
+.headText {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 
-.headText {
-	padding-left		: 0.33em;
-	padding-right		: 0.33em;
-	padding-top			: 0.5em;
-	float				: left;
-	white-space			: nowrap;
-	overflow			: hidden;
-}
-
-.columnButton{
-    border-left:1px solid #FFFFFF;
-    border-right:0px solid #FFFFFF;
-    height:31px;
-    font-weight:normal;
-    color:#333;
-    margin:0px;
-    padding:0;
-    width: 100%;
-    cursor:pointer;
-}
-
+.columnButton{   border-left:1px solid #FFFFFF;   border-right:0px solid #FFFFFF;  height:31px;
+				font-weight:normal;  color:#333;  margin:0px; padding:0; width: 100%; cursor:pointer;}
 
  /***********RESULT TABLE-HEADER COLUNMS*******/
-#col-viewDate{
-	min-width: 68px;
-}
+#col-viewDate{	min-width: 68px;}
 
 /***************Create Job Advertisement *******************************************/
-#createJobAdForm{
-		float: left;
-		width: 100%;
-		margin-bottom: 14px;
-}
-.columnBoxContainer{
-	float		: left;
-	margin		: 0px 70px !important;
-	width		: 700px;
+#createJobAdForm{float: left;width: 100%;margin-bottom: 14px;}
+.columnBoxContainer{float	: left;	margin: 0px 70px !important;width	: 700px;}
 
-}
-
-.columnBoxThinRight{
-	position: relative;
-	float		: right;
-	right:-30px;
-	top: -285px;
-	width		: 135px;
-
-}
-
-.columnBoxThinLeft{
-	position: relative;
-	width		: 135px;
-
-}
-
-
-.floatLeftBtn {
-	float: left;
-	padding-left: 5em;
-	margin: 0;	
-}
+.columnBoxThinRight{position: relative;	float: right; right:-30px;	top: -285px;width: 135px;}
+.columnBoxThinLeft{	position: relative;	width:135px;}
+.floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}

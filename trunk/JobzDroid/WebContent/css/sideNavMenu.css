@@ -1,97 +1,22 @@
 /*   
 */
 
-.sideNavMenu{
-	position		: fixed;    
-    padding			: 0px ;
-    padding-top		: 0px;   
-    padding-right	: 0px; 
-    padding-left	: 0;     
-    top				: 145px;
-	right			: 0; !important
-	
-    display			: block;
-    list-style		: none;    
-    float			: right;
-    /*width			: 150px;*/
-    clear			: both;
-    background		: #f5f5f5;
-    z-index			: 100;
-    
-    -moz-border-radius-topleft      : 8px;
-    -moz-border-radius-bottomleft   : 8px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;  
-}
-.sideNavMenu li{ 
-    position: relative; 
-    margin: 0;
-    padding: 0;    
-}
-
-.sideNavMenu li a{ 
-  
-  display		:block;
-  margin		:0;
-  padding		: 5px 10px;
-  height		:40px;
-  min-width		:160px;
-  color			:#0464BB;
-  outline-style	:none;
-  text-align	: right;
-}
-
-.sideNavMenu li a.topMenu{ 
-	border-bottom: 1px solid #E0E0E0;
-}
-.sideNavMenu li a.topMenu:hover{
-	cursor: default;
-}
-
-.sideNavMenu li a img { 
-  display:block;
-  margin:0;
-  padding:3px;
-  height:40px;
-  width:40px;
-  float:left;
-}
-
-.sideNavMenu li a h2 { 
-  display:block;
-  font: bold 12px Verdana, Arial, Helvetica, sans-serif;
-}
-.sideNavMenu  li a small { 
-  font: bold 8px Verdana, Arial, Helvetica, sans-serif;
-}
-.sideNavMenu li a:hover {   
-  color:#FFF; 
-  background: #9EDB04;
-  
-}
+.sideNavMenu{position: fixed;  padding: 0px ;   padding-top: 0px; padding-right	: 0px; padding-left	: 0;  top: 145px;
+			 right: 0;   display: block; list-style: none; float: right; /*width	: 150px;*/ clear: both; background: #f5f5f5;
+    		 z-index: 100;-moz-border-radius-topleft : 8px; -moz-border-radius-bottomleft : 8px;  -webkit-border-top-left-radius: 5px;
+		    -webkit-border-bottom-left-radius: 5px;  }
+.sideNavMenu li{    position: relative; margin: 0; padding: 0; }
+.sideNavMenu li a{   display:block; margin:0;padding: 5px 10px; height:40px;  min-width	:160px; color:#0464BB; outline-style:none; text-align: right;}
+.sideNavMenu li a.topMenu{ 	border-bottom: 1px solid #E0E0E0;}
+.sideNavMenu li a.topMenu:hover{cursor: default;}
+.sideNavMenu li a img {   display:block;  margin:0;  padding:3px;  height:40px;  width:40px;  float:left;}
+.sideNavMenu li a h2 {   display:block;  font: bold 12px Verdana, Arial, Helvetica, sans-serif;}
+.sideNavMenu  li a small {   font: bold 8px Verdana, Arial, Helvetica, sans-serif;}
+.sideNavMenu li a:hover {     color:#FFF;   background: #9EDB04;}
 
 /********************SubMenus***********************/
-.sideNavMenu #subMenu{
-	padding: 0;
-	font-size: 12px;
-	margin: 0;
-	
-}
-
-.sideNavMenu #subMenu li {
-	list-style		: none;
-	text-align		: right;
-	border-bottom	: none;
-}
-
-.sideNavMenu #subMenu li a {
-	height		: 15px;
-	color		: #119f14;
-	font-size	: 13px;
-	line-height	: 1.2em;
-}
-.sideNavMenu #subMenu li a img { 
-  height	:16px;
-  width		:16px;
-}
+.sideNavMenu #subMenu{	padding: 0;	font-size: 12px;	margin: 0;}
+.sideNavMenu #subMenu li {	list-style	: none;	text-align	: right;border-bottom: none;}
+.sideNavMenu #subMenu li a {height	: 15px;	color	: #119f14;	font-size	: 13px;	line-height	: 1.2em;}
+.sideNavMenu #subMenu li a img {   height	:16px;  width		:16px;}
 /**/

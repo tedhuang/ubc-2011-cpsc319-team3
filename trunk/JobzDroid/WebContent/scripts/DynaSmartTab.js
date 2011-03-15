@@ -98,8 +98,9 @@
                         curTabIdx = tabs.index(this);
                         hideFrame(prevTabIdx);
                         showTab();
-//                        return false;
+                        return false;
                     });
+                	
                 }
                 
                 function hideAllFrames(){
@@ -115,7 +116,7 @@
                     curTab.addClass("curTab");
                     curTab.parent().show();
                     $($(curTab, obj).attr("href"), obj).show();
-                    return false;
+                    return true;
                 }
 /*****************************************************************************************************************************
  * 										Show TAB FUNCTION
@@ -127,13 +128,12 @@
                 	   var openingFrame = $(openingTab.find('a').attr("href"));
                 	   var curTab = tabs.eq(curTabIdx); 
                        
-                   	if(openingTab.length>0 && openingFrame.length >0){
+                   	if(openingTab.length>0 && openingFrame.length >0){//if found
                    	  if(curTab.attr("id") != openingTab.attr("id") && openingTab.css("display")=="block"){//not closed
                    		hideFrame(curTabIdx);
                    		curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                         showTab();
-                   		  
-                   		  return false;
+                        return false;
                    	  }
                    	  else{	
    	                    var lastTab = $($('li:last',"#navBar"),obj);
@@ -187,7 +187,7 @@
                 			hideFrame(prevTabIdx);
                 			showTab();
                 			found = true;
-                			return;
+                			return false;
                 		}
                  		
                 	});
@@ -197,7 +197,6 @@
                 		$.each(tabFrames, function(){
                     		if($($(this),obj).attr("id")== frameid){//make sure the old tabFrame is removed
                     			$(this).remove();
-                    			return false;
                     		}
                     	});
                 		
@@ -224,7 +223,35 @@
                 	  //TODO ADD TAB FULL NOTIFICATION
                   }
                 };
-            
+ /************************************************************************************************************************
+  * 
+  ************************************************************************************************************************/
+        function buildEdForm(titleId){
+        	var formDiv = $('<div></div>').attr('id', titleId).addClass('edFormContainer');
+        	var subDiv = $('<div></div>').addClass('fillInForm');
+        	var div    = $('<div></div>').addClass('field');
+        	var cField = $('<div></div>').attr('class', 'field');
+        	var label  = $('<label></label>');
+        	var input  = $('<input/>').addClass('textBox');
+        	var ta     = $('<textarea></textarea>').addClass('textarea').addClass('mustNotNull');
+        	var fieldNames = ['title-field', 'company-field', 'tag-field' ];
+        	var htmlMap = {'fieldNames1[]':['Ad Title:', 'Company:', 'Add Tag:' ]};
+        	$(fieldNames1).each(function(){//input fields
+        		div.empty();//drop all children
+        		label.attr('for', $(this)).html(htmlMap['title-field']).appendTo(div);
+        		input.attr({ id: $(this), name: $(this)}).addClass('textBox').addClass('mustNotNull').appendTo(div);
+        		
+        	});
+        	div.empty();
+        	label.attr('for', 'desc-field').html('Job Description:').appendTo(div);
+        	ta.attr({id: 'desc-field', name: 'desc-field'}).addClass('textBox').addClass('mustNotNull').appendTo(div);
+        	subDiv.attr('id', 'typeInForm');
+        	div.appendTo(subDiv); 
+        	subDiv.appendTo(formDiv);//TypeInForm Finished
+        	
+        	
+        }
+        
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF DynaSmartTab
