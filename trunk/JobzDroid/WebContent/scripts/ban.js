@@ -8,6 +8,7 @@ $("document").ready(function() {
 		applyFilter("userTable", "filter");
 	});
 	$("#submitButton").bind("click", sendBanRequest);
+	$('#tabs').DynaSmartTab({});
 });
 
 function copyEmailToInput(email){
@@ -15,8 +16,9 @@ function copyEmailToInput(email){
 	return false;
 }
 
-function viewProfile(){
-	
+function viewProfile(idAccount){
+	getProfileById(idAccount, 'profileTable', 'profileHeading');
+	return false;
 }
 
 // send ban request to admin servlet

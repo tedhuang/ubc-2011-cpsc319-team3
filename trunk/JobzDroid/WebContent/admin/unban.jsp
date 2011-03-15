@@ -6,10 +6,15 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
+	<script type="text/javascript" src="../scripts/Profile.js"></script>
 	<script type="text/javascript" src="../scripts/unban.js"></script>
+	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	
 	<title>Unban User</title>
 </head>
 <body>
@@ -32,6 +37,8 @@
 		// get all searcher and poster accounts
 		ArrayList<Account> users = dbManager.getSearcherPosterAccounts();
 	%>	
+		<!--Start tabs-->
+	
 		<div class="main">
 		  <div class="header">
 			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
@@ -44,30 +51,48 @@
 			</ul>
 		  </div>
 		  
-		  <br/>			  
-		  <div class="regbox">
-			<h3 class="heading-text">Unban User</h3>
-			<h1><b><font size='4'>Banned Users</font></b></h1>
+		  <br/>	
+		  <div id="tabs" class="tabPane">
+  	  <div id="navBar" class="navBar">
+		<ul>
+			<li id="unbanTab">
+  				<a href="#unbanFrame"><h2>Unban User</h2></a>
+			</li>
+			<li id="profileTab">
+  				<a href="#profileFrame"><h2>Profile</h2></a>
+			</li>
+		</ul>
+	  </div><!--ENDOF NAVBAR-->
+	
+	
+  <div id="tabFrame">		
+		<div id="unbanFrame" class="subFrame unremovable">
+			<h1><b><font size='4'>List of Banned Users</font></b></h1>
 			<span class="label">
-		          Filter: 
+		          Email Filter: 
 		    </span>
 			<input type="text" class="textinput" id="filter" size="30"/>
 			
-			<table id="userTable">
+			 <table id="userTable">
 				<thead>
 					<tr>
+						<th>Account ID</th>
 						<th>Email</th>
 						<th>Secondary Email</th>
 						<th>User Type</th>
 						<th>Account Creation Date</th>
+						<th>Profile</th>
 					</tr>
 				</thead>
-				<%	// display all banned searcher poster accounts
+				<tbody>
+				<%	// display all active searcher poster accounts
 					String email, secondaryEmail, type, strDateTimeCreated, emailID;
+					int idAccount;
 					long dateTimeCreated;
 					for(int i = 0; i < users.size(); i++){
 						Account acc = users.get(i);
 						if( acc.getStatus().equals("banned") ){
+							idAccount = acc.getIdAccount();
 							email = acc.getEmail();
 							secondaryEmail = acc.getSecondaryEmail();
 							if( secondaryEmail == null)
@@ -77,16 +102,22 @@
 							strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
 							%>
 								<tr title="<%= email %>">
-									<td ><a href="#userNameInput" onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
+									<td><%= idAccount %></td>
+									<td><a href="#userNameInput"  onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
-									<td><button onclick="viewProfile()">View Profile</button></td>
+									<td>
+										<a title="View Profile" href="#" onclick="viewProfile('<%= idAccount %>')">
+		       						 		<img src="../images/icon/view_profile.png"/>
+										</a>									
+									</td>
 								</tr>
 							<%
 						}
 					}
 				%>
+				</tbody>
 			</table>
 			<table>
 				<tbody>
@@ -112,21 +143,31 @@
 				</tbody>
 			</table>
 			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
-		    <br/>	
-		  </div>	
-		  
-		  <br/>
-		  <hr/>
-		</div>
+		    <br/>		
+		</div><!--end of UNBANFRAME-->
 		
-		<ul class="footer_wrapper2">
-			<li>
-				©2011 JobzDroid
-			</li>
-		</ul>	
+		<div id="profileFrame" class="subFrame">
+			 <div id="profileTable" class="resultTableDiv noBorder">
+			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABPROFILEFRAME-->
+		
+	  </div><!--ENDOF TABFRAME-->
+	</div>   <!--end of tabs DIV-->				
+
 	<%
 	}
 	%>	
+	</div><!-- ENDOF MAIN -->
+	<ul class="footer_wrapper2">
+		<li>
+			©2011 JobzDroid
+		</li>
+	</ul>	
 	<form name="sid" method="get" action="">
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>
