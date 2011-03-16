@@ -56,7 +56,6 @@
     <display-name>ServletProfile</display-name>
     <servlet-name>ServletProfile</servlet-name>
     <servlet-class>servlets.ServletProfile</servlet-class>
-    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>ServletProfile</servlet-name>
