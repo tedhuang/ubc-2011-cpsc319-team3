@@ -23,6 +23,7 @@ import classes.Utility;
 import managers.DBManager;
 import managers.NewsManager;
 import managers.RSSManager;
+import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletAdmin
@@ -288,18 +289,43 @@ public class ServletAdmin extends HttpServlet {
 		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		String password = request.getParameter("password");	
+		String passwordRepeat = request.getParameter("passwordRepeat");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		accountName = Utility.checkInputFormat(accountName);
 		password = Utility.checkInputFormat(password);
+		passwordRepeat = Utility.checkInputFormat(passwordRepeat);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
 
 		// check if account name exists
-		boolean emailExists = dbManager.checkEmailExists(accountName);
-		if(emailExists){
+		if( accountName == null ){
+			message = "Account name is required.";
+			allGood = false;
+		}
+		else if( !Utility.validate(accountName, "^[_A-Za-z0-9-\\.]{5,15}$") ){
+			message = "Invalid account name.";
+			allGood = false;
+		}
+		else if(dbManager.checkEmailExists(accountName)){
 			allGood = false;
 			message = "This account already exists.";
+		}
+		else if( password == null ){
+			message = "Password is required.";
+			allGood = false;
+		}	
+		else if( !Utility.validate(password, SystemManager.pwPattern) ){
+			message = "Invalid password format.";
+			allGood = false;
+		}	
+		else if( passwordRepeat == null ){
+			message = "Please repeat your password.";
+			allGood = false;
+		}	
+		else if( !password.equals(passwordRepeat) ){
+			message = "Passwords do not match.";
+			allGood = false;
 		}
 		else {
 			Session session = dbManager.getSessionByKey(sessionKey);
@@ -565,7 +591,7 @@ public class ServletAdmin extends HttpServlet {
             pst.setString(2, password);
             pst.setLong(3, currentTime);
             
-			int rowsInserted = pst.executeUpdate(query);
+			int rowsInserted = pst.executeUpdate();
 			// if successful, 1 row should be inserted
 			if (rowsInserted != 1)
 				return false;

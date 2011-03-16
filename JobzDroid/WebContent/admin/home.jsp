@@ -27,7 +27,7 @@
 		<jsp:forward page="../error.html" />
 	<%
 	}
-	else{ //TODO ADD ADMIN HOME UI
+	else{
 	%>	
 		<div class="main">
 		  <div class="header">
@@ -48,6 +48,13 @@
 		  <a href="#" onclick="loadPageWithSession('ban.jsp')">Ban User</a><br/>
 		  <a href="#" onclick="loadPageWithSession('unban.jsp')">Unban User</a><br/>
 		  
+		  <%
+		  if(s.getAccountType().equals("superAdmin")){
+			  %>
+			  <a href="#" onclick="loadPageWithSession('manageAdmin.jsp')">Manage Admin Accounts</a><br/>
+			  <%
+		  }
+		  %>
 		  <a href="#" onclick="userLogoutRequest()">Log out</a>
 		  <br/>
 		  <hr/>

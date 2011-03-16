@@ -48,7 +48,7 @@ function postNews(evt){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
-					var responseText = parseRegResponse(xmlHttpReq.responseXML);
+					var responseText = parsePostNewsResponse(xmlHttpReq.responseXML);
 					$("#submitButton").removeAttr("disabled");
 			    	$("#statusText").text(responseText);
 				}
@@ -70,7 +70,7 @@ function postNews(evt){
 }
 
 // parses response from server
-function parseRegResponse(responseXML){	
+function parsePostNewsResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function
