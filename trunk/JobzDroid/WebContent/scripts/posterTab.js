@@ -23,9 +23,11 @@
                 
                 $(obj).addClass(options.tabPaneClass); // Set the CSS on top element
                 
+                bindFunc();
+                
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
-     		    
+     		   
    /************************STARTOF FUNCTION GROUP******************************************************************************/
      		   function refreshTabs(){
      			   //update to the latest tab info, any change involving position-changing, visual-changing need to call it at the end  
@@ -59,7 +61,30 @@
      			   bindCloseClick();
      			   return closeBtn;
                }
+     		   function bindFunc(){
+     			   $('#newadbtn', '#sideMenu').bind("click", function(){
+     				  openTab('newAdTab'); 
+     				  open_newAd_form();
+     			   });
+     		   }
      		   
+     		$.fn.DynaSmartTab.bindEdTool=function(tRow, adId){
+//     			
+//     			var a = $('#ownerAdTable').find('tbody').find('span.edTool').find('a.edit');
+//        		  a.each(function(){
+//        			  $(this).bind("click", function(){
+     			tRow.find('a.edit').bind("click", function(){
+            			  openTab('edAdTab'); 
+            			  open_edAd_form();
+            			  getJobAdById("edit",adId, "edAdForm");
+//     			});
+        	});
+//     		  $("a.edit", $(this)).bind("click", function(){
+// 				  openTab('edAdTab'); 
+// 				  open_edAd_form();
+// 			   });
+     		  };
+     		  
      		   function bindCloseClick(){
      		   	$(closeBtn).bind("click", function(){
      			  	var tabToRm = $($(this).parent().find("a"),obj);
@@ -74,7 +99,7 @@
      			  			}
      			  			
      			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
-     			  				$($(this).attr("href"), obj).hide();
+     			  				$($(this).attr("href"), obj).empty().hide();
      			  			}
      			  			else{
      			  					$($(this).attr("href"), obj).remove();
@@ -118,12 +143,13 @@
                     $($(curTab, obj).attr("href"), obj).show();
                     return true;
                 }
+                
 /*****************************************************************************************************************************
  * 										Show TAB FUNCTION
  * -Publicly Accessible
  * @params tabId: the Id of the tab
  * ****************************************************************************************************************************/  
-                $.fn.DynaSmartTab.addShowTab=function(tabId){
+                function openTab(tabId){
                 	   var openingTab = $('#'+tabId);
                 	   var openingFrame = $(openingTab.find('a').attr("href"));
                 	   var curTab = tabs.eq(curTabIdx); 
@@ -152,7 +178,7 @@
                     	curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                     	showTab();                   	  }
                   }return false;
-                };//ENDOF SHOWTAB
+                }//ENDOF SHOWTAB
                 
                 function hideFrame(tabIdx){
                     var curTab = tabs.eq(tabIdx);
@@ -226,20 +252,19 @@
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
-         $.fn.DynaSmartTab.loadForm=function(){
+         function open_newAd_form(){
         	 $("#newAdFrame").load("../DOMs/formDOM.jsp #newAdForm",function(){//TODO move this to server side for security reason
          		$( "#startTime-field","#newAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
          		$( "#expireTime-field" ,"#newAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
          	});
         };
         
-           $.fn.DynaSmartTab.openEdForm=function(){
+        function open_edAd_form(){
         	$("#edAdFrame").load("../DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
         		$( "#startTime-field","#edAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
         	});
-        	
-        };
+        }
         
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each

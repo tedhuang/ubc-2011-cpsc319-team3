@@ -4,30 +4,46 @@
  * @param outputDiv
  * @param heading
  *********************************************************************************************************************/
-function buildDetailTable(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", outputDiv).html("");
+function buildDetailTable(mode, targetXMLTag, outputDiv){
+	
 	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
 	if(jobAd.length==0){//if no results
 		$("#detailFB").html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
 	}
 	else{
-//		xmlObj.each(function() {//for All returned xml obj
-//		  var jobAd = $(this);
-		  $(heading).html(jobAd.attr("jobAdTitle"));
-		  var rowText = "<tr><td>Date Posted</td><td>" 					+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
-		  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
-		  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
-		  				"<tr><td>Job Type</td><td>"						+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
-		  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
-		  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
-		  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
-		  				"<tr class='clean'></tr>" +
-		  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
-		  
-		 $(tbody).append(rowText);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
-		 $("#detailFB").hide();
+		switch (mode){
+			case "detail":
+				
+				var tbody  = $( "tbody", outputDiv).html("");
+				$('.heading', "#"+outputDiv).text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
+				var rowText = "<tr><td>Date Posted</td><td>" 					+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
+			  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
+			  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
+			  				"<tr><td>Job Type</td><td>"						+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
+			  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
+			  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
+			  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
+			  				"<tr class='clean'></tr>" +
+			  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
+			  
+			    $(tbody).append(rowText);
+			 	$(tbody).find('tr').find('td:first').addClass("nameCol");
+			 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+			 	$("#detailFB").hide();
+			 	break;
+		 	
+			case "edit":
+				$("input[name='title-field']", "#"+outputDiv).val(jobAd.attr("jobAdTitle"));
+				$("input[name='company-field']", "#"+outputDiv).val(jobAd.attr("contactInfo"));
+				$("input[name='tag-field']", "#"+outputDiv).val(jobAd.attr("tags"));
+				$("input[name='desc-field']", "#"+outputDiv).val(jobAd.attr("jobAdDescription"));
+//				$("input[name='edu-field']", "#"+outputDiv).val(jobAd.attr("eduReqFormatted"));//TODO FIX
+				$("input[name='startTime-field']", "#"+outputDiv).val(jobAd.attr("startingDateFormatted"));
+				$("input[name='expireTime-field']", "#"+outputDiv).val(jobAd.attr("expireDateFormatted"));
+//				$("input[name='']", "#"+outputDiv).val(jobAd.attr(""));
+//				$("input[name='']", "#"+outputDiv).val(jobAd.attr(""));
+				break;
+		}
 	}
 }
 
@@ -46,21 +62,33 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	else{
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
-		  var rowText = "<tr><td id='td-postedDate'>"  + jobAd.attr("creationDateFormatted") + 
-		  				"</td><td id='td-title'>" +
-		  				"<span onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'>" + "</span>" + 
-		  					jobAd.attr("jobAdTitle") + 
-		  				"</td><td id='td-eduReq'>" + jobAd.attr("eduReqFormatted") + 
-		  				"</td><td id='td-jobAvail'>" + jobAd.attr("jobAvail") +
-		  				"</td><td id='td-loc'>" + jobAd.children("location").attr("address")+
-		  				"</td><td id='td-status'>" + jobAd.attr("status")+
-		  				"</td><td>" + "</td></tr>";
+		  var tr = $('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
-		  $(rowText).appendTo(tbody);
+		  makeEdTool(tr,jobAd.attr("jobAdId"));
+		  tr.appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
+}
+function makeEdTool(tRow, adId){
+	var tool= $('<span></span>').addClass('edTool');
+	$('<a></a>').addClass('jsBtn').addClass('view').text('view | ').appendTo(tool);
+	$('<a></a>').addClass('jsBtn').addClass('edit').text('edit | ').appendTo(tool);
+	$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
+	tRow.hover(function() {
+        tool.animate({opacity: "show", left: "-90"}, "slow");
+    }, function() {
+        tool.animate({opacity: "hide", left: "-100"}, "fast");
+    });
+	tool.appendTo(tRow);
+	$.fn.DynaSmartTab.bindEdTool(tRow, adId);
 }
 
 function filterTable(filter, tbContainerId){
@@ -118,9 +146,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  var jobAd = $(this);
 		  var rowText = "<tr><td>"  + jobAd.attr("creationDateFormatted") + 
 		  
-		  				"</td><td><span id=\"td-title\">" + jobAd.attr("jobAdTitle") +
-		  				"</span></td><td class='hide'>" +jobAd.attr("jobAdId")+
-		  				
+		  				"</td><td id=\"td-title\">" + jobAd.attr("jobAdTitle") +
 		  				"</td><td>" + jobAd.attr("contactInfo")  + 
 		  				"</td><td>" + jobAd.attr("eduReqFormatted") + 
 		  				"</td><td>" + jobAd.attr("jobAvail") +
@@ -129,15 +155,18 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  
 		  $(rowText).appendTo(tbody);
 		  $("#td-title").click(function(){
-				 viewDetail(jobAd.attr("jobAdId"),adDetailTable,adDetailHeading);
+			  getJobAdById("detail", jobAd.attr("jobAdId"),adDetailTable);
 			 });
 		});
-		//onclick='viewDetail("+jobAd.attr("jobAdId")+", adDetailTable,adDetailHeading )'
 		 
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
 }
+
+//function viewDetail(mode, adId, outputDiv){
+//	getJobAdById(mode, adId, outputDiv);
+//}
 /********************************************************************************************************************
  * 						Build a table for profile
  * @param targetXMLTag
@@ -199,7 +228,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
  * @param heading
  *********************************************************************************************************************/
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", "#"+outputDiv).html("");
+	var tbody  = $( "tbody", outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
 	
 	if(profile.length==0){//if no results
@@ -219,7 +248,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		
 		case("searcher"):
 			
-		  $("#"+heading).html( profile.attr("name") + "'s Profile");
+		  $(heading).html( profile.attr("name") + "'s Profile");
 		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
 		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
 		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +
@@ -233,7 +262,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		  
 		case ("poster"):
 			
-			$("#"+heading).html( profile.attr("name") + "'s Profile");
+			$(heading).html( profile.attr("name") + "'s Profile");
 			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" type=\"hidden\"/></td>"+"</tr>" +
 			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" type=\"hidden\"/></td>"+"</tr>" +
 			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td>"+ "<td><input id=\"educationFormatted\" type=\"hidden\"/></td>"+"</tr>" +
