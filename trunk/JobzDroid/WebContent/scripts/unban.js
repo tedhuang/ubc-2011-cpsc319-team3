@@ -48,7 +48,7 @@ function sendUnbanRequest(evt){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
-					var responseText = parseRegResponse(xmlHttpReq.responseXML);
+					var responseText = parseUnbanResponse(xmlHttpReq.responseXML);
 					$("#submitButton").removeAttr("disabled");
 			    	$("#statusText").text(responseText);
 				}
@@ -69,7 +69,7 @@ function sendUnbanRequest(evt){
 }
 
 // parses response from server
-function parseRegResponse(responseXML){	
+function parseUnbanResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function

@@ -39,6 +39,7 @@ h2.welcome{	border-bottom: 2px solid;	border-bottom-color: #0C3E74;	padding: 0 0
 div.padded{	padding: 3px 0px 3px 5px; }
 .errorTag {	color:red;}
 .successTag {	color:green;}
+.linkImg:hover{	cursor: pointer;}
 .heading-text{	text-align: center;	border-bottom: 1px solid #999;	font-weight	: bold;	margin-top: 20px; margin-bottom	: 10px;
 				padding-bottom	: 0px;	color: #237a0e;	font-size: 22px;}
 .formFieldLabel {	float: left; font-weight: bold;	margin	: 2px 0 0 0;color: #5F5F5F;}

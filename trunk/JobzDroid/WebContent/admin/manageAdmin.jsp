@@ -11,11 +11,10 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
-	<script type="text/javascript" src="../scripts/Profile.js"></script>
-	<script type="text/javascript" src="../scripts/ban.js"></script>
+	<script type="text/javascript" src="../scripts/manageAdmin.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	
-	<title>Ban User</title>
+	<title>Manage Admin Accounts</title>
 </head>
 <body>
 	<%	// check session key
@@ -28,14 +27,14 @@
 		<jsp:forward page="../error.html" />
 	<%
 	}
-	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
+	else if ( !s.getAccountType().equals("superAdmin") ){
 	%>
 		<jsp:forward page="../error.html" />
 	<%
 	}
 	else{
 		// get all searcher and poster accounts
-		ArrayList<Account> users = dbManager.getSearcherPosterAccounts();
+		ArrayList<Account> admins = dbManager.getAdminAccounts();
 	%>	
 		<!--Start tabs-->
 	
@@ -55,21 +54,21 @@
 	<div id="tabs" class="tabPane">
   	  <div id="navBar" class="navBar">
 		<ul>
-			<li id="banTab">
-  				<a href="#banFrame"><h2>Ban User</h2></a>
+			<li id="viewTab">
+  				<a href="#viewFrame"><h2>View Admins</h2></a>
 			</li>
-			<li id="profileTab">
-  				<a href="#profileFrame"><h2>Profile</h2></a>
+			<li id="createAdminTab">
+  				<a href="#createAdminFrame"><h2>Create Admin</h2></a>
 			</li>
 		</ul>
 	  </div><!--ENDOF NAVBAR-->
 	
 	
   <div id="tabFrame">		
-		<div id="banFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>List of Active Users</font></b></h1>
+		<div id="viewFrame" class="subFrame unremovable">
+			<h1><b><font size='4'>List of Admins</font></b></h1>
 			<span class="label">
-		          Email Filter: 
+		          Account Name Filter: 
 		    </span>
 			<input type="text" class="textinput" id="filter" size="30"/>
 			
@@ -77,64 +76,85 @@
 				<thead>
 					<tr>
 						<th>Account ID</th>
-						<th>Email</th>
-						<th>Secondary Email</th>
-						<th>User Type</th>
+						<th>Account Name</th>
 						<th>Account Creation Date</th>
-						<th>Profile</th>
+						<th>Delete</th>
 					</tr>
 				</thead>
 				<tbody>
 				<%	// display all active searcher poster accounts
-					String email, secondaryEmail, type, strDateTimeCreated;
+					String accountName, type, strDateTimeCreated;
 					int idAccount;
 					long dateTimeCreated;
-					for(int i = 0; i < users.size(); i++){
-						Account acc = users.get(i);
-						if( acc.getStatus().equals("active") ){
-							idAccount = acc.getIdAccount();
-							email = acc.getEmail();
-							secondaryEmail = acc.getSecondaryEmail();
-							if( secondaryEmail == null)
-								secondaryEmail = "";
-							type = acc.getType();
-							dateTimeCreated = acc.getDateTimeCreated();
-							strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
-							%>
-								<tr title="<%= email %>">
-									<td><%= idAccount %></td>
-									<td><a href="#userNameInput"  onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
-									<td><%= secondaryEmail %></td>
-									<td><%= type %></td>
-									<td><%= strDateTimeCreated %></td>
-									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
-		       						 		<img src="../images/icon/view_profile.png"/>
-										</a>									
-									</td>
-								</tr>
-							<%
-						}
+					for(int i = 0; i < admins.size(); i++){
+						Account acc = admins.get(i);
+						idAccount = acc.getIdAccount();
+						accountName = acc.getEmail();
+						type = acc.getType();
+						dateTimeCreated = acc.getDateTimeCreated();
+						strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
+						%>
+							<tr title="<%= accountName %>">
+								<td><%= idAccount %></td>
+								<td><%= accountName %></td>
+								<td><%= strDateTimeCreated %></td>
+								<td>
+									<a title="Delete" onclick="deleteAdmin('<%= accountName %>')" class="linkImg">
+	       						 		<img src="../images/icon/delete.png"/>
+									</a>									
+								</td>
+							</tr>
+						<%
 					}
 				%>
 				</tbody>
 			</table>
-			<table>
+			<p id="statusTextDelete" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>		
+		</div><!--end of VIEWFRAME-->
+		
+		<div id="createAdminFrame" class="subFrame unremovable">
+			 <table>
 				<tbody>
 				  <tr>
 				    <td class="clean"></td>
 				  </tr>
 				  <tr>
 	    			<td class="label">
-	          		    User name (Email address): 
+	          		    Account name: 
 	    			</td>
 				    <td style="width: 100px">
-				        <div>
-				            <input type="text" class="textinput" id="userNameInput" size="50" maxlength="100" tabindex="11"/>
-				        </div>
+				         <input type="text" class="textinput" id="accountName" size="30" maxlength="100" tabindex="11"/>
 				    </td>
 				    <td>
-	          		    <button id="submitButton" type="button">Ban Hammer</button>
+				         <span id="userNameError" class="errorTag"></span>
+				    </td>
+				  </tr>
+				  <tr>
+				    <td class="label">
+				            Password:
+				    </td> 
+				    <td>
+				        <input id="password1" class="textinput" type="password" size="20" name="password" maxlength="15" tabindex="14"/>
+				    </td>
+				    <td>
+				        <span id="password1Error" class="errorTag"></span>
+				    </td>
+				  </tr>
+				  <tr>
+				    <td class="label">
+				            Confirm password:
+				    </td> 
+				    <td>
+				        <input id="password2" class="textinput" type="password" size="20" name="password" maxlength="15" tabindex="14"/>
+				    </td>
+				    <td>
+				        <span id="password2Error" class="errorTag"></span>
+				    </td>
+				  </tr>
+				  <tr>
+				     <td>
+	          		    <button id="createAdminButton" type="button">Create Account</button>
 	    			</td>
 				  </tr>
 				  <tr>
@@ -142,19 +162,9 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextCreate" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
-		</div><!--end of BANFRAME-->
-		
-		<div id="profileFrame" class="subFrame">
-			 <div id="profileTable" class="resultTableDiv noBorder">
-			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
-				<table>
-					<tbody>
-					</tbody>
-				</table>
-			 </div>		
-		</div><!--end of TABPROFILEFRAME-->
+		</div><!--end of CREATEADMINFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->		  

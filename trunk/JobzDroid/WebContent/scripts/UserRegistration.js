@@ -142,6 +142,7 @@ function sendRegRequest(evt){
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass("errorTag");	
 	$("#statusText").removeClass("successTag");
+	
 	var strEmail = $("#emailAddress").val();
 	var strSecondaryEmail = $("#secondaryEmailAddress").val();
 	var strPassword = $("#password1").val();

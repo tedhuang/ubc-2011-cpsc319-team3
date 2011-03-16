@@ -26,7 +26,7 @@ function sendPasswordChangeRequest(evt){
 		if (xmlHttpReq.readyState == 4 && xmlHttpReq.status == 200){
 			$("#sendButton").removeAttr("disabled");
 			//parse XML response from server
-			var responseText = parseRegResponse(xmlHttpReq.responseXML);
+			var responseText = parseResponse(xmlHttpReq.responseXML);
 	    	$("#statusText").text(responseText);
 		}};
 
@@ -44,7 +44,7 @@ function sendPasswordChangeRequest(evt){
 }
 
 // parses response from server
-function parseRegResponse(responseXML){	
+function parseResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 if(boolResult == "true"){

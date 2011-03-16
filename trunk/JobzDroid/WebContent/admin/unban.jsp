@@ -86,7 +86,7 @@
 				</thead>
 				<tbody>
 				<%	// display all active searcher poster accounts
-					String email, secondaryEmail, type, strDateTimeCreated, emailID;
+					String email, secondaryEmail, type, strDateTimeCreated;
 					int idAccount;
 					long dateTimeCreated;
 					for(int i = 0; i < users.size(); i++){
