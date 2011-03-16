@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../scripts/jq-ui/jquery.ui.core.js"></script>
 <script type="text/javascript" src="../scripts/jq-ui/jquery.ui.datepicker.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
-<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+<script type="text/javascript" src="../scripts/posterTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
@@ -34,6 +34,8 @@
     	$('#tabs').DynaSmartTab({});
 		
     	bindClearError();
+		// MOVED TO AUTHENTICATION.JS
+		//	loadSessionKeyFromURL();
 		});
 </script>
 <script>
@@ -70,7 +72,7 @@
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a class="jsBtn" onclick="$.fn.DynaSmartTab.addShowTab('newAdTab');">
+			<a id="newadbtn" class="jsBtn">
 				<img src="../images/icon/new-post.png"/>
 				<h2>New Job Ad</h2>
 			</a>
@@ -123,15 +125,16 @@
   			<li id="homeTab">
   				<a href="#home-frame"><h2>Home</h2></a>
 			</li>
-  			<li id="adMngTab">
-  				<a href="#adMng-frame"><h2>My Ads</h2></a>
-			</li>
 			<li id="newAdTab" class="hideOnly iniHidden">
 				<span class="close">X</span>
-  				<a href="#newAd-frame"><h2>New Ad</h2></a>
+  				<a href="#newAdFrame"><h2>New Ad</h2></a>
 			</li>
 			<li id="profileTab">
   				<a href="#profileFrame"><h2>My Profile</h2></a>
+			</li>
+			<li id="edAdTab" class="hideOnly iniHidden">
+			<span class="close">X</span>
+  				<a href="#edAdFrame"><h2>View/Edit Ad</h2></a>
 			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
@@ -139,201 +142,85 @@
 	
   <div id="tabFrame">
 	<div id="home-frame" class="subFrame unremovable">
-            <h2 class="welcome">My Profile Summary</h2>
-			<div id="profileArea">
-				Profile goes here
-			</div>
-            <h2 class="welcome">My Active Ads</h2>
-			 
-			    			
-        </div>
-		
-  		<div id="adMng-frame" class="subFrame unremovable iniHidden">
-            <div id="adLinks">
-            	<ul>
-            		<li><a class="jsBtn" onclick="filterTable('open', ownerAdTable)">Open<span id="numActive"></span></a></li>
-					<li><a class="jsBtn">Draft<span id="numDraft"></span></a></li>
-					<li><a class="jsBtn">Pending<span id="numPending"></span></a></li>
-					<li><a class="jsBtn">Inactive<span id="numInactive"></span></a></li>
-            	</ul>
-            	
-            	
-            <button type="button" onclick="getJobAdByOwner(ownerAdTable)">Load Job Ad by Owner</button>
-            
-            
-            	
-            <div id="ownerAdTable" class="resultTableDiv">
-				<table>
-					<thead>
-					<tr>
-						<th id="col-viewDate">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Date</div>
-							</div>
-						</th>
-						<th id="col-viewTitle">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Job Title</div>
-							</div>
-						</th>
-						<th id="col-viewEduReq">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Degree</div>
-							</div>
-						</th>
-						<th id="col-viewAvail">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Availability</div>
-							</div>
-						</th>
-						<th id="col-viewLoc">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Location</div>
-							</div>
-						</th>
-						<th id="col-Tools">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Status</div>
-							</div>
-						</th>
-					</tr>
-				</thead>
-					<tbody>
-					</tbody>
-				</table><!--ENDOF TABLE-->
-			  </div><!--ENDOF DIV RESULT TABLE-->  
-            	
-            	
-            </div>  
+	    <h2 class="welcome">My Profile Summary</h2>
+		<div id="profileArea">
+			Profile goes here
+		</div>
+	          <h2 class="welcome">My Ads</h2>
+		 <div id="adTools">
+	          	<ul>
+	          	<li><a class="jsBtn" onclick="filterTable('open', ownerAdTable)">Open<span id="numActive"></span></a></li>
+				<li><a class="jsBtn">Draft<span id="numDraft"></span></a></li>
+				<li><a class="jsBtn">Pending<span id="numPending"></span></a></li>
+				<li><a class="jsBtn">Inactive<span id="numInactive"></span></a></li>
+	          	</ul>
+	          </div>
+	          	<div id="ownerAdTable" class="resultTableDiv">
+	          	<table>
+				<thead>
+				<tr>
+					<th id="col-viewDate">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Date</div>
+						</div>
+					</th>
+					<th id="col-viewTitle">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Job Title</div>
+						</div>
+					</th>
+					<th id="col-viewEduReq">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Degree</div>
+						</div>
+					</th>
+					<th id="col-viewAvail">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Availability</div>
+						</div>
+					</th>
+					<th id="col-viewLoc">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Location</div>
+						</div>
+					</th>
+					<th id="col-Tools">
+						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="headText">Status</div>
+						</div>
+					</th>
+				</tr>
+			</thead>
+				<tbody>
+				</tbody>
+			</table><!--ENDOF TABLE-->
+	          	</div><!--ENDOF DIV RESULT TABLE-->  
+		    <button type="button" onclick="getJobAdByOwner(ownerAdTable)">Load Job Ad by Owner</button>
 			<input type="text" name="tabName"/>
-                        <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
-                        <script>
-                            function addTab(){
-                              var value = $("input[name=tabName]").val();
-                              $.fn.DynaSmartTab.addTab(value);
-                                }
-                        </script>
-        </div> 
+	            <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
+	            <script>function addTab(){
+	                             var value = $("input[name=tabName]").val();
+	                             $.fn.DynaSmartTab.addTab(value);
+	                     }</script>			
+    </div><!-- ENDOF HOME FRAME -->
 		   
-		<div id="newAd-frame" class="subFrame unremovable">
-          <div id="head-bar">
-				<h2 class="welcome">Create New Ad</h2>
-					<span id="newAdfb">Feed Back Area</span>
-					<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft</a>
-		    		<a class="jsBtn" onclick="postJobAd('submit')">Post it</a>
-					<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
-
-		  </div><!--ENDOF headBar-->
-		  <div id="newAdForm" class="newFormContainer">
-		  	<div id="typeInForm" class="fillInForm"> 
-				<div class="field">
-					<label for="title-field" >Ad Title:</label>
-					<input id="title-filed" name="title-field" class="textBox mustNotNull" value="" />
-				</div>
-				<div class="field"> 
-						<label for="contact-field" >Company:</label> 
-						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
-					</div>
-					
-					<div class="field"> 
-						<label for="tag-field" >Add Tags:</label> 
-						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
-					</div>
-				<div class="field"> 
-						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-filed" name="desc-field" class="textarea mustNotNull"></textarea> 
-				</div>
-				
-				</div><!--ENDOF typeInForm-->
-				
-		<div id="chooseForm" class="fillInForm">
-			<div class="field"> 
-				<label for="edu-field">Minimal Degree Requirement:</label>
-				<select id="edu-field" name="edu-field">
-					<option value="">Choose a degree</option>
-					<option value="1">B.Sc.</option>
-					<option value="2">M.Sc.</option>
-					<option value="3">Ph.D.</option>
-				</select>
-			</div>
-					
-			<div class="field">
-					<label for="startTime-field">Starting Date</label>
-					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
-					<!--  <form id="exp-field" action="" name="formStartingDate">
-					<select id="startingDay">
-					</select> 
-					<select id="startingMonth">
-					</select> 
-					<select id="startingYear">
-					</select> 
-					</form>
-				<script type="text/javascript">
-					//populatedropdown(id_of_day_select, id_of_month_select, id_of_year_select)
-					$("document").ready(function(){
-						populatedropdown("startingDay", "startingMonth", "startingYear");
-					});
-				</script> -->
-			</div >	
-			<div class="field">
-				<label for="expireTime-field">Expiry date</label>
-				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
-				
-				<!--  	<form id = "exp-field" action="" name="formExpiryDate">
-					<select id="expiryDay">
-					</select> 
-					<select id="expiryMonth">
-					</select> 
-					<select id="expiryYear">
-					</select> 
-					</form>
-					<script type="text/javascript">
-						populatedropdown("expiryDay", "expiryMonth", "expiryYear");
-					</script>-->
-			</div>
-					
-					<div class="field"> 
-						<label>Employment Type:</label>
-						<label for="ft-field" >
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
-							Full Time
-						</label>
-		   				<label for="pt-field">
-							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
-		    				 Part Time
-						</label>
-						<label for="is-field">
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
-		   		 			Internship
-						</label>
-					</div>
-					<!--  <div class="field"> 
-						<label for="loc-field" >Job Location:</label> 
-						<input id="address" name="loc-field" class="textBox" value=""/>
-						<input id="lat-field" name="lat-field" class="textBox" value=""/>
-						<input id="lng-field" name="lgn-field" class="textBox" value=""/>
-						<span id=locFeedback></span>
-						<button type="button" onclick="calculateLocation()">Find Location</button><br/>
-						<table id="lookUpTable"></table><br />
-					</div>
-					-->
-			   </div><!--ENDOF RIGHT CHOOSEFORM-->
-		  </div><!--ENDOF newAdForm-->
-		</div><!--ENDOF newAd-frame-->
+	<div id="newAdFrame" class="subFrame unremovable"></div><!--ENDOF newAd-frame-->
+	
+	<div id="profileFrame" class="subFrame">
+		 <div id="profileTable" class="resultTableDiv noBorder">
+		 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+			<table><tbody></tbody></table>
+		 </div>	
+		 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>	
+	</div><!--end of TABPROFILEFRAME-->
 		
-		<div id="profileFrame" class="subFrame">
-			 <div id="profileTable" class="resultTableDiv noBorder">
-			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
-				<table>
-					<tbody>
-					</tbody>
-				</table>
-			 </div>	
-			 <button onclick="getProfileBySessionKey('profileTable', 'profileHeading')">Get My Profile!</button>	
-		</div><!--end of TABPROFILEFRAME-->
 		
-	  </div><!--ENDOF TABFRAME-->
-	</div>   <!--end of tabs DIV-->  
+	<div id="edAdFrame" class="subFrame unremovable">
+		<button onclick='$.fn.DynaSmartTab.openEdForm();'>Open Editing Form</button>
+	</div><!--end of EDADFRAME-->
+	
+	</div><!--ENDOF TABFRAME-->
+  </div><!--end of tabs DIV-->  
 	
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->

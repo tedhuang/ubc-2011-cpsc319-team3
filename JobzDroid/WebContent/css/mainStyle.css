@@ -39,7 +39,6 @@ h2.welcome{	border-bottom: 2px solid;	border-bottom-color: #0C3E74;	padding: 0 0
 div.padded{	padding: 3px 0px 3px 5px; }
 .errorTag {	color:red;}
 .successTag {	color:green;}
-.linkImg:hover{	cursor: pointer;}
 .heading-text{	text-align: center;	border-bottom: 1px solid #999;	font-weight	: bold;	margin-top: 20px; margin-bottom	: 10px;
 				padding-bottom	: 0px;	color: #237a0e;	font-size: 22px;}
 .formFieldLabel {	float: left; font-weight: bold;	margin	: 2px 0 0 0;color: #5F5F5F;}
@@ -61,7 +60,7 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 #topnav {position: absolute;/*width	: 400px;*/	right: 10px;clear: right;float: right;list-style: none;	padding	: 0;display	:inline;}
 #topnav li{	float: left;}
 #topnav a.btn{ width : 100px;background : #076102; color  : #FFF; float	: left;	 margin: 0 0 0 10px; padding: 5px 5px 5px 5px;
-      			text-align  : center;  border : 1px solid #7D7D7D; text-decoration : none;-moz-border-radius : 8px; -webkit-border-radius : 8px; display: inline;}
+      			text-align  : center;  border : 1px solid #7D7D7D; text-decoration : none; display: inline;}
   
 #topnav a.btn:hover{ background: #9EDB04; color  : #FFFFFF; text-decoration : none; }
 
@@ -113,7 +112,10 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
 /***************Result Table Style**************************************/
 .resultTableDiv{clear: both;position: relative;	width: 765px;	min-height	: 140px;font-size	: 11px;	margin: 0 auto;	padding: 1em;	border-top	: 2px solid #004000;}
-
+.resultTableDiv tr #edTool,
+.resultTableDiv span.edTool {    font-weight: normal;    background: url(../images/hover.png) no-repeat;    width: 180px;    height: 45px;
+    position: absolute;        left: -100px;    text-align: center;    padding: 20px 12px 10px;    font-style: normal;
+    z-index: 2;    display: none;}
 .tableClear{border	: none;	display	: none;}
 .noBorder{	border: none;}
 .displayTable{	border: 2px solid #004000;}
