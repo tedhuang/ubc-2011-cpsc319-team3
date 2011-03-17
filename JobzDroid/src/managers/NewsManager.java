@@ -79,6 +79,50 @@ public class NewsManager {
 	}
 	
 	/***
+	 * Deletes a news entry to tableNews in the database
+	 * @param idNews ID of the news.
+	 * @return boolean indicating whether the deletion was successful.
+	 */
+	public boolean deleteNewsEntry(int idNews){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			String query = "DELETE FROM tableNews WHERE idNews='" + idNews + "';"; 	
+            
+			int rowsDeleted = stmt.executeUpdate(query);
+			// if successful, 1 row should be deleted
+			if (rowsDeleted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	}
+	
+	/***
 	 * Gets, sorts and returns all news entries from the database
 	 * @return ArrayList of sorted news entries. (latest entries at the front) 
 	 */

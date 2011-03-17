@@ -9,6 +9,7 @@ $("document").ready(function() {
 	});
 	$("#submitButton").bind("click", sendBanRequest);
 	$('#tabs').DynaSmartTab({});
+	$('#sideMenu').sideNavMenu({});
 });
 
 function copyEmailToInput(email){
@@ -77,7 +78,7 @@ function parseBanResponse(responseXML){
 	 // if ban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
-		 loadPageWithSession('ban.jsp');
+		 loadPageWithSession('manageUsers.jsp');
 	 }
 	 else
 		 $("#statusText").addClass("errorTag");
