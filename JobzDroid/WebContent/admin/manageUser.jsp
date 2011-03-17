@@ -58,21 +58,21 @@
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
 			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
-				<img src="../images/icon/ad_icon.jpg"/>
+				<img src="../images/icon/ad_icon.png"/>
 				<h2>Manage Job Ads</h2>
 			</a>
 		</li>
 		
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageUser.jsp')">
-				<img src="../images/icon/user_icon.jpg"/>
+				<img src="../images/icon/user_icon.png"/>
 				<h2>Manage Users</h2>
 			</a>
 		</li>
 	
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageNews.jsp')">
-				<img src="../images/icon/news_icon.jpg"/>
+				<img src="../images/icon/news_icon.png"/>
 				<h2>Manage Site News</h2>
 			</a>
 		</li>
@@ -86,7 +86,7 @@
 		
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
-				<img src="../images/icon/admin_icon.jpg"/>
+				<img src="../images/icon/admin_icon.png"/>
 				<h2>Manage Admins</h2>
 			</a>
 		</li>
