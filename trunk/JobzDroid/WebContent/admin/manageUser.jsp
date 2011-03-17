@@ -7,13 +7,15 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/Profile.js"></script>
-	<script type="text/javascript" src="../scripts/ban.js"></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	<script type="text/javascript" src="../scripts/manageUser.js"></script>
 	
 	<title>Ban User</title>
 </head>
@@ -39,7 +41,7 @@
 	%>	
 		<!--Start tabs-->
 	
-		<div class="main">
+	<div class="main">
 		  <div class="header">
 			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
 		        <img src="../images/logo-small.png"/>
@@ -52,6 +54,44 @@
 		  </div>
 		  
 		  <br/>	
+		  <!-- STARTOF SIDEMENU -->
+ 	<ul id="sideMenu" class="sideNavMenu">
+		<li>
+			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
+				<img src="../images/icon/ad_icon.jpg"/>
+				<h2>Manage Job Ads</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageUser.jsp')">
+				<img src="../images/icon/user_icon.jpg"/>
+				<h2>Manage Users</h2>
+			</a>
+		</li>
+	
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageNews.jsp')">
+				<img src="../images/icon/news_icon.jpg"/>
+				<h2>Manage Site News</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageRSS.jsp')">
+				<img src="../images/icon/rss_icon.png"/>
+				<h2>Manage RSS</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
+				<img src="../images/icon/admin_icon.jpg"/>
+				<h2>Manage Admins</h2>
+			</a>
+		</li>
+  	</ul><!--ENDOF SideMenu-->
+  	
 	<div id="tabs" class="tabPane">
   	  <div id="navBar" class="navBar">
 		<ul>
