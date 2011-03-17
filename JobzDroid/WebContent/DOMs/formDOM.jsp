@@ -13,7 +13,15 @@
 <div class="main">
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
-		  <div id="edAdForm" class="edFormContainer">
+	<div id="edAdForm" class="edFormContainer">
+		   <div id="head-bar">
+					<h2 class="welcome">Editing Ad:</h2>
+						<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft |</a>
+			    		<a class="jsBtn" onclick="postJobAd('submit')">Post it |</a>
+						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
+						<span id="newAdfb">Feed Back Area</span>
+			  </div><!--ENDOF headBar-->
+			  
 		  	<div id="typeInForm" class="fillInForm"> 
 				<div class="field">
 					<label for="title-field" >Ad Title:</label>
@@ -28,10 +36,6 @@
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
-				<div class="field"> 
-						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-filed" name="desc-field" class="textarea mustNotNull"></textarea> 
-				</div>
 				
 				</div><!--ENDOF typeInForm-->
 				
@@ -39,7 +43,7 @@
 			<div class="field"> 
 				<label for="edu-field">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
-					<option value="">Choose a degree</option>
+					<option value="">Not Specified</option>
 					<option value="1">B.Sc.</option>
 					<option value="2">M.Sc.</option>
 					<option value="3">Ph.D.</option>
@@ -48,29 +52,29 @@
 					
 			<div class="field">
 					<label for="startTime-field">Starting Date</label>
-					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
+					<input id="startTime-field" name="startTime-field" class="mustNotNull" value="" READONLY/>
 			</div >	
 			<div class="field">
 				<label for="expireTime-field">Expiry date</label>
-				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
+				<input id="expireTime-field" name="expireTime-field" class="mustNotNull" value="" READONLY/>
 				
 			</div>
 					
-					<div class="field"> 
-						<label>Employment Type:</label>
-						<label for="ft-field" >
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
-							Full Time
-						</label>
-		   				<label for="pt-field">
-							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
-		    				 Part Time
-						</label>
-						<label for="is-field">
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
-		   		 			Internship
-						</label>
-					</div>
+			<div id="jobAvailField" class="field"> 
+				<label>Employment Type:</label>
+				<label for="ft-field" >
+					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
+					Full Time
+				</label>
+   				<label for="pt-field">
+					 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
+    				 Part Time
+				</label>
+				<label for="is-field">
+    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
+   		 			Internship
+				</label>
+			</div>
 					<!--  <div class="field"> 
 						<label for="loc-field" >Job Location:</label> 
 						<input id="address" name="loc-field" class="textBox" value=""/>
@@ -82,6 +86,12 @@
 					</div>
 					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
+			   <div id="desc-div" class="fillInForm">
+			       <div class="field"> 
+						<label for="desc-field" >Job Description:</label> 
+						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
+				   </div>
+				</div>
 		  </div><!--ENDOF edAdForm-->
 		  
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
@@ -90,8 +100,8 @@
 		  <div id="newAdForm" class="newFormContainer">
 			  <div id="head-bar">
 					<h2 class="welcome">Create New Ad</h2>
-						<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft</a>
-			    		<a class="jsBtn" onclick="postJobAd('submit')">Post it</a>
+						<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft |</a>
+			    		<a class="jsBtn" onclick="postJobAd('submit')">Post it |</a>
 						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
 						<span id="newAdfb">Feed Back Area</span>
 			  </div><!--ENDOF headBar-->
@@ -110,10 +120,6 @@
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
-				<div class="field"> 
-						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-filed" name="desc-field" class="textarea mustNotNull"></textarea> 
-				</div>
 				
 				</div><!--ENDOF typeInForm-->
 				
@@ -163,6 +169,12 @@
 					</div>
 					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
+			   <div id="desc-div" class="fillInForm">
+			       <div class="field"> 
+						<label for="desc-field" >Job Description:</label> 
+						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
+				   </div>
+				</div>
 		 </div><!--ENDOF newAdForm-->
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 		  

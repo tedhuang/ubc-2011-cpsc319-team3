@@ -2,10 +2,6 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.*;
 import java.util.*;
 
@@ -29,7 +25,7 @@ public class ServletJobAd extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private DBManager dbManager;
-	private DBColName DbDict =	new DBColName();
+	private DBColName DbDict =	ServletInitializer.retDbColName();
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -1830,7 +1826,7 @@ public class ServletJobAd extends HttpServlet {
  ***********************************************************************************************************************/
 	private String buildPostQuery(HttpServletRequest request, int IdAcct){
  		String query=null;
-		mysqlKeyword queryKeyword 	= new mysqlKeyword(); 
+		mysqlCmd qcmd 	 	= new mysqlCmd(); 
 		Map<String, Object>paraMap	= new HashMap<String, Object>();//col-val
 		StringBuffer queryBuf 		= new StringBuffer();
 		
@@ -1840,7 +1836,7 @@ public class ServletJobAd extends HttpServlet {
 		while (paramNames.hasMoreElements()) {
 			
 			String paraName = (String) paramNames.nextElement();
-			if( !paraName.equals("action") && !paraName.equals("sessionKey") ){//Not Post "action"
+			if( !paraName.equals("action") && !paraName.equals("sessionKey") ){//Not query "action"&"sKey"
 				//debug
 				System.out.println("Request: "  + paraName 
 									+ " Value: " +request.getParameter(paraName));
@@ -1863,43 +1859,90 @@ public class ServletJobAd extends HttpServlet {
 
 		paraMap.put("idAccount", IdAcct);//set the owner
 		paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the modified time
-			  
-	    String stm1 = queryKeyword.INSERT + queryKeyword.INTO + "tableJobAd " +"(";
-	    String stm2 = "idAccount, title, description, " +
+		String stm1 = "";
+		String stm2 = "";
+		if(request.getParameter("action").equals("editJobAd")){
+			stm1 = qcmd.UPDATE + "tableJobAd" + qcmd.SET;
+			query =stm1;
+		}  
+		
+		else if(request.getParameter("action").equals("saveJobAdDraft")||request.getParameter("action").equals("createJobAdvertisement")){
+				 stm1 = qcmd.INSERT + qcmd.INTO + "tableJobAd " +"(";
+				 stm2 = "idAccount, title, description, " +
 		   			  "expiryDate, datePosted, dateStarting, " +
 		   			  "contactInfo, educationRequired, jobAvailability, tags)" +
-		   			  queryKeyword.VALUES + "('";
-	    query = stm1+stm2;
+		   			  qcmd.VALUES + "('";
+				 query = stm1+stm2;
+				}
+	    
 		queryBuf.append(query);
+		int mode=-1;
 		if(request.getParameter("action").equals("saveJobAdDraft")){
 		    String stm3 = "status, ";//CAUTION: COMA IMPORTANT
 			queryBuf.insert(stm1.length(), stm3);
 			queryBuf.append("draft', '");//CAUTION: SIGLE QUO & COMA IMPORTANT
+			mode=1;
 		  }
 		else if(request.getParameter("action").equals("createJobAdvertisement")){//TODO CHCK SYSTEM SETTING IF NEEDS APPROVAL
-		    String stm3 = "status, ";//CAUTION: SIGLE QUO & COMA IMPORTANT
+		    String stm3 = "status, ";
 			queryBuf.insert(stm1.length(), stm3);
-			queryBuf.append("pending', '");//CAUTION: COMA IMPORTANT
+			queryBuf.append("pending', '");//CAUTION: SIGLE QUO & COMA IMPORTANT
+			mode=1;
 		  }
-		queryBuf.append( paraMap.get("idAccount")); 		queryBuf.append("','");
-		queryBuf.append( paraMap.get("title")); 			queryBuf.append("','");
-		queryBuf.append( paraMap.get("description"));		queryBuf.append("','"); 
-		queryBuf.append( paraMap.get("expiryDate")); 		queryBuf.append("','");
-		queryBuf.append( paraMap.get("datePosted")); 		queryBuf.append("','");
-		queryBuf.append( paraMap.get("dateStarting"));		queryBuf.append("','");
-		queryBuf.append( paraMap.get("contactInfo"));		queryBuf.append("','");
-		queryBuf.append( paraMap.get("educationRequired")); queryBuf.append("','");
-		queryBuf.append( paraMap.get("jobAvailability"));	queryBuf.append("','");
-		queryBuf.append( paraMap.get("tags"));				queryBuf.append("')");
+		else if(request.getParameter("action").equals("editJobAd")){
+			String stm3 = "status" + qcmd.EQ + "pending" + qcmd.COMA;
+			queryBuf.insert(stm1.length(), stm3);
+			mode=2;
+		}
+		switch (mode){
 		
+		case 1:
+			for(Map.Entry<String, Object> entry : paraMap.entrySet()){
+				Object value = entry.getValue();
+	    		queryBuf.append(qcmd.SQ.insert(1, value) + qcmd.COMA);
+			}
+			queryBuf.delete(queryBuf.length() - qcmd.COMA.length(), queryBuf.length());
+			break;
+		case 2:
+			String id="";
+			for(Map.Entry<String, Object> entry : paraMap.entrySet()){
+				String column = entry.getKey();
+	    		Object value = entry.getValue();
+	    		if(!column.equals("jobAdId")){
+	    			queryBuf.append(column +qcmd.EQ + value + qcmd.COMA);
+	    		}
+	    		else{
+	    			id=(String) value;
+	    		}
+			}
+			queryBuf.delete(queryBuf.length() - qcmd.COMA.length(), queryBuf.length());
+			queryBuf.append(qcmd.WHERE+ qcmd.EQ + id);
+			break;
+		default:
+			System.out.println("DONT YOU TRY TO HACK =D");
+			break;
+		}
+	    
+//		queryBuf.append( paraMap.get("idAccount")); 		queryBuf.append("','");
+//		queryBuf.append( paraMap.get("title")); 			queryBuf.append("','");
+//		queryBuf.append( paraMap.get("description"));		queryBuf.append("','"); 
+//		queryBuf.append( paraMap.get("expiryDate")); 		queryBuf.append("','");
+//		queryBuf.append( paraMap.get("datePosted")); 		queryBuf.append("','");
+//		queryBuf.append( paraMap.get("dateStarting"));		queryBuf.append("','");
+//		queryBuf.append( paraMap.get("contactInfo"));		queryBuf.append("','");
+//		queryBuf.append( paraMap.get("educationRequired")); queryBuf.append("','");
+//		queryBuf.append( paraMap.get("jobAvailability"));	queryBuf.append("','");
+//		queryBuf.append( paraMap.get("tags"));				queryBuf.append("')");
 		query = queryBuf.toString();
 		return query;
 	}
 	
-	 final class mysqlKeyword{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
+	 final class mysqlCmd{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
 		String SELECT			="SELECT ";		//CAUTION: SPACE IMPORTANT
 		String INSERT			="INSERT ";		//CAUTION: SPACE IMPORTANT
 		String UPDATE			="UPDATE ";		//CAUTION: SPACE IMPORTANT
+		
+		String SET				=" SET ";		//CAUTION: SPACE IMPORTANT
 		String AND 				= " AND ";		//CAUTION: SPACE IMPORTANT
 		String IN 				= " IN ";		//CAUTION: SPACE IMPORTANT
 		String OR				= " OR "; 		//CAUTION: SPACE IMPORTANT
@@ -1912,9 +1955,13 @@ public class ServletJobAd extends HttpServlet {
 		String INTO				= " INTO "; 	//CAUTION: SPACE IMPORTANT
 		String FROM				= " FROM "; 	//CAUTION: SPACE IMPORTANT
 		String VALUES			= " VALUES "; 	//CAUTION: SPACE IMPORTANT
+		
+		String COMA				= " , ";		//CAUTION: SPACE IMPORTANT
+		String EQ				= "=";
 		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
+		StringBuffer SQ				 =  new StringBuffer(" '' ");
 //		StringBuffer 
-		private mysqlKeyword(){
+		private mysqlCmd(){
 		}
 	}
 /**************************************************************************************

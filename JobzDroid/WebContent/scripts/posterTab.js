@@ -23,7 +23,7 @@
                 
                 $(obj).addClass(options.tabPaneClass); // Set the CSS on top element
                 
-                bindFunc();
+                bindSideNav();//bind function to sideNavBar
                 
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
@@ -61,30 +61,13 @@
      			   bindCloseClick();
      			   return closeBtn;
                }
-     		   function bindFunc(){
+     		   function bindSideNav(){
      			   $('#newadbtn', '#sideMenu').bind("click", function(){
      				  openTab('newAdTab'); 
      				  open_newAd_form();
      			   });
      		   }
      		   
-     		$.fn.DynaSmartTab.bindEdTool=function(tRow, adId){
-//     			
-//     			var a = $('#ownerAdTable').find('tbody').find('span.edTool').find('a.edit');
-//        		  a.each(function(){
-//        			  $(this).bind("click", function(){
-     			tRow.find('a.edit').bind("click", function(){
-            			  openTab('edAdTab'); 
-            			  open_edAd_form();
-            			  getJobAdById("edit",adId, "edAdForm");
-//     			});
-        	});
-//     		  $("a.edit", $(this)).bind("click", function(){
-// 				  openTab('edAdTab'); 
-// 				  open_edAd_form();
-// 			   });
-     		  };
-     		  
      		   function bindCloseClick(){
      		   	$(closeBtn).bind("click", function(){
      			  	var tabToRm = $($(this).parent().find("a"),obj);
@@ -173,8 +156,8 @@
    	                		openingFrame.insertAfter(lastFrame);
    	                		
    	                	}
-   	                	refreshTabs();
                     	hideFrame(curTabIdx);
+                    	refreshTabs();
                     	curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                     	showTab();                   	  }
                   }return false;
@@ -249,6 +232,32 @@
                 	  //TODO ADD TAB FULL NOTIFICATION
                   }
                 };
+    /*********************************************************************************************************************
+     * 						floatingTool
+     * - Add FLOATING TOOL BAR TO THE LIST table row and bind them with different functions
+     * - Publicly Accessible
+     *
+     * ********************************************************************************************************************/ 
+                $.fn.DynaSmartTab.floatingTool=function(tRow, adId){
+         			
+         			var tool= $('<span></span>').addClass('edTool');
+         			$('<a></a>').addClass('jsBtn').addClass('view').text('view | ').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('edit').text('edit | ').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
+         			tRow.hover(function() {
+         		        tool.animate({opacity: "show", left: "-90"}, "slow");
+         		    }, function() {
+         		        tool.animate({opacity: "hide", left: "-100"}, "fast");
+         		    });
+         			tool.appendTo(tRow);
+         			
+         			tRow.find('a.edit').bind("click", function(){
+                			  openTab('edAdTab'); 
+                			  open_edAd_form();
+                			  getJobAdById("edit",adId, "edAdForm");
+              		          timer("loadEdData('jobAd', 'edAdForm', 'edit')", 3000);
+            	});
+         	};
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
@@ -266,6 +275,49 @@
         	});
         }
         
+     function loadEdData(targetXMLTag, edFormContainer, mode){
+        
+    	 var xmlData= $(targetXMLTag,xmlhttp.responseXML);
+        	
+	        	switch(mode){
+	        	
+	        	case "edit":
+	        	$("input[name='title-field']", "#"+edFormContainer).val(xmlData.attr("jobAdTitle"));
+				$("input[name='company-field']", "#"+edFormContainer).val(xmlData.attr("contactInfo"));
+				$("input[name='tag-field']", "#"+edFormContainer).val(xmlData.attr("tags"));
+				$("textarea[name='desc-field']", "#"+edFormContainer).val(xmlData.attr("jobAdDescription"));//Type-in Forms
+				
+				$("#edu-field option","#"+edFormContainer).each(function(){
+					if($(this).text()==xmlData.attr("eduReqFormatted")){
+						$(this).attr("selected", "selected");
+						return false;
+					}
+				});
+				$("input[name='startTime-field']", "#"+edFormContainer).val(xmlData.attr("startingDateFormatted"));
+				$("input[name='expireTime-field']", "#"+edFormContainer).val(xmlData.attr("expiryDateFormatted"));
+				
+				$($(":input","#jobAvailField"), "#"+edFormContainer).each(function(){
+					console.log($(this).val().toLowerCase());
+					console.log(xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase());
+					if($(this).val().toLowerCase()==xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase()){
+						$(this).attr('checked', true);
+						return false;
+					}
+				});
+				break;
+          }//ENDOF SWITCH
+      }
+     
+     function timer(func, delayTime) {
+        // var delay = 50; /* milliseconds - vary as desired */
+         var executionTimer;
+         return function() {
+             if (executionTimer) {
+                     clearTimeout(executionTimer);
+             }
+             executionTimer = setTimeout(func, delayTime);
+         };
+     }
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF DynaSmartTab

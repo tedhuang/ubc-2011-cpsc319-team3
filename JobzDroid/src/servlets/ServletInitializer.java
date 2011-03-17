@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+
+import classes.DBColName;
 import managers.SystemManager;
 
 /**
@@ -16,11 +18,13 @@ public class ServletInitializer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	SystemManager systemManager;
 	Timer timer;
-       
+    protected static DBColName DbDict; //shared DbDict, can only init for once
+    
     public ServletInitializer() {
         super();
         systemManager = SystemManager.getInstance();
         timer = new Timer();
+        DbDict =	new DBColName(); 
     }
 
 	/**
@@ -43,5 +47,9 @@ public class ServletInitializer extends HttpServlet {
 	        }
 	    }
 		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
+	}
+	
+	protected static DBColName retDbColName(){
+		return DbDict;
 	}
 }

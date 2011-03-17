@@ -601,7 +601,12 @@ function getJobAdById(mode, id, outputDiv)
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		    //parse XML response from server
 		  $("#detailFB").html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  buildDetailTable(mode, "jobAd", outputDiv);
+		  if(mode=="detail"){
+		  	buildDetailTable("jobAd", outputDiv);
+		  }
+		  else{
+			  return true;
+		  }
 	    }
 	  };
 }

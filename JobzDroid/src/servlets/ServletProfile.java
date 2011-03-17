@@ -32,7 +32,7 @@ import managers.EmailManager;
 public class ServletProfile extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private DBManager dbManager;
-	private DBColName DbDict =	new DBColName();
+	private DBColName DbDict =	ServletInitializer.retDbColName();
 
 	public ServletProfile() {
         super();
