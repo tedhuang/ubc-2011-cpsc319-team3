@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 
 import classes.DBColName;
 import managers.SystemManager;
+import managers.dbworldintegration;
 
 /**
  * Servlet implementation class ServletInitializer
@@ -18,11 +19,15 @@ public class ServletInitializer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	SystemManager systemManager;
 	Timer timer;
+	Timer dbWorldTimer;
+	dbworldintegration dbworldintegration;
     protected static DBColName DbDict; //shared DbDict, can only init for once
-    
+       
     public ServletInitializer() {
         super();
         systemManager = SystemManager.getInstance();
+        dbworldintegration = new dbworldintegration();
+        dbWorldTimer = new Timer();
         timer = new Timer();
         DbDict =	new DBColName(); 
     }
@@ -43,10 +48,19 @@ public class ServletInitializer extends HttpServlet {
 	        	systemManager.removeExpiredSessionKeys();
 	        	systemManager.removeExpiredPendingAccounts();
 	        	systemManager.removeExpiredInactiveJobAds();
-	        	systemManager.makeInactiveExpiredJobAds();
+	        	systemManager.makeInactiveExpiredJobAds();	        	
 	        }
 	    }
+	    
+	    class AutomatedTasksDBWorld extends TimerTask {
+	    	public void run(){
+	            dbworldintegration.emailParse(SystemManager.dbWorldEmailAddress, SystemManager.dbWorldEmailPw);	    		
+	    	}
+	    }
+	    
 		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
+		
+		dbWorldTimer.schedule(new AutomatedTasksDBWorld(), 0, SystemManager.timeIntervalAutomatedDBWorldTasks);
 	}
 	
 	protected static DBColName retDbColName(){

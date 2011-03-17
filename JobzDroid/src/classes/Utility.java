@@ -152,6 +152,7 @@ public class Utility {
 		corrected = toBeChecked.replace("<", "");
 		corrected = toBeChecked.replace(">", "");
 		corrected = toBeChecked.replace("^", "");
+		corrected = toBeChecked.replace("'", "\\'");
 		
 		return corrected;		
 	}
