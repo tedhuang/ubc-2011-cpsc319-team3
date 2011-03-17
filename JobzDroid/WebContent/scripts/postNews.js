@@ -73,7 +73,7 @@ function postNews(evt){
 function parsePostNewsResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 // if registration sucessful, then update button text and function
+	 // if posting sucessful, then clear input values and update text style
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
 		 $("#submitButton").removeAttr("disabled");

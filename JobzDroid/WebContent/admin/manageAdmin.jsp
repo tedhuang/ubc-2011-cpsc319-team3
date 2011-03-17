@@ -99,7 +99,7 @@
 								<td><%= accountName %></td>
 								<td><%= strDateTimeCreated %></td>
 								<td>
-									<a title="Delete" onclick="deleteAdmin('<%= accountName %>')" class="linkImg">
+									<a title="Delete" onclick="sendDeleteAdminRequest('<%= accountName %>')" class="linkImg">
 	       						 		<img src="../images/icon/delete.png"/>
 									</a>									
 								</td>

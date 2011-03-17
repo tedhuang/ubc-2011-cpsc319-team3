@@ -72,7 +72,7 @@ function sendUnbanRequest(evt){
 function parseUnbanResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 // if registration sucessful, then update button text and function
+	 // if unban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
 		 loadPageWithSession('unban.jsp');
