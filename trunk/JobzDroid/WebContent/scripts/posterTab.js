@@ -251,11 +251,12 @@
          		    });
          			tool.appendTo(tRow);
          			
-         			tRow.find('a.edit').bind("click", function(){
+         			tRow.find('a.edit').click(function(){
                 			  openTab('edAdTab'); 
                 			  open_edAd_form();
                 			  getJobAdById("edit",adId, "edAdForm");
-              		          timer("loadEdData('jobAd', 'edAdForm', 'edit')", 3000);
+//              		      timer("loadEdData('jobAd', 'edAdForm', 'edit')", 3000);
+//                			  loadEdData('jobAd', 'edAdForm', 'edit');
             	});
          	};
  /************************************************************************************************************************
@@ -275,8 +276,8 @@
         	});
         }
         
-     function loadEdData(targetXMLTag, edFormContainer, mode){
-        
+//     function loadEdData(targetXMLTag, edFormContainer, mode){
+        $.fn.DynaSmartTab.loadEdData=function(targetXMLTag, edFormContainer, mode){
     	 var xmlData= $(targetXMLTag,xmlhttp.responseXML);
         	
 	        	switch(mode){
@@ -306,7 +307,7 @@
 				});
 				break;
           }//ENDOF SWITCH
-      }
+      };
      
      function timer(func, delayTime) {
         // var delay = 50; /* milliseconds - vary as desired */
