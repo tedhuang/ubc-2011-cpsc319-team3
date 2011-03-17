@@ -604,8 +604,8 @@ function getJobAdById(mode, id, outputDiv)
 		  if(mode=="detail"){
 		  	buildDetailTable("jobAd", outputDiv);
 		  }
-		  else{
-			  return true;
+		  else if(mode=="edit"){
+			  $.fn.DynaSmartTab.loadEdData("jobAd", "edAdForm", mode);
 		  }
 	    }
 	  };
