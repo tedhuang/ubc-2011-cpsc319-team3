@@ -46,6 +46,9 @@ import sun.net.www.URLConnection;
 
 public class dbworldintegration {
 	private DBManager dbManager;
+
+	private final static String EMAIL = "jobzdroidtestemail@gmail.com";
+	private final static String PASS = "cpsc319team3";
 	
 	public dbworldintegration(){
 	dbManager= DBManager.getInstance();		
@@ -54,8 +57,8 @@ public class dbworldintegration {
 //Invoke test program every time java application is started by user.	
 	public static void main(String[] args)
 	{
-		String user="jobzdroidtestemail@gmail.com";
-		String password="cpsc319team3";
+		String user=EMAIL;
+		String password=PASS;
 		new dbworldintegration().emailParse(user,password);
 	}
 
