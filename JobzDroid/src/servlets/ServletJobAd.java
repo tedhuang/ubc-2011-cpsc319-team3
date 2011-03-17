@@ -1871,7 +1871,7 @@ public class ServletJobAd extends HttpServlet {
 				 stm2 = "idAccount, title, description, " +
 		   			  "expiryDate, datePosted, dateStarting, " +
 		   			  "contactInfo, educationRequired, jobAvailability, tags)" +
-		   			  qcmd.VALUES + "('";
+		   			  qcmd.VALUES + "(";
 				 query = stm1+stm2;
 				}
 	    
@@ -1886,7 +1886,7 @@ public class ServletJobAd extends HttpServlet {
 		else if(request.getParameter("action").equals("createJobAdvertisement")){//TODO CHCK SYSTEM SETTING IF NEEDS APPROVAL
 		    String stm3 = "status, ";
 			queryBuf.insert(stm1.length(), stm3);
-			queryBuf.append("pending', '");//CAUTION: SIGLE QUO & COMA IMPORTANT
+			queryBuf.append("'pending'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
 			mode=1;
 		  }
 		else if(request.getParameter("action").equals("editJobAd")){
@@ -1899,7 +1899,7 @@ public class ServletJobAd extends HttpServlet {
 		case 1:
 			for(Map.Entry<String, Object> entry : paraMap.entrySet()){
 				Object value = entry.getValue();
-	    		queryBuf.append(qcmd.SQ.insert(1, value) + qcmd.COMA);
+	    		queryBuf.append(qcmd.SQ.insert(2, value) + qcmd.COMA);
 			}
 			queryBuf.delete(queryBuf.length() - qcmd.COMA.length(), queryBuf.length());
 			break;
