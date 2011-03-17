@@ -65,7 +65,7 @@ function sendBanRequest(evt){
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 		
-	//update status text and submitted email
+	//update status text
 	submittedUser = strUserName;	
 	$("#statusText").text("Processing...This may take a moment.");
 }
@@ -74,7 +74,7 @@ function sendBanRequest(evt){
 function parseBanResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 // if registration sucessful, then update button text and function
+	 // if ban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
 		 $("#statusText").addClass("successTag");
 		 loadPageWithSession('ban.jsp');

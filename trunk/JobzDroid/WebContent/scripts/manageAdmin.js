@@ -1,6 +1,7 @@
 /**
  * Javascript file for adding/deleting admin accounts (super admin)
  */
+
 $("document").ready(function() {
 	$("#filter").bind("keyup", function(){
 		applyFilter("userTable", "filter");
@@ -10,13 +11,7 @@ $("document").ready(function() {
 	$('#tabs').DynaSmartTab({});
 });
 
-function deleteAdmin(accountName){
-    var b = confirm("Are you sure to permanently delete " + accountName + "?");
-    if (b == false)
-        return false;
-}
-
-//client side error checking
+//client side error checking for creating admin
 function validateInputs(evt){
 	// case: account name
 	if( $(this).attr('id') == "accountName" ){
@@ -69,7 +64,7 @@ function sendCreateAdminRequest(evt){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
-					var responseText = parseResponseCreate(xmlHttpReq.responseXML);
+					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextCreate");
 					$("#createAdminButton").removeAttr("disabled");
 			    	$("#statusTextCreate").text(responseText);
 				}
@@ -87,20 +82,61 @@ function sendCreateAdminRequest(evt){
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 		
-	//update status text and submitted email
+	//update status text
 	$("#statusTextCreate").text("Processing...This may take a moment.");
 }
 
+//send delete admin request to admin servlet
+function sendDeleteAdminRequest(accountName){
+    var b = confirm("Are you sure to permanently delete " + accountName + "?");
+    if (b == false)
+        return false;
+    var strSessionKey = $("#sessionKey").val();
+	$(".linkImg").attr("disabled", true);
+	$("#statusTextDelete").removeClass("errorTag");	
+	$("#statusTextDelete").removeClass("successTag");
+	
+	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+		xmlHttpReq = new XMLHttpRequest();
+	else
+		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+	
+	if(xmlHttpReq){
+		xmlHttpReq.onreadystatechange = function(){
+			if (xmlHttpReq.readyState == 4){
+				if(xmlHttpReq.status == 200){
+					//parse XML response from server
+					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextDelete");
+					$(".linkImg").removeAttr("disabled");
+			    	$("#statusTextDelete").text(responseText);
+				}
+			}};
+	}
+	request = new Request;
+	request.addAction("deleteAdmin");
+	request.addSessionKey(strSessionKey);
+	request.addParam("accountName", accountName);
+	
+	//send the request to servlet
+	xmlHttpReq.open("POST","../ServletAdmin", true);
+	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlHttpReq.send(request.toString());
+		
+	//update status text
+	$("#statusTextDelete").text("Processing...This may take a moment.");
+}
+
 // parses response from server for admin creation
-function parseResponseCreate(responseXML){	
+function parseResponse(responseXML, textOutputId){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
-		 $("#statusTextCreate").addClass("successTag");
+		 $("#"+textOutputId).addClass("successTag");
 		 loadPageWithSession('manageAdmin.jsp');
 	 }
 	 else
-		 $("#statusTextCreate").addClass("errorTag");
+		 $("#"+textOutputId).addClass("errorTag");
 	 return strMsg;
 }
