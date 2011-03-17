@@ -35,15 +35,14 @@
 #tabFrame div.subFrame{	margin	: 0;	padding	: 10px; min-height: 450px;}
 #tabFrame div.subFrame div{    margin: 0 auto; 	text-align	: left;    font	: normal 12px Verdana, Arial, Helvetica, sans-serif; }
 #tabFrame div.subFrame .newFormContainer,
-#tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0;overflow: auto;bottom: 0;	background-color: white;}
+#tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0; bottom: 0;	background-color: white;}
 .edFormContainer .fillInForm,
-.newFormContainer .fillInForm{	float: left;	margin-right: 20px;	width: 450px;	background-color: whiteSmoke;
+.newFormContainer .fillInForm{	float: left;	margin-right: 20px;	width: 480px;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
-.fillInForm div.field {	margin-bottom: 7px;	position: relative;	clear: both;	padding: 0;}
-.fillInForm div.field label {	width: 80px;font-size: 12px;font-weight: bold;display: block;margin-top: 6px;padding: 0 0 0 1px;
-								line-height: 18px;float: left;width: 110px;text-align: left;}
+.fillInForm div.field {	margin-bottom: 7px;	/*position: relative;	clear: both;	padding: 0;*/}
+.fillInForm div.field label {	width: 40%;font-size: 12px;font-weight: bold; margin-top: 6px; line-height: 18px; float: left; clear: both;}
 .fillInForm div.field input.textBox{	border-color: #CCC;	width: 340px;}
 .fillInForm div.field input.textBoxL{	width: 340px;	height: 20px;}
-.fillInForm div.field textarea{	border-color: #CCC;	width: 340px;	height:100px;}
+.fillInForm div.field textarea.textBoxXL{	border-color: #CCC;	width: 850px;	height:300px;  resize: none; }
 
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/

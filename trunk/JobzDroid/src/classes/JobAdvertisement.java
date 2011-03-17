@@ -42,11 +42,11 @@ public class JobAdvertisement {
 		Location loc =new Location("Vancouver");
 		locationList.add(loc);
 		
-		eduReqFormatted = Utility.degreeConvertor(educationReq);
-		
-		creationDateFormatted = Utility.dateConvertor(creationDate);
-		expiryDateFormatted = Utility.dateConvertor(expiryDate);
-		startingDateFormatted = Utility.dateConvertor(startingDate);
+		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
+		creationDateFormatted	= Utility.dateConvertor(creationDate);
+		expiryDateFormatted 	= Utility.dateConvertor(expiryDate);
+		startingDateFormatted	= Utility.dateConvertor(startingDate);
+		String jobAvail			= Utility.jobTypeTranslator(false,jobAvailability);
 		
 		String result =  "\t<jobAd" +
 		" jobAdId=\"" 				+ jobAdId + "\"" +

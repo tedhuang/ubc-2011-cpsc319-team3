@@ -190,26 +190,33 @@ public class Utility {
 	}
 //////////////////////////////////////////////////////////////////////////////////
 	public static long dateConvertor(String date){
-	  boolean goodFormat=false;
+	  boolean badFormat=true;
+	  boolean badTime =true;
 	  long dateInMs=0;
+	  
+	  Calendar minCal=Calendar.getInstance();
+	  minCal.add(Calendar.MONTH, 1);
+	  Calendar maxCal=Calendar.getInstance();
+	  maxCal.add(Calendar.MONTH, 3);
+	  
 	  if(date!=null){
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
 		StringTokenizer st=new StringTokenizer(date, "/");
 		if(st.countTokens()==3){//we know the delimiters format is right
 			try { 
 				Date aDate = df.parse(date);
-				goodFormat=true;
+				badFormat=false;
 				dateInMs = aDate.getTime();
+				if(dateInMs > minCal.getTimeInMillis()|| dateInMs<maxCal.getTimeInMillis() ){
+					badTime=false;
+				}
 			} 
 			catch (ParseException e) { 
 				logError("Failure while converting date string to long: " + e.getMessage()); 
 			}
 		}
-	    if(!goodFormat){//some other bad format, we do a default setting: one month
-	    		Calendar cal = Calendar.getInstance();
-	            // Add 1 month to the calendar
-	            cal.add(Calendar.MONTH, 1);
-	            dateInMs=cal.getTimeInMillis();
+	    if(badFormat || badTime){//some other bad format, we do a default setting: one month
+	         dateInMs=minCal.getTimeInMillis();
 	    }
 	  }
 	  return dateInMs;
@@ -220,25 +227,25 @@ public class Utility {
 		
 		switch (numForm){
 			case 1:
-				return "Bachelor";
+				return "B.Sc.";
 			case 2:
-				return "Master";
+				return "M.Sc.";
 			case 3:
-				return "Ph.D";
+				return "Ph.D.";
 			default:
 				return "Not Specified";
 		}
 	}	
 	
-	public static int degreeConvertor(String input){
+	public static int degreeConvertor(String input){//TODO ADD REGEXP TO IT
 		
-		if(input.equalsIgnoreCase("Ph.D")){
+		if(input.equalsIgnoreCase("Ph.D.")){
 			return 3;
 		}
-		else if(input.equalsIgnoreCase("bachelor")){
+		else if(input.equalsIgnoreCase("B.Sc.")|| input.equalsIgnoreCase("bachelor")){
 			return 1;
 		}
-		else if(input.equalsIgnoreCase("master")){
+		else if(input.equalsIgnoreCase("M.Sc.")|| input.equalsIgnoreCase("master")){
 			return 2;
 		}
 		else{
@@ -261,22 +268,15 @@ public class Utility {
 			}
 		}
 		
-		else{
-			   if( input.equalsIgnoreCase("full time")|| input.equalsIgnoreCase("part time")){
+		else if( input.equalsIgnoreCase("full time")|| input.equalsIgnoreCase("part time")){
 				   String str = input.toLowerCase().replaceAll(" t", "T");
 				   return str;
 				 }
 			 
-			 else{
-				if(input.equalsIgnoreCase("internship")){
+		else if(input.equalsIgnoreCase("internship")){
 					return input;
-				}
-				else{
-					return null;
-				}
-			 }
-		}//ENDOF INNER ELSE
-	  }return "unspecified";
-	}
-	
+			}
+	  }
+		return "unknown";
+	 }	
 }//ENDOF UTILITY CLASS
