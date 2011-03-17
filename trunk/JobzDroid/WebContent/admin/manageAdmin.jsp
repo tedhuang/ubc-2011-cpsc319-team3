@@ -70,9 +70,9 @@
 			<span class="label">
 		          Account Name Filter: 
 		    </span>
-			<input type="text" class="textinput" id="filter" size="30"/>
+			<input type="text" class="textinput" id="filterAdmin" size="30"/>
 			
-			 <table id="userTable">
+			 <table id="tableAdmin">
 				<thead>
 					<tr>
 						<th>Account ID</th>
@@ -99,8 +99,8 @@
 								<td><%= accountName %></td>
 								<td><%= strDateTimeCreated %></td>
 								<td>
-									<a title="Delete" onclick="sendDeleteAdminRequest('<%= accountName %>')" class="linkImg">
-	       						 		<img src="../images/icon/delete.png"/>
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= accountName %>', 'manageAdmin.jsp')" class="linkImg">
+	       						 		<img src="../images/icon/delete_icon.png"/>
 									</a>									
 								</td>
 							</tr>

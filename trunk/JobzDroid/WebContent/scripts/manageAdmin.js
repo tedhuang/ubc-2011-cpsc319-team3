@@ -3,8 +3,8 @@
  */
 
 $("document").ready(function() {
-	$("#filter").bind("keyup", function(){
-		applyFilter("userTable", "filter");
+	$("#filterAdmin").bind("keyup", function(){
+		applyFilter("tableAdmin", "filterAdmin");
 	});
 	$("#createAdminFrame input").bind("change", validateInputs);
 	$("#createAdminButton").bind("click", sendCreateAdminRequest);
@@ -84,47 +84,6 @@ function sendCreateAdminRequest(evt){
 		
 	//update status text
 	$("#statusTextCreate").text("Processing...This may take a moment.");
-}
-
-//send delete admin request to admin servlet
-function sendDeleteAdminRequest(accountName){
-    var b = confirm("Are you sure to permanently delete " + accountName + "?");
-    if (b == false)
-        return false;
-    var strSessionKey = $("#sessionKey").val();
-	$(".linkImg").attr("disabled", true);
-	$("#statusTextDelete").removeClass("errorTag");	
-	$("#statusTextDelete").removeClass("successTag");
-	
-	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-		xmlHttpReq = new XMLHttpRequest();
-	else
-		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-	
-	if(xmlHttpReq){
-		xmlHttpReq.onreadystatechange = function(){
-			if (xmlHttpReq.readyState == 4){
-				if(xmlHttpReq.status == 200){
-					//parse XML response from server
-					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextDelete");
-					$(".linkImg").removeAttr("disabled");
-			    	$("#statusTextDelete").text(responseText);
-				}
-			}};
-	}
-	request = new Request;
-	request.addAction("deleteAdmin");
-	request.addSessionKey(strSessionKey);
-	request.addParam("accountName", accountName);
-	
-	//send the request to servlet
-	xmlHttpReq.open("POST","../ServletAdmin", true);
-	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.send(request.toString());
-		
-	//update status text
-	$("#statusTextDelete").text("Processing...This may take a moment.");
 }
 
 // parses response from server for admin creation
