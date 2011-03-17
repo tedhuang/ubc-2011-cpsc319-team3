@@ -24,6 +24,8 @@ public class SystemManager {
 	public static long 		timeBeforeRemovingExpiredInactiveJobAds = 7 * 24 * 60 * 60 * 1000;		// default 7 days
 	public static boolean 	autoRemoveExpiredInactiveJobAds 		= true;							// default auto remove expired inactive job ads
 	public static long 		timeIntervalAutomatedTasks 				= 10 * 60 * 1000;				// default 10 minutes
+	public static long		timeIntervalAutomatedDBWorldTasks		= 1* 60 * 60 * 1000;				// default 1 hour
+	public static long      expiryTimeJobAdDefault					= 30 * 24 * 60 * 60 * 1000;		// default 1 month
 	//TODO add maximum expiry time for each value
 	
 	// default string patterns
@@ -44,6 +46,10 @@ public class SystemManager {
 	public static String systemEmailPw			= "cs319CS#!(";
 	public static String systemEmailSMTPHost	= "smtp.gmail.com";
 	public static String systemEmailPort		= "465";
+	
+	//dbworld email variables
+	public static String dbWorldEmailAddress  	= "jobzdroidtestemail@gmail.com" ;
+	public static String dbWorldEmailPw			= "cpsc319team3";
 	/***********************************************************************************************************************/
 	
 	// singleton instance
