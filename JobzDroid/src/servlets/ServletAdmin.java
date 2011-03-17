@@ -49,7 +49,7 @@ public class ServletAdmin extends HttpServlet {
 		ban,
 		unban,
 		createAdmin,
-		deleteAdmin,
+		deleteAccount,
 		postNews
 	}
 
@@ -82,19 +82,19 @@ public class ServletAdmin extends HttpServlet {
 				adminLoginReqTaker(request, response);
 				break;
 			case ban:
-				ban(request, response);
+				banHandler(request, response);
 				break;
 			case unban:
-				unban(request, response);
+				unbanHandler(request, response);
 				break;
 			case createAdmin:
-				createAdmin(request, response);
+				createAdminHandler(request, response);
 				break;
-			case deleteAdmin:
-				deleteAdmin(request, response);
+			case deleteAccount:
+				deleteAccountHandler(request, response);
 				break;
 			case postNews:
-				postNews(request, response);
+				postNewsHandler(request, response);
 				break;
 		}
 	}
@@ -142,7 +142,7 @@ public class ServletAdmin extends HttpServlet {
 	/***
 	 * Handles account ban requests.
 	 */
-	private void ban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void banHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");		
 		sessionKey = Utility.checkInputFormat(sessionKey);
@@ -213,7 +213,7 @@ public class ServletAdmin extends HttpServlet {
 	/***
 	 * Handles account unban requests.
 	 */
-	private void unban(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void unbanHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
@@ -285,7 +285,7 @@ public class ServletAdmin extends HttpServlet {
 	/***
 	 * Handles create admin requests from the super admin.
 	 */
-	private void createAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void createAdminHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		String password = request.getParameter("password");	
@@ -364,9 +364,9 @@ public class ServletAdmin extends HttpServlet {
 	}
 	
 	/***
-	 * Handles delete admin requests from the super admin.
+	 * Handles delete account requests from the super admin.
 	 */
-	private void deleteAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void deleteAccountHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		sessionKey = Utility.checkInputFormat(sessionKey);
@@ -382,28 +382,47 @@ public class ServletAdmin extends HttpServlet {
 			message = "This account does not exist.";
 		}
 		else {
+			// if check if user is authorized
 			Session session = dbManager.getSessionByKey(sessionKey);
 			if(session == null){			
 					allGood = false;
-					message = "Unauthorized delete admin action.";
+					message = "Unauthorized delete account action.";
 			}
 			else{
-				// check if user is authorized
-				String userType = session.getAccountType();
-				if( !userType.equals("superAdmin")){
+				Account accToDelete = dbManager.getAccountFromEmail(accountName);
+				if( accToDelete == null ){
 					allGood = false;
-					message = "Unauthorized delete admin action.";
+					message = "Error reading account information.";
+				}
+				else{
+					String accToDeleteType = accToDelete.getType();
+					String userType = session.getAccountType();
+					// only super admins can delete admin accounts
+					if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
+						allGood = false;
+						message = "Unauthorized delete account action.";
+					}
+					// requires at least admin privilege to delete normal accounts
+					else if( ( accToDeleteType.equals("searcher") || accToDeleteType.equals("searcher") ) 
+							&& (!userType.equals("admin") && !userType.equals("superAdmin")) ){
+						allGood = false;
+						message = "Unauthorized delete account action.";
+					}
+					else if(accToDeleteType.equals("superAdmin")){
+						allGood = false;
+						message = "Invalid delete account action.";
+					}
 				}
 			}
 		}
 		
 		if(allGood){
-			if(deleteAdminAccount(accountName)){
+			if(deleteAccount(accountName)){
 				result = true;
-				message = "Admin account " + accountName + " has been successfully deleted.";
+				message = "Account " + accountName + " has been successfully deleted.";
 			}
 			else
-				message = "An error has occured while performing delete admin action. Please try again later.";
+				message = "An error has occured while performing delete account action. Please try again later.";
 		}
 		
 		// Write XML containing message and result to response
@@ -420,7 +439,7 @@ public class ServletAdmin extends HttpServlet {
 	/***
 	 * Handles post news requests from admins.
 	 */
-	private void postNews(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void postNewsHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");	
@@ -627,7 +646,7 @@ public class ServletAdmin extends HttpServlet {
 	 * @param email Account name to delete.
 	 * @return boolean indicating whether the deletion was successful.
 	 */
-	private boolean deleteAdminAccount(String email){
+	private boolean deleteAccount(String email){
 		Connection conn = dbManager.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;

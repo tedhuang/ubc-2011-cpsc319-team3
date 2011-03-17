@@ -20,7 +20,7 @@ function viewProfile(idAccount){
 	return false;
 }
 
-// send ban request to admin servlet
+// send unban request to admin servlet
 function sendUnbanRequest(evt){
 	var strUserName = trim($("#userNameInput").val());
 	var strSessionKey = $("#sessionKey").val();

@@ -17,7 +17,7 @@
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	<script type="text/javascript" src="../scripts/manageUser.js"></script>
 	
-	<title>Ban User</title>
+	<title>Manage Users</title>
 </head>
 <body>
 	<%	// check session key
@@ -73,23 +73,28 @@
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageNews.jsp')">
 				<img src="../images/icon/news_icon.png"/>
-				<h2>Manage Site News</h2>
+				<h2>Manage News</h2>
 			</a>
 		</li>
 		
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageRSS.jsp')">
-				<img src="../images/icon/rss_icon.png"/>
+				<img src="../images/icon/rss.png"/>
 				<h2>Manage RSS</h2>
 			</a>
 		</li>
-		
+	<%
+	 if(s.getAccountType().equals("superAdmin")){
+	 	%>
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
 				<h2>Manage Admins</h2>
 			</a>
 		</li>
+		<%
+		  }
+	%>
   	</ul><!--ENDOF SideMenu-->
   	
 	<div id="tabs" class="tabPane">
@@ -97,6 +102,9 @@
 		<ul>
 			<li id="banTab">
   				<a href="#banFrame"><h2>Ban User</h2></a>
+			</li>
+			<li id="unbanTab">
+  				<a href="#unbanFrame"><h2>Unban User</h2></a>
 			</li>
 			<li id="profileTab">
   				<a href="#profileFrame"><h2>Profile</h2></a>
@@ -111,9 +119,92 @@
 			<span class="label">
 		          Email Filter: 
 		    </span>
-			<input type="text" class="textinput" id="filter" size="30"/>
+			<input type="text" class="textinput" id="filterBan" size="30"/>
 			
-			 <table id="userTable">
+			 <table id="tableBanUser">
+				<thead>
+					<tr>
+						<th>Account ID</th>
+						<th>Email</th>
+						<th>Secondary Email</th>
+						<th>User Type</th>
+						<th>Account Creation Date</th>
+						<th>Profile</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+				<%	// display all active searcher poster accounts
+					for(int i = 0; i < users.size(); i++){
+						Account acc = users.get(i);
+						if( acc.getStatus().equals("active") ){
+							int idAccount = acc.getIdAccount();
+							String email = acc.getEmail();
+							String secondaryEmail = acc.getSecondaryEmail();
+							if( secondaryEmail == null)
+								secondaryEmail = "";
+							String type = acc.getType();
+							long dateTimeCreated = acc.getDateTimeCreated();
+							String strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
+							%>
+								<tr title="<%= email %>">
+									<td><%= idAccount %></td>
+									<td><a href="#banUserNameInput"  onclick="copyEmailToInput('<%= email %>', 'banUserNameInput')"><%= email %></a></td>
+									<td><%= secondaryEmail %></td>
+									<td><%= type %></td>
+									<td><%= strDateTimeCreated %></td>
+									<td>
+										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
+		       						 		<img src="../images/icon/view_profile.png"/>
+										</a>									
+									</td>
+									<td>
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp')" class="linkImg">
+	       						 		<img src="../images/icon/delete_icon.png"/>
+									</a>									
+								</td>
+								</tr>
+							<%
+						}
+					}
+				%>
+				</tbody>
+			</table>
+			<table>
+				<tbody>
+				  <tr>
+				    <td class="clean"></td>
+				  </tr>
+				  <tr>
+	    			<td class="label">
+	          		    User name (Email address): 
+	    			</td>
+				    <td style="width: 100px">
+				        <div>
+				            <input type="text" class="textinput" id="banUserNameInput" size="50" maxlength="100" tabindex="11"/>
+				        </div>
+				    </td>
+				    <td>
+	          		    <button id="submitBan" type="button">Ban Hammer</button>
+	    			</td>
+				  </tr>
+				  <tr>
+				    <td class="clean"></td>
+				  </tr>
+				</tbody>
+			</table>
+			<p id="statusTextBan" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>		
+		</div><!--end of BANFRAME-->
+		
+		<div id="unbanFrame" class="subFrame unremovable">
+			<h1><b><font size='4'>List of Banned Users</font></b></h1>
+			<span class="label">
+		          Email Filter: 
+		    </span>
+			<input type="text" class="textinput" id="filterUnban" size="30"/>
+			
+			 <table id="tableUnbanUser">
 				<thead>
 					<tr>
 						<th>Account ID</th>
@@ -126,29 +217,26 @@
 				</thead>
 				<tbody>
 				<%	// display all active searcher poster accounts
-					String email, secondaryEmail, type, strDateTimeCreated;
-					int idAccount;
-					long dateTimeCreated;
 					for(int i = 0; i < users.size(); i++){
 						Account acc = users.get(i);
-						if( acc.getStatus().equals("active") ){
-							idAccount = acc.getIdAccount();
-							email = acc.getEmail();
-							secondaryEmail = acc.getSecondaryEmail();
+						if( acc.getStatus().equals("banned") ){
+							int idAccount = acc.getIdAccount();
+							String email = acc.getEmail();
+							String secondaryEmail = acc.getSecondaryEmail();
 							if( secondaryEmail == null)
 								secondaryEmail = "";
-							type = acc.getType();
-							dateTimeCreated = acc.getDateTimeCreated();
-							strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
+							String type = acc.getType();
+							long dateTimeCreated = acc.getDateTimeCreated();
+							String strDateTimeCreated = Utility.longToDateString(dateTimeCreated, "PST");
 							%>
 								<tr title="<%= email %>">
 									<td><%= idAccount %></td>
-									<td><a href="#userNameInput"  onclick="copyEmailToInput('<%= email %>')"><%= email %></a></td>
+									<td><a href="#unbanUserNameInput"  onclick="copyEmailToInput('<%= email %>', 'unbanUserNameInput')"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
 									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
+										<a title="View Profile" href="#" onclick="viewProfile('<%= idAccount %>')">
 		       						 		<img src="../images/icon/view_profile.png"/>
 										</a>									
 									</td>
@@ -170,11 +258,11 @@
 	    			</td>
 				    <td style="width: 100px">
 				        <div>
-				            <input type="text" class="textinput" id="userNameInput" size="50" maxlength="100" tabindex="11"/>
+				            <input type="text" class="textinput" id="unbanUserNameInput" size="50" maxlength="100" tabindex="11"/>
 				        </div>
 				    </td>
 				    <td>
-	          		    <button id="submitButton" type="button">Ban Hammer</button>
+	          		    <button id="submitUnban" type="button">Unban</button>
 	    			</td>
 				  </tr>
 				  <tr>
@@ -182,9 +270,9 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextUnban" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
-		</div><!--end of BANFRAME-->
+		</div><!--end of UNBANFRAME-->
 		
 		<div id="profileFrame" class="subFrame">
 			 <div id="profileTable" class="resultTableDiv noBorder">
