@@ -10,7 +10,8 @@
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
-	<script type="text/javascript" src="../scripts/authentication.js"></script>
+	<script type="text/javascript" src="../scripts/authentication.js"></script>	
+	<script type="text/javascript" src="../scripts/deleteAccount.js"></script>
 	<script type="text/javascript" src="../scripts/manageAdmin.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	
@@ -99,7 +100,7 @@
 								<td><%= accountName %></td>
 								<td><%= strDateTimeCreated %></td>
 								<td>
-									<a title="Delete" onclick="sendDeleteAccountRequest('<%= accountName %>', 'manageAdmin.jsp')" class="linkImg">
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= accountName %>', 'manageAdmin.jsp', 'statusTextFirstFrame')" class="linkImg">
 	       						 		<img src="../images/icon/delete_icon.png"/>
 									</a>									
 								</td>
@@ -109,7 +110,7 @@
 				%>
 				</tbody>
 			</table>
-			<p id="statusTextDelete" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of VIEWFRAME-->
 		
@@ -162,7 +163,7 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusTextCreate" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of CREATEADMINFRAME-->
 		
