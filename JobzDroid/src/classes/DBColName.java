@@ -92,7 +92,8 @@ public class DBColName{
 		  			"pt-field",
 		  			"is-field",//pos:11
 		  			"tag-field",
-		  			"loc-field"//pos:15
+		  			"adId-field"
+//		  			"loc-field"//pos:15
 			
 	};
 	private Map<String, String>adEditFieldsMap=new HashMap<String, String>();
@@ -139,7 +140,12 @@ public class DBColName{
 		if(action.equals("searchJobAdvertisement")){
 			return colDictSearchJobAd;
 		}
-		else if(action.equals("createJobAdvertisement")||action.equals("saveJobAdDraft")){
+		else if( action.equals("createJobAdvertisement")
+				  ||
+				 action.equals("saveJobAdDraft")
+				  ||
+				 action.equals("editJobAd"))
+		{
 			return colDictEditJobAd;
 		}
 		
@@ -190,8 +196,9 @@ public class DBColName{
 		colDictEditJobAd.put(adEditFieldsMap.get("pt-field"), 			tbJobAdColMap.get("jobAvailability"));
 		colDictEditJobAd.put(adEditFieldsMap.get("tag-field"), 			tbJobAdColMap.get("tags"));
 		colDictEditJobAd.put(adEditFieldsMap.get("expireTime-field"),	tbJobAdColMap.get("expiryDate"));
+		colDictEditJobAd.put(adEditFieldsMap.get("adId-field"),			tbJobAdColMap.get("idJobAd"));
 		//Location?
-		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"), 		"address");
+//		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"), 		"address");
 		
 		colDictEditJobAd = Collections.unmodifiableMap(colDictEditJobAd);
 	}

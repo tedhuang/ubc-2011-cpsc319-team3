@@ -143,20 +143,41 @@ public class Utility {
 	 * @return The corrected string.
 	 */
 	public static String checkInputFormat(String toBeChecked){		
-		String corrected;
-		corrected = toBeChecked.replace("\'", "\\\'");
-		corrected = toBeChecked.replace("\"", "\\\"");
-		corrected = toBeChecked.replace(";", "");
-		corrected = toBeChecked.replace("{", "");
-		corrected = toBeChecked.replace("}", "");
-		corrected = toBeChecked.replace("<", "");
-		corrected = toBeChecked.replace(">", "");
-		corrected = toBeChecked.replace("^", "");
-		corrected = toBeChecked.replace("'", "\\'");
-		
+		String corrected="";
+		try{
+			corrected = toBeChecked.replace("\'", "\\\'");
+			corrected = toBeChecked.replace("\"", "\\\"");
+			corrected = toBeChecked.replace(";", "");
+			corrected = toBeChecked.replace("{", "");
+			corrected = toBeChecked.replace("}", "");
+			corrected = toBeChecked.replace("<", "");
+			corrected = toBeChecked.replace(">", "");
+			corrected = toBeChecked.replace("^", "");
+			corrected = toBeChecked.replace("'", "\\'");
+		}
+		catch(NullPointerException e){
+			System.out.println("Null Value Found when Processing data");
+			e.printStackTrace();
+		}
 		return corrected;		
 	}
 	
+	public static String checkInputFormat(String toBeChecked, String mode){		
+		String corrected="";
+		
+		if(mode.equals("draft")){
+			corrected = toBeChecked.replace("\'", "\\\'");
+			corrected = toBeChecked.replace("\"", "\\\"");
+			corrected = toBeChecked.replace(";", "");
+			corrected = toBeChecked.replace("{", "");
+			corrected = toBeChecked.replace("}", "");
+			corrected = toBeChecked.replace("<", "");
+			corrected = toBeChecked.replace(">", "");
+			corrected = toBeChecked.replace("^", "");
+			corrected = toBeChecked.replace("'", "\\'");
+		}
+		return corrected;
+	}
 	public static String md5(String input){
         String res = "";
         try {
