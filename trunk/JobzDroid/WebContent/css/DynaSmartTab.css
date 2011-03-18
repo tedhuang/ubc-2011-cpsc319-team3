@@ -33,16 +33,21 @@
 #tabFrame{	width: 100%;	background-color: white;	display	: inline;	float: left;	border: 1px solid #CCC;   border-top-width	: 0 !important;
 		position: relative;	margin	: 0;	-webkit-border-bottom-left-radius	: 5px;    -webkit-border-bottom-right-radius	: 5px;}
 #tabFrame div.subFrame{	margin	: 0;	padding	: 10px; min-height: 450px;}
-#tabFrame div.subFrame div{    margin: 0 auto; 	text-align	: left;    font	: normal 12px Verdana, Arial, Helvetica, sans-serif; }
+#tabFrame div.subFrame div{ text-align	: left;    font	: normal 12px Verdana, Arial, Helvetica, sans-serif; }
 #tabFrame div.subFrame .newFormContainer,
 #tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0; bottom: 0;	background-color: white;}
 .edFormContainer .fillInForm,
-.newFormContainer .fillInForm{	float: left;	margin-right: 20px;	width: 480px;	background-color: whiteSmoke;
+.newFormContainer .fillInForm{	float: left;	margin-right: 20px;	width: auto;	background-color: whiteSmoke;
+	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
+.edFormContainer .descForm{	margin-top: 20px;	width: 480px;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
 .fillInForm div.field {	margin-bottom: 7px;	/*position: relative;	clear: both;	padding: 0;*/}
-.fillInForm div.field label {	width: 40%;font-size: 12px;font-weight: bold; margin-top: 6px; line-height: 18px; float: left; clear: both;}
+.fillInForm div.field label {	width: 100%;font-size: 12px;font-weight: bold; margin-top: 6px; line-height: 18px; float: left; clear: both;}
+.fillInForm div.field label.group input{ margin: 0 0 0 2em;}
 .fillInForm div.field input.textBox{	border-color: #CCC;	width: 340px;}
 .fillInForm div.field input.textBoxL{	width: 340px;	height: 20px;}
-.fillInForm div.field textarea.textBoxXL{	border-color: #CCC;	width: 850px;	height:300px;  resize: none; }
+.fillInForm div.field input.hidden{	display:none;}
+.descForm div.field textarea.textBoxXL,
+.fillInForm div.field textarea.textBoxXL{	border-color: #CCC;	width: 880px;	height:300px;  resize: none; }
 
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/

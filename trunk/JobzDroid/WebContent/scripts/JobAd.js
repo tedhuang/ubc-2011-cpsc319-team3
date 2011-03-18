@@ -388,23 +388,28 @@ function submitJobAdForApproval(){
  * 
  * - IN CHARGE OF SUBMITTING AD OR SAVING DRAFT 
  *******************************************************************************************************************************/
-function postJobAd(mode){
+function postJobAd(mode, formDiv, heading){
 	var noNullData=false;
-	
+	var theForm =$("#"+formDiv);
+	var theheading =$("#"+heading);
 	var sessionKey = $("#sessionKey").val();
 	request = new Request;
-	if(mode=="submit"){
+	if(mode=="submit" ){
 		request.addAction("createJobAdvertisement");
-		noNullData = checkMandatory("newAdForm");
+		noNullData = checkMandatory(theForm);
 	}
 	else if(mode=="draft"){
 		request.addAction("saveJobAdDraft");
 		noNullData = true;
 	}
+	else if(mode=="edit"){
+		request.addAction("editJobAd");
+		noNullData = checkMandatory(theForm);
+	}
 	
 	if(noNullData){
 		request.addSessionKey( sessionKey );
-		var searchFields = $(":input", "#newAdForm").serializeArray();
+		var searchFields = $(":input", theForm).serializeArray();
 		
 		jQuery.each(searchFields, function(i, field){
 	          if(field.name=="expireTime-field" || field.name=="startTime-field"){
@@ -421,26 +426,28 @@ function postJobAd(mode){
 		else{// code for IE6, IE5
 			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 		}
+		
+		if(mode=="submit"){
+			theheading.html("<h2 class='info'>Sending Request...</h2>");
+		}
+		else if(mode=="draft"){
+			theheading.html("<h2 class='info'>Saving Draft...</h2>");
+		}
+		else if(mode=="edit"){
+			theheading.html("<h2 class='info'>Updating Your Ad...</h2>");
+		}
 		xmlhttp.open("POST","../ServletJobAd" ,true);
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(request.toString());
 		
-		if(mode=="submit"){
-			$("#newAdfb").html("<h2 class='info'>Sending Request...</h2>");
-		}
-		else if(mode=="draft"){
-			$("#newAdfb").html("<h2 class='info'>Saving Draft...</h2>");
-		}
-		
-		
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			  
-//			  var message = xmlhttp.responseXML.getElementById("message");
-		    $("#newAdfb").html("<h2 class='good'>" + xmlhttp.responseXML.getElementById("message") + "</h2>");
+//			  var message = xmlhttp.responseXML.getElementById("message");xmlhttp.responseXML.getElementById("message") +
+		    theheading.html("<h2 class='good'>Action Performed Successfully!</h2>");
 		    }
 		  else{
-			  $("#newAdfb").html("<h2 class='error'>opps something is wrong!</h2>");
+			  theheading.html("<h2 class='error'>opps something is wrong!</h2>");
 		  }
 		};
 		
@@ -448,10 +455,10 @@ function postJobAd(mode){
 	}//IF MANDATORIES FILLED
 }
 
-function checkMandatory(formContainerId){
+function checkMandatory(formContainer){
 	var count=0;
 	var error = "<h2 class='error'>Hmm...You seem to miss something</h2>";
-	var chkList = $('.mustNotNull', "#"+formContainerId).get();
+	var chkList = $('.mustNotNull', formContainer).get();
 	
 	$(chkList).each(function(){
 		if($(this).val()== ""){

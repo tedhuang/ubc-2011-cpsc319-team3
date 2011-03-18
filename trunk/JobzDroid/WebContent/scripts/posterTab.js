@@ -284,6 +284,7 @@
 	        	
 	        	case "edit":
 	        	$("input[name='title-field']", "#"+edFormContainer).val(xmlData.attr("jobAdTitle"));
+	        	$("input[name='adId-field']", "#"+edFormContainer).val(xmlData.attr("jobAdId"));
 				$("input[name='company-field']", "#"+edFormContainer).val(xmlData.attr("contactInfo"));
 				$("input[name='tag-field']", "#"+edFormContainer).val(xmlData.attr("tags"));
 				$("textarea[name='desc-field']", "#"+edFormContainer).val(xmlData.attr("jobAdDescription"));//Type-in Forms

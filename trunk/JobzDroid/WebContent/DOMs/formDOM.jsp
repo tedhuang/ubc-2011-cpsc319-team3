@@ -16,16 +16,17 @@
 	<div id="edAdForm" class="edFormContainer">
 		   <div id="head-bar">
 					<h2 class="welcome">Editing Ad:</h2>
-						<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft |</a>
-			    		<a class="jsBtn" onclick="postJobAd('submit')">Post it |</a>
+						<a class="jsBtn" onclick="postJobAd('draft', 'edAdForm','edAdfb')">Save Another Draft |</a>
+			    		<a class="jsBtn" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a>
 						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
-						<span id="newAdfb">Feed Back Area</span>
+						<span id="edAdfb">Feed Back Area</span>
 			  </div><!--ENDOF headBar-->
 			  
 		  	<div id="typeInForm" class="fillInForm"> 
 				<div class="field">
-					<label for="title-field" >Ad Title:</label>
+					<label for="title-field" >Ad Title</label>
 					<input id="title-filed" name="title-field" class="textBox mustNotNull" value="" />
+					<input id="adId-field"  name="adId-field"  class="hidden mustNotNull" READONLY/>
 				</div>
 				<div class="field"> 
 						<label for="contact-field" >Company:</label> 
@@ -62,16 +63,12 @@
 					
 			<div id="jobAvailField" class="field"> 
 				<label>Employment Type:</label>
-				<label for="ft-field" >
+				<label class="group">
 					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
 					Full Time
-				</label>
-   				<label for="pt-field">
-					 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
+					<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
     				 Part Time
-				</label>
-				<label for="is-field">
-    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
+    				 <input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
    		 			Internship
 				</label>
 			</div>
@@ -86,7 +83,7 @@
 					</div>
 					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
-			   <div id="desc-div" class="fillInForm">
+			   <div id="desc-div" class="descForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
 						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
@@ -100,8 +97,8 @@
 		  <div id="newAdForm" class="newFormContainer">
 			  <div id="head-bar">
 					<h2 class="welcome">Create New Ad</h2>
-						<a class="jsBtn" onclick="postJobAd('draft')">Save to Draft |</a>
-			    		<a class="jsBtn" onclick="postJobAd('submit')">Post it |</a>
+						<a class="jsBtn" onclick="postJobAd('draft', 'newAdForm','newAdfb')">Save to Draft |</a>
+			    		<a class="jsBtn" onclick="postJobAd('submit','newAdForm','newAdfb')">Post it |</a>
 						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
 						<span id="newAdfb">Feed Back Area</span>
 			  </div><!--ENDOF headBar-->
@@ -145,16 +142,12 @@
 					
 					<div class="field"> 
 						<label>Employment Type:</label>
-						<label for="ft-field" >
+						<label class="group">
 							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
 							Full Time
-						</label>
-		   				<label for="pt-field">
-							 <input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
-		    				 Part Time
-						</label>
-						<label for="is-field">
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
+							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
+		    				Part Time
+		    				 <input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
 		   		 			Internship
 						</label>
 					</div>
