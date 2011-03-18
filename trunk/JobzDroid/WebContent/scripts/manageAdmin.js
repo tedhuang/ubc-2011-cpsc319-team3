@@ -50,8 +50,8 @@ function sendCreateAdminRequest(evt){
 	var strSessionKey = $("#sessionKey").val();
 
 	$("#createAdminButton").attr("disabled", true);
-	$("#statusTextCreate").removeClass("errorTag");	
-	$("#statusTextCreate").removeClass("successTag");
+	$("#statusTextSecondFrame").removeClass("errorTag");	
+	$("#statusTextSecondFrame").removeClass("successTag");
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
@@ -64,9 +64,9 @@ function sendCreateAdminRequest(evt){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
-					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextCreate");
+					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextSecondFrame");
 					$("#createAdminButton").removeAttr("disabled");
-			    	$("#statusTextCreate").text(responseText);
+			    	$("#statusTextSecondFrame").text(responseText);
 				}
 			}};
 	}
@@ -83,7 +83,7 @@ function sendCreateAdminRequest(evt){
 	xmlHttpReq.send(request.toString());
 		
 	//update status text
-	$("#statusTextCreate").text("Processing...This may take a moment.");
+	$("#statusTextSecondFrame").text("Processing...This may take a moment.");
 }
 
 // parses response from server for admin creation

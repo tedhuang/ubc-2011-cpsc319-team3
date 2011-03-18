@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="../scripts/Profile.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	<script type="text/javascript" src="../scripts/deleteAccount.js"></script>
 	<script type="text/javascript" src="../scripts/manageUser.js"></script>
 	
 	<title>Manage Users</title>
@@ -130,6 +131,7 @@
 						<th>User Type</th>
 						<th>Account Creation Date</th>
 						<th>Profile</th>
+						<th>Ban</th>
 						<th>Delete</th>
 					</tr>
 				</thead>
@@ -149,7 +151,7 @@
 							%>
 								<tr title="<%= email %>">
 									<td><%= idAccount %></td>
-									<td><a href="#banUserNameInput"  onclick="copyEmailToInput('<%= email %>', 'banUserNameInput')"><%= email %></a></td>
+									<td><a href="#userNameInputFirstFrame"  onclick="copyEmailToInput('<%= email %>', 'userNameInputFirstFrame')"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
@@ -159,10 +161,15 @@
 										</a>									
 									</td>
 									<td>
-									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp')" class="linkImg">
+									<a title="Ban" onclick="sendBanRequest('<%= email %>')" class="linkImg">
+	       						 		<img src="../images/icon/ban_icon.png"/>
+									</a>									
+									</td>
+									<td>
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextFirstFrame')" class="linkImg">
 	       						 		<img src="../images/icon/delete_icon.png"/>
 									</a>									
-								</td>
+									</td>
 								</tr>
 							<%
 						}
@@ -181,11 +188,14 @@
 	    			</td>
 				    <td style="width: 100px">
 				        <div>
-				            <input type="text" class="textinput" id="banUserNameInput" size="50" maxlength="100" tabindex="11"/>
+				            <input type="text" class="textinput" id="userNameInputFirstFrame" size="50" maxlength="100" tabindex="11"/>
 				        </div>
 				    </td>
 				    <td>
-	          		    <button id="submitBan" type="button">Ban Hammer</button>
+	          		    <button id="submitBan" type="button">Ban User</button>
+	    			</td>
+	    			<td>
+	          		    <button id="submitDeleteFirstFrame" type="button">Delete User</button>
 	    			</td>
 				  </tr>
 				  <tr>
@@ -193,7 +203,7 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusTextBan" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of BANFRAME-->
 		
@@ -213,6 +223,8 @@
 						<th>User Type</th>
 						<th>Account Creation Date</th>
 						<th>Profile</th>
+						<th>Unban</th>
+						<th>Delete</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -231,14 +243,24 @@
 							%>
 								<tr title="<%= email %>">
 									<td><%= idAccount %></td>
-									<td><a href="#unbanUserNameInput"  onclick="copyEmailToInput('<%= email %>', 'unbanUserNameInput')"><%= email %></a></td>
+									<td><a href="#userNameInputSecondFrame"  onclick="copyEmailToInput('<%= email %>', 'userNameInputSecondFrame')"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
 									<td>
-										<a title="View Profile" href="#" onclick="viewProfile('<%= idAccount %>')">
+										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
 		       						 		<img src="../images/icon/view_profile.png"/>
 										</a>									
+									</td>
+									<td>
+										<a title="Unban" onclick="sendUnbanRequest('<%= email %>')" class="linkImg">
+		       						 		<img src="../images/icon/unban_icon.png"/>
+										</a>									
+									</td>
+									<td>
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextSecondFrame')" class="linkImg">
+	       						 		<img src="../images/icon/delete_icon.png"/>
+									</a>									
 									</td>
 								</tr>
 							<%
@@ -258,11 +280,14 @@
 	    			</td>
 				    <td style="width: 100px">
 				        <div>
-				            <input type="text" class="textinput" id="unbanUserNameInput" size="50" maxlength="100" tabindex="11"/>
+				            <input type="text" class="textinput" id="userNameInputSecondFrame" size="50" maxlength="100" tabindex="11"/>
 				        </div>
 				    </td>
 				    <td>
 	          		    <button id="submitUnban" type="button">Unban</button>
+	    			</td>
+	    			<td>
+	          		    <button id="submitDeleteSecondFrame" type="button">Delete User</button>
 	    			</td>
 				  </tr>
 				  <tr>
@@ -270,7 +295,7 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusTextUnban" class="pagefont" align="center" style="font-weight:bold" ></p>
+			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of UNBANFRAME-->
 		
