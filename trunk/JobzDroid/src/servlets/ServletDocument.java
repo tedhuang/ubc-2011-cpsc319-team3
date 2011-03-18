@@ -1,5 +1,8 @@
 package servlets;
 
+import managers.DBManager;
+import managers.SystemManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,25 +14,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
+import org.apache.commons.io.FileUtils;
+
+import classes.Session;
+
 /**
  * Servlet implementation class ServletDocument
  */
 public class ServletDocument extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private DBManager dbManager;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ServletDocument() {
         super();
-        // TODO Auto-generated constructor stub
+        dbManager = DBManager.getInstance();
     }
 
 	/**
@@ -48,7 +56,7 @@ public class ServletDocument extends HttpServlet {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		
-		List /* FileItem */ items = null;
+		List /* FileItem + form-fields */ items = null;
 		
 		// Create a factory for disk-based file items
 		FileItemFactory factory = new DiskFileItemFactory();
@@ -65,22 +73,16 @@ public class ServletDocument extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-
-		//TODO check user via sessionKey
-		
-		//TODO check size, find entry in DB
-		
-		//TODO Write entry in DB
-		
 		
 	    String name;
 	    String value;
 		
 		// Process the uploaded items
 		Iterator iter = items.iterator();
-		String nextFileName="default";
-		String sessionKey;
+		String nextFileName = "";
+		String sessionKey = "";
 		
+		earlyExit: {
 		while (iter.hasNext()) {
 			System.out.println("Process form");
 		    FileItem item = (FileItem) iter.next();
@@ -96,7 +98,6 @@ public class ServletDocument extends HttpServlet {
 			    // is this where field is?
 			    if(name.equals("sessionKey")) {
 			    	sessionKey = value;
-			    	System.out.println( sessionKey );
 			    }
 			    
 			    InputStream uploadedStream = item.getInputStream();
@@ -105,14 +106,68 @@ public class ServletDocument extends HttpServlet {
 		    }
 		 // Process a file upload
 		    else {
+		    	
 		    	System.out.println("Process File Upload");
+		    	
+		    	
 		        String fieldName = item.getFieldName();
 		        String fileName = item.getName();
 		        String contentType = item.getContentType();
 		        boolean isInMemory = item.isInMemory();
 		        long sizeInBytes = item.getSize();
 		        
-		        File uploadedFile = new File( "/JobzDroid/Documents/", nextFileName );
+		        Session currSession = dbManager.getSessionByKey( sessionKey );
+		        
+		        if ( currSession == null ) {
+		        	//TODO add error message
+		        	break earlyExit;
+		        }
+		        
+		        if ( !currSession.checkPrivilege("searcher")) {
+		        	//TODO add error message
+		        	break earlyExit;
+		        }
+		        
+		        
+		        // early exit if file extension is not of the type accepted by the system
+		        if( !checkFileExtension(fileName) ) {
+		        	//TODO add return error message
+		        	break earlyExit;
+		        }
+		        
+		        //TODO check file directory size
+		        
+		        long userDirectorySize = getUserDirectorySize( currSession.getIdAccount() );
+		        
+		        File userDirectory = new File( SystemManager.documentDirectory + SystemManager.documentDirectory );
+		        
+		        if( userDirectorySize != -1 ) {
+		        	
+		        	if(userDirectory.createNewFile() ) {
+		        		System.out.print("ServletDocument: new directory created for user " + currSession.getIdAccount());
+		        	}
+		        	else {
+		        		//TODO add error message
+		        		break earlyExit;
+		        	}
+		        }
+		        else {
+		        	// check the user directory size
+		        	if( (userDirectorySize + sizeInBytes)  > SystemManager.fileStorageSizeLimit ) {
+		        		//TODO add error message
+		        		break earlyExit;
+		        	}
+		        	
+		        }
+		        
+		        
+		        File uploadedFile = new File( userDirectory , nextFileName );
+		        
+		        if ( !uploadedFile.createNewFile() ) {
+		        	//TODO add return error message
+		        	break earlyExit;
+		        }
+		        
 		        try {
 		        	System.out.println("Writing to File: " + uploadedFile.getAbsolutePath() );
 					item.write(uploadedFile);
@@ -123,7 +178,42 @@ public class ServletDocument extends HttpServlet {
 				}
 		    }
 		    
+		    
+		    
+		}
 		}
 	}
+	
+	private boolean checkFileExtension( String fileName ) {
 
+	    String extension = getFileExtension( fileName );
+	    
+		for( String validExtension : SystemManager.validFileExtensions) {
+			if ( extension.equalsIgnoreCase( validExtension ) ) {
+				return true;
+			}
+		}
+	    
+	    
+		return false;
+	}
+
+	private String getFileExtension( String fileName ) {
+		int lastDot= fileName.lastIndexOf(".");
+	    String extension=fileName.substring( lastDot ,fileName.length());  
+	    
+	    return extension;
+	}
+	
+	public long getUserDirectorySize( int idAccount ) {
+		File userDirectory = new File( SystemManager.documentDirectory + SystemManager.documentDirectory );
+		
+		if ( userDirectory.exists() ) {
+			return FileUtils.sizeOfDirectory( userDirectory );
+		}
+		else {
+			return -1;
+		}
+		
+	}
 }
