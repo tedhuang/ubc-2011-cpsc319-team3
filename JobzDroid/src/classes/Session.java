@@ -42,7 +42,7 @@ public class Session {
 	
 	
 	public boolean checkPrivilege( String authorizedUserType0 ) {
-		if( accountType.equals(authorizedUserType0) ) {
+		if( accountType.equalsIgnoreCase(authorizedUserType0) ) {
 			return true;
 		}
 		
@@ -50,8 +50,8 @@ public class Session {
 	}
 	
 	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1 ) {
-		if( accountType.equals(authorizedUserType0) 
-				|| accountType.equals(authorizedUserType1) ) {
+		if( accountType.equalsIgnoreCase(authorizedUserType0) 
+				|| accountType.equalsIgnoreCase(authorizedUserType1) ) {
 			return true;
 		}
 		
@@ -59,9 +59,9 @@ public class Session {
 	}
 	
 	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1, String authorizedUserType2 ) {
-		if( accountType.equals(authorizedUserType0) 
-				|| accountType.equals(authorizedUserType1)
-				|| accountType.equals(authorizedUserType2) ) {
+		if( accountType.equalsIgnoreCase(authorizedUserType0) 
+				|| accountType.equalsIgnoreCase(authorizedUserType1)
+				|| accountType.equalsIgnoreCase(authorizedUserType2) ) {
 			return true;
 		}
 		
@@ -71,9 +71,9 @@ public class Session {
 	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1, String authorizedUserType2,
 									String authorizedUserType3 ) {
 		if( accountType.equals(authorizedUserType0) 
-				|| accountType.equals(authorizedUserType1)
-				|| accountType.equals(authorizedUserType2) 
-				|| accountType.equals(authorizedUserType3) ) {
+				|| accountType.equalsIgnoreCase(authorizedUserType1)
+				|| accountType.equalsIgnoreCase(authorizedUserType2) 
+				|| accountType.equalsIgnoreCase(authorizedUserType3) ) {
 			return true;
 		}
 		

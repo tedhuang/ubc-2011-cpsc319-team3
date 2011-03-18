@@ -47,9 +47,16 @@ public class SystemManager {
 	public static String systemEmailSMTPHost	= "smtp.gmail.com";
 	public static String systemEmailPort		= "465";
 	
-	//dbworld email variables
+	// dbworld email variables
 	public static String dbWorldEmailAddress  	= "jobzdroidtestemail@gmail.com" ;
 	public static String dbWorldEmailPw			= "cpsc319team3";
+	
+	// document and file system management variables
+	public static String[] validFileExtensions
+						= { ".doc", ".docx", ".txt" }; //TODO check SRS for file extensions
+	public static String documentDirectory		= "/JobzDroid/Document/"; //TODO maybe change to default user path
+	public static long fileStorageSizeLimit		= 5 * 1000000; // limit is 5 Mb, base unit is byte
+	
 	/***********************************************************************************************************************/
 	
 	// singleton instance
