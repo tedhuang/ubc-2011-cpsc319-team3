@@ -54,6 +54,10 @@ public class ServletDocument extends HttpServlet {
 		
 		System.out.println("Entered doPost on ServletDocument");
 		
+		String message	= "ServletDocument: Upload Failed";
+		String action	= "";
+		//TODO add action and redirection
+		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		
 		List /* FileItem + form-fields */ items = null;
@@ -119,57 +123,52 @@ public class ServletDocument extends HttpServlet {
 		        Session currSession = dbManager.getSessionByKey( sessionKey );
 		        
 		        if ( currSession == null ) {
-		        	//TODO add error message
+		        	message = "ServletDocument: expired or invalid session";
 		        	break earlyExit;
 		        }
 		        
-		        if ( !currSession.checkPrivilege("searcher")) {
-		        	//TODO add error message
+		        if ( currSession.checkPrivilege("searcher")  == false) {
+		        	message = "ServletDocument: invalid user type, user does not have the privilege";
 		        	break earlyExit;
 		        }
 		        
 		        
 		        // early exit if file extension is not of the type accepted by the system
 		        if( !checkFileExtension(fileName) ) {
-		        	//TODO add return error message
+		        	message = "ServletDocument: " + fileName + " is not a valid file type for upload";
+		        	break earlyExit;
+		        }
+		        
+		        
+		        //TODO check user directory exists
+		        File userDirectory = getUserDirectory( currSession.getIdAccount() );
+		        if ( userDirectory == null ) {
+		        	message = "ServletDocument: System cannot create new user directory";
 		        	break earlyExit;
 		        }
 		        
 		        //TODO check file directory size
-		        
 		        long userDirectorySize = getUserDirectorySize( currSession.getIdAccount() );
 		        
-		        File userDirectory = new File( SystemManager.documentDirectory + SystemManager.documentDirectory );
-		        
 		        if( userDirectorySize != -1 ) {
-		        	
-		        	if(userDirectory.createNewFile() ) {
-		        		System.out.print("ServletDocument: new directory created for user " + currSession.getIdAccount());
-		        	}
-		        	else {
-		        		//TODO add error message
-		        		break earlyExit;
-		        	}
-		        }
-		        else {
 		        	// check the user directory size
 		        	if( (userDirectorySize + sizeInBytes)  > SystemManager.fileStorageSizeLimit ) {
-		        		//TODO add error message
+		        		message = "ServletDocument: user will exceed file upload limit of " + (SystemManager.fileStorageSizeLimit / 1000000 ) + "mB";
 		        		break earlyExit;
 		        	}
-		        	
 		        }
 		        
 		        
 		        File uploadedFile = new File( userDirectory , nextFileName );
 		        
-		        if ( !uploadedFile.createNewFile() ) {
-		        	//TODO add return error message
+		        if ( uploadedFile.createNewFile() == false ) {
+		        	message = "ServletDocument: System cannot write to file " + nextFileName;
 		        	break earlyExit;
 		        }
 		        
 		        try {
 		        	System.out.println("Writing to File: " + uploadedFile.getAbsolutePath() );
+		        	message = "ServletDocument: Upload Sucessful";
 					item.write(uploadedFile);
 					//TODO set file permission?
 				} catch (Exception e) {
@@ -178,10 +177,10 @@ public class ServletDocument extends HttpServlet {
 				}
 		    }
 		    
-		    
-		    
 		}
 		}
+		
+		System.out.println(message);
 	}
 	
 	private boolean checkFileExtension( String fileName ) {
@@ -194,7 +193,6 @@ public class ServletDocument extends HttpServlet {
 			}
 		}
 	    
-	    
 		return false;
 	}
 
@@ -206,7 +204,7 @@ public class ServletDocument extends HttpServlet {
 	}
 	
 	public long getUserDirectorySize( int idAccount ) {
-		File userDirectory = new File( SystemManager.documentDirectory + SystemManager.documentDirectory );
+		File userDirectory = new File( SystemManager.documentDirectory + idAccount +"/");
 		
 		if ( userDirectory.exists() ) {
 			return FileUtils.sizeOfDirectory( userDirectory );
@@ -215,5 +213,19 @@ public class ServletDocument extends HttpServlet {
 			return -1;
 		}
 		
+	}
+	
+	private File getUserDirectory( int idAccount ) throws IOException {
+		File userDirectory = new File( SystemManager.documentDirectory + idAccount +"/");
+		
+		if ( !userDirectory.exists() ) {
+			boolean success = userDirectory.mkdirs();
+			
+			if ( !success ) {
+				return null;
+			}
+		}
+		
+		return userDirectory;
 	}
 }
