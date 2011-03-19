@@ -5,17 +5,19 @@
  * @param heading
  *********************************************************************************************************************/
 function buildDetailTable(targetXMLTag, outputDiv){
+	var fb =$(".feedback", "#"+outputDiv);
+	var heading=$('.heading', "#"+outputDiv);
 	
 	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
 	if(jobAd.length==0){//if no results
-		$("#detailFB").html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
+		fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
 	}
 	else{
 //		switch (mode){
 //			case "detail":
 				
-				var tbody  = $( "tbody", outputDiv).html("");
-				$('.heading', "#"+outputDiv).text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
+				var tbody  = $( "tbody", "#"+outputDiv).html("");
+				heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
 				var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
 			  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
 			  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
@@ -29,35 +31,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 			    $(tbody).append(rowText);
 			 	$(tbody).find('tr').find('td:first').addClass("nameCol");
 			 	$(tbody).find('tr').find('td:last').addClass("dataCol");
-			 	$("#detailFB").hide();
-//			 	break;
-//		 	
-//			case "edit":
-//				$("input[name='title-field']", "#"+outputDiv).val(jobAd.attr("jobAdTitle"));
-//				$("input[name='company-field']", "#"+outputDiv).val(jobAd.attr("contactInfo"));
-//				$("input[name='tag-field']", "#"+outputDiv).val(jobAd.attr("tags"));
-//				$("textarea[name='desc-field']", "#"+outputDiv).val(jobAd.attr("jobAdDescription"));//Type-in Forms
-//				
-//				$("#edu-field option","#"+outputDiv).each(function(){
-//					if($(this).text()==jobAd.attr("eduReqFormatted")){
-//						$(this).attr("selected", "selected");
-//						return false;
-//					}
-//				});
-//				$("input[name='startTime-field']", "#"+outputDiv).val(jobAd.attr("startingDateFormatted"));
-//				$("input[name='expireTime-field']", "#"+outputDiv).val(jobAd.attr("expiryDateFormatted"));
-//				
-//				$(":input","#jobAvailField").each(function(){
-//					console.log($(this).val().toLowerCase());
-//					console.log(jobAd.attr("jobAvail").replace(/\s/g,"").toLowerCase());
-//					if($(this).val().toLowerCase()==jobAd.attr("jobAvail").replace(/\s/g,"").toLowerCase()){
-//						$(this).attr('checked', true);
-//						return false;
-//					}
-//				});
-//				
-//				break;
-//		}
+			 	fb.hide();
 	}
 }
 
@@ -71,7 +45,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
-		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
+		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj

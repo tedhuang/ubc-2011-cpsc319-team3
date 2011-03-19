@@ -111,6 +111,9 @@ public class ServletJobAd extends HttpServlet {
 			case submitJobAdForApproval://WHY DO WE HAVE THIS?
 				submitJobAdForApproval(request, response);
 				break;
+			case deleteJobAd:
+				deleteJobAd(request, response);
+				break;
 				
 		/*****************Retrieve AD ACTIONS***********************/		
 			case searchJobAdvertisement:
@@ -138,7 +141,7 @@ public class ServletJobAd extends HttpServlet {
 				break;
 				
 			case adminDeleteJobAd:
-				adminDeleteJobAd(request, response);
+				deleteJobAd(request, response);
 				break;
 				
 			case changeJobAdStatus:
@@ -1138,85 +1141,6 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-	
-	
-
-	/*
-	 * Permenently removes the job ad by ID from the database
-	 */
-	private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		/**
-		 * TODO: Implement check session key
-		 */
-		
-		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
-
-		
-		System.out.println(jobAdId);
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		boolean isSuccessful = false;
-		String message = "adminDeleteJobAd failed";
-		
-		try {
-			stmt = conn.createStatement();
-			
-			//Delete designed job Ad
-			String query = 
-				"DELETE FROM tableJobAd " + 
-				"WHERE idJobAd='" + jobAdId + "'";
-			
-			//Debug print
-			System.out.println("Update Query: " + query);
-			
-			if( stmt.executeUpdate(query) != 1 ){ //Error Check
-				System.out.println("Error: Update Query Failed");
-			}
-			else{
-				isSuccessful = true;
-				message = "adminDeleteJobAd worked!";
-				System.out.println("adminDeleteJobAd worked!");
-			}
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		
-		
-		
-	}
-	
 	/*
 	 * Changes the status of the targetted job ad to the specified status
 	 */
@@ -1689,7 +1613,7 @@ public class ServletJobAd extends HttpServlet {
 			if ( userSession == null ) {
 				//TODO session invalid, handle error
 				System.out.println("session is null, Failed to authenticate user session");
-				msg = "Are You Logged in? Please Try Re-login";
+				msg = "Have You Logged in? Please Try Re-login";
 				break earlyExit;
 			}
 			else {
@@ -1872,11 +1796,7 @@ public class ServletJobAd extends HttpServlet {
 			stm2.append( qcmd.WHERE);
 		}  
 		
-		else if( ( action.equals("saveJobAdDraft")
-					||
-				   action.equals("createJobAdvertisement"))
-				){
-			
+		else if( ( action.equals("saveJobAdDraft") || action.equals("createJobAdvertisement")) ){
 			stm1.append( qcmd.INSERT + qcmd.INTO + "tableJobAd " + qcmd.PRNTHS);
 			stm2.append( qcmd.VALUES + qcmd.PRNTHS);
 			stm1.insert(stm1.length()-2, "status"+qcmd.COMA);
@@ -1944,15 +1864,151 @@ public class ServletJobAd extends HttpServlet {
 		return query;
 	}
 	
+
+	/*
+	 * Permenently removes the job ad by ID from the database
+	 */
+	private void deleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		mysqlCmd qcmd = new mysqlCmd(); 
+		String feedback="";
+		String sessKey = request.getParameter("sessionKey");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+//		Session userSession = dbManager.getSessionByKey(sessKey);
+//		int acctId;
+		
+//		earlyExit: {
+//			System.out.println("Checking user's sessionKey" + sessKey);
+//				
+//			if ( userSession == null ) {
+//				System.out.println("session is null, Failed to authenticate user session");
+//				feedback = "Have You Logged in? Please Try Re-login";
+//				break earlyExit;
+//			}
+//			else {
+//				String uType=userSession.getAccountType();
+//				System.out.println("checking usertype...\n"+"usertype = " + uType);
+//				
+//				if( uType.equals("poster") || uType.equals("admin")){
+//					System.out.print("User is " + uType+ ". Priviliege Confirmed.");
+//					acctId= userSession.getIdAccount();
+//				}
+//				else {
+//					System.out.print( "User is" + uType +". Privilege Denied.");
+//					break earlyExit;
+//				}
+//			}
+//		}//ENDOF EARLY EXIT
+			
+//		System.out.print("User Access Granted for key: " + userSession.getKey() +"\n" );
+//		System.out.println("Starting Deleting JobAd with ID " + jobAdId);
+		
+		StringBuffer qBuf = sessAuthQuery(sessKey, qcmd); 
+		qBuf.insert(0, qcmd.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
+					   qcmd.FROM + "tableJobAd tbAd" + qcmd.WHERE + "idAccount" + qcmd.EQ);
+		qBuf.append(qcmd.AND +"idJobAd" + qcmd.EQ + jobAdId);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminDeleteJobAd failed";
+		
+		try {
+//			stmt = conn.createStatement();
+			
+			//Delete designed job Ad
+			String query = qBuf.toString();
+;			System.out.println("Processin Query: " + query);
+			ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+							   .executeQuery(query);
+			
+			//Debug print
+//			stmt.executeQuery(query);
+			
+//			ResultSet rs = stmt.getResultSet();
+			while (rs.next()){
+				System.out.println("JobAd: ID-" + rs.getInt("idJobAd") +"was deleted by " + 
+						   			"Use: ID-" + rs.getInt("idAccount") +" with sessionKey-" + sessKey +
+						   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+				feedback="The Ad was deleted!";
+				rs.deleteRow();
+				
+			}
+			
+//			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//				System.out.println("Error: Update Query Failed");
+//			}
+//			else{
+//				isSuccessful = true;
+//				feedback = "adminDeleteJobAd worked!";
+//				System.out.println("adminDeleteJobAd worked!");
+//			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + feedback + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	private StringBuffer sessAuthQuery(String sKey, mysqlCmd qcmd){
+		
+		StringBuffer qSessTb =new StringBuffer();
+		StringBuffer qAcctTb =new StringBuffer();
+		
+		qSessTb.append(qcmd.PRNTHS);
+		qAcctTb.append(qcmd.PRNTHS);
+		
+		qSessTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableSession" +  
+						  qcmd.WHERE +"sessionKey" + qcmd.EQ + qcmd.SQUO +sKey + qcmd.SQUO);
+		qAcctTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableAccount " + 
+				  		  qcmd.WHERE +"idAccount" + qcmd.EQ);
+		qAcctTb.insert(qAcctTb.length()-2, qSessTb + qcmd.AND + "type" + qcmd.EQ + "'poster'" + 
+										   qcmd.AND + "status" +qcmd.EQ +"'active'");
+		return qAcctTb;
+	}
+	
+	
 	 final class mysqlCmd{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
 		String SELECT			="SELECT ";		//CAUTION: SPACE IMPORTANT
 		String INSERT			="INSERT ";		//CAUTION: SPACE IMPORTANT
 		String UPDATE			="UPDATE ";		//CAUTION: SPACE IMPORTANT
+		String DEL				="DELETE ";		//CAUTION: SPACE IMPORTANT
 		
-		String SET				= " SET ";		//CAUTION: SPACE IMPORTANT
-		String AND 				= " AND ";		//CAUTION: SPACE IMPORTANT
+		String AS				= " AS "; 		//CAUTION: SPACE IMPORTANT
 		String IN 				= " IN ";		//CAUTION: SPACE IMPORTANT
 		String OR				= " OR "; 		//CAUTION: SPACE IMPORTANT
+		String ON				= " ON ";		//CAUTION: SPACE IMPORTANT
+		String AND 				= " AND ";		//CAUTION: SPACE IMPORTANT
+		String SET				= " SET ";		//CAUTION: SPACE IMPORTANT
 		String LIKE				= " LIKE "; 	//CAUTION: SPACE IMPORTANT
 		String REGEXP		 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
 		String WHERE			= " WHERE ";	//CAUTION: SPACE IMPORTANT

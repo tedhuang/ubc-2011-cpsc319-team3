@@ -586,9 +586,9 @@ function getJobAdById(mode, id, outputDiv)
 	request = new Request;
 	request.addAction("getJobAdById");
 	request.addParam("jobAdId", id);
-
+	var fb = $(".feedback", "#"+outputDiv);
 	//change the text while sending the request
-	$("#detailFB").html("<h2>Sending getJobAdById Request</h2>");
+	fb.html("<h2>Sending getJobAdById Request</h2>");
 	
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -607,14 +607,17 @@ function getJobAdById(mode, id, outputDiv)
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		    //parse XML response from server
-		  $("#detailFB").html("<h2 class='good'> Successfully finished tasks</h2>");	
+		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
 		  if(mode=="detail"){
 		  	buildDetailTable("jobAd", outputDiv);
 		  }
 		  else if(mode=="edit"){
-			  $.fn.DynaSmartTab.loadEdData("jobAd", "edAdForm", mode);
+			  $.fn.DynaSmartTab.loadEdData("jobAd", outputDiv, mode);
 		  }
 	    }
+	  else{
+		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
+	  }
 	  };
 }
 
@@ -650,72 +653,24 @@ function getJobAdByOwner(outputDiv){
 	
 	xmlhttp.onreadystatechange=function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		  buildOwnerAdTb("jobAd", outputDiv);
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  buildOwnerAdTb("jobAd", outputDiv);//uibot
 	    }
+	  else{
+		  //TODO Lightbox error
+	  }
 	  };	  
 }
-/*************************************************************************************************************
- * 				Edit Job Ad
- *************************************************************************************************************/
-function editJobAd(){
-	//document.getElementById("submitEdit").disabled=true;
-	document.getElementById("feedback").innerHTML="<h2>Sending Edit Request</h2>";
+
+function delJobAd(tbRow, jobAdId){
 	
-	var strTitle 			= document.getElementById("jobTitle").value;
-	var strDescription 		= document.getElementById("jobDescription").value;
-	var educationRequirement= document.getElementById("educationRequirement").value;
-	var strContactInfo 		= document.getElementById("contactInfo").value;
-	var strTags 			= document.getElementById("tags").value;
-	var strJobAvailability 	= document.getElementById("jobAvailability").value;
+	var strSessionKey = $("#sessionKey").val();
 	
-	var expiryYear 			= document.getElementById("expiryYear").value;
-	var expiryMonth 		= document.getElementById("expiryMonth").value;
-	var expiryDay 			= document.getElementById("expiryDay").value;
-	
-	var startingDay 		= document.getElementById("startingDay").value;
-	var startingMonth 		= document.getElementById("startingMonth").value;
-	var startingYear 		= document.getElementById("startingYear").value;
-	
-	//Get values from GoogleMaps.js
-	var strAddress 			= getAddress();
-	var doubleLongitude 	= getLongitude();
-	var doubleLatitude 		= getLatitude();
-	
-	
-	//User Input Check:
-	if(strTitle == null){
-		alert("Must Enter Job Advertisement Title!");
-		return;
-	}
-	document.getElementById("newJobAdButton").disabled=true;
-	
-	
-	var sessionKey = document.getElementById("sessionKey").value;
-	//var sessionKey = "4297f44b13955235245b2497399d7a93"; //temporary testing key TODO: remove 
-	 
 	request = new Request;
-	request.addAction("editJobAdvertisement");
-	request.addSessionKey( sessionKey );
-	request.addParam("strTitle", strTitle);
-	request.addParam("strDescription", strDescription);
-	request.addParam("strEducationReq", educationRequirement);
-	request.addParam("strContactInfo", strContactInfo);
-	request.addParam("strJobAvailability", strJobAvailability);
-	request.addParam("strTags", strTags);
-	request.addParam("expiryYear", expiryYear);
-	request.addParam("expiryMonth", expiryMonth);
-	request.addParam("expiryDay", expiryDay);
-	request.addParam("startingDay", startingDay);
-	request.addParam("startingMonth", startingMonth);
-	request.addParam("startingYear", startingYear);
-	request.addParam("address", strAddress);
-	request.addParam("longitude", doubleLongitude);
-	request.addParam("latitude", doubleLatitude);
+	request.addAction("deleteJobAd");
+	request.addParam("sessionKey", strSessionKey);
+	request.addParam("jobAdId", jobAdId);
 	
-		  
-//Response Handling:
 //	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -725,28 +680,19 @@ function editJobAd(){
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		  var message = xmlhttp.responseXML.getElementById("message");
-		  var result = xmlhttp.responseXML.getElementById("result");
-		    var responseText= result + ": " + message;
-	    	document.getElementById("feedback").innerHTML=responseText;
-	    }
-	  };
-	
-	
 	//send the parameters to the servlet with POST
-	//TODO will need to change this to ./ServletJobAd
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 	
-	  
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  tbRow.remove();
+	    }
+	  else{
+		  //TODO Lightbox error
+		  console.log("delete was unsuccessful");
+	  }
+	  };	  
 }
