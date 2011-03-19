@@ -132,14 +132,14 @@ public class ServletProfile extends HttpServlet{
 				String query = 
 					"SELECT * FROM tableProfilePoster WHERE idAccount=" + accountID;
 				
-				System.out.println("getJobAdById query:" + query);
+				System.out.println("getProfileById query:" + query);
 				isSuccessful = stmt.execute(query);
 				
 				ResultSet result = stmt.getResultSet();
 				
 				if (result.first()){
-					System.out.println("getJobAd successful");
-					message = "getJobAd successful";
+					System.out.println("getProfileById successful");
+					message = "getProfileById successful";
 					
 					poster.accountID		= result.getInt("idAccount");
 					poster.name				= result.getString("name");
@@ -188,14 +188,14 @@ public class ServletProfile extends HttpServlet{
 					String query = 
 						"SELECT * FROM tableProfileSearcher WHERE idAccount=" + accountID;
 					
-					System.out.println("getJobAdById query:" + query);
+					System.out.println("getProfileById query:" + query);
 					isSuccessful = stmt.execute(query);
 					
 					ResultSet result = stmt.getResultSet();
 					
 					if (result.first()){
-						System.out.println("getJobAd successful");
-						message = "getJobAd successful";
+						System.out.println("getProfileById successful");
+						message = "getProfileById successful";
 						
 						searcher.accountID			= result.getInt("idAccount");
 						searcher.name				= result.getString("name");
@@ -292,6 +292,9 @@ public class ServletProfile extends HttpServlet{
 		boolean isSuccessful = false;
 		String message = "Failure to fetch profile by Session Key";
 		
+		ProfileSearcher searcher = new ProfileSearcher();
+		ProfilePoster poster = new ProfilePoster();
+		
 		Connection conn = null;	
 		Statement stmt = null;
 		Object profile = null;
@@ -300,22 +303,14 @@ public class ServletProfile extends HttpServlet{
 		{
 		try{
 
-			
 			String acctType = "";
-			
-			ArrayList<Location> profileAddressList = new ArrayList<Location>();
-			
+						
 			if( currSession.checkPrivilege( "searcher") ) {
 				acctType = "Searcher";
-				ProfileSearcher searcher = new ProfileSearcher();
-				searcher.addressList = profileAddressList;
 				profile = searcher;
 			}
 			else if ( currSession.checkPrivilege( "poster") ) {
 				acctType = "Poster";
-				
-				ProfilePoster poster = new ProfilePoster();
-				poster.addressList = profileAddressList;
 				profile = poster;
 			}
 			else {
@@ -333,17 +328,16 @@ public class ServletProfile extends HttpServlet{
 				"SELECT * FROM tableProfile"+ acctType +" INNER JOIN tableAccount " + 
 					"USING (idAccount) WHERE idAccount=" + currSession.getIdAccount();
 			
-			System.out.println("getJobAdBySessionKey query:" + query);
+			System.out.println("getProfileBySessionKey query:" + query);
 			isSuccessful = stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
 				
 			if (result.first()){
 
-				System.out.println("getJobAd successful");
-				message = "getJobAd successful";
+				System.out.println("getProfileBySessionKey successful");
+				message = "getProfileBySessionKey successful";
 				
 				if ( currSession.getAccountType().equals("searcher") ) {
-					ProfileSearcher searcher = (ProfileSearcher)profile;
 					searcher.accountID			= result.getInt("idAccount");
 					searcher.name				= result.getString("name");
 					searcher.phone		 		= result.getString("phone");
@@ -352,16 +346,16 @@ public class ServletProfile extends HttpServlet{
 					searcher.preferredStartDate = result.getLong("startingDate");
 					searcher.email				= result.getString("email");
 					searcher.secondaryEmail		= result.getString("secondaryEmail");
-				}
-				if ( currSession.getAccountType().equals("poster") ) {
-					ProfilePoster poster = (ProfilePoster)profile;
 					
+				}
+				if ( currSession.getAccountType().equals("poster") ) {					
 					poster.accountID		= result.getInt("idAccount");
 					poster.name				= result.getString("name");
 					poster.phone		 	= result.getString("phone");
 					poster.selfDescription	= result.getString("selfDescription");
-//					poster.email				= result.getString("email");
-//					poster.secondaryEmail		= result.getString("secondaryEmail");
+					poster.email			= result.getString("email");
+					poster.secondaryEmail	= result.getString("secondaryEmail");
+
 				}
 					
 			}
@@ -395,7 +389,14 @@ public class ServletProfile extends HttpServlet{
 				fetchedAddressList.add(address);
 			}
 			
-			profileAddressList = fetchedAddressList;
+			
+			if ( currSession.getAccountType().equals("searcher") ) {
+				searcher.addressList = fetchedAddressList;
+			}
+			else if ( currSession.getAccountType().equals("poster") ) {
+				poster.addressList = fetchedAddressList;
+			}
+			
 			
 		}
 		catch (SQLException e) {
