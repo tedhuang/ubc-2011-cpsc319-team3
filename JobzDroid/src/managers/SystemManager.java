@@ -55,8 +55,8 @@ public class SystemManager {
 	
 	// document and file system management variables
 	public static String[] validFileExtensions
-						= { ".doc", ".docx", ".txt" }; //TODO check SRS for file extensions
-	public static String documentDirectory		= "/JobzDroid/Document/"; //TODO maybe change to default user path
+						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" }; //TODO check SRS for file extensions
+	public static String documentDirectory		= "/JobzDroid/Documents/"; //TODO maybe change to default user path
 	public static long fileStorageSizeLimit		= 5 * 1000000; // limit is 5 Mb, base unit is byte
 	
 	/***********************************************************************************************************************/
