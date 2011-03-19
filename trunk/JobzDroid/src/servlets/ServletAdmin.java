@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
 
 import classes.Account;
 import classes.NewsEntry;
@@ -24,6 +21,7 @@ import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
+import managers.EmailManager;
 import managers.NewsManager;
 import managers.RSSManager;
 import managers.SystemManager;
@@ -36,6 +34,7 @@ public class ServletAdmin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private DBManager dbManager;
 	private NewsManager newsManager;
+	private EmailManager emailManager;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -44,6 +43,7 @@ public class ServletAdmin extends HttpServlet {
         super();
 		newsManager = NewsManager.getInstance();
 		dbManager = DBManager.getInstance();
+		emailManager = new EmailManager();
     }
     
     // Enumerates the action parameter
@@ -151,9 +151,11 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void banHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
-		String email = request.getParameter("email");		
+		String email = request.getParameter("email");
+		String reason = request.getParameter("reason");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
+		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
@@ -201,6 +203,10 @@ public class ServletAdmin extends HttpServlet {
 			if(banAccount(email)){
 				result = true;
 				message = "Account " + email + " has been successfully banned.";
+				// send email to inform banned user
+				emailManager.informBan("luolw123@hotmail.com", reason);
+				//TODO 
+			//	emailManager.informBan(email, reason);
 			}
 			else
 				message = "An error has occured while performing ban action. Please try again later.";
@@ -222,9 +228,11 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void unbanHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
-		String email = request.getParameter("email");	
+		String email = request.getParameter("email");
+		String reason = request.getParameter("reason");	
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
+		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
@@ -272,6 +280,9 @@ public class ServletAdmin extends HttpServlet {
 			if(unbanAccount(email)){
 				result = true;
 				message = "Account " + email + " has been successfully unbanned.";
+				emailManager.informUnban("luolw123@hotmail.com", reason);
+				//TODO
+			//	emailManager.informUnban(email, reason);
 			}
 			else
 				message = "An error has occured while performing unban action. Please try again later.";
@@ -376,12 +387,15 @@ public class ServletAdmin extends HttpServlet {
 	private void deleteAccountHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
+		String reason = request.getParameter("reason");
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		accountName = Utility.checkInputFormat(accountName);
+		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
-
+		String userType = "";
+		
 		// check if account name exists
 		boolean emailExists = dbManager.checkEmailExists(accountName);
 		if(!emailExists){
@@ -403,7 +417,7 @@ public class ServletAdmin extends HttpServlet {
 				}
 				else{
 					String accToDeleteType = accToDelete.getType();
-					String userType = session.getAccountType();
+					userType = session.getAccountType();
 					// only super admins can delete admin accounts
 					if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
 						allGood = false;
@@ -427,6 +441,11 @@ public class ServletAdmin extends HttpServlet {
 			if(deleteAccount(accountName)){
 				result = true;
 				message = "Account " + accountName + " has been successfully deleted.";
+				// inform the user
+				if( !userType.equals("admin") )
+					emailManager.informDeletion("luolw123@hotmail.com", reason);
+				//TODO
+				//	emailManager.informDeletion(email, reason);
 			}
 			else
 				message = "An error has occured while performing delete account action. Please try again later.";
@@ -475,16 +494,19 @@ public class ServletAdmin extends HttpServlet {
 		if(allGood){
 			// process line breaks and white spaces in content
 			content = Utility.processLineBreaksWhiteSpaces(content);
+			long currentTime = Utility.getCurrentTime();
+			// reduce precision to 1 second to work with ROME library's pubDate 
+			currentTime = currentTime / 1000 * 1000;			
 			
-			if(newsManager.addNewsEntry(title, content)){
+			if(newsManager.addNewsEntry(title, content, currentTime)){
 				result = true;
 				message = "News entry has been successfully posted.";
 				// add entry to the top of news RSS
 				try {
-					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromURL("http://localhost:8080/JobzDroid/rss/news.xml");
-					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(), content);
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(currentTime), content);
 					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
+					String newsPath = getServletContext().getRealPath("/rss/news.xml");
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 
 				catch (Exception e) {
@@ -553,10 +575,8 @@ public class ServletAdmin extends HttpServlet {
 				// find and remove the first matching news entry in the RSS
 				try {
 					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "rss/news.xml");
-					if(newsEntry == null)
-						System.out.println("NULL NEWS ENTRY");
-					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent() );
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
 					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 

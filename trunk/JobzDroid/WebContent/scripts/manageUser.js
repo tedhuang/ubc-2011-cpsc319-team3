@@ -39,11 +39,13 @@ function viewProfile(idAccount){
 // send ban request to admin servlet
 function sendBanRequest(strUserName){
 	var strSessionKey = $("#sessionKey").val();
-	// ask user to confirm first
-    var b = confirm("Are you sure to ban user " + strUserName + "?");
-    if (b == false)
+	// ask for reason to ban
+    var strReason = prompt("Please enter a reason to ban " + strUserName + " below.\n" +
+    		" An email message will be sent to the user with the information you enter.");
+    if ( !strReason || strReason == "" ){
+    	alert("Please enter the reason of banning the user.");
         return false;
-
+    }
 	$("button").attr("disabled", true);
 	$(".linkImg").attr("disabled", true);
 	$("#statusTextFirstFrame").removeClass("errorTag");	
@@ -75,6 +77,7 @@ function sendBanRequest(strUserName){
 	request.addAction("ban");
 	request.addSessionKey(strSessionKey);
 	request.addParam("email", strUserName);
+	request.addParam("reason", strReason);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
@@ -103,10 +106,13 @@ function parseBanResponse(responseXML){
 //send unban request to admin servlet
 function sendUnbanRequest(strUserName){
 	var strSessionKey = $("#sessionKey").val();
-	// ask user to confirm first
-    var b = confirm("Are you sure to unban user " + strUserName + "?");
-    if (b == false)
+	// ask for reason to unban
+    var strReason = prompt("Please enter a reason to unban " + strUserName + " below.\n" +
+    		" An email message will be sent to the user with the information you enter.");
+    if ( !strReason || strReason == "" ){
+    	alert("Please enter the reason of unbanning the user.");
         return false;
+    }
 
 	$("button").attr("disabled", true);
 	$(".linkImg").attr("disabled", true);
@@ -139,6 +145,7 @@ function sendUnbanRequest(strUserName){
 	request.addAction("unban");
 	request.addSessionKey(strSessionKey);
 	request.addParam("email", strUserName);
+	request.addParam("reason", strReason);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);

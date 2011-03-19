@@ -161,7 +161,7 @@ public class RSSManager {
 	 * @param content Content of the entry to search for.
 	 * @return Index of the first matching feed entry. -1 if none found.
 	 */
-	public static int searchEntry(SyndFeed feed, String title, String content){
+	public static int searchEntry(SyndFeed feed, String title, String content, Date dateTimePublished){
 		@SuppressWarnings("unchecked")
 		List<SyndEntry> entries = feed.getEntries();
 		Iterator<SyndEntry> itr = entries.iterator(); 
@@ -170,7 +170,8 @@ public class RSSManager {
 			SyndEntry entry = itr.next();
 			String entryTitle = entry.getTitle();
 			String entryDesc = entry.getDescription().getValue();
-			if( title.equals(entryTitle) && content.equals(entryDesc) )
+			Date entryPublishedTime = entry.getPublishedDate();
+			if( title.equals(entryTitle) && content.equals(entryDesc) && dateTimePublished.equals(entryPublishedTime) )
 				return currIndex;
 			else
 				currIndex++;

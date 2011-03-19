@@ -22,10 +22,9 @@ public class EmailManager {
 	 * @param address Email address of the receiver.
 	 * @param name Name or company/organization name of the new user receiving the account activation email.
 	 * @param uuid Unique id for activating the account.
-	 * @return boolean indicating whether the email was successfully sent.
 	 */
 	public void sendAccountActivationEmail(String address, String name, UUID uuid) {
-		String emailTitle = "Jobzdroid Account Activation";
+		String emailTitle = "JobzDroid Account Activation";
 		String emailBody = "Greetings, " + name + "!\n\nThank you for registering on JobzDroid!\n" +
 							"Please click on the link below to activate your account:\n" +
 							"http://localhost:8080/JobzDroid/Account?action=activate&id=" + uuid +
@@ -38,11 +37,10 @@ public class EmailManager {
 	 *  to confirm the email change to the given address.
 	 * @param address Email address of the receiver.
 	 * @param uuid Unique id for confirming the email change request.
-	 * @return boolean indicating whether the email was successfully sent.
 	 */
 	public void sendPrimaryEmailChangeVerificationEmail(String address, UUID uuid){
-		String emailTitle = "Jobzdroid Primary Email Change Confirmation";
-		String emailBody = "Greetings!\n\n" +
+		String emailTitle = "JobzDroid Primary Email Change Confirmation";
+		String emailBody = "Greetings,\n\n" +
 							"Please click on the link below to confirm your primary email change:\n" +
 							"http://localhost:8080/JobzDroid/Account?action=verifyEmailChange&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
@@ -54,14 +52,55 @@ public class EmailManager {
 	 * Contains a link to reset the password.
 	 * @param address Email address of the receiver.
 	 * @param uuid Unique id for resetting password.
-	 * @return boolean indicating whether the email was successfully sent.
 	 */
 	public void sendPasswordResetEmail(String address, UUID uuid){
-		String emailTitle = "Jobzdroid Password Reset Request";
-		String emailBody = "Greetings!\n\n" +
+		String emailTitle = "JobzDroid Password Reset Request";
+		String emailBody = "Greetings,\n\n" +
 							"Please click on the link below to reset your password:\n" +
 							"http://localhost:8080/JobzDroid/Account?action=emailLinkForgetPassword&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
+		sendEmail(address, emailTitle, emailBody);
+	}
+	
+	/***
+	 * Sends an email informing the user about the ban.
+	 * @param address Email address of the receiver.
+	 * @param reason Reason of the ban.
+	 */
+	public void informBan(String address, String reason){
+		String emailTitle = "JobzDroid Account Action";
+		String emailBody = "Greetings,\n\n" +
+							"Your JobzDroid account " + address + " has been banned for the following reason:\n"+
+							reason +
+							"\n\n(Please do not reply to this message.)";
+		sendEmail(address, emailTitle, emailBody);
+	}
+	
+	/***
+	 * Sends an email informing the user about the unban.
+	 * @param address Email address of the receiver.
+	 * @param reason Reason of the unban.
+	 */
+	public void informUnban(String address, String reason){
+		String emailTitle = "JobzDroid Account Action";
+		String emailBody = "Greetings,\n\n" +
+							"Your JobzDroid account " + address + " has been unbanned for the following reason:\n"+
+							reason +
+							"\n\n(Please do not reply to this message.)";
+		sendEmail(address, emailTitle, emailBody);
+	}
+	
+	/***
+	 * Sends an email informing the user about the deletion.
+	 * @param address Email address of the receiver.
+	 * @param reason Reason of the deletion.
+	 */
+	public void informDeletion(String address, String reason){
+		String emailTitle = "JobzDroid Account Action";
+		String emailBody = "Greetings,\n\n" +
+							"Your JobzDroid account " + address + " has been permanently deleted for the following reason:\n"+
+							reason +
+							"\n\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
 	
@@ -70,7 +109,6 @@ public class EmailManager {
 	 * @param address Email address of the receiver.
 	 * @param title Title of the email.
 	 * @param body Message body of the email.
-	 * @return boolean indicating whether the email was successfully sent.
 	 */
 	public void sendEmail(String address, String title, String body) {
 		Properties properties = new Properties();
@@ -83,7 +121,6 @@ public class EmailManager {
 		properties.put("mail.smtp.socketFactory.port", SystemManager.systemEmailPort);
 		properties.put("mail.smtp.socketFactory.class",	"javax.net.ssl.SSLSocketFactory");
 		properties.put("mail.smtp.socketFactory.fallback", "false");
-//		SecurityManager security = System.getSecurityManager();
 
 		try {
 			Authenticator auth = new SMTPAuthenticator();

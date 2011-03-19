@@ -90,7 +90,7 @@ function parsePostNewsResponse(responseXML){
 
 function sendDeleteNewsRequest(idNews){
 	var strSessionKey = $("#sessionKey").val();
-    var b = confirm("Are you sure to delete News ID: " + idNews + "?");
+    var b = confirm("Are you sure to delete News ID: " + idNews + "?\nIts associated RSS entry will also be removed.");
     if (b == false)
         return false;
     
@@ -114,10 +114,9 @@ function sendDeleteNewsRequest(idNews){
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;				
 					 $(".linkImg").removeAttr("disabled");
+					 alert(strMsg);
 					 if(boolResult == "true")
 						 loadPageWithSession('manageNews.jsp');
-					 else						 
-						 alert(strMsg);
 				}
 			}};
 	}
