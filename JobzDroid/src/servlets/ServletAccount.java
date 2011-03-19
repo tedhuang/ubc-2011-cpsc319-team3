@@ -80,31 +80,31 @@ public class ServletAccount extends HttpServlet {
 		switch( EnumAction.valueOf(action) ){
 			// account registration
 			case register:
-				registerAccount(request, response);
+				registerHandler(request, response);
 				break;
 			// verify email for account activation
 			case activate:
-				activateAccount(request, response);
+				activateAccountHandler(request, response);
 				break;
 			// request for a primary email change
 			case requestEmailChange:
-				requestEmailChange(request, response);
+				requestEmailChangeHandler(request, response);
 				break;				
 			// verify email for changing primary email
 			case verifyEmailChange:
-				verifyEmailChange(request, response);
+				verifyEmailChangeHandler(request, response);
 				break;				
 			// requests a unique link to be sent to user's email to reset password
 			case requestForgetPassword:
-				requestForgetPassword(request, response);
+				requestForgetPasswordHandler(request, response);
 				break;		
 			// handles email link click from a forget password request
 			case emailLinkForgetPassword:
-				emailLinkForgetPassword(request, response);
+				emailLinkForgetPasswordHandler(request, response);
 				break;
 			// reset password
 			case resetForgetPassword:
-				resetForgetPassword(request, response);
+				resetForgetPasswordHandler(request, response);
 				break;
 			case requestForLogin:
 				loginReqTaker(request, response);
@@ -120,7 +120,7 @@ public class ServletAccount extends HttpServlet {
 	 * Performs server-side checks on user registration inputs. If successful, then calls db manager update account tables in DB.
 	 * Finally calls the email manager to send a verification email to the new user, and sends result and message back to user.
 	 */
-	private void registerAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void registerHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		boolean result = false;
 		String message = "";
 		boolean allGood = true;
@@ -247,7 +247,7 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Handles account activation link click from an email.
 	 */
-	private void activateAccount(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void activateAccountHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
 		boolean accountActivated = activateAccount(verificationNumber);
 		if(accountActivated){
@@ -261,7 +261,7 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Handles primary email change requests.
 	 */
-	private void requestEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void requestEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String newEmail = request.getParameter("newEmail");		
 		UUID uuid = UUID.randomUUID();; // verification number
@@ -303,7 +303,7 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Verifies an email change link click from an email.
 	 */
-	private void verifyEmailChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void verifyEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
 		boolean emailChanged = verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
@@ -384,7 +384,7 @@ public class ServletAccount extends HttpServlet {
 	 * Adds a password request entry, sends an email containing the password reset link
 	 * to the user, and then returns the results to the user in the response.
 	 */
-	private void requestForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void requestForgetPasswordHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String email = request.getParameter("email");
 		boolean result = false;
 		String message = "";
@@ -421,7 +421,7 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Handles email link click from a forget password request
 	 */
-	private void emailLinkForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void emailLinkForgetPasswordHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/account/ResetForgetPassword.jsp");
 		dispatcher.forward(request, response);
 	}
@@ -430,7 +430,7 @@ public class ServletAccount extends HttpServlet {
 	 * Final step of forget password procedure. Final validation of request and updates user password.
 	 * Updates password if all checks pass.
 	 */
-	private void resetForgetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void resetForgetPasswordHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		// get request parameters
 		String password = request.getParameter("password");
 		String passwordRepeat = request.getParameter("passwordRepeat");

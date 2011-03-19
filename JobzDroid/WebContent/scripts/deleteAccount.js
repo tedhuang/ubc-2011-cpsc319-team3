@@ -3,6 +3,15 @@
  */
 //send delete account request to admin servlet
 function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
+	// ask for reason to delete if deleting a user (not admin)
+	if(pageSource == "manageUser.jsp"){
+	    var strReason = prompt("Please enter a reason to delete " + accountName + " below.\n" +
+	    		" An email message will be sent to the user with the information you enter.");
+	    if ( !strReason || strReason == "" ){
+	    	alert("Please enter the reason of deleting the user.");
+	        return false;
+	    }
+	}
     var b = confirm("Are you sure to PERMANENTLY delete account " + accountName + "?");
     if (b == false)
         return false;
@@ -44,6 +53,7 @@ function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
 	request.addAction("deleteAccount");
 	request.addSessionKey(strSessionKey);
 	request.addParam("accountName", accountName);
+	request.addParam("reason", strReason);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);

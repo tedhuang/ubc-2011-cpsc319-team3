@@ -32,20 +32,20 @@ public class NewsManager {
 	 * Adds a news entry to tableNews in the database
 	 * @param title Title of the news.
 	 * @param content Content of the news.
+	 * @param dateTimePublished News publish date/time. Measured in milliseconds.
 	 * @return boolean indicating whether the addition was successful.
 	 */
-	public boolean addNewsEntry(String title, String content){
+	public boolean addNewsEntry(String title, String content, long dateTimePublished){
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
-		ResultSet rs = null;		
-		long currentTime = Utility.getCurrentTime();
+		ResultSet rs = null;
 		try {
 			String query = "INSERT INTO tableNews(title, content, dateTimePublished)" +
             		" VALUES(?,?,?);";
 			pst = conn.prepareStatement(query);
 			pst.setString(1, title);
             pst.setString(2, content);
-            pst.setLong(3, currentTime);
+            pst.setLong(3, dateTimePublished);
             
 			int rowsInserted = pst.executeUpdate();
 			// if successful, 1 row should be inserted
