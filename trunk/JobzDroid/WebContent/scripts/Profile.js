@@ -145,12 +145,13 @@ function submitChangeProfile(){
 	document.getElementById("submitEdit").disabled=true;
 	
 	
-	var strSearcherName =  document.getElementById("searcherName").value;
-	var strSearcherPhone = document.getElementById("searcherPhone").value;
-	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
-	var strEmpPref = document.getElementById("empPref").value;
-	var strPreferredStartDate = document.getElementById("startDate");
-	var intEducationLevel = document.getElementById("educationLevel").value;
+	var strSearcherName 		= document.getElementById("name").value;
+	var strSecEmail				= document.getElementById("secondaryEmail").value;
+	var strSearcherPhone 		= document.getElementById("searcherPhone").value;
+	var strSearcherDescripton 	= document.getElementById("searcherDescripton").value;
+	var strEmpPref				= document.getElementById("empPref").value;
+	var strPreferredStartDate 	= document.getElementById("startingDate");
+	var intEducationLevel 		= document.getElementById("educationLevel").value;
 	
 	
 	var strPosterName = document.getElementById("posterName").value;

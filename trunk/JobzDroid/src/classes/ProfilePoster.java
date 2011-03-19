@@ -11,6 +11,10 @@ public class ProfilePoster {
 	public String selfDescription = "";
 	public ArrayList<Location> addressList;
 
+	public String email = "";
+	public String secondaryEmail = "";
+	
+	
 	public ProfilePoster(){
 		accountType = "poster";
 	}
@@ -23,11 +27,15 @@ public class ProfilePoster {
 		addressList.add(loc);
 		
 		String result =  "\t\t<profile" +
-		" accountID=\"" + accountID + "\"" +
-		" accountType=\"" + accountType + "\"" +
-		" name=\"" + name  + "\"" +
-		" phone=\"" + phone + "\"" +
-		" selfDescription=\"" + selfDescription + "\" >\n";
+			" accountID=\"" + accountID + "\"" +
+			" accountType=\"" + accountType + "\"" +
+			" name=\"" + name  + "\"" +
+			" phone=\"" + phone + "\"" +
+			" email=\"" + email + "\"" +
+			" secondaryEmail=\"" + secondaryEmail + "\"" +
+			" selfDescription=\"" + selfDescription + "\"";
+			
+		result = result + ">\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
 			result = result.concat("\t\t\t<location address=\""  + addressList.get(i).address + "\"" +
