@@ -5,18 +5,6 @@
     <link>http://localhost:8080/JobzDroid/news.jsp</link>
     <description>Site News of Your Ultimate Database Jobs Market</description>
     <dc:language>en-us</dc:language>
-    <item>
-      <title>1111111111111111111111111</title>
-      <description>22222222222222222222222</description>
-      <pubDate>Sat, 12 Mar 2011 03:28:14 GMT</pubDate>
-      <dc:date>2011-03-12T03:28:14Z</dc:date>
-    </item>
-    <item>
-      <title>rrrrrrrrrr</title>
-      <description>ddddddd</description>
-      <pubDate>Sat, 12 Mar 2011 03:20:54 GMT</pubDate>
-      <dc:date>2011-03-12T03:20:54Z</dc:date>
-    </item>
   </channel>
 </rss>
 

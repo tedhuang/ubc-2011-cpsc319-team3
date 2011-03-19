@@ -45,7 +45,7 @@
   				<td><%= formattedDate %></td>
   			</tr>
   			<tr>
-  				<td><pre><%= content %></pre></td>
+  				<td><%= content %></td>
   			</tr>	  			
 		  	<tr>
 		  	  <td class="clean"></td>

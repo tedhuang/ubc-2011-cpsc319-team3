@@ -40,7 +40,7 @@
 		// get all searcher and poster accounts
 		ArrayList<Account> users = dbManager.getSearcherPosterAccounts();
 	%>	
-		<!--Start tabs-->
+	<!--Start tabs-->
 	
 	<div class="main">
 		  <div class="header">
@@ -52,10 +52,9 @@
 			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
-		  </div>
-		  
+		  </div>		  
 		  <br/>	
-		  <!-- STARTOF SIDEMENU -->
+	<!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
 			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
@@ -84,18 +83,24 @@
 				<h2>Manage RSS</h2>
 			</a>
 		</li>
-	<%
+	 <%
 	 if(s.getAccountType().equals("superAdmin")){
-	 	%>
+	 %>
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
 				<h2>Manage Admins</h2>
 			</a>
 		</li>
-		<%
-		  }
-	%>
+	 <%
+	  }
+	 %>
+	 	<li>
+			<a class="jsBtn" onclick="userLogoutRequest()">
+				<img src="../images/icon/logout_icon.png"/>
+				<h2>Log Out</h2>
+			</a>
+		</li>
   	</ul><!--ENDOF SideMenu-->
   	
 	<div id="tabs" class="tabPane">
@@ -161,14 +166,14 @@
 										</a>									
 									</td>
 									<td>
-									<a title="Ban" onclick="sendBanRequest('<%= email %>')" class="linkImg">
-	       						 		<img src="../images/icon/ban_icon.png"/>
-									</a>									
+										<a title="Ban" onclick="sendBanRequest('<%= email %>')" class="linkImg">
+		       						 		<img src="../images/icon/ban_icon.png"/>
+										</a>									
 									</td>
 									<td>
-									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextFirstFrame')" class="linkImg">
-	       						 		<img src="../images/icon/delete_icon.png"/>
-									</a>									
+										<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextFirstFrame')" class="linkImg">
+		       						 		<img src="../images/icon/delete_icon.png"/>
+										</a>									
 									</td>
 								</tr>
 							<%
@@ -311,9 +316,6 @@
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->		  
-		  
-		
-
 	<%
 	}
 	%>	

@@ -54,7 +54,7 @@
 			  <%
 		  }
 		  %>
-		  <a href="#" onclick="userLogoutRequest()">Log out</a>
+		  <a href="#" onclick="userLogoutRequest()">Log Out</a>
 		  <br/>
 		  <hr/>
 		</div>

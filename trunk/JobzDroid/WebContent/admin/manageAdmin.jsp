@@ -7,12 +7,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>	
 	<script type="text/javascript" src="../scripts/deleteAccount.js"></script>
 	<script type="text/javascript" src="../scripts/manageAdmin.js"></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	
 	<title>Manage Admin Accounts</title>
@@ -49,9 +51,59 @@
 			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
-		  </div>
-		  
+		  </div>		  
 		  <br/>	
+		  
+    <!-- STARTOF SIDEMENU -->
+ 	<ul id="sideMenu" class="sideNavMenu">
+		<li>
+			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
+				<img src="../images/icon/ad_icon.png"/>
+				<h2>Manage Job Ads</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageUser.jsp')">
+				<img src="../images/icon/user_icon.png"/>
+				<h2>Manage Users</h2>
+			</a>
+		</li>
+	
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageNews.jsp')">
+				<img src="../images/icon/news_icon.png"/>
+				<h2>Manage News</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageRSS.jsp')">
+				<img src="../images/icon/rss.png"/>
+				<h2>Manage RSS</h2>
+			</a>
+		</li>
+		<%
+		if(s.getAccountType().equals("superAdmin")){
+	 	%>
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
+				<img src="../images/icon/admin_icon.png"/>
+				<h2>Manage Admins</h2>
+			</a>
+		</li>
+		<%
+		}
+		%>
+		<li>
+			<a class="jsBtn" onclick="userLogoutRequest()">
+				<img src="../images/icon/logout_icon.png"/>
+				<h2>Log Out</h2>
+			</a>
+		</li>
+  	</ul>
+  	<!--ENDOF SideMenu-->
+  	
 	<div id="tabs" class="tabPane">
   	  <div id="navBar" class="navBar">
 		<ul>

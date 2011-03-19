@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import classes.Utility;
@@ -151,5 +152,29 @@ public class RSSManager {
         entries.remove(index);
         outFeed.setEntries(entries);        
         return outFeed;
+	}
+	
+	/***
+	 * Searches the given feed for an entry with the given title, and content. Returns the index of the feed entry.
+	 * @param feed Feed to search from.
+	 * @param title Title of the entry to search for.
+	 * @param content Content of the entry to search for.
+	 * @return Index of the first matching feed entry. -1 if none found.
+	 */
+	public static int searchEntry(SyndFeed feed, String title, String content){
+		@SuppressWarnings("unchecked")
+		List<SyndEntry> entries = feed.getEntries();
+		Iterator<SyndEntry> itr = entries.iterator(); 
+		int currIndex = 0;
+		while(itr.hasNext()) {
+			SyndEntry entry = itr.next();
+			String entryTitle = entry.getTitle();
+			String entryDesc = entry.getDescription().getValue();
+			if( title.equals(entryTitle) && content.equals(entryDesc) )
+				return currIndex;
+			else
+				currIndex++;
+		} 
+		return -1;
 	}
 }

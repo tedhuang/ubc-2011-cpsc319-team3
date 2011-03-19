@@ -123,6 +123,54 @@ public class NewsManager {
 	}
 	
 	/***
+	 * Search for a NewsEntry in the database with the given ID.
+	 * @param idNews ID of the news to search for.
+	 * @return NewsEntry with the given ID. Null if not found.
+	 */
+	public NewsEntry getNewsEntryById(int idNews){
+		NewsEntry entry = null;
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String title, content;
+		long dateTimePublished;
+		
+		try {			
+			stmt = conn.createStatement();
+			String query = "SELECT * FROM tableNews WHERE idNews='" + idNews +" ';";            
+			rs = stmt.executeQuery(query);
+		    if(rs.first()) {
+		    	title = rs.getString("title");
+		    	content = rs.getString("content");
+		    	dateTimePublished = rs.getLong("dateTimePublished");
+		        entry = new NewsEntry(idNews, title, content, dateTimePublished);
+		    }
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return entry;
+	}
+	
+	/***
 	 * Gets, sorts and returns all news entries from the database
 	 * @return ArrayList of sorted news entries. (latest entries at the front) 
 	 */
