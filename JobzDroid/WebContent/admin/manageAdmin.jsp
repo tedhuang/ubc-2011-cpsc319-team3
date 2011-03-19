@@ -131,7 +131,6 @@
 						<th>Account ID</th>
 						<th>Account Name</th>
 						<th>Account Creation Date</th>
-						<th>Delete</th>
 					</tr>
 				</thead>
 				<tbody>

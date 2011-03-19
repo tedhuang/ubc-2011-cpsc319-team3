@@ -135,9 +135,6 @@
 						<th>Secondary Email</th>
 						<th>User Type</th>
 						<th>Account Creation Date</th>
-						<th>Profile</th>
-						<th>Ban</th>
-						<th>Delete</th>
 					</tr>
 				</thead>
 				<tbody>
