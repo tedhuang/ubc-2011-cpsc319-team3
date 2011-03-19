@@ -7,7 +7,7 @@
 html, body { margin: 0; padding: 0; border: 0; outline: 0; font-family: Arial;
 			 font-style: normal;  font-weight: inherit;    font-size: 100%;    vertical-align: baseline;
 }
-a {	text-decoration: none;}
+a {	text-decoration: none; border:none;}
 table {	display: table;	border-collapse: separate;	border-spacing: 7px 7px;	border-color: gray; }
 
 tbody {	display: table-row-group;	vertical-align: middle;	border-color: inherit;}

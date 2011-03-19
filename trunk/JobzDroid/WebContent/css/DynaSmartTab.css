@@ -19,7 +19,7 @@
 .navBar ul li:hover{     color	: #FFF;   background-color  : #9EDB04; }
 
 .navBar li a{ 	height: 30px;width	: 130px;    display	: block;    margin	: 0;   padding: 2px;  color	: #FFFFFF; border-bottom	: 1px solid #E0E0E0;
-    border-bottom	: none; cursor: auto; }
+    border-bottom	: none; cursor: pointer; }
 .navBar ul li a img {   display:block;  margin:0;  padding:3px;  height:50px;  width:50px;  float:left;}
 .navBar ul li a h2 {   display	: block;  font: bold 13px Verdana, Arial, Helvetica, sans-serif;}
 .navBar ul li a small {   font: normal 12px Verdana, Arial, Helvetica, sans-serif;  float:left;}
