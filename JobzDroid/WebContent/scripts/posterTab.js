@@ -255,27 +255,38 @@
                 			  openTab('edAdTab'); 
                 			  open_edAd_form();
                 			  getJobAdById("edit",adId, "edAdForm");
-//              		      timer("loadEdData('jobAd', 'edAdForm', 'edit')", 3000);
-//                			  loadEdData('jobAd', 'edAdForm', 'edit');
-            	});
+            		});
+         			tRow.find('a.view').click(function(){
+          			  openTab('adDetailTab'); 
+          			  open_adDetail();
+          			  getJobAdById("detail",adId, "adDetailTable");
+         			});
+         			tRow.find('a.del').click(function(){
+         				delJobAd(tRow, adId);
+         				
+         			});
          	};
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
          function open_newAd_form(){
-        	 $("#newAdFrame").load("../DOMs/formDOM.jsp #newAdForm",function(){//TODO move this to server side for security reason
+        	 $("#newAdFrame").load("DOMs/formDOM.jsp #newAdForm",function(){//TODO move this to server side for security reason
          		$( "#startTime-field","#newAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
          		$( "#expireTime-field" ,"#newAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
          	});
-        };
+        }
         
         function open_edAd_form(){
-        	$("#edAdFrame").load("../DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
+        	$("#edAdFrame").load("DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
         		$( "#startTime-field","#edAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
         	});
         }
-        
+        function open_adDetail(){
+       	 $("#adDetailFrame").load("DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
+        		
+        	});
+       }
 //     function loadEdData(targetXMLTag, edFormContainer, mode){
         $.fn.DynaSmartTab.loadEdData=function(targetXMLTag, edFormContainer, mode){
     	 var xmlData= $(targetXMLTag,xmlhttp.responseXML);
@@ -310,16 +321,6 @@
           }//ENDOF SWITCH
       };
      
-     function timer(func, delayTime) {
-        // var delay = 50; /* milliseconds - vary as desired */
-         var executionTimer;
-         return function() {
-             if (executionTimer) {
-                     clearTimeout(executionTimer);
-             }
-             executionTimer = setTimeout(func, delayTime);
-         };
-     }
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF DynaSmartTab
