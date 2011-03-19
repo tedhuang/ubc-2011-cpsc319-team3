@@ -7,7 +7,7 @@ $("document").ready(function() {
 	$("#newsTitle").bind("change", validateInput);
 	// allow content to have maximum 2048 characters
 	$("#newsContent").bind("keyup", function(){
-		limitChars('newsContent', 4000, 'contentInfo');
+		limitChars('newsContent', 10000, 'contentInfo');
 	});
 	// send request to admin servlet on submit
 	$("#submitButton").bind("click", postNews);
@@ -90,7 +90,7 @@ function parsePostNewsResponse(responseXML){
 
 function sendDeleteNewsRequest(idNews){
 	var strSessionKey = $("#sessionKey").val();
-    var b = confirm("Are you sure to delete the selected news entry?");
+    var b = confirm("Are you sure to delete News ID: " + idNews + "?");
     if (b == false)
         return false;
     
@@ -112,11 +112,12 @@ function sendDeleteNewsRequest(idNews){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;					 
-					 alert(strMsg);
+					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;				
 					 $(".linkImg").removeAttr("disabled");
 					 if(boolResult == "true")
 						 loadPageWithSession('manageNews.jsp');
+					 else						 
+						 alert(strMsg);
 				}
 			}};
 	}
