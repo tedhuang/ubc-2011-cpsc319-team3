@@ -38,6 +38,22 @@ public class Utility {
 	}
 	
 	/***
+	 * Converts string line breaks into HTML line break tags, and two or more white spaces into a sequence of NBSP.
+	 * @param input Input string.
+	 * @return Processed string.
+	 */
+	public static String processLineBreaksWhiteSpaces(String input){
+		Pattern p = Pattern.compile("(\r\n|\r|\n|\n\r)");
+		Matcher m = p.matcher(input);			 
+		if (m.find()) {
+			input = m.replaceAll("<br />");
+		}
+		input = input.replace("  ", "&nbsp;&nbsp;");
+		input = input.replace("&nbsp; ", "&nbsp;&nbsp;"); 
+		return input;
+	}
+	
+	/***
 	 * Gets the current date and time in the form of a long integer.
 	 * @return long representing the current date and time
 	 */

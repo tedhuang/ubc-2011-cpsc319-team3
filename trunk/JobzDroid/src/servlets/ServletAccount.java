@@ -497,8 +497,10 @@ public class ServletAccount extends HttpServlet {
 			secondaryEmail = Utility.checkInputFormat(secondaryEmail);
 		if(address != null)
 			address = Utility.checkInputFormat(address);
-		if(description != null)
+		if(description != null){
 			description = Utility.checkInputFormat(description);
+			description = Utility.processLineBreaksWhiteSpaces(description);
+		}
 		if(phone != null)
 			phone = Utility.checkInputFormat(phone);
 		
