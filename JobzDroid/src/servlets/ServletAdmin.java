@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +19,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 
 import classes.Account;
+import classes.NewsEntry;
 import classes.Session;
 import classes.Utility;
 
@@ -50,7 +53,8 @@ public class ServletAdmin extends HttpServlet {
 		unban,
 		createAdmin,
 		deleteAccount,
-		postNews
+		postNews,
+		deleteNews
 	}
 
 	/**
@@ -95,6 +99,9 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case postNews:
 				postNewsHandler(request, response);
+				break;
+			case deleteNews:
+				deleteNewsHandler(request, response);
 				break;
 		}
 	}
@@ -442,7 +449,7 @@ public class ServletAdmin extends HttpServlet {
 	private void postNewsHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
 		String title = request.getParameter("title");
-		String content = request.getParameter("content");	
+		String content = request.getParameter("content");		
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		title = Utility.checkInputFormat(title);
 		content = Utility.checkInputFormat(content);
@@ -466,6 +473,19 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		if(allGood){
+			// convert all line breaks inside content into <br />
+			Pattern p = Pattern.compile("(\r\n|\r|\n|\n\r)");
+			Matcher m = p.matcher(content);			 
+			if (m.find()) {
+			  content = m.replaceAll("<br />");
+			}
+			// convert all occurrences of multiple white spaces into sequences of &nbsp
+	//		p = Pattern.compile(" (?= )|(?<= ) ");
+	//		m = p.matcher(content);
+	//		content = m.replaceAll("&nbsp;"); 
+			content = content.replace("  ", "&nbsp;&nbsp;");
+			content = content.replace("&nbsp; ", "&nbsp;&nbsp;"); 
+			
 			if(newsManager.addNewsEntry(title, content)){
 				result = true;
 				message = "News entry has been successfully posted.";
@@ -497,6 +517,78 @@ public class ServletAdmin extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
+	/***
+	 * Handles delete news requests from admins.
+	 */
+	private void deleteNewsHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionKey");
+		String strIdNews = request.getParameter("idNews");
+		int idNews = -1;
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// session check
+		Session session = dbManager.getSessionByKey(sessionKey);
+		if(session == null){
+			allGood = false;
+			message = "Unauthorized delete news action.";
+		}
+		else{
+			// check if user is authorized
+			String userType = session.getAccountType();
+			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
+				allGood = false;
+				message = "Unauthorized delete news action.";
+			}
+			else{
+				try{
+					idNews = Integer.parseInt(strIdNews);
+				}
+				catch(NumberFormatException ex){
+					allGood = false;
+					message = "Invalid News ID.";
+				}
+			}
+		}
+		
+		if(allGood){
+			// load news before we delete 
+			NewsEntry newsEntry = newsManager.getNewsEntryById(idNews);
+			
+			if(newsManager.deleteNewsEntry(idNews)){
+				result = true;
+				message = "News entry has been successfully deleted.";
+				// find and remove the first matching news entry in the RSS
+				try {
+					String newsPath = getServletContext().getRealPath("/rss/news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "rss/news.xml");
+					if(newsEntry == null)
+						System.out.println("NULL NEWS ENTRY");
+					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent() );
+					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
+					RSSManager.writeFeedToFile(newsFeed, newsPath);
+				} 
+				catch (Exception e) {
+					Utility.logError("Failed to remove news (Title: " + newsEntry.getTitle() + ") from RSS: " + e.getMessage());
+					message = "News entry has been successfully deleted, but there was an error updating News RSS: " + e.getMessage();
+				}				
+			}
+			else
+				message = "An error has occured while performing delete news action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
 	
 	/**************************************HELPER FUNCTIONS*******************************************************/
 	

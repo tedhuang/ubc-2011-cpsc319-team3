@@ -16,6 +16,8 @@ public class SystemManager {
 	/***
 	 * Global system variables with their default values. Values are overwritten after loading the configuration file.
 	 */
+	public static String    serverBaseURL                           = "http://localhost:8080/JobzDroid/";
+	
 	public static long 		sessionRenewPeriodAfterExpiry 			= 15 * 60 * 1000;				// default 15 mins
 	public static long 		expiryTimeSession 						= 1 * 60 * 60 * 1000; 			// default 1 hour
 	public static long 		expiryTimeEmailVerification 			= 60 * 60 * 1000;				// default 60 minutes
@@ -87,6 +89,7 @@ public class SystemManager {
 			return;
 	    }
 		// update system variables
+		serverBaseURL       = config.getProperty("serverBaseURL");
 		dbDriver			= config.getProperty("dbDriver");
 		dbURL				= config.getProperty("dbURL");
 		dbUser 				= config.getProperty("dbUser");
@@ -99,6 +102,8 @@ public class SystemManager {
 		systemEmailPw 		= config.getProperty("systemEmailPw");
 		systemEmailSMTPHost = config.getProperty("systemEmailSMTPHost");
 		systemEmailPort 	= config.getProperty("systemEmailPort");
+		dbWorldEmailAddress = config.getProperty("dbWorldEmailAddress");
+		dbWorldEmailPw		= config.getProperty("dbWorldEmailPw");
 		try{
 			sessionRenewPeriodAfterExpiry 	= Long.parseLong(config.getProperty("sessionRenewPeriodAfterExpiry").trim()) * 60 * 1000;	// unit: minutes -> millisecond
 			expiryTimeSession 				= Long.parseLong(config.getProperty("expiryTimeSession").trim()) * 60 * 1000;

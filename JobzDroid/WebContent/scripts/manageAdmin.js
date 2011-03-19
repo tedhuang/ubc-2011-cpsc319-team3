@@ -9,6 +9,7 @@ $("document").ready(function() {
 	$("#createAdminFrame input").bind("change", validateInputs);
 	$("#createAdminButton").bind("click", sendCreateAdminRequest);
 	$('#tabs').DynaSmartTab({});
+	$('#sideMenu').sideNavMenu({});
 });
 
 //client side error checking for creating admin
