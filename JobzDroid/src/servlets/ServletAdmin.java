@@ -473,18 +473,8 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		if(allGood){
-			// convert all line breaks inside content into <br />
-			Pattern p = Pattern.compile("(\r\n|\r|\n|\n\r)");
-			Matcher m = p.matcher(content);			 
-			if (m.find()) {
-			  content = m.replaceAll("<br />");
-			}
-			// convert all occurrences of multiple white spaces into sequences of &nbsp
-	//		p = Pattern.compile(" (?= )|(?<= ) ");
-	//		m = p.matcher(content);
-	//		content = m.replaceAll("&nbsp;"); 
-			content = content.replace("  ", "&nbsp;&nbsp;");
-			content = content.replace("&nbsp; ", "&nbsp;&nbsp;"); 
+			// process line breaks and white spaces in content
+			content = Utility.processLineBreaksWhiteSpaces(content);
 			
 			if(newsManager.addNewsEntry(title, content)){
 				result = true;
