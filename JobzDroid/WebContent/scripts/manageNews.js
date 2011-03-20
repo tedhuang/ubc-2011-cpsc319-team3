@@ -15,7 +15,7 @@ $("document").ready(function() {
 	$('#sideMenu').sideNavMenu({});
 });
 
-// client side error checking
+// client side error checking, can add additional checks on other fields if needed
 function validateInput(evt){
 	// case: News title changed
 	if( $(this).attr('id') == "newsTitle" ){
@@ -50,7 +50,18 @@ function postNews(evt){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
-					var responseText = parsePostNewsResponse(xmlHttpReq.responseXML);
+					var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
+					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
+					 if(boolResult == "true"){
+						 $("#statusText").addClass("successTag");
+						 $("#submitButton").removeAttr("disabled");
+						 $("#newsTitle").val("");
+						 $("#newsContent").val("");
+						 loadPageWithSession('manageNews.jsp');
+					 }
+					 else
+						 $("#statusText").addClass("errorTag");		
+					 
 					$("#submitButton").removeAttr("disabled");
 			    	$("#statusText").text(responseText);
 				}
@@ -69,23 +80,6 @@ function postNews(evt){
 	
 	//update status text
 	$("#statusText").text("Processing...This may take a moment.");
-}
-
-// parses response from server
-function parsePostNewsResponse(responseXML){	
-	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-	 // if posting sucessful, then clear input values and update text style
-	 if(boolResult == "true"){
-		 $("#statusText").addClass("successTag");
-		 $("#submitButton").removeAttr("disabled");
-		 $("#newsTitle").val("");
-		 $("#newsContent").val("");
-		 loadPageWithSession('manageNews.jsp');
-	 }
-	 else
-		 $("#statusText").addClass("errorTag");
-	 return strMsg;
 }
 
 function sendDeleteNewsRequest(idNews){

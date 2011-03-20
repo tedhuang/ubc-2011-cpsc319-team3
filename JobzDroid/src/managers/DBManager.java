@@ -492,6 +492,45 @@ public class DBManager {
 		return null;
 	}
 	
+	private Session extendSessionExpiryTime( Session session ) {
+
+		Connection conn = getConnection();	
+		Statement stmt = null;		
+
+		
+		long newExpiryTime = session.getExpiryTime() + SystemManager.expiryTimeSession;
+		
+		try{
+			// retrieve the account ID from login information
+			stmt = conn.createStatement();
+			int rowsUpdated = stmt.executeUpdate( "UPDATE tableSession SET expiryTime='" + newExpiryTime + "' " + 
+										"WHERE sessionKey='"+ session.getKey() + "';");
+			
+			if( rowsUpdated != 1 ) {
+				return null;
+			}
+			
+			session.updateExpiryTime(newExpiryTime);
+			return session;
+
+		}//ENDOF TRY
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+	    
+		return null;
+	}
+	
 	private int cleanSessionKeyByID( int idAccount ) {
 		// cleanup other sessionKey associated with this idAccount 
 
@@ -608,7 +647,7 @@ public class DBManager {
 			else {//if the key is expired but within 30min
 				if( currSession.getExpiryTime() <= currentTime + SystemManager.sessionRenewPeriodAfterExpiry ) {
 					// renew user's sessionKey
-					currSession = registerSessionKey(currSession);
+					currSession = extendSessionExpiryTime(currSession);
 				}
 				else {
 					// past renewal period, user must re-log in
