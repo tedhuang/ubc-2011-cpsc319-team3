@@ -1,0 +1,18 @@
+#lightBox.on,#lightBox #overlay{position:absolute;top:0 !important;left:0!important;height:100%;width:100%;z-index:9998;}
+#lightBox #overlay.lb_black{background-color: #000000;}
+#lightBox #divlb {position:absolute; top:30%; left:40%; font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;min-width:200px;}
+#lightBox #divlb img{z-index:9999;position:relative; padding:2em;  float:left;}
+#lightBox #midBox{z-index:9999;position:absolute; top:20%; left: 30%;height:231px;width:431px;
+				  font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;color:white;
+				  background: url(../images/bg/midBox.png) no-repeat scroll center center;}
+#lightBox #midBox #info{position:relative; top:2em;  padding:1em;}
+#lightBox  h2{font-size:0.8em; }
+#lightBox #divlb h2{font-size:1.5em; color:#029B8C;}
+#lightBox #midBox #info h2{color:#FFFFFF;}
+#lightBox #midBox #info img{position:relative;  padding:2em 4em 1em 2em;  float:left; }
+#lightBox #divlb img.load,
+#lightBox #midBox #info img.load{background: url(../images/loadin.gif) no-repeat scroll center center;}
+#lightBox #divlb img.alert,
+#lightBox #midBox #info img.alert{background: url(../images/icon/alert.png) no-repeat scroll center center;}
+#lightBox #divlb img.good,
+#lightBox #midBox #info img.good{background: url(../images/icon/good.png) no-repeat scroll center center;}
