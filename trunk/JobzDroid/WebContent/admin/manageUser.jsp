@@ -121,7 +121,7 @@
 	
   <div id="tabFrame">		
 		<div id="banFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>List of Active Users</font></b></h1>
+			<h2 class="welcome"><b><font size='4'>List of Active Users</font></b></h2>
 			<span class="label">
 		          Email Filter: 
 		    </span>
@@ -210,7 +210,7 @@
 		</div><!--end of BANFRAME-->
 		
 		<div id="unbanFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>List of Banned Users</font></b></h1>
+			<h2 class="welcome"><b><font size='4'>List of Banned Users</font></b></h2>
 			<span class="label">
 		          Email Filter: 
 		    </span>

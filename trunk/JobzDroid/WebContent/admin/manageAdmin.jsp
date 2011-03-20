@@ -119,7 +119,7 @@
 	
   <div id="tabFrame">		
 		<div id="viewFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>List of Admins</font></b></h1>
+			<h2 class="welcome"><b><font size='4'>List of Admins</font></b></h2>
 			<span class="label">
 		          Account Name Filter: 
 		    </span>
@@ -166,6 +166,7 @@
 		</div><!--end of VIEWFRAME-->
 		
 		<div id="createAdminFrame" class="subFrame unremovable">
+		<h2 class="welcome"><b><font size='4'>Create New Admin Account</font></b></h2>
 			 <table>
 				<tbody>
 				  <tr>

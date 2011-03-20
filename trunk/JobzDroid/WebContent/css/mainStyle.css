@@ -151,3 +151,6 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .columnBoxThinRight{position: relative;	float: right; right:-30px;	top: -285px;width: 135px;}
 .columnBoxThinLeft{	position: relative;	width:135px;}
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
+
+/************ Admin Manage RSS **********************************************************/
+.fixedBottomFrame{	position:fixed;	left:26%;  bottom:2px; border:2px solid #0C3E74}
