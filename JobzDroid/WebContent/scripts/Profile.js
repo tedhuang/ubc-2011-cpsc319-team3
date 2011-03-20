@@ -48,33 +48,37 @@ function loadProfileDetails(responseXML){
 
 
 
-function createProfile(){
-	//disables button to prevent multiple submit
-	document.getElementById("submitProfile").disabled=true;
-	
-	
-	var strSearcherPhone = document.getElementById("searcherPhone").value;
-	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
-	var strEmpPref = document.getElementById("empPref").value;
-	var intEducationLevel = document.getElementById("educationLevel").value;
-	
-	
-	var strPosterName = document.getElementById("posterName").value;
-	var strPosterPhone = document.getElementById("posterPhone").value;
-	var strPosterDescripton = document.getElementById("posterDescripton").value;
-	//var strAffiliation = document.getElementById("affiliation").value;
-	
-	//Poster = 1, Searcher = 2
-	var intAccountType = document.getElementById("accountType").value; 
-	var intAccountID = document.getElementById("accountID").value;
-	
-	//Check for required fields:
-	if(name == null){
-		alert("Must Enter your name!");
-		document.getElementById("newJobAdButton").disabled=false;
-		return;
-	}
 
+function submitChangeProfile(accountType){
+	
+	//disables button to prevent multiple submit
+	document.getElementById("submitButton").disabled=true;
+	
+	var sessionKey = $("#sessionKey").val();
+	
+	//==========================================================================
+	//Account Changes - Call account functions to handle account info changes
+		
+		//TODO: implement this
+
+	//==========================================================================
+
+	//TODO: add location change
+	
+	
+	//Profile Changes
+	var strName 		= document.getElementById("name").value;
+	var strSecEmail		= document.getElementById("secondaryEmail").value;
+	var strPhone 		= document.getElementById("phone").value;
+	var strDescripton 	= document.getElementById("searcherDescripton").value;
+	
+	if (accountType == "searcher"){
+		var strEmpPref				= document.getElementById("empPref").value;
+		var strPreferredStartDate 	= document.getElementById("startingDate");
+		var intEducationLevel 		= document.getElementById("educationLevel").value;
+		
+	}
+	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -84,138 +88,21 @@ function createProfile(){
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
-	    	document.getElementById("feedback").innerHTML=responseText;
-
-	    }
-	  };
-	
-	
-	request = new Request;
-	request.addAction("createProfile");
-	request.addSessionID("1234"); //TODO integrate session key
-	request.addParam("accountType", intAccountType); 	//Poster = 1, Searcher = 2
-	request.addParam("accountID", intAccountID);
-	
-	//alert("Account Type: " + intAccountType);
-	if(intAccountType == "2" ){
-		alert("account type = searcher");
-		request.addParam("searcherName",strSearcherName);
-		request.addParam("searcherPhone",strSearcherPhone);
-		request.addParam("searcherDescripton",strSearcherDescripton);
-		request.addParam("empPref",strEmpPref);
-		request.addParam("educationLevel",intEducationLevel);
-		
-	}else if(intAccountType == "1" ){
-		alert("account type = poster");
-		request.addParam("posterName",strPosterName);
-		request.addParam("posterPhone",strPosterPhone);
-		request.addParam("posterDescription",strPosterDescripton);
-		//request.addParam("affiliation",strAffiliation);
-	}
-	else{
-		alert("Please select an account type before submitting");
-		document.getElementById("submitProfile").disabled=false;
-		return;
-	}
-		
-
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
-}
-
-
-
-
-function submitChangeProfile(){
-	
-	//disables button to prevent multiple submit
-	document.getElementById("submitEdit").disabled=true;
-	
-	
-	var strSearcherName 		= document.getElementById("name").value;
-	var strSecEmail				= document.getElementById("secondaryEmail").value;
-	var strSearcherPhone 		= document.getElementById("searcherPhone").value;
-	var strSearcherDescripton 	= document.getElementById("searcherDescripton").value;
-	var strEmpPref				= document.getElementById("empPref").value;
-	var strPreferredStartDate 	= document.getElementById("startingDate");
-	var intEducationLevel 		= document.getElementById("educationLevel").value;
-	
-	
-	var strPosterName = document.getElementById("posterName").value;
-	var strPosterPhone = document.getElementById("posterPhone").value;
-	var strPosterDescripton = document.getElementById("posterDescripton").value;
-	
-	//Poster = 1, Searcher = 2
-	var intAccountType = document.getElementById("accountType").value; 
-	var intAccountID = document.getElementById("accountID").value;
-	
-	//Check for required fields:
-	if(name == null){
-		alert("Must Enter your name!");
-		document.getElementById("newJobAdButton").disabled=false;
-		return;
-	}
-
-	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
-	    	document.getElementById("feedback").innerHTML=responseText;
-
-	    }
-	  };
 	
 	
 	request = new Request;
 	request.addAction("editProfile");
-	request.addSessionID("1234"); //TODO integrate session key
-	request.addParam("accountType", intAccountType); 	//Poster = 1, Searcher = 2
-	request.addParam("accountID", intAccountID);
+	request.addSessionKey(sessionKey); //TODO integrate session key
 	
-	//alert("Account Type: " + intAccountType);
-	if(intAccountType == "2" ){
-		alert("account type = searcher");
-		request.addParam("searcherName",strSearcherName);
-		request.addParam("searcherPhone",strSearcherPhone);
-		request.addParam("searcherDescripton",strSearcherDescripton);
+	request.addParam("name",strName);
+	request.addParam("secEmail",strSecEmail);
+	request.addParam("phone",strPhone);
+	request.addParam("descripton",strDescripton);
+	
+	if(accountType == "searcher"){
 		request.addParam("empPref",strEmpPref);
 		request.addParam("educationLevel",intEducationLevel);
-		
-	}else if(intAccountType == "1" ){
-		alert("account type = poster");
-		request.addParam("posterName",strPosterName);
-		request.addParam("posterPhone",strPosterPhone);
-		request.addParam("posterDescription",strPosterDescripton);
-	}
-	else{
-		alert("Please select an account type before submitting");
-		document.getElementById("submitProfile").disabled=false;
-		return;
+		request.addParam("preferredStartDate", strPreferredStartDate); //This is taken as a long
 	}
 	
 
@@ -224,11 +111,21 @@ function submitChangeProfile(){
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
-	
+
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		    //parse XML response from server
+		  	//TODO: implement response
+		  alert(xmlhttp.responseXML.getElementById("message"));
+		  
+	    }
+	  };	
 }
+
+
+
 
 function getProfileById(idAccount, outputDiv, heading){
 	var strSessionKey = $("#sessionKey").val();
@@ -287,3 +184,101 @@ function getProfileBySessionKey(outputDiv, heading){
 	    }
 	  };	
 }
+
+
+
+/**************
+ * 
+ *DEPRECATED:
+ *
+ **************/
+//
+//function createProfile(){
+//	//disables button to prevent multiple submit
+//	document.getElementById("submitProfile").disabled=true;
+//	
+//	
+//	var strSearcherPhone = document.getElementById("searcherPhone").value;
+//	var strSearcherDescripton = document.getElementById("searcherDescripton").value;
+//	var strEmpPref = document.getElementById("empPref").value;
+//	var intEducationLevel = document.getElementById("educationLevel").value;
+//	
+//	
+//	var strPosterName = document.getElementById("posterName").value;
+//	var strPosterPhone = document.getElementById("posterPhone").value;
+//	var strPosterDescripton = document.getElementById("posterDescripton").value;
+//	//var strAffiliation = document.getElementById("affiliation").value;
+//	
+//	//Poster = 1, Searcher = 2
+//	var intAccountType = document.getElementById("accountType").value; 
+//	var intAccountID = document.getElementById("accountID").value;
+//	
+//	//Check for required fields:
+//	if(name == null){
+//		alert("Must Enter your name!");
+//		document.getElementById("newJobAdButton").disabled=false;
+//		return;
+//	}
+//
+//	var xmlHttpReq;
+//	if (window.XMLHttpRequest)
+//	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+//	  xmlhttp=new XMLHttpRequest();
+//	  }
+//	else
+//	  {// code for IE6, IE5
+//	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+//	  }
+//	  
+//	xmlhttp.onreadystatechange=function()
+//	  {
+//	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+//	    {
+//		    //parse XML response from server
+//		    var responseText= ParseXMLResponse(xmlhttp.responseXML);
+//	    	document.getElementById("feedback").innerHTML=responseText;
+//
+//	    }
+//	  };
+//	
+//	
+//	request = new Request;
+//	request.addAction("createProfile");
+//	request.addSessionKey("1234"); //TODO integrate session key
+//	request.addParam("accountType", intAccountType); 	//Poster = 1, Searcher = 2
+//	request.addParam("accountID", intAccountID);
+//	
+//	//alert("Account Type: " + intAccountType);
+//	if(intAccountType == "2" ){
+//		alert("account type = searcher");
+//		request.addParam("searcherName",strSearcherName);
+//		request.addParam("searcherPhone",strSearcherPhone);
+//		request.addParam("searcherDescripton",strSearcherDescripton);
+//		request.addParam("empPref",strEmpPref);
+//		request.addParam("educationLevel",intEducationLevel);
+//		
+//	}else if(intAccountType == "1" ){
+//		alert("account type = poster");
+//		request.addParam("posterName",strPosterName);
+//		request.addParam("posterPhone",strPosterPhone);
+//		request.addParam("posterDescription",strPosterDescripton);
+//		//request.addParam("affiliation",strAffiliation);
+//	}
+//	else{
+//		alert("Please select an account type before submitting");
+//		document.getElementById("submitProfile").disabled=false;
+//		return;
+//	}
+//		
+//
+//	//send the parameters to the servlet with POST
+//	xmlhttp.open("POST","../ServletProfile" ,true);
+//	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//	xmlhttp.send(request.toString());
+//
+//	//change the text while sending the request
+//	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+//	
+//}
+
+

@@ -41,10 +41,9 @@ public class ServletProfile extends HttpServlet{
 	
 	private enum EnumAction
 	{ 
-		createProfile,
+		//createProfile,
 		editProfile,
 		getProfileById,
-		searchJobSearcher,
 		getProfileBySessionKey,
 		searchProfile,
 		UNKNOWN;
@@ -76,16 +75,12 @@ public class ServletProfile extends HttpServlet{
 				getProfileById(request,response);
 				break;
 				
-			case createProfile:
-				createProfile(request, response); //implement error checks
-				break;
+//			case createProfile:
+//				createProfile(request, response); //implement error checks
+//				break;
 				
 			case editProfile:
 				editProfile(request,response);
-				break;
-				
-			case searchJobSearcher:
-				searchJobSearcher(request,response);
 				break;
 				
 			case getProfileBySessionKey:
@@ -285,7 +280,6 @@ public class ServletProfile extends HttpServlet{
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
 		String sessionKey = request.getParameter("sessionKey");
-		
 		Session currSession = dbManager.getSessionByKey( sessionKey );
 		
 		//Initialize Return statements
@@ -449,219 +443,42 @@ public class ServletProfile extends HttpServlet{
 	}
 	
 	
-	
-	private void searchJobSearcher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		//TODO: port search from job ad search
-		
-		
-	}
-	
-	
-	
-	
-	private void createProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		System.out.println("Checkpoint: Inside createProfile");
-		
-		//Account Type: Poster = 1, Searcher = 2
-		int accountType = Integer.parseInt(request.getParameter("accountType")); 	
-		int accountID = Integer.parseInt(request.getParameter("accountID"));
-		
-		String name;
-		String phone;
-		String selfDescription;
-		String empPref;
-		long preferredStartDate;
-		int educationLevel;
-		
-		//Initialize Return statments
-		boolean isSuccessful = false;
-		String message = "Failure to create new profile";
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		try{
-		//Create Job Poster Profile
-			if(accountType == 1){
-				System.out.println("Creating Job Poster Profile");
-				stmt = conn.createStatement();
-				
-				name = request.getParameter("posterName");
-				phone = request.getParameter("posterPhone");
-				selfDescription = request.getParameter("posterDescription");
 
-				//Check format
-				name = Utility.checkInputFormat( name );
-				phone = Utility.checkInputFormat( phone );
-				selfDescription = Utility.checkInputFormat( selfDescription );
-				
-			//Add new entry with specified paramters into database
-				String query = 
-					"INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) " + 
-					"VALUES ('"
-						+ accountID + "','"
-						+ name + "','"
-						+ phone + "','"
-						+ selfDescription + 
-					"')";
-				
-				System.out.println("New PosterProfile Query:" + query);
-				int rowsInserted = stmt.executeUpdate(query);
-				
-				if (rowsInserted == 1){
-					System.out.println("New Profile Creation success (DB)");
-				}
-				else{
-					System.out.println("Error: row not inserted");
-					stmt.close();
-				}
-				
-				//Check if profile is created successfully
-				query = "SELECT idAccount FROM tableProfilePoster WHERE " + " idAccount='" + accountID + "'"; 
-				ResultSet result = stmt.executeQuery(query);
-				if( result.first() ){
-					System.out.println("Profile Created in DB");
-					isSuccessful = true;
-					message = "Create new profile success";
-				}
-				else{
-					System.out.println("Error: result.first() is false ");
-				}
-			}
-			
-		//Create Job Searcher Profile
-			else{
-				System.out.println("Creating Job Searcher Profile");
-				
-				name = request.getParameter("searcherName");
-				phone = request.getParameter("searcherPhone");
-				selfDescription = request.getParameter("searcherDescripton");
-				empPref = request.getParameter("empPref");
-				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-				preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
-
-				stmt = conn.createStatement();
-				
-				//Check format
-				name = Utility.checkInputFormat( name );
-				phone = Utility.checkInputFormat( phone );
-				selfDescription = Utility.checkInputFormat( selfDescription );
-
-				//TODO: include address
-				String query = 
-					"INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) " + 
-					"VALUES ('"
-						+ accountID + "','"
-						+ name + "','"
-						+ phone + "','"
-						+ selfDescription + 
-						+ educationLevel + "','"
-						+ preferredStartDate + 
-					"')";
-
-				// if successful, 1 row should be inserted
-				System.out.println("New SearcherProfile Query:" + query);
-				int rowsInserted = stmt.executeUpdate(query);
-				
-				if (rowsInserted == 1){
-					System.out.println("New Profile Creation success (DB)");
-				}
-				else{
-					stmt.close();
-				}
-				
-				//Check if profile is created successfully
-				query = "SELECT name FROM tableProfileSearcher WHERE " + " idAccount='" + accountID + "'"; 
-				ResultSet result = stmt.executeQuery(query);
-				if( result.first() ){
-					System.out.println("Profile Created in DB");
-					isSuccessful =  true;
-					message = "Create new profile success";
-				}
-				else{
-					System.out.println("Error: result.first() is false ");
-				}
-			}
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-	
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-	    System.out.println("Checkpoint: End of create profile - Message: " + message);
-	    
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-	    
-
-	    
-	}
-	
-	
 	private void editProfile(HttpServletRequest request, HttpServletResponse response) 
 								throws ServletException, IOException{
 		
-		//Account Type: Poster = 1, Searcher = 2
-		int accountType = Integer.parseInt(request.getParameter("strAccountType")); 	
-		int accountID = Integer.parseInt(request.getParameter("accountID"));
+		String sessionKey = request.getParameter("sessionKey");
+		Session currSession = dbManager.getSessionByKey( sessionKey );
 		
-		String name;
-		String secEmail;
-		String phone;
-		String selfDescription;
-		String empPref;
-		long preferredStartDate;
-		int educationLevel;
+		int accountID = currSession.getIdAccount();
+		String accountType = currSession.getAccountType();
+		
+		String name = request.getParameter("name");
+		String secEmail = request.getParameter("secEmail");;
+		String phone = request.getParameter("phone");
+		String selfDescription = request.getParameter("descripton");;
+		//TODO: add address handling
+		
+		
+		//Check new inputs
+		name = Utility.checkInputFormat( name );
+		secEmail = Utility.checkInputFormat( secEmail );
+		phone = Utility.checkInputFormat( phone );
+		selfDescription = Utility.checkInputFormat( selfDescription );
 		
 		//Initialize return statements
 		boolean isSuccessful = false;
 		String message = "failed to edit profile";
 		
-		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
-		
+
 		try{
 		//Edit Job Poster Profile
-			if(accountType == 1){
-
-				stmt = conn.createStatement();
-				
-				name = request.getParameter("posterName");
-				secEmail = request.getParameter("posterSecEmail");
-				phone = request.getParameter("posterPhone");
-				selfDescription = request.getParameter("posterDescription");
-				
-				name = Utility.checkInputFormat( name );
-				secEmail = Utility.checkInputFormat( secEmail );
-				phone = Utility.checkInputFormat( phone );
-				selfDescription = Utility.checkInputFormat( selfDescription );
+			stmt = conn.createStatement();
+			
+			if(accountType.equals("poster") ){
+				System.out.println("Editting Poster Profile");
 				
 				String query = 
 					"UPDATE tableProfilePoster SET " 
@@ -671,7 +488,6 @@ public class ServletProfile extends HttpServlet{
 					+ "selfDescription='" 	+ selfDescription + "' " +
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
-				
 				System.out.println("New PosterProfile Query:" + query);
 				
 				if( stmt.executeUpdate(query) != 1 ){ //Error Check
@@ -684,34 +500,26 @@ public class ServletProfile extends HttpServlet{
 				}
 				
 			}
-			
 		//Edit Job Searcher Profile
 			else{
-				name = request.getParameter("searcherName");
-				secEmail = request.getParameter("searcherSecEmail");
-				phone = request.getParameter("searcherPhone");
-				selfDescription = request.getParameter("searcherDescripton");
-				empPref = request.getParameter("empPref");
-				educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-				preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
+				System.out.println("Editting Searcher Profile");
 				
-				stmt = conn.createStatement();
-				
-				name = Utility.checkInputFormat( name );
-				secEmail = Utility.checkInputFormat( secEmail );
-				phone = Utility.checkInputFormat( phone );
-				selfDescription = Utility.checkInputFormat( selfDescription );
+				String empPref = request.getParameter("empPref");
+				String preferredStartDate = request.getParameter("preferredStartDate");
+				int educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
 
+				long startDateMS = Utility.dateStringToLong(preferredStartDate); //Convert to milliseconds
+				
 				//TODO: include address
 				String query = 
 					"UPDATE tableProfileSearcher SET " 
 					+ "name= '" 			+ name + "','" 
 					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "phone='" 		+ phone + "','" 
+					+ "phone='" 			+ phone + "','" 
 					+ "selfDescription='" 	+ selfDescription + "','"
 					+ "empPref='" 			+ empPref + "','"
 					+ "educationLevel='" 	+ educationLevel + "','" 
-					+ "startingDate='"	+ preferredStartDate + "' " +
+					+ "startingDate='"		+ startDateMS + "' " +
 					"WHERE idAccount='" 	+ accountID + "' ";
 					
 				
@@ -986,3 +794,171 @@ public class ServletProfile extends HttpServlet{
 
 
 
+
+/**
+ * 
+ * DEPRECATED
+ * 
+ */
+
+//private void createProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+//	System.out.println("Checkpoint: Inside createProfile");
+//	
+//	//Account Type: Poster = 1, Searcher = 2
+//	int accountType = Integer.parseInt(request.getParameter("accountType")); 	
+//	int accountID = Integer.parseInt(request.getParameter("accountID"));
+//	
+//	String name;
+//	String phone;
+//	String selfDescription;
+//	String empPref;
+//	long preferredStartDate;
+//	int educationLevel;
+//	
+//	//Initialize Return statments
+//	boolean isSuccessful = false;
+//	String message = "Failure to create new profile";
+//	
+//	Connection conn = dbManager.getConnection();	
+//	Statement stmt = null;
+//	
+//	try{
+//	//Create Job Poster Profile
+//		if(accountType == 1){
+//			System.out.println("Creating Job Poster Profile");
+//			stmt = conn.createStatement();
+//			
+//			name = request.getParameter("posterName");
+//			phone = request.getParameter("posterPhone");
+//			selfDescription = request.getParameter("posterDescription");
+//
+//			//Check format
+//			name = Utility.checkInputFormat( name );
+//			phone = Utility.checkInputFormat( phone );
+//			selfDescription = Utility.checkInputFormat( selfDescription );
+//			
+//		//Add new entry with specified paramters into database
+//			String query = 
+//				"INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) " + 
+//				"VALUES ('"
+//					+ accountID + "','"
+//					+ name + "','"
+//					+ phone + "','"
+//					+ selfDescription + 
+//				"')";
+//			
+//			System.out.println("New PosterProfile Query:" + query);
+//			int rowsInserted = stmt.executeUpdate(query);
+//			
+//			if (rowsInserted == 1){
+//				System.out.println("New Profile Creation success (DB)");
+//			}
+//			else{
+//				System.out.println("Error: row not inserted");
+//				stmt.close();
+//			}
+//			
+//			//Check if profile is created successfully
+//			query = "SELECT idAccount FROM tableProfilePoster WHERE " + " idAccount='" + accountID + "'"; 
+//			ResultSet result = stmt.executeQuery(query);
+//			if( result.first() ){
+//				System.out.println("Profile Created in DB");
+//				isSuccessful = true;
+//				message = "Create new profile success";
+//			}
+//			else{
+//				System.out.println("Error: result.first() is false ");
+//			}
+//		}
+//		
+//	//Create Job Searcher Profile
+//		else{
+//			System.out.println("Creating Job Searcher Profile");
+//			
+//			name = request.getParameter("searcherName");
+//			phone = request.getParameter("searcherPhone");
+//			selfDescription = request.getParameter("searcherDescripton");
+//			empPref = request.getParameter("empPref");
+//			educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
+//			preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
+//
+//			stmt = conn.createStatement();
+//			
+//			//Check format
+//			name = Utility.checkInputFormat( name );
+//			phone = Utility.checkInputFormat( phone );
+//			selfDescription = Utility.checkInputFormat( selfDescription );
+//
+//			//TODO: include address
+//			String query = 
+//				"INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) " + 
+//				"VALUES ('"
+//					+ accountID + "','"
+//					+ name + "','"
+//					+ phone + "','"
+//					+ selfDescription + 
+//					+ educationLevel + "','"
+//					+ preferredStartDate + 
+//				"')";
+//
+//			// if successful, 1 row should be inserted
+//			System.out.println("New SearcherProfile Query:" + query);
+//			int rowsInserted = stmt.executeUpdate(query);
+//			
+//			if (rowsInserted == 1){
+//				System.out.println("New Profile Creation success (DB)");
+//			}
+//			else{
+//				stmt.close();
+//			}
+//			
+//			//Check if profile is created successfully
+//			query = "SELECT name FROM tableProfileSearcher WHERE " + " idAccount='" + accountID + "'"; 
+//			ResultSet result = stmt.executeQuery(query);
+//			if( result.first() ){
+//				System.out.println("Profile Created in DB");
+//				isSuccessful =  true;
+//				message = "Create new profile success";
+//			}
+//			else{
+//				System.out.println("Error: result.first() is false ");
+//			}
+//		}
+//	}
+//	catch (SQLException e) {
+//		//TODO log SQL exception
+//		System.out.println("SQL exception : " + e.getMessage());
+//
+//	}
+//	// close DB objects
+//    finally {
+//        try{
+//            if (stmt != null)
+//                stmt.close();
+//        }
+//        catch (Exception e) {
+//        	//TODO log "Cannot close Statement"
+//        	System.out.println("Cannot close Statement : " + e.getMessage());
+//        }
+//        try {
+//            if (conn  != null)
+//                conn.close();
+//        }
+//        catch (SQLException e) {
+//        	//TODO log Cannot close Connection
+//        	System.out.println("Cannot close Connection : " + e.getMessage());
+//        }
+//    }
+//    
+//    System.out.println("Checkpoint: End of create profile - Message: " + message);
+//    
+//	StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+// 
+//}

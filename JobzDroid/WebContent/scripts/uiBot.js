@@ -196,6 +196,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 }
 
 
+
 /********************************************************************************************************************
  * 						Build a table for profile editing
  * @param targetXMLTag
@@ -205,6 +206,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	var tbody  = $( "tbody", outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	
 	
 	if(profile.length==0){//if no results
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
@@ -217,8 +219,8 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 													  onclick: 'enableProfileEdit('+accountType+')'
 													  
 													  });
-		var editEmailButton 	= "<button id=\"editEmailButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Change Email</button>";
-		var editPasswordButton	= "<button id=\"editPasswordButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Change Password</button>";
+		var editEmailButton 	= "<button id='editEmailButton' style='DISPLAY: none;' onclick='buildEditEmail(\"tbody\")' >Change Email</button>";
+		var editPasswordButton	= "<button id=\"editPasswordButton\" style = \"DISPLAY: none;\" onclick=\"buildEditPassword()\">Change Password</button>";
 		
 		var educationLevelSelection = 	"<select id=\"educationLevel\" name=\"educationLevel\" style = \"DISPLAY: none;\"> " +
 											"<option value=\"0\">None</option>"  +
@@ -227,48 +229,35 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 											"<option value=\"3\">Ph.D.</option>" +
 											"</select>";
 		
-		switch(accountType){
-		
-		case("searcher"):
-			
-		  $(heading).html( profile.attr("name") + "'s Profile");
-		  
-		 
-		  var profileText = 
-					"<tr><td>Your Account Email</td><td>"			+ profile.attr("email")				+ "</td>"+ "<td>" + editEmailButton + editPasswordButton + "</td>"+"</tr>" +
-	  				"<tr><td>Your Name</td><td>" 					+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\"style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-  					"<tr><td>Your Backup Email</td><td>"			+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" style = \"DISPLAY: none;\"/></td>"+"</tr>" +
-  					"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationLevel")	+ "</td>"+ "<td>" + educationLevelSelection + "</td></tr>" +
-  					"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("empPref") 			+ "</td>"+ "<td><input id=\"empPref\" style = \"DISPLAY: none;\"/></td>"+"</tr>" +
-  					"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")		+ "</td>"+ "<td><input id=\"startingDate\" style = \"DISPLAY: none;\"/></td>"+"</tr>" +
-  					"<tr><td>More About You</td><td>"				+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-  					"<tr><td>Your Address</td><td>"					+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" 	style = \"DISPLAY: none;\"/></td>"+"</tr>" +
-  					
-  					"<tr><td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Enable Edit Button</button></td>" + 
-  					"<td><button id=\"submitButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Submit</button></td></tr>";
-		  break;
-		  
+		//Add Shared Fields
+		var profileText = 
+			"<tr><td>Your Account Email</td><td>"			+ profile.attr("email")				+ "</td>"+ "<td><input id=\"newEmail\"style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>Old Password</td><td>"					+ " "								+ "</td>"+ "<td><input id=\"passwordOld\"style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>New Password</td><td>"					+ " "								+ "</td>"+ "<td><input id=\"passwordNew\"style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>Repeat Password</td><td>"				+ "	"								+ "</td>"+ "<td><input id=\"passwordRepeat\"style = \"DISPLAY: none;\" /></td></tr>" +
 
-		  
-		case ("poster"):
-			$(heading).html( profile.attr("name") + "'s Profile");
-			  var profileText = 
-					"<tr><td>Your Account Email</td><td>"	+ profile.attr("email")				+ "</td>"+ "<td>" + editEmailButton + editPasswordButton + "</td>"+"</tr>" +
-					"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\" style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-	  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-	  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-	  				"<tr><td>Your Address</td><td>"			+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" style = \"DISPLAY: none;\" /></td>"+"</tr>" +
-	  				
-	  				"<tr><td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")\'>Enable Edit Button</button></td>" + 
-	  				"<td></td>" + "<td><button id=\"submitButton\" style = \"DISPLAY: none;\" onclick=\"submitChangeProfile()\">Submit</button></td></tr>";
-	
-		  break;
-		  
-		default:
-			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
-			break;
+			"<tr><td>Your Name</td><td>" 					+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\"style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>Your Backup Email</td><td>"			+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" style = \"DISPLAY: none;\"/></td></tr>" +
+			"<tr><td>Your Phone Number</td><td>"			+ profile.attr("phone")				+ "</td>"+ "<td><input id=\"phone\" style = \"DISPLAY: none;\"/></td></tr>" +
+			"<tr><td>More About You</td><td>"				+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>Your Address</td><td>"					+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" 	style = \"DISPLAY: none;\"/></td></tr>";
 		
+		//Add Searcher Fields
+		if( accountType == "searcher"){	
+			profileText +=
+				"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td>"+ "<td>" + educationLevelSelection + "</td></tr>" +
+				"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("empPref") 				+ "</td>"+ "<td><input id=\"empPref\" style = \"DISPLAY: none;\"/></td></tr>" +
+				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")			+ "</td>"+ "<td><input id=\"startingDate\" style = \"DISPLAY: none;\"/></td></tr>";
 		}
+		
+		//Add buttons 
+		profileText += 
+			"<tr>" +
+				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Enable Edit</button></td>" +
+				"<td></td><td><button id='submitButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
+			"</tr>";
+ 
+		
 		 $(tbody).append(profileText);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");
 		 $(tbody).find('tr').find('td:last').addClass("dataCol");
@@ -282,34 +271,27 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 
 function enableProfileEdit(accountType)
 {
-	switch(accountType)
-	{
-	case ("searcher"):
-		$("#name").show();
-		$("#secondaryEmail").show();
-		$("#educationLevel").show();
-		$("#empPref").show(); //TODO: change to check box
-		$("#address").show(); //TODO: Integrate with Google Map
-		$("#startingDate").show();
-		$("#selfDescription").show();
-
-		break;
+	$("#newEmail").show();
+	$("#passwordOld").show();
+	$("#passwordNew").show();
+	$("#passwordRepeat").show();
 	
-	case ("poster"):
-		
-		$("#name").show();
-		$("#secondaryEmail").show();
-		$("#address").show();
-		$("#selfDescription").show();
-
-		break;
+	$("#name").show();
+	$("#secondaryEmail").show();
+	$("#phone").show();
+	$("#educationLevel").show();
+	$("#selfDescription").show();
+	$("#address").show();
+	
+	if(accountType == "searcher"){
+		$("#startingDate").show();
+		$("#empPref").show(); //TODO: change to check box
 	}
 	
 	$("#submitButton").show();
-	$("#editEmailButton").show();
-	$("#editPasswordButton").show();
-
 }
+
+
 
 /*******************************************************************************************************************************
  * 		Customize Default DOM ELEMENTS
