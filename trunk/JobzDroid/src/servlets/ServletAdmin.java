@@ -438,7 +438,7 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		if(allGood){
-			if(deleteAccount(accountName)){
+			if(dbManager.deleteAccount(accountName)){
 				result = true;
 				message = "Account " + accountName + " has been successfully deleted.";
 				// inform the user
@@ -735,50 +735,6 @@ public class ServletAdmin extends HttpServlet {
 	        try{
 	            if (pst != null)
 	                pst.close();
-	        }
-	        catch (Exception e) {
-	        	Utility.logError("Cannot close Statement: " + e.getMessage());
-	        }
-	        dbManager.freeConnection(conn);
-	    }
-	}
-	
-	/***
-	 * Deletes an admin account with given account name.
-	 * @param email Account name to delete.
-	 * @return boolean indicating whether the deletion was successful.
-	 */
-	private boolean deleteAccount(String email){
-		Connection conn = dbManager.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		try {
-			stmt = conn.createStatement();
-			String query = "DELETE FROM tableAccount WHERE email='" + email + "';";
-            
-			int rowsInserted = stmt.executeUpdate(query);
-			// if successful, 1 row should be inserted
-			if (rowsInserted != 1)
-				return false;
-			
-			return true;
-		}
-		catch (SQLException e) {
-			Utility.logError("SQL exception: " + e.getMessage());
-			return false;	
-		}
-		// free DB objects
-	    finally {
-	        try {
-	            if (rs != null)
-	                rs.close();
-	        }
-	        catch (Exception e){
-	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
-	        }
-	        try{
-	            if (stmt != null)
-	                stmt.close();
 	        }
 	        catch (Exception e) {
 	        	Utility.logError("Cannot close Statement: " + e.getMessage());

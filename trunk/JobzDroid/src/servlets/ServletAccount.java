@@ -226,8 +226,11 @@ public class ServletAccount extends HttpServlet {
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
 					result = true;
 				}
-				else
+				else{
+					// delete the account if there was any error during registration
+					dbManager.deleteAccount(email);
 					message = "Failed to create account. Please try again later.";
+				}
 			}
 			else{
 				message = "This email address has already been used. Please choose another one.";

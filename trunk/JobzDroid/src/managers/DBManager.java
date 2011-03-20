@@ -322,6 +322,50 @@ public class DBManager {
 		return -1;
 	}
 	
+	/***
+	 * Deletes an account with given account name.
+	 * @param email Account name to delete.
+	 * @return boolean indicating whether the deletion was successful.
+	 */
+	public boolean deleteAccount(String email){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			String query = "DELETE FROM tableAccount WHERE email='" + email + "';";
+            
+			int rowsInserted = stmt.executeUpdate(query);
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+			return false;	
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+	}
+	
 	/****************************************************************************************************/
 	
 	/**********************************************************************************************************************
