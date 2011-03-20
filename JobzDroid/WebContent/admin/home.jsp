@@ -42,7 +42,7 @@
 		  </div>
 		  
 		  <br/>	
-		  <h1><b><font size='4'>Admin Home</font></b></h1>
+		  <h2 class="welcome"><b><font size='4'>Administrator Home</font></b></h2>
 		  <a href="#" onclick="loadPageWithSession('manageJobAd.jsp')">Manage Jobs Advertisements</a><br/>
 		  <a href="#" onclick="loadPageWithSession('manageUser.jsp')">Manage Users</a><br/>
 		  <a href="#" onclick="loadPageWithSession('manageNews.jsp')">Manage Site News</a><br/>

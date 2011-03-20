@@ -99,60 +99,52 @@
 	<div id="tabs" class="tabPane">
   	  <div id="navBar" class="navBar">
 		<ul>
-			<li id="manageNewsTab">
-  				<a href="#manageNewsFrame"><h2>Manage News</h2></a>
+			<li id="newsRSSTab">
+  				<a href="#newsRSSFrame"><h2>News RSS</h2></a>
 			</li>
-			<li id="postNewsTab">
-  				<a href="#postNewsFrame"><h2>Post News</h2></a>
+			<li id="jobAdRSSTab">
+  				<a href="#jobAdRSSFrame"><h2>Job Ad RSS</h2></a>
 			</li>
 		</ul>
 	  </div><!--ENDOF NAVBAR-->
 	  
 	  <div id="tabFrame">
-		  <div id="manageNewsFrame" class="subFrame unremovable">
+		  <div id="newsRSSFrame" class="subFrame unremovable">
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
+		  	<p>some stuff</p>
 		  	  <table>
-			  <%
-			  // read news entries
-			  	NewsManager newsManager = NewsManager.getInstance();
-				ArrayList<NewsEntry> entries = newsManager.loadNewsEntries();
-			  	for(int i = 0; i < entries.size(); i++){
-			  		NewsEntry entry = entries.get(i);
-			  		int idNews = entry.getIdNews();
-			  		String title = entry.getTitle();
-			  		String content = entry.getContent();
-			  		long dateTimePublished = entry.getDateTimePublished();
-			  		// display publish date in PST
-			  		String formattedDate = Utility.longToDateString(dateTimePublished, "PST");
-			  %>
-			  		<tr style="font-weight:bold">
-			  			<td >
-			  				News ID: <%= idNews %>	  			
-		  					<a title="Delete" onclick="sendDeleteNewsRequest('<%= idNews %>')" class="linkImg" style="float:right">
-	       						 		<img src="../images/icon/delete_icon.png"/>
-							</a>
-			  			</td>
-			  		</tr>
-		  			<tr style="font-weight:bold">
-		  				<td>Title: <%= title %> 
-		  				</td>
-		  			</tr>
-		  			<tr>
-		  				<td><%= formattedDate %></td>
-		  			</tr>
-		  			<tr>
-		  				<td><%= content %></td>
-		  			</tr>	  			
-				  	<tr>
-				  	  <td class="clean"></td>
-				 	</tr>
-			  <%		
-			  	}
-			  %>
 			  </table>
-		  </div><!--end of VIEWNEWSFRAME-->
 		  
-		  <div id="postNewsFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>Post Site News</font></b></h1>
+		    <div id="addNewsRSSDiv" class="fixedBottomFrame">
+			<h2 class="welcome"><b><font size='4'> Add New RSS Entry</font></b></h2>
 				<table>
 					<tbody>
 					  <tr>
@@ -164,7 +156,7 @@
 		    			</td>
 					    <td style="width: 272px">
 					        <div>
-					            <input type="text" class="textinput" id="newsTitle" size="134" maxlength="100" tabindex="11"/>
+					            <input type="text" class="textinput" id="newsTitle" size="125" maxlength="100" tabindex="11"/>
 					      		<span id="titleError" class="errorTag"></span>
 					        </div>
 					    </td>
@@ -177,7 +169,8 @@
 					        Content:			        
 					    </td> 
 					    <td>
-					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
+					        <textarea id="newsContent" class="textinput" rows="9" cols="126" tabindex="14"></textarea>
+					        <br/>
 					        <span>Note: You can add HTML tags for styling.</span><br/>
 					        <span id="contentInfo"></span>
 					    </td>
@@ -189,16 +182,17 @@
 			<!--TODO STYLE THE BUTTON-->
 			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>	
-		  </div> <!--end of TABPOSTNEWSFRAME-->		  
+		   </div> <!--end of addNewsRSSDiv-->	
+		  </div> <!--end of NEWSRSSFRAME-->		
+		  
+		  <div id="jobAdRSSFrame" class="subFrame unremovable">
+		  	  <table>
+			  </table>
+		  </div><!--end of JOB_AD_RSS_FRAME-->
+		    
 		</div> <!--ENDOF TABFRAME-->
 	   </div> <!--end of tabs DIV-->	
 	  </div><!-- ENDOF MAIN -->
-	  
-	<ul class="footer_wrapper2">
-		<li>
-			©2011 JobzDroid
-		</li>
-	</ul>	
 	<%
 	}
 	%>	

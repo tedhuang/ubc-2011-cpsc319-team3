@@ -110,6 +110,7 @@
 	  
 	  <div id="tabFrame">
 		  <div id="manageNewsFrame" class="subFrame unremovable">
+		  <h2 class="welcome"><b><font size='4'>News List</font></b></h2>
 		  	  <table>
 			  <%
 			  // read news entries
@@ -155,7 +156,7 @@
 		  </div><!--end of VIEWNEWSFRAME-->
 		  
 		  <div id="postNewsFrame" class="subFrame unremovable">
-			<h1><b><font size='4'>Post Site News</font></b></h1>
+			<h2 class="welcome"><b><font size='4'>Post Site News</font></b></h2>
 				<table>
 					<tbody>
 					  <tr>
