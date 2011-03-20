@@ -31,10 +31,11 @@ public class SystemManager {
 	//TODO add maximum expiry time for each value
 	
 	// default string patterns
-	public static String emailPattern 	= "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
-	public static String pwPattern 		= "^[_A-Za-z0-9-\\.]{5,15}$";
-	public static String namePattern 	= "^[_A-Za-z0-9-\\.]+$";
-	public static String phonePattern 	= "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$";
+	public static String emailPattern 		= "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
+	public static String pwPattern 			= "^[_A-Za-z0-9-\\.]{5,15}$";
+	public static String namePattern 		= "^[_A-Za-z0-9-\\.]+$";
+	public static String phonePattern 		= "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$";
+	public static String fileNamePattern 	= "^[_A-Za-z0-9-\\.]+\\.+[A-Za-z0-9]+$";
 	
 	// DB connection variables
 	public static String dbDriver 	= "com.mysql.jdbc.Driver";

@@ -439,6 +439,8 @@ public class ServletAdmin extends HttpServlet {
 		
 		if(allGood){
 			if(dbManager.deleteAccount(accountName)){
+				//TODO delete user's document on file system as well
+				
 				result = true;
 				message = "Account " + accountName + " has been successfully deleted.";
 				// inform the user
