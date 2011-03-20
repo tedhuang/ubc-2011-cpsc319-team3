@@ -79,4 +79,8 @@ public class Session {
 		
 		return false;
 	}
+	
+	public void updateExpiryTime(long newExpiryTime ) {
+		expiryTime = newExpiryTime;
+	}
 }

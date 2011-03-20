@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	<script type="text/javascript" src="../scripts/manageNews.js"></script>
-	<title>Post News</title>
+	<title>Manage News</title>
 </head>
 <body>
 	<%	// check session key
@@ -136,13 +136,16 @@
 		  				<td>Title: <%= title %> 
 		  				</td>
 		  			</tr>
-		  			<tr>
+		  			<tr style="font-style: italic">
 		  				<td><%= formattedDate %></td>
 		  			</tr>
 		  			<tr>
 		  				<td><%= content %></td>
 		  			</tr>	  			
 				  	<tr>
+				  	  <td class="clean"></td>
+				 	</tr>
+				 	<tr>
 				  	  <td class="clean"></td>
 				 	</tr>
 			  <%		
