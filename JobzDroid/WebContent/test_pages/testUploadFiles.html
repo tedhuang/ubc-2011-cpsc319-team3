@@ -7,26 +7,63 @@
     function uploadFile() {
     	
     	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
-    	document.fileUploadForm.action = "../ServletDocument"
-    	document.fileUploadForm.submit();
+    	document.fileUploadForm.action = "../ServletDocument";
+
+    	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        	xmlhttp=new XMLHttpRequest();
+        }
+   		else {// code for IE6, IE5
+   	   		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+   	   	}
+
+    	xmlhttp.onreadystatechange = fileUploadProgress;
+    	
+        document.fileUploadForm.submit();
     }
+
+	function uploadFileAjax() {
+
+		document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
+    	var url = "../ServletDocument";
+		
+    	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        	xmlhttp=new XMLHttpRequest();
+        }
+   		else {// code for IE6, IE5
+   	   		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+   	   	}
+   	   	
+    	//send the parameters to the servlet with POST
+   		xmlhttp.open("POST", url ,true);
+
+   		xmlhttp.onreadystatechange = fileUploadProgress;
+   		xmlhttp.send();
+   		
+	}
+
+	function fileUploadProgress() {
+
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			document.getElementById("uploadResult").innerHTML = xmlhttp.responseXML;
+	    }
+	}
     
     </script>
     
   </HEAD>
   <BODY>Upload Files
-    <FORM name="fileUploadForm" action="javascript:uploadFile();"
+    <FORM name="fileUploadForm" onsubmit="uploadFile()"
     method="post" enctype="multipart/form-data">
         <input type="hidden" name="sessionKey"/>
-        File: <input type="text" name="fileName"/><input type="file" name="file"/><br/>
-        <input type="submit" value="upload"/>
+        File: <input type="file" name="file"/><br/>
+        <input type="submit" value="Upload"/>
     </FORM>
     
     
-    	<form name="sid" method="get" action="">
+    	<form name="sid" method="get">
 		<input id="sessionKey" name="sessionKey"/>
 		</form>
 		
-		
+	<DIV id="uploadResult">before upload</DIV>
   </BODY>
 </HTML>

@@ -23,6 +23,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileUtils;
 
 import classes.Session;
+import classes.Utility;
 
 /**
  * Servlet implementation class ServletDocument
@@ -40,6 +41,10 @@ public class ServletDocument extends HttpServlet {
         dbManager = DBManager.getInstance();
     }
 
+	private enum EnumAction	{
+		deleteDocument
+	}
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -52,11 +57,43 @@ public class ServletDocument extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("Entered doPost on ServletDocument");
+		processRequest(request, response);
 		
-		String message	= "ServletDocument: Upload Failed";
+	}
+	
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		
+		if ( isMultipart ) {
+			uploadFile(request, response);
+		}
+		else {
+			String action = request.getParameter("action");
+			// throw error if action is invalid
+			try{
+				EnumAction.valueOf(action);
+			}
+			catch(Exception e){
+				throw new ServletException("Invalid account servlet action.");
+			}
+			
+			switch( EnumAction.valueOf(action) ){
+				// account registration
+				case deleteDocument:
+					deleteDocument(request, response);
+					break;
+			}
+		}
+
+	}
+	
+	private void uploadFile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+
 		String action	= "";
 		//TODO add action and redirection
+		
+		String message	= "ServletDocument: Upload Failed";
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		
@@ -83,7 +120,7 @@ public class ServletDocument extends HttpServlet {
 		
 		// Process the uploaded items
 		Iterator iter = items.iterator();
-		String nextFileName = "";
+//		String nextFileName = "";
 		String sessionKey = "";
 		
 		earlyExit: {
@@ -96,10 +133,10 @@ public class ServletDocument extends HttpServlet {
 			    name = item.getFieldName();
 			    value = item.getString();
 			    
-			    if(name.equals("fileName")) {
-			    	nextFileName = value;
-			    }
-			    // is this where field is?
+//			    if(name.equals("fileName")) {
+//			    	nextFileName = value;
+//			    }
+			    // fetch the hidden sessionkey
 			    if(name.equals("sessionKey")) {
 			    	sessionKey = value;
 			    }
@@ -132,6 +169,14 @@ public class ServletDocument extends HttpServlet {
 		        	break earlyExit;
 		        }
 		        
+		        // early exit if the filename is valid
+		        // (only alphanumeric or - or _ or ., and at least 1 char).(alphanumeric, at least one character)
+		        // regex pattern = "^[_A-Za-z0-9-\\.]+\\.+[A-Za-z0-9]+$" see SystemManager
+		        if( Utility.validate(fileName, SystemManager.fileNamePattern) == false ) {
+		        	message = "ServletDocument: " + fileName + " is not a valid filename for upload\n" +
+		        				"filename must contain only alphanumeric, \"-\", \"_\", or \".\", and must have valid file extension";
+		        	break earlyExit;
+		        }
 		        
 		        // early exit if file extension is not of the type accepted by the system
 		        if( !checkFileExtension(fileName) ) {
@@ -139,15 +184,14 @@ public class ServletDocument extends HttpServlet {
 		        	break earlyExit;
 		        }
 		        
-		        
-		        //TODO check user directory exists
+		        //check user directory exists
 		        File userDirectory = getUserDirectory( currSession.getIdAccount() );
 		        if ( userDirectory == null ) {
 		        	message = "ServletDocument: System cannot create new user directory";
 		        	break earlyExit;
 		        }
 		        
-		        //TODO check file directory size
+		        //check file directory size
 		        long userDirectorySize = getUserDirectorySize( currSession.getIdAccount() );
 		        
 		        if( userDirectorySize != -1 ) {
@@ -158,11 +202,16 @@ public class ServletDocument extends HttpServlet {
 		        	}
 		        }
 		        
-		        
-		        File uploadedFile = new File( userDirectory , nextFileName );
+		        File uploadedFile = new File( userDirectory , fileName );
 		        
 		        if ( uploadedFile.createNewFile() == false ) {
-		        	message = "ServletDocument: System cannot write to file " + nextFileName;
+		        	if( uploadedFile.exists() ) {
+		        		message = "ServletDocument: " + fileName + " already exists, change the filename or delete the original from JobzDroid";
+		        	}
+		        	else {
+		        		message = "ServletDocument: cannot write to " + fileName;
+		        	}
+		        	
 		        	break earlyExit;
 		        }
 		        
@@ -178,9 +227,72 @@ public class ServletDocument extends HttpServlet {
 		    }
 		    
 		}
-		}
-		
+		}//earlyExit:
 		System.out.println(message);
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("\t<action>" + action + "</action>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+	
+	
+	private void deleteDocument(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String message = "ServletDocument: deleteDocument() did not work as intended";
+		String action = "";
+		
+		String sessionKey = request.getParameter("sessionKey");
+		String fileName = request.getParameter("fileName");
+		
+		Session currSession = dbManager.getSessionByKey(sessionKey);
+		
+		boolean success = false;
+		earlyExit: {
+			
+			if( currSession == null ) {
+				message = "ServletDocument: session invalid or expired";
+				break earlyExit;
+			}
+			
+			File userDirectory = getUserDirectory( currSession.getIdAccount() );
+			File fileToBeDeleted = new File( userDirectory, fileName );
+			
+			if( fileToBeDeleted.exists() ) {
+				success = fileToBeDeleted.delete();
+				
+				if( success ) {
+					
+				}
+				else {
+					message = "ServletDocument: failed to delete " + fileName + " from system";
+				}
+				
+			}
+			else {
+				message = "ServletDocument: " + fileName + " does not exist on system";
+			}
+			
+
+		}//earlyExit:
+		System.out.println(message);
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("\t<action>" + action + "</action>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+
 	}
 	
 	private boolean checkFileExtension( String fileName ) {
@@ -228,4 +340,5 @@ public class ServletDocument extends HttpServlet {
 		
 		return userDirectory;
 	}
+	
 }
