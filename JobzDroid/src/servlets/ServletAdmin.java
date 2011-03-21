@@ -54,7 +54,9 @@ public class ServletAdmin extends HttpServlet {
 		createAdmin,
 		deleteAccount,
 		postNews,
-		deleteNews
+		deleteNews,
+		addRSSEntry,
+		removeRSSEntry
 	}
 
 	/**
@@ -102,6 +104,12 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case deleteNews:
 				deleteNewsHandler(request, response);
+				break;
+			case addRSSEntry:
+				addRSSEntryHandler(request, response);
+				break;
+			case removeRSSEntry:
+				removeRSSEntryHandler(request, response);
 				break;
 		}
 	}
@@ -602,6 +610,146 @@ public class ServletAdmin extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
+	/***
+	 * Handles add RSS entry requests from admins.
+	 */
+	private void addRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionKey");
+		String feedType = request.getParameter("feedType");
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");		
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		title = Utility.checkInputFormat(title);
+		content = Utility.checkInputFormat(content);
+		content = Utility.processLineBreaksWhiteSpaces(content);
+		
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// session check
+		Session session = dbManager.getSessionByKey(sessionKey);
+		if(session == null){
+			allGood = false;
+			message = "Unauthorized post news action.";
+		}
+		else{
+			// check if user is authorized
+			String userType = session.getAccountType();
+			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
+				allGood = false;
+				message = "Unauthorized post news action.";
+			}
+		}
+		
+		if(allGood){
+			// process line breaks and white spaces in content
+			content = Utility.processLineBreaksWhiteSpaces(content);
+			long currentTime = Utility.getCurrentTime();
+			// reduce precision to 1 second to work with ROME library's pubDate 
+			currentTime = currentTime / 1000 * 1000;			
+			
+			if(newsManager.addNewsEntry(title, content, currentTime)){
+				result = true;
+				message = "News entry has been successfully posted.";
+				// add entry to the top of news RSS
+				try {
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(currentTime), content);
+					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
+					String newsPath = getServletContext().getRealPath("/rss/news.xml");
+					RSSManager.writeFeedToFile(newsFeed, newsPath);
+				} 
+				catch (Exception e) {
+					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
+					message = "News entry has been successfully posted, but there was an error updating News RSS.";
+				}				
+			}
+			else
+				message = "An error has occured while performing post news action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	/***
+	 * Handles delete RSS entry requests from admins.
+	 */
+	private void removeRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String sessionKey = request.getParameter("sessionKey");
+		String strIdNews = request.getParameter("idNews");
+		int idNews = -1;
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		boolean allGood = true;
+		boolean result = false;
+		String message = "";
+
+		// session check
+		Session session = dbManager.getSessionByKey(sessionKey);
+		if(session == null){
+			allGood = false;
+			message = "Unauthorized delete news action.";
+		}
+		else{
+			// check if user is authorized
+			String userType = session.getAccountType();
+			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
+				allGood = false;
+				message = "Unauthorized delete news action.";
+			}
+			else{
+				try{
+					idNews = Integer.parseInt(strIdNews);
+				}
+				catch(NumberFormatException ex){
+					allGood = false;
+					message = "Invalid News ID.";
+				}
+			}
+		}
+		
+		if(allGood){
+			// load news before we delete 
+			NewsEntry newsEntry = newsManager.getNewsEntryById(idNews);
+			
+			if(newsManager.deleteNewsEntry(idNews)){
+				result = true;
+				message = "News entry has been successfully deleted.";
+				// find and remove the first matching news entry in the RSS
+				try {
+					String newsPath = getServletContext().getRealPath("/rss/news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
+					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
+					RSSManager.writeFeedToFile(newsFeed, newsPath);
+				} 
+				catch (Exception e) {
+					Utility.logError("Failed to remove news (Title: " + newsEntry.getTitle() + ") from RSS: " + e.getMessage());
+					message = "News entry has been successfully deleted, but there was an error updating News RSS: " + e.getMessage();
+				}				
+			}
+			else
+				message = "An error has occured while performing delete news action. Please try again later.";
+		}
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
 	/**************************************HELPER FUNCTIONS*******************************************************/
 	
 	/***

@@ -25,6 +25,7 @@ public class SystemManager {
 	public static long 		expiryTimePendingAccount 				= 60 * 60 * 1000;  				// default 60 minutes
 	public static long 		timeBeforeRemovingExpiredInactiveJobAds = 7 * 24 * 60 * 60 * 1000;		// default 7 days
 	public static boolean 	autoRemoveExpiredInactiveJobAds 		= true;							// default auto remove expired inactive job ads
+	public static boolean   enableJobAdApproval						= true;							// default enable admin job ad approval
 	public static long 		timeIntervalAutomatedTasks 				= 10 * 60 * 1000;				// default 10 minutes
 	public static long		timeIntervalAutomatedDBWorldTasks		= 1* 60 * 60 * 1000;			// default 1 hour
 	public static long      expiryTimeJobAdDefault					= 30 * 24 * 60 * 60 * 1000;		// default 1 month
@@ -86,7 +87,7 @@ public class SystemManager {
 	        } 
 		catch (Exception ex) {
 			// log error
-			Utility.logError("Error loading configuration file: " + ex.getMessage());
+			Utility.logError("Error loading configuration file: " + ex.getMessage() + ". Using default values instead.");
 			return;
 	    }
 		// update system variables
@@ -118,13 +119,18 @@ public class SystemManager {
 			if (Integer.parseInt(config.getProperty("autoRemoveExpiredInactiveJobAds").trim()) == 0)								// 0 = false, true otherwise
 				autoRemoveExpiredInactiveJobAds = false;
 			else
-				autoRemoveExpiredInactiveJobAds = true;			
-
+				autoRemoveExpiredInactiveJobAds = true;		
+			
+			if (Integer.parseInt(config.getProperty("enableJobAdApproval").trim()) == 0)											// 0 = false, true otherwise
+				enableJobAdApproval = false;
+			else
+				enableJobAdApproval = true;	
+			
 			maxDBConnectionPoolSize = Integer.parseInt(config.getProperty("maxDBConnectionPoolSize").trim());
 		}
 		catch(NumberFormatException e){
 			// log error
-			Utility.logError("Error parsing configuration file due to number format exception: " + e.getMessage());
+			Utility.logError("Error parsing configuration file due to number format exception: " + e.getMessage() + ". Some settings will be using the default values.");
 		}
 	}
 	
