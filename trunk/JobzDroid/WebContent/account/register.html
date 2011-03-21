@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Register on JobzDroid!</title>	
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>	
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/UserRegistration.js'></script>
@@ -120,17 +121,28 @@
 			            Address:
 			    </td> 
 			    <td>
-			        <input id='loc-filed' />
-					<button type='button' id='addressButton' onclick='calculateLocation()'>Find Address</button>
+			        <input id='loc-filed' size="38"/>
 			    </td>
 			</tr>
 			<tr>
 				<td></td>
-				<td>
-					<span id='locFeedback'></span>
-					<span id='resultTableTitle'></span> 
-					<table id='lookUpTable'></table>
+				<td><button type='button' id='addressButton' onclick='calculateLocation()'>Find Address</button></td>
+			</tr>
+			<tr>
+				<td class="label">Location saved:</td>
+				<td>									
+					<span id='locFeedback'>None</span><br/>
 				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>			
+					<span id='resultTableTitle'></span>
+					<table id='lookUpTable'></table>
+				</td>	
+			</tr>
+			<tr>
+				<td></td>
 			</tr>
 			<tr class="accountTypeSpecific">
 			    <td class="label">
@@ -172,8 +184,10 @@
 		<!--TODO STYLE THE BUTTON-->
 		<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
         <br/>	
+        
 	</div>	
   </div> 
 </div> <!-- ENDOF MAIN-->
+<div id="mapCanvas"></div>
 </body>
 </html>
