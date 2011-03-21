@@ -272,7 +272,7 @@ public class ServletAccount extends HttpServlet {
 			stmt = conn.createStatement();
 			
 			String query = 
-				"INSERT INTO tableLocationProfile(idAccount, address, latitude, longitude) " + 
+				"INSERT INTO tableLocationProfile(idAccount, location, latitude, longitude) " + 
 				"VALUES ('"
 					+ idAccount + "','"
 					+ address + "','"
@@ -286,11 +286,7 @@ public class ServletAccount extends HttpServlet {
 			
 			if (rowsInserted == 1){
 				System.out.println("Insert Profile address success");
-				isSuccessful = true;
-				
-			}
-			else{
-				stmt.close();
+				isSuccessful = true;				
 			}
 
 		}
@@ -578,6 +574,7 @@ public class ServletAccount extends HttpServlet {
 		password = Utility.checkInputFormat(password);
 		accountType = Utility.checkInputFormat(accountType);
 		name = Utility.checkInputFormat(name);
+		address = Utility.checkInputFormat(address);
 		
 		if(secondaryEmail != null)
 			secondaryEmail = Utility.checkInputFormat(secondaryEmail);
@@ -588,6 +585,8 @@ public class ServletAccount extends HttpServlet {
 		}
 		if(phone != null)
 			phone = Utility.checkInputFormat(phone);
+		if(address != null)
+			address = Utility.checkInputFormat(address);
 		
 		try {
 			long currentTime = Utility.getCurrentTime();
@@ -692,10 +691,10 @@ public class ServletAccount extends HttpServlet {
 						+ empPrefIn + 
 					"');";
 	            System.out.println(query);
-	            pst.executeUpdate();
 	            
 				if( pst.executeUpdate(query) != 1 ){ //Error Check
 					System.out.println("Error: Update Query Failed");
+					return false;
 				}
 
 			}
@@ -724,11 +723,11 @@ public class ServletAccount extends HttpServlet {
 			
 			//add entry to location table
 			if( address != null){
-				//returns true if successful
-				return insertAddress(idAccount, address, longitude, latitude);
+				if( !insertAddress(idAccount, address, longitude, latitude) )
+					return false;
 			}
 			
-			//return true;
+			return true;
 		}
 		catch (SQLException e) {
 			Utility.logError("SQL exception: " + e.getMessage());

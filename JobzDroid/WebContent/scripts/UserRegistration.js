@@ -138,11 +138,8 @@ function validateForm(evt){
 }
 
 // sends account reg request to the account servlet
-function sendRegRequest(evt){
-	
+function sendRegRequest(evt){	
 	$("#submitButton").attr("disabled", true);
-	$("#statusText").removeClass("errorTag");	
-	$("#statusText").removeClass("successTag");
 	
 	var strEmail 			= $("#emailAddress").val();
 	var strSecondaryEmail 	= $("#secondaryEmailAddress").val();
@@ -152,10 +149,11 @@ function sendRegRequest(evt){
 	var strName 			= $("#name").val();
 	var strPhone 			= $("#phone").val();
 	var strDescription 		= $("#description").val();
+	var strUserAddressInput = $("#loc-filed").val();
+	// get address info from google maps JS
 	var strAddress 			= getAddress();
 	var strLong				= getLongitude();
 	var strLat 				= getLatitude();
-	
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -188,7 +186,12 @@ function sendRegRequest(evt){
 	request.addParam("passwordRepeat", strPasswordRepeat);
 	request.addParam("accountType", strAccountType);
 	request.addParam("name", strName);
-	if( strAddress && strAddress != "" ){
+	if( strUserAddressInput && strUserAddressInput != ""){
+		if( !strAddress || strAddress == "" || !strLat || strLat == "" || !strLong || strLong == ""){
+			alert("Please choose a location to link with your address.");
+			$("#submitButton").removeAttr("disabled");
+			return false;
+		}		
 		request.addParam("address", strAddress);
 		request.addParam("latitude", strLat);
 		request.addParam("longitude", strLong);
@@ -227,6 +230,8 @@ function sendRegRequest(evt){
 	xmlHttpReq.send(request.toString());
 	
 	//update status text
+	$("#statusText").removeClass("errorTag");	
+	$("#statusText").removeClass("successTag");
 	$("#statusText").text("Processing...This may take a moment.");
 }
 
@@ -239,6 +244,7 @@ function parseRegResponse(responseXML){
 		 $("input").attr("disabled", true);
 		 $("select").attr("disabled", true);
 		 $("textarea").attr("disabled", true);
+		 $("button").attr("disabled", true);
 		 $("#statusText").addClass("successTag");
 		 $("#submitButton").text("Return to Home Page");
 		 $("#submitButton").unbind("click", sendRegRequest);

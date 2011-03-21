@@ -30,7 +30,7 @@ function showMap(LatLng, formatted_address) {
 		title: formatted_address
 	});
 	google.maps.event.addListener(marker, 'click', function() {
-		var contentString = "<div><a href='http://www.google.com' target='_blank'>test URL</a></div>";
+		var contentString = "<div><b>Your Location: </b><br/><i>" + formatted_address + "</i></div>";
 		var infowindow = new google.maps.InfoWindow({     
 			content: contentString
 		}); 
@@ -49,8 +49,9 @@ function calculateLocation() {
 	address = $("#loc-filed").val(); //$("#address"+rowNumber).text();
 	//var address = $("#address"+rowNumber).text();
 	
-	if(address == ""){
-		alert("Please input an address");
+	if(!address || address == ""){
+		alert("Please input an address.");
+		return false;
 	}
 	
 	geocoder.geocode( {'address': address}, function(results, status) {
@@ -87,12 +88,12 @@ function listLocationChoices(googleMapsResults){
 		var rowNumber = $(this).parent().parent().index();
 		latitude = googleMapsResults[rowNumber].geometry.location.lat();
 		longitude = googleMapsResults[rowNumber].geometry.location.lng();
-		address = currentResult.formatted_address; 
+		address = googleMapsResults[rowNumber].formatted_address; 
 		
 		//$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
 		$("#longitude").text("Longitude: " + longitude);
 		$("#latitude").text("Latitude: " + latitude);
-		$("#locFeedback").text("Location saved: " + address);
+		$("#locFeedback").text(address);
 		
 	});
 }
