@@ -181,7 +181,8 @@
 					        Content:			        
 					    </td> 
 					    <td>
-					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
+					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea><br/>
+					        <span>Note: News RSS will be updated automatically when news entries are posted here.</span><br/>
 					        <span>Note: You can add HTML tags for styling.</span><br/>
 					        <span id="contentInfo"></span>
 					    </td>

@@ -58,8 +58,7 @@ public class ServletInitializer extends HttpServlet {
 	    	}
 	    }
 	    
-		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);
-		
+		timer.schedule(new AutomatedTasks(), 0, SystemManager.timeIntervalAutomatedTasks);		
 		dbWorldTimer.schedule(new AutomatedTasksDBWorld(), 0, SystemManager.timeIntervalAutomatedDBWorldTasks);
 	}
 	
