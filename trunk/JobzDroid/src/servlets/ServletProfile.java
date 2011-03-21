@@ -462,8 +462,6 @@ public class ServletProfile extends HttpServlet{
 		String latitude			= request.getParameter("latitude");
 		String longitude		= request.getParameter("longitude");
 		
-
-		//TODO: add employment preference handling
 		
 		//Check new inputs
 		name = Utility.checkInputFormat( name );
@@ -590,7 +588,7 @@ public class ServletProfile extends HttpServlet{
 			}
 			else{
 				isSuccessful = true;
-				message = "Edit Profile Location success!";
+				message = "Edit All Profile Fields success!";
 				System.out.println("Edit Profile Location success!");
 			}
 			

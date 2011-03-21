@@ -78,7 +78,6 @@ function submitChangeProfile(accountType){
 	
 	if (accountType == "searcher"){
 		var boolEmpPrefPT			= document.getElementById("partTimeCheck").checked;
-		//alert(boolEmpPrefPT);
 		var boolEmpPrefFT			= document.getElementById("fullTimeCheck").checked;
 		var boolEmpPrefIn			= document.getElementById("internCheck").checked;
 		
@@ -132,7 +131,7 @@ function submitChangeProfile(accountType){
 	    {
 		    //parse XML response from server
 		  	//TODO: implement response
-		  alert(xmlhttp.responseXML.getElementById("message"));
+		  alert((responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
 		  
 	    }
 	  };	
