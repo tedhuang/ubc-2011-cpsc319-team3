@@ -12,6 +12,7 @@
         	
         		lightBox = $(this);
         		
+//        		fullLightBox(buildInfoBox("test","alert"),true);
 //        		divLightBox('loginbox','load','loading...');
    /************************STARTOF FUNCTION GROUP******************************************************************************/
         		function buildInfoBox(text, imgClass){
@@ -19,17 +20,35 @@
              		$('<img>').attr('id','lbImg').addClass(imgClass).appendTo(infoBox);
              		$('<h2></h2>').attr('id','lbMsg').text(text).appendTo(infoBox);
              		 return infoBox;
-             		 
              	}
         		
-        		function fullLightBox(lb_class, infoBox){
+        		function buildBtnBox(){
+             		var btnBox= $('<div></div>').attr('id', 'btnBox');
+             		$('<a></a>')
+             		.addClass("yes jsBtn")
+             		.html("OK")
+             		.appendTo(btnBox);
+             		$('<a></a>')
+             		.addClass("no jsBtn")
+             		.html("Cancel")
+             		.appendTo(btnBox);
+             		
+             		btnBox.delegate('a.no', "click", function(){
+             			rmLightbox(0);
+             		});
+             		
+//             		$('a.yes', btnBox).click( function(){
+//             			$('a.del', "#ownerAdTable").trigger("comfirmDel",[true]);
+//             		});
+             		 return btnBox;
+             	}
+        		function fullLightBox(infoBox){
      		    
      			// hide scrollbars!
      			$('body').css('overflow-y', 'hidden');
      			
      			$('<div id="overlay"></div>').addClass('lb_black')
      			.css('opacity', '0').animate({'opacity': '0.5'}, 1000)
-//     			.hide()
      			.appendTo(lightBox);
      			
      			$('<div></div>').attr('id','midBox')
@@ -85,7 +104,7 @@
  			.fadeOut('fast', function() {
  			$(this).remove();
  			$('body').css('overflow-y', 'auto'); // show scrollbars!
- 			lightBox.removeClass('on');
+ 			lightBox.removeClass();
  			});
  	};
  	
@@ -109,12 +128,13 @@
      			case "small":
      				smallLightBox(buildInfoBox(text,imgClass));
      				break;
-//     			case "div":
-//     				divLightBox($(this),imgClass,text);
-//     				break;
      			case "info":
      				smallLightBox(buildInfoBox(text,imgClass));
      	     		rmLightbox(2500);
+     	     		break;
+//     			case "diaBox":
+//     				fullLightBox(buildInfoBox(text,imgClass),true);
+//     				break;
      			default:
      				fullLightBox(buildInfoBox(text,imgClass));
  					break;
@@ -129,6 +149,28 @@
      	
      	$.fn.smartLightBox.openDivlb=function(div, imgClass, msg){
      		divLightBox(div, imgClass, msg);
+     	};
+     	
+     	$.fn.smartLightBox.diaBox=function(msg,imgClass ){
+     		
+     		$('body').css('overflow-y', 'hidden');
+ 			
+ 			$('<div id="overlay"></div>').addClass('lb_black')
+ 			.css('opacity', '0').animate({'opacity': '0.5'}, 1000)
+ 			.appendTo(lightBox);
+ 			
+ 			$('<div></div>').attr('id','midBox')
+ 							.css('opacity', '0').animate({'opacity': '1'}, 1000)
+ 							.appendTo(lightBox);
+ 			var infoBox = buildInfoBox(msg, imgClass);
+ 			infoBox.appendTo('#midBox');
+ 			buildBtnBox().appendTo('#midBox');
+ 			
+ 			lightBox
+ 			.addClass('dialog')
+ 			.css('top', $(document).scrollTop())
+ 			.appendTo('body');
+				
      	};
      	
      	

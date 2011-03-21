@@ -6,59 +6,54 @@ $("document").ready(function(){
 /*****************************************************************************************************
  * 					LOG IN FUNCTION
  ****************************************************************************************************/
-function userLoginRequest()//TODO Recover lightbox element
-{
-//	$("#loginBox").hide();
-//	openbox("sign-inLoading",'',1);
-	$("#submitButton").attr("disabled", true);
-	$("#submitButton").text("Processing...");
-	$("#loginError").text("");
-	var email = document.getElementById("email").value;
-	var password = document.getElementById("password").value;
+function userLoginRequest(){
 	
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	xmlhttp.onreadystatechange=function(){
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //Gets sessionKey and prints it to div
-			var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
-			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
-			
-		    if( sessionKey != "null" ) 
-			    { 	
-					var action = (xmlhttp.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
-		    		document.sid.action = action;
-					document.getElementById("sessionKey").value = sessionKey;
-					document.sid.submit();
-		    	}
-		    else
-		    	{
-			    	//TODO: implement error handling
-		    		$("#submitButton").removeAttr("disabled");
-		    		$("#submitButton").text("Log in");
-					$("#loginError").text("Incorrect usersname(your Email address) and password combination.");
-//		    		closePopup("sign-inLoading");
-//			    	$("#loginBox").show();
-		    	}
-	    }
+//	$("#submitButton").attr("disabled", true);
+//	$("#submitButton").text("Processing...");
+//	$("#loginError").text("");
+	//TODO ADD LOGIN FORM
+	var email = $("#email").val();
+	var password = $("#password").val();
+	if(email.length||password.length){
+		$.fn.smartLightBox.openlb('small','signing in...','load');
+		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		  }
+		else{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
+		//send the parameters to the servlet with POST
+		xmlhttp.open("POST","./ServletAccount" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(Params);  
+		
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    {
+			    //Gets sessionKey and prints it to div
+				var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+				//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
+				
+			    if( sessionKey != "null" ){ 	
+						var action = (xmlhttp.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
+			    		document.sid.action = action;
+						document.getElementById("sessionKey").value = sessionKey;
+						document.sid.submit();
+//						$.fn.smartLightBox.closeLightBox();
+			    	}
+			    else{
+						$("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+						$("#lbMsg","#lightBox").html("Invalid email or password, please try again");
+						$.fn.smartLightBox.closeLightBox(2000);
+			    	}
+		    }
 	  };
-	  
-	var Params = "action=requestForLogin" + "&email=" + email + "&password=" + password;
-
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","./ServletAccount" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(Params);
+	}
+	else{
+		//TODO ERROR
+	}
 }
-
 /*****************************************************************************************************
  * 					ADMIN LOG IN FUNCTION
  ****************************************************************************************************/

@@ -27,9 +27,16 @@
                 
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
+     		    initHome();
      		   
    /************************STARTOF FUNCTION GROUP******************************************************************************/
-     		   function refreshTabs(){
+     		   function initHome(){
+//     			  $.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+     			  getJobAdByOwner("ownerAdTable");
+//     			 $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+     			  
+     		   }
+     		    function refreshTabs(){
      			   //update to the latest tab info, any change involving position-changing, visual-changing need to call it at the end  
 	     			  tabs 		= updateTabSet(); // Get all anchors in this array
 	                  tabFrames = updateTabFrameSet(); // All Tab Frames
@@ -70,8 +77,35 @@
      		   
      		   function bindCloseClick(){
      		   	$(closeBtn).bind("click", function(){
-     			  	var tabToRm = $($(this).parent().find("a"),obj);
-     			  	if(tabToRm.length>0){
+     		   	 tabToRm = $($(this).parent().find("a"),obj);
+     		   	if(tabToRm.length){
+ 			  		$.each(tabToRm, function(){
+ 			  			
+ 			  			if($($(this).parent(), obj).hasClass("hideOnly")){
+ 			  				$($(this).parent(), obj).hide();
+ 			  			}
+ 			  			else{
+ 			  				$($(this).parent(), obj).remove();
+ 			  			}
+ 			  			
+ 			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
+ 			  				$($(this).attr("href"), obj).empty().hide();
+ 			  			}
+ 			  			else{
+ 			  					$($(this).attr("href"), obj).remove();
+ 			  			}
+ 			  		});
+     		   	 }
+	 			    refreshTabs();
+	 			  	tabNum--;
+	         	    curTabIdx=0;
+	         	    showTab();
+     		   	});
+     		   }
+     		   function autoCloseTab(){
+     			  
+     				tabToRm = tabs.eq(curTabIdx); 
+     			  	if(tabToRm.length){
      			  		$.each(tabToRm, function(){
      			  			
      			  			if($($(this).parent(), obj).hasClass("hideOnly")){
@@ -88,14 +122,13 @@
      			  					$($(this).attr("href"), obj).remove();
      			  			}
      			  		});
-     			  	
-     			   refreshTabs();
+     			  	}
+     			    refreshTabs();
      			  	tabNum--;
              	    curTabIdx=0;
              	    showTab();
-     			  	}
-             	  });
-     		   }
+     			  	
+             	  }
      		   
                 function bindOnClick()
                 {
@@ -245,27 +278,35 @@
          			$('<a></a>').addClass('jsBtn').addClass('edit').text('edit | ').appendTo(tool);
          			$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
          			tRow.hover(function() {
-         		        tool.animate({opacity: "show", left: "-90"}, "slow");
+         		        tool.animate({opacity: "show", left: "0"}, 0);
          		    }, function() {
-         		        tool.animate({opacity: "hide", left: "-100"}, "fast");
+         		        tool.animate({opacity: "hide", left: "0"}, 0);
          		    });
          			tool.appendTo(tRow);
          			
-         			tRow.find('a.edit').click(function(){
-                			  openTab('edAdTab'); 
-                			  open_edAd_form();
-                			  getJobAdById("edit",adId, "edAdForm");
-            		});
-         			tRow.find('a.view').click(function(){
-          			  openTab('adDetailTab'); 
-          			  open_adDetail();
-          			  getJobAdById("detail",adId, "adDetailTable");
-         			});
-         			tRow.find('a.del').click(function(){
-         				delJobAd(tRow, adId);
+//         			tRow.find('a.edit').click(function(){ loadEdit(adId);});
+         			tRow.delegate("a.edit", "click", function(){
+         				openTab('edAdTab');
+                 		open_edAd_form();
+         				getJobAdById("edit",adId, "edAdForm");
          				
          			});
-         	};
+         			tRow.delegate('a.view', "click", function(){
+         				openTab('adDetailTab'); 
+            			open_adDetail();
+            			getJobAdById("detail",adId, "adDetailTable");
+         				
+         			});
+         			tRow.delegate('a.del', "click", function(){
+         				$.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
+     					$('a.yes', "#btnBox").click(function(){
+     						$("#btnBox", "#lightBox").hide();
+     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+     						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
+     						delJobAd(tRow, adId);
+     					});
+         			});
+         };
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
@@ -278,15 +319,19 @@
         
         function open_edAd_form(){
         	$("#edAdFrame").load("DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
+        		$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
         		$( "#startTime-field","#edAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
         	});
         }
         function open_adDetail(){
        	 $("#adDetailFrame").load("DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
-        		
+       		$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
         	});
        }
+        $.fn.DynaSmartTab.close=function(){
+        	autoCloseTab();
+        };
 //     function loadEdData(targetXMLTag, edFormContainer, mode){
         $.fn.DynaSmartTab.loadEdData=function(targetXMLTag, edFormContainer, mode){
     	 var xmlData= $(targetXMLTag,xmlhttp.responseXML);
@@ -317,6 +362,7 @@
 						return false;
 					}
 				});
+				$.fn.smartLightBox.closeLightBox(0, $("#"+edFormContainer).parent(".subFrame").attr('id'));
 				break;
           }//ENDOF SWITCH
       };

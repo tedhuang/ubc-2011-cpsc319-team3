@@ -31,6 +31,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 			    $(tbody).append(rowText);
 			 	$(tbody).find('tr').find('td:first').addClass("nameCol");
 			 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+			 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 			 	fb.hide();
 	}
 }
@@ -42,10 +43,11 @@ function buildDetailTable(targetXMLTag, outputDiv){
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
 function buildOwnerAdTb(targetXMLTag, outputDiv){
-	var tbody  = $("tbody", outputDiv).html("");
+	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
-		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+		$("#"+outputDiv).html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
@@ -196,7 +198,6 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 }
 
 
-
 /********************************************************************************************************************
  * 						Build a table for profile editing
  * @param targetXMLTag
@@ -206,7 +207,6 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	var tbody  = $( "tbody", outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
-	
 	
 	if(profile.length==0){//if no results
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
