@@ -154,7 +154,7 @@ public class Utility {
 	}
 	
 	/***
-	 * Corrects user SQL input to acceptable format, preventing injection attacks.
+	 * Corrects user SQL input element to an acceptable format, preventing injection attacks.
 	 * @param toBeChecked String to be checked.
 	 * @return The corrected string.
 	 */
@@ -172,8 +172,8 @@ public class Utility {
 			corrected = toBeChecked.replace("'", "\\'");
 		}
 		catch(NullPointerException e){
-			System.out.println("Null Value Found when Processing data");
-			e.printStackTrace();
+			Utility.logError("Null value found when processing input data.");
+			return null;
 		}
 		return corrected;		
 	}
