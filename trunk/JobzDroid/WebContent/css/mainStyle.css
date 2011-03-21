@@ -115,9 +115,8 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 /***************Result Table Style**************************************/
 .resultTableDiv{clear: both;position: relative;	width: 765px;	min-height	: 140px;font-size	: 11px;	margin: 0 auto;	padding: 1em;	border-top	: 2px solid #004000;}
 .resultTableDiv tr #edTool,
-.resultTableDiv span.edTool {    font-weight: normal;    background: url(../images/hover.png) no-repeat;    width: 180px;    height: 45px;
-    position: absolute;        left: -100px;    text-align: center;    padding: 20px 12px 10px;    font-style: normal;
-    z-index: 2;    display: none;}
+.resultTableDiv span.edTool {font-weight: normal; background: url(../images/bg/hover.png) no-repeat; width: 252px; height: 104px;position: absolute;
+							  text-align: center;padding: 20px 12px 10px; font-style: normal; z-index: 2;    display: none;}
 .tableClear{border	: none;	display	: none;}
 .noBorder{	border: none;}
 .displayTable{	border: 2px solid #004000;}

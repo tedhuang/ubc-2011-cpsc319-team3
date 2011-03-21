@@ -393,21 +393,26 @@ function postJobAd(mode, formDiv, heading){
 	var theForm =$("#"+formDiv);
 	var theheading =$("#"+heading);
 	var sessionKey = $("#sessionKey").val();
+	var infoText;
 	request = new Request;
 	if(mode=="submit" ){
 		request.addAction("createJobAdvertisement");
 		noNullData = checkMandatory(theForm);
+		infoText="Submitting Your Request...";
 	}
 	else if(mode=="draft"){
 		request.addAction("saveJobAdDraft");
 		noNullData = true;
+		infoText="Saving Draft...";
 	}
 	else if(mode=="edit"){
 		request.addAction("editJobAd");
 		noNullData = checkMandatory(theForm);
+		infoText="Updating Your Request...";
 	}
 	
 	if(noNullData){
+		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
 		var searchFields = $(":input", theForm).serializeArray();
 		
@@ -444,13 +449,20 @@ function postJobAd(mode, formDiv, heading){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			  
 //			  var message = xmlhttp.responseXML.getElementById("message");xmlhttp.responseXML.getElementById("message") +
-		    theheading.html("<h2 class='good'>Action Performed Successfully!</h2>");
+		  	$("#lbImg", theForm).removeClass("load").addClass("good");
+			$("#lbMsg",theForm).html("Action Successful!");
+			$.fn.smartLightBox.closeLightBox(2000, formDiv);  
+			setTimeout ( $.fn.DynaSmartTab.close, 2000 );
+				
+//		    theheading.html("<h2 class='good'>Action Performed Successfully!</h2>");
 		    }
-		  else{
-			  theheading.html("<h2 class='error'>opps something is wrong!</h2>");
+		  else if(xmlhttp.status!=200){
+			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$.fn.smartLightBox.closeLightBox(2000, formDiv);
+//			  theheading.html("<h2 class='error'>opps something is wrong!</h2>");
 		  }
 		};
-		
 		
 	}//IF MANDATORIES FILLED
 }
@@ -461,7 +473,7 @@ function checkMandatory(formContainer){
 	var chkList = $('.mustNotNull', formContainer).get();
 	
 	$(chkList).each(function(){
-		if($(this).val()== ""){
+		if(!$(this).val().length){
 			
 			$(error).insertAfter($(this).siblings('label'));
 		}
@@ -583,6 +595,7 @@ function quickSearchJobAd(outputDiv){
  ************************************************************************************************************/
 function getJobAdById(mode, id, outputDiv)
 {
+//	$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
 	request = new Request;
 	request.addAction("getJobAdById");
 	request.addParam("jobAdId", id);
@@ -615,7 +628,7 @@ function getJobAdById(mode, id, outputDiv)
 			  $.fn.DynaSmartTab.loadEdData("jobAd", outputDiv, mode);
 		  }
 	    }
-	  else{
+	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
 	  }
 	  };
@@ -628,38 +641,33 @@ function getJobAdById(mode, id, outputDiv)
  ************************************************************************************************************/
 function getJobAdByOwner(outputDiv){
 	
-	//var intOwnerId = document.getElementById("ownerId").value;
-	
+	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
 	var strSessionKey = $("#sessionKey").val();
-	
 	request = new Request;
 	request.addAction("getJobAdByOwner");
-//	request.addSessionKey(document.getElementById("sessionKey").value ); 
 	request.addParam("sessionKey", strSessionKey);
 	
-//	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
+	}
+	else{// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
+	}
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	
-	xmlhttp.onreadystatechange=function()
-	  {
+	xmlhttp.onreadystatechange=function(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  
 		  buildOwnerAdTb("jobAd", outputDiv);//uibot
 	    }
 	  else{
-		  //TODO Lightbox error
+		  
 	  }
-	  };	  
+	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	};	  
 }
 
 function delJobAd(tbRow, jobAdId){
@@ -688,6 +696,9 @@ function delJobAd(tbRow, jobAdId){
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  $("#lbImg", "#lightBox").removeClass("load").addClass("good");
+		  $("#lbMsg","#lightBox").html("Your Ad Was Deleted!");
+		  $.fn.smartLightBox.closeLightBox(1500);
 		  tbRow.remove();
 	    }
 	  else{

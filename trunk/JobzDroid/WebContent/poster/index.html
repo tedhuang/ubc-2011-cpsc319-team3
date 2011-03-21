@@ -9,6 +9,7 @@
 <link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
+<link rel="stylesheet" href="../css/smartLightbox.css"/>
 <!-- <link rel="stylesheet" href="../css/jq-ui/jquery.ui.base.css"/>-->
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script src="http://code.jquery.com/jquery-latest.js"></script>
@@ -16,6 +17,7 @@
 <script type="text/javascript" src="../scripts/jq-ui/jquery.ui.datepicker.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="../scripts/posterTab.js"></script>
+<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
@@ -24,20 +26,17 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 
-
 <script type="text/javascript">
    
     $(document).ready(function(){
     	// Smart Tab 
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
-  		$('#sideMenu').sideNavMenu({});
-		
+  		$('#lightBox').smartLightBox({});
+		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
 		
     	bindClearError();
-		// MOVED TO AUTHENTICATION.JS
-		//	loadSessionKeyFromURL();
-		});
+	});
 </script>
 <script>
 	$(function() {
@@ -200,7 +199,7 @@
 				</tbody>
 			</table><!--ENDOF TABLE-->
 	          	</div><!--ENDOF DIV RESULT TABLE-->  
-		    <button type="button" onclick="getJobAdByOwner(ownerAdTable)">Load Job Ad by Owner</button>
+		    <button type="button" onclick="getJobAdByOwner('ownerAdTable')">Load Job Ad by Owner</button>
 			<input type="text" name="tabName"/>
 	            <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
 	            <script>function addTab(){
@@ -232,6 +231,7 @@
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->
 </div><!--ENDOF MAIN-->
+<div id="lightBox"></div>
 	<form name="sid" method="get" action="">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
