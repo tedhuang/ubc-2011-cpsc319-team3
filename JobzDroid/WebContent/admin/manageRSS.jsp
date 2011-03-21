@@ -105,51 +105,43 @@
 			<li id="jobAdRSSTab">
   				<a href="#jobAdRSSFrame"><h2>Job Ad RSS</h2></a>
 			</li>
+			<li id="postRSSTab">
+  				<a href="#postRSSFrame"><h2>Post RSS</h2></a>
+			</li>
 		</ul>
 	  </div><!--ENDOF NAVBAR-->
 	  
 	  <div id="tabFrame">
-		  <div id="newsRSSFrame" class="subFrame unremovable">
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
-		  	<p>some stuff</p>
+		  <div id="newsRSSFrame" class="subFrame unremovable">		  
+			<h2 class="welcome"><b><font size='4'> Manage News RSS</font></b></h2>
 		  	  <table>
 			  </table>
+		  </div> <!--end of NEWS_RSS_FRAME-->		
 		  
-		    <div id="addNewsRSSDiv" class="fixedBottomFrame">
-			<h2 class="welcome"><b><font size='4'> Add New RSS Entry</font></b></h2>
+		  <div id="jobAdRSSFrame" class="subFrame unremovable">		  
+			<h2 class="welcome"><b><font size='4'> Manage Job Ads RSS</font></b></h2>
+		  	  <table>
+			  </table>
+		  </div><!--end of JOB_AD_RSS_FRAME-->
+		    
+		  <div id="postRSSFrame" class="subFrame unremovable">
+			<h2 class="welcome"><b><font size='4'> Post New RSS Entry</font></b></h2>
 				<table>
 					<tbody>
 					  <tr>
 					    <td class="clean"></td>
 					  </tr>
+					  <tr>
+					  	 <td class="label">
+			          		 Choose a Feed: 
+			   			 </td> 
+					  	 <td>
+					        <select id="eduLevel">
+							  <option value="0">News RSS</option>
+							  <option value="1">Job Ad RSS</option>
+							</select>
+			  			 </td>
+			    	  </tr>
 					  <tr>
 		    			<td style="width: 155px;" class="label">
 		          		    Title: 
@@ -164,7 +156,7 @@
 					  <tr>
 					    <td class="clean"></td>
 					  </tr>
-					<tr>
+					  <tr>
 					    <td class="label">			        
 					        Content:			        
 					    </td> 
@@ -174,22 +166,14 @@
 					        <span>Note: You can add HTML tags for styling.</span><br/>
 					        <span id="contentInfo"></span>
 					    </td>
-					</tr>
-				</tbody>
-			</table>
-				
+					  </tr>
+				   </tbody>
+		       </table>				
 			<p align="center"><button id="submitButton" type="button">Submit</button></p>
 			<!--TODO STYLE THE BUTTON-->
 			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>	
-		   </div> <!--end of addNewsRSSDiv-->	
-		  </div> <!--end of NEWSRSSFRAME-->		
-		  
-		  <div id="jobAdRSSFrame" class="subFrame unremovable">
-		  	  <table>
-			  </table>
-		  </div><!--end of JOB_AD_RSS_FRAME-->
-		    
+		  </div><!--end of POST_RSS_FRAME-->
 		</div> <!--ENDOF TABFRAME-->
 	   </div> <!--end of tabs DIV-->	
 	  </div><!-- ENDOF MAIN -->
