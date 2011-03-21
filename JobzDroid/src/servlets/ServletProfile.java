@@ -447,18 +447,23 @@ public class ServletProfile extends HttpServlet{
 	private void editProfile(HttpServletRequest request, HttpServletResponse response) 
 								throws ServletException, IOException{
 		
-		String sessionKey = request.getParameter("sessionKey");
-		Session currSession = dbManager.getSessionByKey( sessionKey );
+		String sessionKey 		= request.getParameter("sessionKey");
+		Session currSession 	= dbManager.getSessionByKey( sessionKey );
 		
-		int accountID = currSession.getIdAccount();
-		String accountType = currSession.getAccountType();
+		int accountID 			= currSession.getIdAccount();
+		String accountType 		= currSession.getAccountType();
 		
-		String name = request.getParameter("name");
-		String secEmail = request.getParameter("secEmail");;
-		String phone = request.getParameter("phone");
-		String selfDescription = request.getParameter("descripton");;
-		//TODO: add address handling
+		String name 			= request.getParameter("name");
+		String secEmail 		= request.getParameter("secEmail");
+		String phone 			= request.getParameter("phone");
+		String selfDescription 	= request.getParameter("descripton");
 		
+		String address 			= request.getParameter("address");
+		String latitude			= request.getParameter("latitude");
+		String longitude		= request.getParameter("longitude");
+		
+
+		//TODO: add employment preference handling
 		
 		//Check new inputs
 		name = Utility.checkInputFormat( name );
@@ -474,19 +479,18 @@ public class ServletProfile extends HttpServlet{
 		Statement stmt = null;
 
 		try{
-		//Edit Job Poster Profile
 			stmt = conn.createStatement();
 			
+		//Edit Job Poster Profile
 			if(accountType.equals("poster") ){
 				System.out.println("Editting Poster Profile");
 				
 				String query = 
 					"UPDATE tableProfilePoster SET " 
-					+ "name='" 				+ name + "','" 
-					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "phone='" 			+ phone + "','" 
+					+ "name='" 				+ name + 			"'," 
+					+ "phone='" 			+ phone + 			"'," 
 					+ "selfDescription='" 	+ selfDescription + "' " +
-					"WHERE idAccount='" 	+ accountID + "' ";
+					"WHERE idAccount='" 	+ accountID + 		"' ";
 					
 				System.out.println("New PosterProfile Query:" + query);
 				
@@ -494,7 +498,6 @@ public class ServletProfile extends HttpServlet{
 					System.out.println("Error: Update Query Failed");
 				}
 				else{
-					isSuccessful = true;
 					message = "Edit Poster Profile success!";
 					System.out.println("Edit Poster Profile success!");
 				}
@@ -504,38 +507,95 @@ public class ServletProfile extends HttpServlet{
 			else{
 				System.out.println("Editting Searcher Profile");
 				
-				String empPref = request.getParameter("empPref");
+				//Load Employment Preference Values
+				String empPrefFT = request.getParameter("empPrefFT"); 
+					if(empPrefFT.equals("true") )
+						empPrefFT = "1"; 
+					else
+						empPrefFT = "0";
+					
+				String empPrefPT = request.getParameter("empPrefPT");
+					if(empPrefPT.equals("true") )
+						empPrefPT = "1"; 
+					else
+						empPrefPT = "0";
+					
+				String empPrefIn = request.getParameter("empPrefIn");
+					if(empPrefIn.equals("true") )
+						empPrefIn = "1"; 
+					else
+						empPrefIn = "0";
+				
 				String preferredStartDate = request.getParameter("preferredStartDate");
 				int educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-
+				
 				long startDateMS = Utility.dateStringToLong(preferredStartDate); //Convert to milliseconds
 				
 				//TODO: include address
 				String query = 
 					"UPDATE tableProfileSearcher SET " 
-					+ "name= '" 			+ name + "','" 
-					+ "secondaryEmail='" 	+ secEmail + "','" 
-					+ "phone='" 			+ phone + "','" 
-					+ "selfDescription='" 	+ selfDescription + "','"
-					+ "empPref='" 			+ empPref + "','"
-					+ "educationLevel='" 	+ educationLevel + "','" 
-					+ "startingDate='"		+ startDateMS + "' " +
-					"WHERE idAccount='" 	+ accountID + "' ";
-					
+					+ "name= '" 			+ name 				+ "'," 
+					+ "phone='" 			+ phone 			+ "'," 
+					+ "selfDescription='" 	+ selfDescription 	+ "',"
+					+ "educationLevel='" 	+ educationLevel 	+ "'," 
+					+ "startingDate='"		+ startDateMS 		+ "' " +
+					"WHERE idAccount='" 	+ accountID 		+ "' ";			
 				
 				// if successful, 1 row should be inserted
-				System.out.println("New SearcherProfile Query:" + query);
+				System.out.println("New SearcherProfile Query (location):" + query);
 				
 				if( stmt.executeUpdate(query) != 1 ){ //Error Check
 					System.out.println("Error: Update Query Failed");
 				}
 				else{
-					isSuccessful = true;
 					message = "Edit Searcher Profile Success!";
 					System.out.println("Edit Searcher Profile success!");
 				}
+				
+				
+				//Update Employment Type Preference 
+				query = 
+					"UPDATE tableSearcherEmpPref SET " 
+					+ "fullTime= '" 		+ empPrefFT 	+ "'," 
+					+ "partTime='" 			+ empPrefPT 	+ "'," 
+					+ "internship='" 		+ empPrefIn 	+ "' " +
+					"WHERE idAccount='" + accountID + "' ";
+			
+				System.out.println("Update Query: " + query);
+				
+				
+				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
+				}
+				else{
+					message = "Edit Searcher Employment Preference success!";
+					System.out.println("Edit Searcher Employment Preference success!");
+				}
+
+				
+			}//END OF ELSE
+			
+		//Update Location Values
+			String query = 
+				"UPDATE tableLocationProfile SET " 
+				+ "location= '" 	+ address 	+ "'," 
+				+ "longitude='" 	+ longitude + "'," 
+				+ "latitude='" 		+ latitude 	+ "' " +
+				"WHERE idAccount='" + accountID + "' ";
+		
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
 			}
-		}
+			else{
+				isSuccessful = true;
+				message = "Edit Profile Location success!";
+				System.out.println("Edit Profile Location success!");
+			}
+			
+
+		}//END OF TRY
 		catch (SQLException e) {
 			//TODO log SQL exception
 			System.out.println("SQL exception : " + e.getMessage());
