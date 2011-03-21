@@ -42,7 +42,8 @@ public class ServletDocument extends HttpServlet {
     }
 
 	private enum EnumAction	{
-		deleteDocument
+		deleteDocument,
+		listUserDocuments
 	}
     
 	/**
@@ -81,6 +82,10 @@ public class ServletDocument extends HttpServlet {
 				// account registration
 				case deleteDocument:
 					deleteDocument(request, response);
+					break;
+					
+				case listUserDocuments:
+					listUserDocuments(request, response);
 					break;
 			}
 		}
@@ -339,6 +344,69 @@ public class ServletDocument extends HttpServlet {
 		}
 		
 		return userDirectory;
+	}
+	
+	public File[] getUserFiles( int idAccount ) {
+		File userDirectory = null;
+		
+		try {
+			userDirectory = getUserDirectory( idAccount );
+		} catch (IOException e) {
+			System.out.println("ServletDocument: error accessing directory of user " + idAccount);
+			e.printStackTrace();
+		}
+		
+		if( userDirectory == null ) {
+			return null;
+		}
+		else {
+			return userDirectory.listFiles();
+		}
+		
+	}
+	
+	private void listUserDocuments( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String message = "ServletDocument: listUserDocuments() did not work as intended";
+		String action = "";
+		
+		String sessionKey = request.getParameter("sessionKey");
+		
+		Session currSession = dbManager.getSessionByKey(sessionKey);
+		
+		String fileNames = "";
+		
+		boolean success = false;
+		earlyExit: {
+			
+			if( currSession == null ) {
+				message = "ServletDocument: session invalid or expired";
+				break earlyExit;
+			}
+			
+			File[] userfiles = getUserFiles( currSession.getIdAccount() );
+			
+			for( File eachFile: userfiles ) {
+				fileNames = fileNames.concat("\t<file>" + eachFile.getName() + "<\file>\n");
+				success = true;
+			}
+			
+			message = "ServletDocument: filename gotten";
+		}//earlyExit:
+		System.out.println(message);
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("\t<action>" + action + "</action>\n");
+		if(success = true) {
+			XMLResponse.append(fileNames);
+		}
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
 	}
 	
 }
