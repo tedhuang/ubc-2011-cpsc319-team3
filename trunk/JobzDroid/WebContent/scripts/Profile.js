@@ -70,10 +70,18 @@ function submitChangeProfile(accountType){
 	var strName 		= document.getElementById("name").value;
 	var strSecEmail		= document.getElementById("secondaryEmail").value;
 	var strPhone 		= document.getElementById("phone").value;
-	var strDescripton 	= document.getElementById("searcherDescripton").value;
+	var strDescripton 	= document.getElementById("selfDescription").value;
+	
+	var strAddress 		= getAddress();
+	var strLong			= getLongitude();
+	var strLat			= getLatitude();
 	
 	if (accountType == "searcher"){
-		var strEmpPref				= document.getElementById("empPref").value;
+		var boolEmpPrefPT			= document.getElementById("partTimeCheck").checked;
+		//alert(boolEmpPrefPT);
+		var boolEmpPrefFT			= document.getElementById("fullTimeCheck").checked;
+		var boolEmpPrefIn			= document.getElementById("internCheck").checked;
+		
 		var strPreferredStartDate 	= document.getElementById("startingDate");
 		var intEducationLevel 		= document.getElementById("educationLevel").value;
 		
@@ -99,8 +107,14 @@ function submitChangeProfile(accountType){
 	request.addParam("phone",strPhone);
 	request.addParam("descripton",strDescripton);
 	
+	request.addParam("address", strAddress);
+	request.addParam("longitude", strLong);
+	request.addParam("latitude", strLat);
+	
 	if(accountType == "searcher"){
-		request.addParam("empPref",strEmpPref);
+		request.addParam("empPrefPT", boolEmpPrefPT);
+		request.addParam("empPrefFT", boolEmpPrefFT);
+		request.addParam("empPrefIn", boolEmpPrefIn);
 		request.addParam("educationLevel",intEducationLevel);
 		request.addParam("preferredStartDate", strPreferredStartDate); //This is taken as a long
 	}

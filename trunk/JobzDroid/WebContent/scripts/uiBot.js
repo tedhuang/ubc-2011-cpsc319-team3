@@ -229,27 +229,48 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 											"<option value=\"3\">Ph.D.</option>" +
 											"</select>";
 		
+		var employmentPrefSelection = "<div id=empPrefSelectionDiv style='DISPLAY: none'>" +
+										  "<input type='checkbox' name='partTimeCheck' id='partTimeCheck' value='parttime'  > Part-Time " +
+										  "<input type='checkbox' name='fullTimeCheck' id='fullTimeCheck' value='fulltime'  > Full-Time" +
+										  "<input type='checkbox' name='internCheck'   id='internCheck'   value='internship'> Internship" +
+									  "</div>";
+		
+		var addressButton = "<button type='button' id=\"addressButton\" style = 'DISPLAY: none;' onclick='calculateLocation()'>Find Location</button>";
+		var addressResult = "<span type='text' id='locFeedback'></span>" +
+							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
+		
 		//Add Shared Fields
 		var profileText = 
-			"<tr><td>Your Account Email</td><td>"			+ profile.attr("email")				+ "</td>"+ "<td><input id=\"newEmail\"style = \"DISPLAY: none;\" /></td></tr>" +
-			"<tr><td>Old Password</td><td>"					+ " "								+ "</td>"+ "<td><input id=\"passwordOld\"style = \"DISPLAY: none;\" /></td></tr>" +
-			"<tr><td>New Password</td><td>"					+ " "								+ "</td>"+ "<td><input id=\"passwordNew\"style = \"DISPLAY: none;\" /></td></tr>" +
-			"<tr><td>Repeat Password</td><td>"				+ "	"								+ "</td>"+ "<td><input id=\"passwordRepeat\"style = \"DISPLAY: none;\" /></td></tr>" +
+			"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")				+ "</td><td></td></tr>" +
+			"<tr><td>New E-mail</td><td>"			+ " "								+ "</td><td><input id='emailNew' 		style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>Repeat New E-mail</td><td>"	+ " "								+ "</td><td><input id='emailRepeat' 	style = 'DISPLAY: none;' /></td></tr>" +
+			
+			"<tr><td>Old Password</td><td>"			+ " "								+ "</td><td><input id='passwordOld' 	style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>New Password</td><td>"			+ " "								+ "</td><td><input id='passwordNew' 	style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>Repeat Password</td><td>"		+ "	"								+ "</td><td><input id='passwordRepeat' 	style = 'DISPLAY: none;' /></td></tr>" +
 
-			"<tr><td>Your Name</td><td>" 					+ profile.attr("name") 				+ "</td>"+ "<td><input id=\"name\"style = \"DISPLAY: none;\" /></td></tr>" +
-			"<tr><td>Your Backup Email</td><td>"			+ profile.attr("secondaryEmail")	+ "</td>"+ "<td><input id=\"secondaryEmail\" style = \"DISPLAY: none;\"/></td></tr>" +
-			"<tr><td>Your Phone Number</td><td>"			+ profile.attr("phone")				+ "</td>"+ "<td><input id=\"phone\" style = \"DISPLAY: none;\"/></td></tr>" +
-			"<tr><td>More About You</td><td>"				+ profile.attr("selfDescription")	+ "</td>"+ "<td><input id=\"selfDescription\" style = \"DISPLAY: none;\" /></td></tr>" +
-			"<tr><td>Your Address</td><td>"					+ profile.attr("address")			+ "</td>"+ "<td><input id=\"address\" 	style = \"DISPLAY: none;\"/></td></tr>";
-		
+			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td><td><input id='secondaryEmail'  style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td><td><input id='selfDescription' style = 'DISPLAY: none;' /></td></tr>";
+
+	
 		//Add Searcher Fields
 		if( accountType == "searcher"){	
 			profileText +=
-				"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td>"+ "<td>" + educationLevelSelection + "</td></tr>" +
-				"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("empPref") 				+ "</td>"+ "<td><input id=\"empPref\" style = \"DISPLAY: none;\"/></td></tr>" +
-				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")			+ "</td>"+ "<td><input id=\"startingDate\" style = \"DISPLAY: none;\"/></td></tr>";
+				"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
+				"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("empPref")				+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
+				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")			+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> yyyy/mm/dd (add date picker?) </td></tr>";
 		}
 		
+		//Add Address Input Field
+		profileText += 
+			"<tr><td>Your Address</td>  <td>"+ profile.attr("address")+"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
+			"<tr><td></td><td></td><td>" + addressButton + "</td></tr>" +
+			"<tr><td></td><td></td><td>" + addressResult + "</td></tr>";
+			//"<tr><td></td><td></td><td>" + "<span id='locFeedback'>Please Select an address</span>" + "</td></tr>";
+			
+			
 		//Add buttons 
 		profileText += 
 			"<tr>" +
@@ -271,7 +292,8 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 
 function enableProfileEdit(accountType)
 {
-	$("#newEmail").show();
+	$("#emailNew").show();
+	$("#emailRepeat").show();
 	$("#passwordOld").show();
 	$("#passwordNew").show();
 	$("#passwordRepeat").show();
@@ -281,11 +303,12 @@ function enableProfileEdit(accountType)
 	$("#phone").show();
 	$("#educationLevel").show();
 	$("#selfDescription").show();
-	$("#address").show();
+	$("#loc-filed").show();
+	$("#addressButton").show();
 	
 	if(accountType == "searcher"){
 		$("#startingDate").show();
-		$("#empPref").show(); //TODO: change to check box
+		$("#empPrefSelectionDiv").show(); //TODO: change to check box
 	}
 	
 	$("#submitButton").show();
