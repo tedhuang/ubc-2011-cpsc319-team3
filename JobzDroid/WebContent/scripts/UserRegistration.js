@@ -139,19 +139,23 @@ function validateForm(evt){
 
 // sends account reg request to the account servlet
 function sendRegRequest(evt){
+	
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass("errorTag");	
 	$("#statusText").removeClass("successTag");
 	
-	var strEmail = $("#emailAddress").val();
-	var strSecondaryEmail = $("#secondaryEmailAddress").val();
-	var strPassword = $("#password1").val();
-	var strPasswordRepeat = $("#password2").val();
-	var strAccountType = $("input[name=accountType]:checked").val();
-	var strName = $("#name").val();
-	var strAddress = $("#address").val();
-	var strPhone = $("#phone").val();
-	var strDescription = $("#description").val();
+	var strEmail 			= $("#emailAddress").val();
+	var strSecondaryEmail 	= $("#secondaryEmailAddress").val();
+	var strPassword 		= $("#password1").val();
+	var strPasswordRepeat 	= $("#password2").val();
+	var strAccountType		= $("input[name=accountType]:checked").val();
+	var strName 			= $("#name").val();
+	var strPhone 			= $("#phone").val();
+	var strDescription 		= $("#description").val();
+	var strAddress 			= getAddress();
+	var strLong				= getLongitude();
+	var strLat 				= getLatitude();
+	
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -184,8 +188,11 @@ function sendRegRequest(evt){
 	request.addParam("passwordRepeat", strPasswordRepeat);
 	request.addParam("accountType", strAccountType);
 	request.addParam("name", strName);
-	if( strAddress && strAddress != "" )
+	if( strAddress && strAddress != "" ){
 		request.addParam("address", strAddress);
+		request.addParam("latitude", strLat);
+		request.addParam("longitude", strLong);
+	}
 	if( strPhone && strPhone != "" )
 		request.addParam("phone", strPhone);
 	if( strDescription && strDescription != "" )
@@ -193,21 +200,27 @@ function sendRegRequest(evt){
 	
 	// account type specific parameters
 	if( strAccountType == "searcher" ){
-		var eduLevel = $("#eduLevel").val();
+		
+		var eduLevel 		= $("#eduLevel").val();
 		var strStartingDate = $("#startingDate").val();
-		var strEmpPref = "";
+		//Load Employment Preference Checkbox values
+		var boolEmpPrefPT	= document.getElementById("partTimeCheck").checked;
+		var boolEmpPrefFT	= document.getElementById("fullTimeCheck").checked;
+		var boolEmpPrefIn	= document.getElementById("internCheck").checked;
+		
 		$('input[name=empPref]:checked').each(function() {
 			strEmpPref += $(this).val() + "_";
 			});
 		request.addParam("eduLevel", eduLevel);
 		if( strStartingDate && strStartingDate != "")
 			request.addParam("startingDate", strStartingDate);
-		if( strEmpPref && strEmpPref != "")
-			request.addParam("empPref", strEmpPref);
+
+		request.addParam("empPrefPT", boolEmpPrefPT); //These will be 1s and 0s
+		request.addParam("empPrefFT", boolEmpPrefFT);
+		request.addParam("empPrefIn", boolEmpPrefIn);
 	}
-	else{
-		// no poster specific fields currently
-	}
+
+
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

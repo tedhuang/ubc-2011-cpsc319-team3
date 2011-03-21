@@ -126,6 +126,7 @@ public class ServletAccount extends HttpServlet {
 		boolean allGood = true;
 		boolean accountCreated = false;
 		UUID uuid = UUID.randomUUID();; // verification number
+		
 		// get request parameters
 		String email = request.getParameter("email");
 		String secondaryEmail = request.getParameter("secondaryEmail");
@@ -133,13 +134,22 @@ public class ServletAccount extends HttpServlet {
 		String passwordRepeat = request.getParameter("passwordRepeat");
 		String accountType = request.getParameter("accountType");
 		String name = request.getParameter("name");
-		String address = request.getParameter("address");
+
 		String phone = request.getParameter("phone");
 		String description = request.getParameter("description");
 		String startingDate = request.getParameter("startingDate");
-		String empPref = request.getParameter("empPref");
+		
+		String address 			= request.getParameter("address");
+		String latitude			= request.getParameter("latitude");
+		String longitude		= request.getParameter("longitude");
+		
+		String empPrefFT = request.getParameter("empPrefFT"); 
+		String empPrefPT = request.getParameter("empPrefPT");
+		String empPrefIn = request.getParameter("empPrefIn");
+		
 		int eduLevel = -1;
 		if( accountType.equals("searcher") ){
+			
 			try{
 				eduLevel = Integer.parseInt(request.getParameter("eduLevel"));
 			}
@@ -148,9 +158,8 @@ public class ServletAccount extends HttpServlet {
 				allGood = false;
 			}
 		}
-		else{
-			// no poster specific fields currently
-		}
+
+		
 		// validate data
 		if( email == null ){
 			message = "Email address is required.";
@@ -214,8 +223,8 @@ public class ServletAccount extends HttpServlet {
 			boolean isUnique = !dbManager.checkEmailExists(email);
 			if(isUnique){
 				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid,
-						address, description, eduLevel, startingDate, empPref);
-
+						description, eduLevel, startingDate, address, longitude, latitude, empPrefFT, empPrefPT, empPrefIn);
+				
 				if(accountCreated){
 					//send verification email to new user
 					//TODO
@@ -225,12 +234,15 @@ public class ServletAccount extends HttpServlet {
 							"please follow the instructions to activate your account within "
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
 					result = true;
+					
 				}
 				else{
 					// delete the account if there was any error during registration
 					dbManager.deleteAccount(email);
 					message = "Failed to create account. Please try again later.";
 				}
+				
+				
 			}
 			else{
 				message = "This email address has already been used. Please choose another one.";
@@ -247,6 +259,69 @@ public class ServletAccount extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 	
+	
+	
+	private boolean insertAddress(int idAccount, String address, String longitude, String latitude) {
+
+		boolean isSuccessful = false;
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+
+		try{
+			stmt = conn.createStatement();
+			
+			String query = 
+				"INSERT INTO tableLocationProfile(idAccount, address, latitude, longitude) " + 
+				"VALUES ('"
+					+ idAccount + "','"
+					+ address + "','"
+					+ longitude + "','"
+					+ latitude + 
+				"')";
+			
+			// if successful, 1 row should be inserted
+			System.out.println("New location insert query: " + query);
+			int rowsInserted = stmt.executeUpdate(query);
+			
+			if (rowsInserted == 1){
+				System.out.println("Insert Profile address success");
+				isSuccessful = true;
+				
+			}
+			else{
+				stmt.close();
+			}
+
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		
+		// free DB objects
+	    finally {
+	        try {
+	            if (stmt != null)
+	            	stmt.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (conn != null)
+	            	conn.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		
+		return isSuccessful;
+	}
+	
+	
+
 	/***
 	 * Handles account activation link click from an email.
 	 */
@@ -483,11 +558,18 @@ public class ServletAccount extends HttpServlet {
 	 * @param accountType Account type
 	 * @param name Person/Company name 
 	 * @param uuid randomly generated unique verification number for email
+	 * @param latitude 
+	 * @param longitude 
+	 * @param address 
 	 * @param expiryTimeEmailVerification Time before the registration verification expires
 	 * @return boolean indicating whether account was successfully created
 	 */
-	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, String name, String phone, UUID uuid, 
-			String address, String description, int eduLevel, String startingDate, String empPref) {
+	private boolean createAccount(String email, String secondaryEmail, String password, String accountType, 
+								  String name, String phone, UUID uuid, String description, int eduLevel, 
+								  String startingDate, String address, String longitude, String latitude,
+								  String empPrefFT, String empPrefPT, String empPrefIn) {
+		System.out.println("Creating Account..");
+		
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -496,10 +578,10 @@ public class ServletAccount extends HttpServlet {
 		password = Utility.checkInputFormat(password);
 		accountType = Utility.checkInputFormat(accountType);
 		name = Utility.checkInputFormat(name);
+		
 		if(secondaryEmail != null)
 			secondaryEmail = Utility.checkInputFormat(secondaryEmail);
-		if(address != null)
-			address = Utility.checkInputFormat(address);
+		
 		if(description != null){
 			description = Utility.checkInputFormat(description);
 			description = Utility.processLineBreaksWhiteSpaces(description);
@@ -524,6 +606,7 @@ public class ServletAccount extends HttpServlet {
             pst.setString(4, accountType);
             pst.setLong(5, currentTime);
             
+            System.out.println(query);
 			int rowsInserted = pst.executeUpdate();
 			// if successful, 1 row should be inserted
 			if (rowsInserted != 1)
@@ -541,10 +624,14 @@ public class ServletAccount extends HttpServlet {
 			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
 	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";	
 			pst = conn.prepareStatement(query);
+			
 			// if successful, 1 row should be inserted
+            System.out.println(query);
 			rowsInserted = pst.executeUpdate(query);
 			if (rowsInserted != 1)
 				return false;
+
+			
 			// add entry to user profile table
 			if(accountType.equals("searcher")){
 				// update profile table
@@ -553,8 +640,8 @@ public class ServletAccount extends HttpServlet {
 					if(startingDateLong == -1)
 						return false;
 				}
-				query = "INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, address, startingDate) VALUES " + 
-		  		"(?,?,?,?,?,?,?);";
+				query = "INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) VALUES " + 
+		  		"(?,?,?,?,?,?);";
 	            pst = conn.prepareStatement(query);
 	            pst.setInt(1, idAccount);
 	            pst.setString(2, name);
@@ -569,40 +656,52 @@ public class ServletAccount extends HttpServlet {
 	            
 	            pst.setInt(5, eduLevel);
 	            
-	            if(address == null)
-	            	pst.setNull(6, java.sql.Types.VARCHAR);
-	            else
-	            	pst.setString(6, address);
-	            
 	            if(startingDate == null)
-	            	pst.setNull(7, java.sql.Types.BIGINT);
+	            	pst.setNull(6, java.sql.Types.BIGINT);
 	            else
-	            	pst.setLong(7, startingDateLong);
+	            	pst.setLong(6, startingDateLong);
 	            
+	            System.out.println(query);
 				rowsInserted = pst.executeUpdate();
+				
 				if (rowsInserted != 1)
 					return false;
 				
 				// update employment Preference table
-				if(empPref != null){
-					String prefs[] = empPref.split("_");
-					String pref;
-					for(int i = 0; i < prefs.length; i++){
-						pref = prefs[i].trim();
-						if(!pref.equals("")){
-							query = "INSERT INTO tableSearcherEmpPref(idAccount, empPref) VALUES " + 
-					  		"(?,?);";
-				            pst = conn.prepareStatement(query);
-				            pst.setInt(1, idAccount);
-				            pst.setString(2, pref);
-				            pst.executeUpdate();
-						}
-					}
+				if(empPrefFT.equals("true") )
+					empPrefFT = "1"; 
+				else
+					empPrefFT = "0";
+				
+				if(empPrefPT.equals("true") )
+					empPrefPT = "1"; 
+				else
+					empPrefPT = "0";
+				
+				if(empPrefIn.equals("true") )
+					empPrefIn = "1"; 
+				else
+					empPrefIn = "0";
+
+				query = 
+					"INSERT INTO tableSearcherEmpPref(idAccount, partTime, fullTime, internship) " + 
+					"VALUES ('"
+						+ idAccount + "','"
+						+ empPrefPT + "','"
+						+ empPrefFT + "','"
+						+ empPrefIn + 
+					"');";
+	            System.out.println(query);
+	            pst.executeUpdate();
+	            
+				if( pst.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
 				}
+
 			}
 			else if(accountType.equals("poster")){
-				query = "INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription, address) VALUES " + 
-		  		"(?,?,?,?,?);";
+				query = "INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) VALUES " + 
+		  		"(?,?,?,?);";
 	            pst = conn.prepareStatement(query);
 	            pst.setInt(1, idAccount);
 	            pst.setString(2, name);
@@ -617,16 +716,19 @@ public class ServletAccount extends HttpServlet {
 	            else
 	            	pst.setString(4, description);
 	            
-	            if(address == null)
-	            	pst.setNull(5, java.sql.Types.VARCHAR);
-	            else
-	            	pst.setString(5, address);
-	            
+	            System.out.println(query);
 				rowsInserted = pst.executeUpdate();
 				if (rowsInserted != 1)
 					return false;
 			}
-			return true;
+			
+			//add entry to location table
+			if( address != null){
+				//returns true if successful
+				return insertAddress(idAccount, address, longitude, latitude);
+			}
+			
+			//return true;
 		}
 		catch (SQLException e) {
 			Utility.logError("SQL exception: " + e.getMessage());
@@ -682,6 +784,7 @@ public class ServletAccount extends HttpServlet {
 			query = "INSERT INTO tablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
 	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
 			// if successful, 1 row should be inserted
+			System.out.println(query);
 			rowsInserted = stmt.executeUpdate(query);
 			if (rowsInserted != 1)
 				return false;
@@ -743,12 +846,14 @@ public class ServletAccount extends HttpServlet {
 					idAccount = rs.getInt("idAccount");
 					query = "UPDATE tableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
 					// if successful, 1 row should be updated
+					System.out.println(query);
 					rowsUpdated = stmt.executeUpdate(query);
 					if (rowsUpdated != 1)
 						return false;
 					else {
 						// finally, delete row containing the verification number from tableEmailVerification
 						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						System.out.println(query);
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1)
 							Utility.logError("Failed to delete row containing the verification number upon successful account activation.");
@@ -819,6 +924,7 @@ public class ServletAccount extends HttpServlet {
 		    pst.setLong(3, expiryTime);
 		    pst.setString(4, newEmail);
 			// if successful, 1 row should be inserted
+		    System.out.println(query);
 			int rowsInserted = pst.executeUpdate(query);
 			if (rowsInserted != 1)
 				return false;
@@ -884,12 +990,14 @@ public class ServletAccount extends HttpServlet {
 					emailPending = rs.getString("emailPending");
 					query = "UPDATE tableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
 					// if successful, 1 row should be updated
+					System.out.println(query);
 					rowsUpdated = stmt.executeUpdate(query);					
 					if (rowsUpdated != 1)
 						return false;
 					else {
 						// finally, delete row containing the verification number from tableEmailVerification
 						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						System.out.println(query);
 						rowsUpdated = stmt.executeUpdate(query);
 						if(rowsUpdated != 1){
 							Utility.logError("Failed to delete row containing the verification number " +
@@ -945,12 +1053,14 @@ public class ServletAccount extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
+			System.out.println(query);
 			rowsUpdated = stmt.executeUpdate(query);
 			if(rowsUpdated != 1){
 				Utility.logError("Failed to delete entry from tablePasswordReset while resetting password for account" +
 						"ID:" + idAccount +".");
 				}
 			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
+			System.out.println(query);
 			rowsUpdated = stmt.executeUpdate(query);
 			if(rowsUpdated == 1)
 				return true;

@@ -7,6 +7,9 @@
 	<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>	
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/UserRegistration.js'></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
+	<script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
+	
 </head>
 <body>
 
@@ -96,14 +99,6 @@
 			</tr>
 			<tr>
 			    <td class="label">
-			            Address:
-			    </td> 
-			    <td>
-			        <input type="text" id="address" class="textinput" maxlength="100" tabindex="14">
-			    </td>
-			</tr>
-			<tr>
-			    <td class="label">
 			            Phone:
 			    </td> 
 			    <td>
@@ -120,7 +115,23 @@
 			        <span id="descInfo"></span>
 			    </td>
 			</tr>
-			
+						<tr>
+			    <td class="label">
+			            Address:
+			    </td> 
+			    <td>
+			        <input id='loc-filed' />
+					<button type='button' id='addressButton' onclick='calculateLocation()'>Find Address</button>
+			    </td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<span id='locFeedback'></span>
+					<span id='resultTableTitle'></span> 
+					<table id='lookUpTable'></table>
+				</td>
+			</tr>
 			<tr class="accountTypeSpecific">
 			    <td class="label">
 			           ** Education level:
@@ -148,11 +159,12 @@
 			            Employment preference:
 			    </td> 
 			    <td>
-					<input type="checkbox" name="empPref" value="full" /> Full time 
-					<input type="checkbox" name="empPref" value="part" /> Part time 
-					<input type="checkbox" name="empPref" value="intern" /> Internship 
+					  <input type='checkbox' name='partTimeCheck' id='partTimeCheck' value='parttime'  > Part-Time 
+					  <input type='checkbox' name='fullTimeCheck' id='fullTimeCheck' value='fulltime'  > Full-Time
+					  <input type='checkbox' name='internCheck'   id='internCheck'   value='internship'> Internship
 			    </td>
 			</tr>
+			
 		</tbody>
 	</table>
 		

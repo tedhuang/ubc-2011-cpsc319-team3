@@ -74,7 +74,7 @@ function listLocationChoices(googleMapsResults){
 	var i;
 	for (i = 0; i < googleMapsResults.length; i++){
 		var currentResult = googleMapsResults[i];
-		$("#lookUpTable").append("<tr title='Click to view this location in GoogleMaps'>" +
+		$("#lookUpTable").append("<tr title='Click to save this address'>" +
 				"<td><a href=''>" + currentResult.formatted_address + "</a></td>" +
 				"<td><button type='button'>Save</button><td></tr>");
 	}
