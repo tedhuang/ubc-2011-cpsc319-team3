@@ -239,16 +239,17 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		var addressResult = "<span type='text' id='locFeedback'></span>" +
 							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
 		
-		//Add Shared Fields
-		var profileText = 
-			"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")				+ "</td><td></td></tr>" +
-			"<tr><td>New E-mail</td><td>"			+ " "								+ "</td><td><input id='emailNew' 		style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>Repeat New E-mail</td><td>"	+ " "								+ "</td><td><input id='emailRepeat' 	style = 'DISPLAY: none;' /></td></tr>" +
-			
-			"<tr><td>Old Password</td><td>"			+ " "								+ "</td><td><input id='passwordOld' 	style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>New Password</td><td>"			+ " "								+ "</td><td><input id='passwordNew' 	style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>Repeat Password</td><td>"		+ "	"								+ "</td><td><input id='passwordRepeat' 	style = 'DISPLAY: none;' /></td></tr>" +
 
+		var accountText = 
+				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")		+ "</td><td></td></tr>" +
+				"<tr><td>New E-mail</td><td>"			+ " "						+ "</td><td><input id='emailNew' 		style = 'DISPLAY: none;' /></td></tr>" +
+				
+				"<tr><td>Old Password</td><td>"			+ " "						+ "</td><td><input id='passwordOld' 	style = 'DISPLAY: none;' /></td></tr>" +
+				"<tr><td>New Password</td><td>"			+ " "						+ "</td><td><input id='passwordNew' 	style = 'DISPLAY: none;' /></td></tr>" +
+				"<tr><td>Repeat Password</td><td>"		+ "	"						+ "</td><td><input id='passwordRepeat' 	style = 'DISPLAY: none;' /></td></tr>";
+
+			
+		var profileText =
 			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td><td><input id='secondaryEmail'  style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
@@ -272,19 +273,33 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			
 			
 		//Add buttons 
-		profileText += 
+		buttonHTML += 
 			"<tr>" +
-				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Enable Edit</button></td>" +
-				"<td></td><td><button id='submitButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
+				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableAccountEdit()'>Change E-mail and Password</button></td>" +
+				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Change Profile Fields</button></td>" +
+				"<td></td><td><button id='submitProfileButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
+				"<td></td><td><button id='submitAccountButton' style = 'DISPLAY: none;' onclick=\'submitChangeAccount()'>Submit</button></td>" +
 			"</tr>";
  
-		
+		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
+		 $(tbody).append(buttonHTML);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");
 		 $(tbody).find('tr').find('td:last').addClass("dataCol");
 		 $("#detailFB").hide();
 	}
 }
+
+function enableAccountEdit(){
+	$("#emailNew").show();
+	$("#passwordOld").show();
+	$("#passwordNew").show();
+	$("#passwordRepeat").show();
+
+	$("#submitChangeAccount").show();
+}
+
+
 
 /********************************************************************************************************************
  * 						Enable Profile Edit
@@ -292,11 +307,6 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 
 function enableProfileEdit(accountType)
 {
-	$("#emailNew").show();
-	$("#emailRepeat").show();
-	$("#passwordOld").show();
-	$("#passwordNew").show();
-	$("#passwordRepeat").show();
 	
 	$("#name").show();
 	$("#secondaryEmail").show();
@@ -311,7 +321,7 @@ function enableProfileEdit(accountType)
 		$("#empPrefSelectionDiv").show(); //TODO: change to check box
 	}
 	
-	$("#submitButton").show();
+	$("#submitProfileButton").show();
 }
 
 
