@@ -62,7 +62,7 @@ public class DBConnectionPool {
             freeConnections.remove(0);
             // if bad connection, then set connection back to null and keep looping
             try {
-				if (connection.isClosed())
+				if ( connection != null && connection.isClosed())
 					connection = null;
 			}
             catch (SQLException e) {
