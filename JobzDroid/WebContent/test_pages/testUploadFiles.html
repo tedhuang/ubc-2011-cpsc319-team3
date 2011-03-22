@@ -70,12 +70,16 @@
   	xmlhttp.onreadystatechange=function(){
   	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
   	    {
+  		buildOwnerFileTb("file", "fileTable" );
   		    //Gets sessionKey and prints it to div
+  			/*
   			var listFiles = xmlhttp.responseXML.getElementsByTagName("file");
   			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
 
   		    if( listFiles != "null" ) 
   			    { 
+  		    		
+  		    		
   		    		for ( file in listFiles)
   		    		{
   		    			var fileName 	= file.getAttribute("fileName");
@@ -92,9 +96,29 @@
   		    	{
   			    	//TODO: implement error handling
   		    	}
+  		    */
   	    }
   	  };
     	
+	}
+	
+	function buildOwnerFileTb(targetXMLTag, outputDiv){
+		var tbody  = $("tbody", "#"+outputDiv).html("");
+		var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+		if(xmlObj.length==0){//if no results
+		}
+		else{
+			xmlObj.each(function() {//for All returned xml obj
+			  var jobAd = $(this);
+			  var tr = $('<tr></tr>');
+			  $('<td></td>').attr("id", id='td-fileName').text(jobAd.attr("fileName")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-size').text(jobAd.attr("size")).appendTo(tr);
+			  
+			  tr.appendTo(tbody);
+			  
+			});
+			 $("tr:odd", tbody).addClass("oddRow");
+		}
 	}
     </script>
     
