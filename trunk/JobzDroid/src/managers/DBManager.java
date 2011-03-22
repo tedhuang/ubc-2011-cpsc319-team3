@@ -62,6 +62,7 @@ public class DBManager {
 	 * @return boolean indicating whether the email address is unique
 	 */
 	public boolean checkEmailExists(String email) {
+		System.out.println("Inside DBManager - checkEmailExists");
 		Connection conn = getConnection();	
 		ResultSet rs = null;
 		Statement stmt = null;

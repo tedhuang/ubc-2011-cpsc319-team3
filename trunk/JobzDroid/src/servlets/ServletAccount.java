@@ -129,31 +129,31 @@ public class ServletAccount extends HttpServlet {
 	 * Finally calls the email manager to send a verification email to the new user, and sends result and message back to user.
 	 */
 	private void registerHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		boolean result = false;
-		String message = "";
-		boolean allGood = true;
+		boolean result 		   = false;
+		String message 		   = "";
+		boolean allGood 	   = true;
 		boolean accountCreated = false;
 		UUID uuid = UUID.randomUUID();; // verification number
 		
 		// get request parameters
-		String email = request.getParameter("email");
-		String secondaryEmail = request.getParameter("secondaryEmail");
-		String password = request.getParameter("password");
-		String passwordRepeat = request.getParameter("passwordRepeat");
-		String accountType = request.getParameter("accountType");
-		String name = request.getParameter("name");
+		String email 			= request.getParameter("email");
+		String secondaryEmail 	= request.getParameter("secondaryEmail");
+		String password 		= request.getParameter("password");
+		String passwordRepeat 	= request.getParameter("passwordRepeat");
+		String accountType		= request.getParameter("accountType");
+		String name				= request.getParameter("name");
 
-		String phone = request.getParameter("phone");
-		String description = request.getParameter("description");
-		String startingDate = request.getParameter("startingDate");
+		String phone 			= request.getParameter("phone");
+		String description 		= request.getParameter("description");
+		String startingDate 	= request.getParameter("startingDate");
 		
 		String address 			= request.getParameter("address");
 		String latitude			= request.getParameter("latitude");
 		String longitude		= request.getParameter("longitude");
 		
-		String empPrefFT = request.getParameter("empPrefFT"); 
-		String empPrefPT = request.getParameter("empPrefPT");
-		String empPrefIn = request.getParameter("empPrefIn");
+		String empPrefFT 		= request.getParameter("empPrefFT"); 
+		String empPrefPT 		= request.getParameter("empPrefPT");
+		String empPrefIn 		= request.getParameter("empPrefIn");
 		
 		int eduLevel = -1;
 		if( accountType.equals("searcher") ){
@@ -340,7 +340,7 @@ public class ServletAccount extends HttpServlet {
 	 * Handles Secondary E-mail changes
 	 */
 	private void requestSecondaryEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		System.out.println("Inside Secondary Email Change Handler");
+		System.out.println("Inside ServletAccount: Secondary Email Change Handler");
 		
 		boolean isSuccessful = false;
 		String message = "Change secondary e-mail failed";
@@ -409,10 +409,10 @@ public class ServletAccount extends HttpServlet {
 	 * Handles primary email change requests.
 	 */
 	private void requestEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-
+		
 		String sessionKey = request.getParameter("sessionKey");
 		String newEmail = request.getParameter("newEmail");		
-		System.out.println("Inside requestEmailChangeHandler, New Email: " + newEmail + "Session Key: " + sessionKey);
+		System.out.println("Inside ServletAccount: requestEmailChangeHandler - New Email: " + newEmail + ", Session Key: " + sessionKey);
 		
 		UUID uuid = UUID.randomUUID();; // verification number
 		boolean result = false;
@@ -474,6 +474,8 @@ public class ServletAccount extends HttpServlet {
  * @throws IOException
  **************************************************************************************************************************************/
 	private void loginReqTaker(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		System.out.println("Inside ServletAccount: loginRequTaker");
+		
 		String email = request.getParameter("email");
 		String pw = request.getParameter("password");
 		System.out.println("user="+ email+ "Password="+ pw);
@@ -1029,6 +1031,7 @@ public class ServletAccount extends HttpServlet {
 	 * @return boolean indicating whether adding the email change was successful
 	 */
 	private boolean addEmailChangeRequest(String sessionKey, String newEmail, UUID uuid){
+		System.out.println("Inside ServletAccount: addEmailChangeRequest");
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -1049,16 +1052,24 @@ public class ServletAccount extends HttpServlet {
 			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;	
             String query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime, emailPending)" +
     		" VALUES(?,?,?,?);";
+            
+            
             pst = conn.prepareStatement(query);
 		    pst.setString(1, uuid.toString());
 		    pst.setInt(2, idAccount);
 		    pst.setLong(3, expiryTime);
 		    pst.setString(4, newEmail);
 			// if successful, 1 row should be inserted
-		    System.out.println(query);
-			int rowsInserted = pst.executeUpdate(query);
-			if (rowsInserted != 1)
+		    
+		    System.out.println(query + "values: uuid=" + uuid.toString() + " idAccount=" + idAccount + " expiryTime=" + expiryTime + " newEmail=" + newEmail);
+		    
+			int rowsInserted = pst.executeUpdate(); //TODO: fix the exception generated by changing e-mail request
+			
+			if (rowsInserted != 1){
+				System.out.println("addEmailChangeRequest failed");
 				return false;
+			}
+			System.out.println("addEmailChangeRequest success");
 			return true;
 		}
 		catch (SQLException e) {

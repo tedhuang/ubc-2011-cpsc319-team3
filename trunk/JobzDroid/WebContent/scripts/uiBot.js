@@ -36,6 +36,49 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	}
 }
 
+
+
+
+
+/************************************************************************************************
+ * 					BUILD TABLE CONTAINING ALL JOB ADS - used by Admin(manageJobAd.jsp) and Searcher
+ * INSERT RETURNED DATA INTO THE TABLE
+ * @param xmlObj: THE xmlObject name returned from the server
+ * @param outputDiv: The DIV where the table is held
+**************************************************************************************************/
+function buildBrowseJobAdTb(targetXMLTag, outputDiv){
+	
+	//TODO: finish implementing
+	
+	var tbody  = $("tbody", "#"+outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var tr = $('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
+		  
+		  //$.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
+		  tr.appendTo(tbody);
+		  
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}
+
+
+
+
 /************************************************************************************************
  * 					BUILD TABLE FOR OWNER's AD LIST
  * INSERT RETURNED DATA INTO THE TABLE

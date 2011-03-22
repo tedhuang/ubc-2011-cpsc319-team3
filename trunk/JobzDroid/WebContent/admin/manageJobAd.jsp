@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, classes.Session"%>
+    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, classes.Session, classes.Account, classes.Utility, java.util.ArrayList"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-<title>Admin Job Advertisement Management</title>
-
-<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>
-<script type="text/javascript" src='../scripts/Utility.js'></script>
-<script type="text/javascript" src='../scripts/uiBot.js'></script>
-<script type="text/javascript" src='../scripts/JobAd.js'></script>
-<script type="text/javascript" src="../scripts/authentication.js"></script>
-<script language="JavaScript">
-  function initializePage(){
-	  $("#jobAdDetails").hide();
-	  //document.getElementById("jobTitle").disabled=true;
-  }
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
+	<link rel="stylesheet" href="../css/smartLightbox.css"/>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
+	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
+	<script type="text/javascript" src="../scripts/Utility.js"></script>
+	<script type="text/javascript" src="../scripts/authentication.js"></script>
+	<script type="text/javascript" src="../scripts/Profile.js"></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
+	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	<script type="text/javascript" src='../scripts/JobAd.js'></script>
+	<script type="text/javascript" src='../scripts/uiBot.js'></script>
+	
+<script type="text/javascript">
+   
+    $(document).ready(function(){
+    	// Smart Tab 
+		//ADD/RM "sliding:false" to parameter to toggle hiding effect
+  		$('#lightBox').smartLightBox({});
+		$('#sideMenu').sideNavMenu({});
+    	$('#tabs').DynaSmartTab({});
+		
+    	bindClearError();
+	});
 </script>
-
+	
+	<title>Manage JobAd</title>
 </head>
-
+<body>
 	<%	// check session key
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
@@ -34,97 +50,280 @@
 		response.sendRedirect("../index.html");	
 	}
 	else{
+		// get all Job Advertisements
+		//ArrayList<JobAdvertisement> JobAd = dbManager.getSearcherPosterAccounts();
 	%>	
-		<body onload="initializePage()">
+	<!--Start tabs-->
 	
+	<div class="main">
+		  <div class="header">
+			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
+		        <img src="../images/logo-small.png"/>
+			</a>
+			<ul id="topnav" class="topnav">
+			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
+			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
+			    <li><a href="#" class="btn">View Job Ads</a></li>
+			</ul>
+		  </div>		  
+		  <br/>	
+		  
+		  
+<!-- ==================================================================== -->		
+<!--===================== SIDE MENU  =====================================-->
+<!-- ==================================================================== -->	
+ 	<ul id="sideMenu" class="sideNavMenu">
+		<li>
+			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
+				<img src="../images/icon/ad_icon.png"/>
+				<h2>Manage Job Ads</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageUser.jsp')">
+				<img src="../images/icon/user_icon.png"/>
+				<h2>Manage Users</h2>
+			</a>
+		</li>
 	
-			Select a Job Ad: <br/>
-			Job Ad ID: <input id="jobAdId" type="text" name="jobAdId" size="15"/><br/>
-			<button id="getJobAdButton" type="button" onclick="getJobAdById()">Find Job Ad</button> <br/>
-			<br/>
-			
-			Delete Job Ad: <br/>
-			<button id="adminDeleteButton" type="button" onclick="adminDeleteJobAd()">Delete (Permanently)
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageNews.jsp')">
+				<img src="../images/icon/news_icon.png"/>
+				<h2>Manage News</h2>
+			</a>
+		</li>
+		
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageRSS.jsp')">
+				<img src="../images/icon/rss.png"/>
+				<h2>Manage RSS</h2>
+			</a>
+		</li>
+	 <%
+	 if(s.getAccountType().equals("superAdmin")){
+	 %>
+		<li>
+			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
+				<img src="../images/icon/admin_icon.png"/>
+				<h2>Manage Admins</h2>
+			</a>
+		</li>
+	 <%
+	  }
+	 %>
+	 	<li>
+			<a class="jsBtn" onclick="userLogoutRequest()">
+				<img src="../images/icon/logout_icon.png"/>
+				<h2>Log Out</h2>
+			</a>
+		</li>
+  	</ul><!--ENDOF SideMenu-->
+  	
+  	
+<!-- ==================================================================== -->		
+<!--===================== NAVBAR =========================================-->
+<!-- ==================================================================== -->
 
-</button> <br/>
-			<br/>
-			
-			Approve/Deny Job Ad: <br/>
-			<button id="adminApproveButton" type="button" onclick="adminApprove()">Approve</button> <br/>
-			<button id="adminDenyButton" type="button" onclick="adminDeny()">Deny</button>
-			
-			<h4>Feedback:</h4>
-			<div id=feedback>Feedback Area</div>
-			
-			
-			
-			<br/>
-			<br/>
-			<br/>
-			<h2>Job Ad Details:</h2>
-			
-			<div id="jobAdDetails">
+	<div id="tabs" class="tabPane">
+  	  <div id="navBar" class="navBar">
+		<ul>
+			<li id="jobAdTab">
+  				<a href="#allJobAdFrame"><h2>All Job Ads</h2></a>
+			</li>
+			<li id="approvedTab">
+  				<a href="#approveJobAdFrame"><h2>Approved Job Ads</h2></a>
+			</li>
+			<li id="deniedTab">
+  				<a href="#denyJobAdFrame"><h2>Denied Job Ads</h2></a>
+			</li>
+			<li id="jobAdDetailsTab">
+  				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
+			</li>
+		</ul>
+	  </div><!--ENDOF NAVBAR-->
+	
+	
+<!-- ==================================================================== -->		
+<!--===================== ALL JOB AD FRAME===============================-->
+<!-- ==================================================================== -->	
+
+  <div id="tabFrame">		
+		<div id="allJobAdFrame" class="subFrame unremovable">
+			<h2 class="welcome"><b><font size='4'>List of Job Advertisements</font></b></h2>
+
+		 <div id="headToolBar">
+          	<ul id="filter">
+          		<li><a class="jsBtn cAll" onclick="filterTable('', allJobAdtable)">View All<span id="numActive"></span></a></li>
+	          	<li><a class="jsBtn cOpen" onclick="filterTable('open', allJobAdtable)">Open<span id="numActive"></span></a></li>
+				<li><a class="jsBtn cDraft" onclick="filterTable('draft', allJobAdtable)">Draft<span id="numDraft"></span></a></li>
+				<li><a class="jsBtn cPending" onclick="filterTable('pending', allJobAdtable)">Pending<span id="numPending"></span></a></li>
+				<li><a class="jsBtn cInact" onclick="filterTable('inactive', allJobAdtable)">Inactive<span id="numInactive"></span></a></li>
+          	</ul>
+          </div>
+	       <div id="allJobAdtable" class="resultTableDiv">
+	          <table>
+				<thead>
+					<tr>
+						<th id="col-viewDate">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Date</div>
+							</div>
+						</th>
+						<th id="col-viewTitle">
+							<div  class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Job Title</div>
+							</div>
+						</th>
+						<th id="col-viewEduReq">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-viewAvail">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Form of Employment</div>
+							</div>
+						</th>
+						<th id="col-viewLoc">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+						<th id="col-Tools">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Status</div>
+							</div>
+						</th>
+					</tr>
+					
+					<!-- 
+						<th id="col-Approve">
+							<td>
+								<a title="Approve" onclick="adminApprove()" class="jsBtn">
+	      						 	<img src="../images/icon/view_profile.png"/>
+								</a>									
+							</td>
+						</th>
+						<th id="col-Deny">
+							<td>
+								<a title="Deny" onclick="adminDeny()" class="linkImg">
+	      						 	<img src="../images/icon/ban_icon.png"/>
+								</a>									
+							</td>
+						</th>
+						<th id="col-Delete">
+							<td>
+								<a title="Delete" onclick="adminDelete()" class="linkImg">
+	      						 	<img src="../images/icon/delete_icon.png"/>
+								</a>									
+							</td>
+						</th>
+					 -->
+
+				</thead>
+					<tbody></tbody>
+				</table><!--ENDOF TABLE-->
 				
-				<h4>JobAd ID:</h4> <span id="jobAdId">Unknown</span> <br/>
-				
-				<h4>Current Status:</h4> <span id="status">Unknown</span><br/>
-				
-				<h4>Approval Status:</h4> <span id="isApproved">Unknown</span> <br/>
-				
-				<h4>Title:</h4> <span id="jobTitle"></span><br/>
-				
-				<h4>Description:</h4><br/>
-				<span id="jobDescription" ></span>
-				<br/><br/>
-				
-				<h4>Education Requirement:</h4>
-				<select id="educationReq" name="educationReq" disabled="disabled">
-						<option value="0">None</option>
-						<option value="1">B.Sc.</option>
-						<option value="2">M.Sc.</option>
-						<option value="3">Ph.D.</option>
-					</select>		
-				
-				<br/>
-				
-				<h4>Job Location(s) (separated by comma):</h4> <br/>
-				~Need to integrate with Google Map~ <br/>
-				<span id="address"></span>
-				<div id="mapCanvas"></div> 
-				
-				<br/>
-				
-				<h4>Contact Info:</h4>
-				<input id="contactInfo" type="text" name="contactInfo" size="20"/><br/>
-				<br/>
-				
-				<h4>Tags:</h4>
-				 <input id="tags" type="text" name="tags" size="20"/><br/>
-				<br/>
-				
-				<h4>Starting Date:  </h4>
-				<span id="startingDate"></span>
-				<br/>
-				
-				<h4>Expiring on:</h4>
-				<span id="expiryDate"></span>
-				<br/>
-				
-				<h4>Created on:</h4>
-				<span id="creationDate"></span>
-				<br/>
-				
-				<h4>Number of views:</h4>
-				<span id="numViews"></span>
-				<br/>
-			
 			</div>
 			
-			<form name="sid" method="get" action="">
-				<input id="sessionKey" name="sessionKey"/>
-			</form>				
-		</body>
-		<%
+			<button type="button" onclick="getAllJobAd('allJobAdtable')">Load all Job Ads</button>
+			
+		
+			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>
+		</div><!--end of ALL JOB AD FRAME-->
+		
+		
+		
+		
+<!-- ==================================================================== -->		
+<!--===================== APPROVED JOB AD FRAME =========================-->
+<!-- ==================================================================== -->	
+		
+		<div id="approvedJobAdFrame" class="subFrame unremovable">
+			<h2 class="welcome"><b><font size='4'>List of Approved Job Ads</font></b></h2>
+			
+			 <table id="tableApprovedJobAd">
+				<thead>
+					<tr>
+
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+			
+			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>		
+		</div><!--end of APPROVED JOB AD FRAME-->
+		
+		
+		
+		
+		
+<!-- ==================================================================== -->		
+<!--===================== DENIED JOB AD FRAME ===========================-->
+<!-- ==================================================================== -->	
+		
+		<div id="deniedJobAdFrame" class="subFrame unremovable">
+			<h2 class="welcome"><b><font size='4'>List of Denied Job Ads</font></b></h2>
+			
+			 <table id="tableDeniedJobAd">
+				<thead>
+					<tr>
+
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+			
+			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
+		    <br/>		
+		</div><!--end of DENIED JOB AD FRAME-->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+<!-- ==================================================================== -->		
+<!--===================== JOB AD DETAILS FRAME  ==========================-->
+<!-- ==================================================================== -->	
+
+		<div id="jobAdDetailsFrame" class="subFrame">
+			 <div id="profileTable" class="resultTableDiv noBorder">
+			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABPROFILEFRAME-->
+		
+	  </div><!--ENDOF TABFRAME-->
+	</div>   <!--end of tabs DIV-->		  
+	<%
 	}
-		%>
+	%>	
+	</div><!-- ENDOF MAIN -->
+	<ul class="footer_wrapper2">
+		<li>
+			©2011 JobzDroid
+		</li>
+	</ul>	
+	<div id="lightBox"></div>
+	<form name="sid" method="get" action="">
+		<input type="hidden" id="sessionKey" name="sessionKey"/>
+	</form>
+</body>
 </html>
