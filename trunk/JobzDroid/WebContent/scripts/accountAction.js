@@ -136,7 +136,7 @@ function changePrimaryEmail(sessionKey, newEmail){
  ****************************************************************************************************/
 function changeSecondaryEmail(sessionKey, secEmail){
 	request = new Request;
-	request.addAction("requestSecondaryEmailChangeHandler");
+	request.addAction("requestSecondaryEmailChange");
 	request.addSessionKey(sessionKey);
 	
 	request.addParam("secEmail",secEmail);
@@ -172,10 +172,40 @@ function changeSecondaryEmail(sessionKey, secEmail){
 /*****************************************************************************************************
  * 					Helper function - Handles Changes for Password
  ****************************************************************************************************/
-function changePassword(sessionKey, newPassword){
+function changePassword(sessionKey, oldPassword, newPassword, newPasswordRepeat){
+	request = new Request;
+	request.addAction("requestPasswordChange");
+	request.addSessionKey(sessionKey);	
+	request.addParam("oldPassword", oldPassword);
+	request.addParam("newPassword", newPassword);
+	request.addParam("newPasswordRepeat", newPasswordRepeat);
 	
+	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
 	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletAccount" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
 	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+			document.getElementById("submitAccountButton").disabled=false;
+		  //TODO: parse response
+			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+			
+			
+	    }
+	  };	
 }
 
 
@@ -198,20 +228,20 @@ function submitChangeAccount(){
 
 	
 	//Check if secondary e-mail has been given a value
-	if(strSecEmail != ""){
+	if(strSecEmail && strSecEmail != ""){
 		//TODO: implement real-time AJAX response for format check
 		changeSecondaryEmail(sessionKey, strSecEmail);
 	}
 
 	//Check if primary e-mail has been given a value
-	if(strNewEmail != ""){
+	if(strNewEmail && strNewEmail != ""){
 		//TODO: implement real-time AJAX response for format check
 		changePrimaryEmail(sessionKey, strNewEmail);
 	}
 
 	//Check if password fields have been filled
-	if(strNewPW != ""){
-		if( ( strOldPW != ""  ) && (strRepeatPW != "") ){
+	if(strNewPW && strNewPW != ""){
+		if( ( strOldPW && strOldPW != ""  ) && (strRepeatPW && strRepeatPW != "") ){
 			
 			if(strNewPW != strRepeatPW){
 				//TODO: implement real-time AJAX response
@@ -219,7 +249,7 @@ function submitChangeAccount(){
 			}
 			else{
 				//Initiate password change functions
-				changePassword(sessionKey, strNewPW);
+				changePassword(sessionKey, strOldPW, strNewPW, strRepeatPW);
 			}
 				
 			

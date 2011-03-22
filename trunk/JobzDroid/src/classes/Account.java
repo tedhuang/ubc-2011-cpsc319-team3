@@ -7,14 +7,16 @@ public class Account {
 	private String type;
 	private String status;
 	private long dateTimeCreated;
+	private String passwordMd5;
 	
-	public Account(int idAccount, String email, String secondaryEmail, String type, String status, long dateTimeCreated){
+	public Account(int idAccount, String email, String secondaryEmail, String type, String status, long dateTimeCreated, String passwordMd5){
 		this.idAccount = idAccount;
 		this.email = email;
 		this.secondaryEmail = secondaryEmail;
 		this.type = type;
 		this.status = status;
 		this.dateTimeCreated = dateTimeCreated;
+		this.passwordMd5 = passwordMd5;
 	}
 	
 	public int getIdAccount(){
@@ -39,5 +41,9 @@ public class Account {
 	
 	public long getDateTimeCreated(){
 		return dateTimeCreated;
+	}
+	
+	public String getPasswordMd5(){
+		return passwordMd5;
 	}
 }
