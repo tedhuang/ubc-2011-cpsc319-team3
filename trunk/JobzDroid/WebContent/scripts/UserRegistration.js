@@ -52,7 +52,10 @@ $("document").ready(function() {
 	$("#submitButton").bind("click",sendRegRequest);
 });
 
-// client side error checking
+
+/*****************************************************************************************************
+ * 					Client side error checking inside registration form
+ ****************************************************************************************************/
 function validateForm(evt){
 	// case: account type changed (must have at least one selected)
 	if( $(this).is("[name=accountType]") ){
@@ -136,6 +139,10 @@ function validateForm(evt){
 			$("#startingDateError").text("");
 	}
 }
+
+
+
+
 
 // sends account reg request to the account servlet
 function sendRegRequest(evt){	

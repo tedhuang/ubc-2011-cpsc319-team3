@@ -48,24 +48,13 @@ function loadProfileDetails(responseXML){
 
 
 
-
 function submitChangeProfile(accountType){
 	
 	//disables button to prevent multiple submit
-	document.getElementById("submitButton").disabled=true;
+	document.getElementById("submitProfileButton").disabled=true;
 	
 	var sessionKey = $("#sessionKey").val();
-	
-	//==========================================================================
-	//Account Changes - Call account functions to handle account info changes
 		
-		//TODO: implement this
-
-	//==========================================================================
-
-	//TODO: add location change
-	
-	
 	//Profile Changes
 	var strName 		= document.getElementById("name").value;
 	var strSecEmail		= document.getElementById("secondaryEmail").value;
@@ -99,7 +88,7 @@ function submitChangeProfile(accountType){
 	
 	request = new Request;
 	request.addAction("editProfile");
-	request.addSessionKey(sessionKey); //TODO integrate session key
+	request.addSessionKey(sessionKey);
 	
 	request.addParam("name",strName);
 	request.addParam("secEmail",strSecEmail);

@@ -245,17 +245,17 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		
 
 		var accountText = 
-				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")		+ "</td><td></td></tr>" +
-				"<tr><td>New E-mail</td><td>"			+ " "						+ "</td><td><input id='emailNew' 		style = 'DISPLAY: none;' /></td></tr>" +
-				
-				"<tr><td>Old Password</td><td>"			+ " "						+ "</td><td><input id='passwordOld' 	style = 'DISPLAY: none;' /></td></tr>" +
-				"<tr><td>New Password</td><td>"			+ " "						+ "</td><td><input id='passwordNew' 	style = 'DISPLAY: none;' /></td></tr>" +
-				"<tr><td>Repeat Password</td><td>"		+ "	"						+ "</td><td><input id='passwordRepeat' 	style = 'DISPLAY: none;' /></td></tr>";
+				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
+				"<tr id=newEmailRow 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
+				"<tr><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
+				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
+				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
+				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /></td></tr>" +
+				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat'/></td></tr>";
 
 			
 		var profileText =
 			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td><td><input id='secondaryEmail'  style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td><td><input id='selfDescription' style = 'DISPLAY: none;' /></td></tr>";
 
@@ -265,7 +265,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			profileText +=
 				"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
 				"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("empPref")				+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
-				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")			+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> yyyy/mm/dd (add date picker?) </td></tr>";
+				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDate")			+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
 		}
 		
 		//Add Address Input Field
@@ -273,17 +273,19 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			"<tr><td>Your Address</td>  <td>"+ profile.attr("address")+"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
 			"<tr><td></td><td></td><td>" + addressButton + "</td></tr>" +
 			"<tr><td></td><td></td><td>" + addressResult + "</td></tr>";
-			//"<tr><td></td><td></td><td>" + "<span id='locFeedback'>Please Select an address</span>" + "</td></tr>";
 			
 			
 		//Add buttons 
-		buttonHTML += 
+		buttonHTML = 
 			"<tr>" +
-				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableAccountEdit()'>Change E-mail and Password</button></td>" +
-				"<td><button id=\"enableEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Change Profile Fields</button></td>" +
-				"<td></td><td><button id='submitProfileButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
+				"<td><button id=\"enableAccountEditButton\" type=\"button\" onclick=\'enableAccountEdit(\""+accountType+"\")'>Change E-mail and Password</button></td>" +
 				"<td></td><td><button id='submitAccountButton' style = 'DISPLAY: none;' onclick=\'submitChangeAccount()'>Submit</button></td>" +
+			"</tr>"+
+			"<tr>" +
+				"<td><button id=\"enableProfileEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Change Profile Fields</button></td>" +
+				"<td></td><td><button id='submitProfileButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
 			"</tr>";
+			
  
 		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
@@ -294,13 +296,31 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	}
 }
 
-function enableAccountEdit(){
-	$("#emailNew").show();
-	$("#passwordOld").show();
-	$("#passwordNew").show();
-	$("#passwordRepeat").show();
-
-	$("#submitChangeAccount").show();
+/********************************************************************************************************************
+ * 						Enable Account Edit
+ *********************************************************************************************************************/
+function enableAccountEdit(accountType){
+	$("#newEmailRow").show();
+	$("#secEmailRow").show();
+	$("#oldPWRow").show();
+	$("#newPWRow").show();
+	$("#repeatPWRow").show();
+	$("#submitAccountButton").show();
+	
+	//Hide Edit Profile Fields
+	$("#name").hide();
+	$("#phone").hide();
+	$("#educationLevel").hide();
+	$("#selfDescription").hide();
+	$("#loc-filed").hide();
+	$("#addressButton").hide();
+	
+	if(accountType == "searcher"){
+		$("#startingDate").hide();
+		$("#empPrefSelectionDiv").hide(); 
+	}
+	$("#submitProfileButton").hide();
+	
 }
 
 
@@ -308,12 +328,9 @@ function enableAccountEdit(){
 /********************************************************************************************************************
  * 						Enable Profile Edit
  *********************************************************************************************************************/
-
 function enableProfileEdit(accountType)
 {
-	
 	$("#name").show();
-	$("#secondaryEmail").show();
 	$("#phone").show();
 	$("#educationLevel").show();
 	$("#selfDescription").show();
@@ -322,10 +339,17 @@ function enableProfileEdit(accountType)
 	
 	if(accountType == "searcher"){
 		$("#startingDate").show();
-		$("#empPrefSelectionDiv").show(); //TODO: change to check box
+		$("#empPrefSelectionDiv").show(); 
 	}
-	
 	$("#submitProfileButton").show();
+	
+	//Hide Account Fields
+	$("#secEmailRow").hide();
+	$("#newEmailRow").hide();
+	$("#oldPWRow").hide();
+	$("#newPWRow").hide();
+	$("#repeatPWRow").hide();
+	$("#submitAccountButton").hide();
 }
 
 

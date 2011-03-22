@@ -454,7 +454,7 @@ public class ServletProfile extends HttpServlet{
 		String accountType 		= currSession.getAccountType();
 		
 		String name 			= request.getParameter("name");
-		String secEmail 		= request.getParameter("secEmail");
+		//String secEmail 		= request.getParameter("secEmail");
 		String phone 			= request.getParameter("phone");
 		String selfDescription 	= request.getParameter("descripton");
 		
@@ -465,7 +465,7 @@ public class ServletProfile extends HttpServlet{
 		
 		//Check new inputs
 		name = Utility.checkInputFormat( name );
-		secEmail = Utility.checkInputFormat( secEmail );
+
 		phone = Utility.checkInputFormat( phone );
 		selfDescription = Utility.checkInputFormat( selfDescription );
 		
