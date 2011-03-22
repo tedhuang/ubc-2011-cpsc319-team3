@@ -4,10 +4,10 @@
 
 $("document").ready(function() {
 	// client side error checking
-	$("#rssTitle").bind("change", validateInput);
+	$("input").bind("change", validateInput);
 	// allow content to have maximum 2048 characters
-	$("#rssContent").bind("keyup", function(){
-		limitChars('newsContent', 10000, 'contentInfo');
+	$("#contentInput").bind("keyup", function(){
+		limitChars('contentInput', 10000, 'contentInfo');
 	});
 	// send request to admin servlet on submit
 	$("#submitButton").bind("click", postRSS);
@@ -17,8 +17,8 @@ $("document").ready(function() {
 
 // client side error checking, can add additional checks on other fields if needed
 function validateInput(evt){
-	// case: News title changed
-	if( $(this).attr('id') == "rssTitle" ){
+	// case: rss title input changed
+	if( $(this).attr('id') == "titleInput" ){
 		var title = $(this).val();
 		if(trim(title) == "")
 			$("#titleError").text("Title must not be empty.");
@@ -31,9 +31,10 @@ function validateInput(evt){
 function postRSS(evt){
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass();	
-	var strNewsTitle = trim($("#newsTitle").val());
-	var strNewsContent = $("#newsContent").val();
+	var strRSSTitle = trim($("#titleInput").val());
+	var strRSSContent = $("#contentInput").val();
 	var strSessionKey = $("#sessionKey").val();
+	var strFeedType = $("#feedType").val(); 
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -55,9 +56,9 @@ function postRSS(evt){
 					 if(boolResult == "true"){
 						 $("#statusText").addClass("successTag");
 						 $("#submitButton").removeAttr("disabled");
-						 $("#newsTitle").val("");
-						 $("#newsContent").val("");
-						 loadPageWithSession('manageNews.jsp');
+						 $("#titleInput").val("");
+						 $("#contentInput").val("");
+						 loadPageWithSession('manageRSS.jsp');
 					 }
 					 else
 						 $("#statusText").addClass("errorTag");		
@@ -68,10 +69,11 @@ function postRSS(evt){
 			}};
 	}
 	request = new Request;
-	request.addAction("postNews");
+	request.addAction("postRSS");
 	request.addSessionKey(strSessionKey);
-	request.addParam("title", strNewsTitle);
-	request.addParam("content", strNewsContent);
+	request.addParam("title", strRSSTitle);
+	request.addParam("content", strRSSContent);
+	request.addParam("type", strFeedType);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
@@ -112,7 +114,7 @@ function sendDeleteRSSRequest(index){
 					 $(".linkImg").removeAttr("disabled");
 					 alert(strMsg);
 					 if(boolResult == "true")
-						 loadPageWithSession('manageNews.jsp');
+						 loadPageWithSession('manageRSS.jsp');
 				}
 			}};
 	}

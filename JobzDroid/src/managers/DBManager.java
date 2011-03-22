@@ -133,7 +133,7 @@ public class DBManager {
 				type = rs.getString("type");
 				status = rs.getString("status");
 				dateTimeCreated = rs.getLong("dateTimeCreated");
-				passwordMd5 = rs.getString("passwordMd5");
+				passwordMd5 = rs.getString("password");
 				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
 				return account;
 			}
@@ -192,7 +192,7 @@ public class DBManager {
 				type = rs.getString("type");
 				status = rs.getString("status");
 				dateTimeCreated = rs.getLong("dateTimeCreated");
-				passwordMd5 = rs.getString("passwordMd5");
+				passwordMd5 = rs.getString("password");
 				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
 				return account;
 			}
