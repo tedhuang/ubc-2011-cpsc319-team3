@@ -24,16 +24,12 @@
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
 	Session s = dbManager.getSessionByKey(sessionKey);
-	// if invalid or non-admin session, then forward to error page.
+	// if invalid or non-admin session, then redirect to index page.
 	if (s == null){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
-	else if ( !s.getAccountType().equals("superAdmin") ){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
+		response.sendRedirect("../index.html");	
 	}
 	else{
 		// get all searcher and poster accounts

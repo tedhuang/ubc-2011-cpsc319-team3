@@ -278,6 +278,7 @@ public class DBManager {
 		Statement stmt = null;
 		long expiryTime, currentTime = Utility.getCurrentTime();
 		int idAccount = -1;
+		System.out.println(idPasswordReset);
 		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
 		try {
 			stmt = conn.createStatement();

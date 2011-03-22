@@ -25,16 +25,12 @@
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
 	Session s = dbManager.getSessionByKey(sessionKey);
-	// if invalid or non-admin session, then forward to error page.
+	// if invalid or non-admin session, then redirect to index page.
 	if (s == null){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else{
 		// get all searcher and poster accounts
@@ -158,7 +154,7 @@
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
 									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
+										<a title="View Profile" onclick="viewProfile('<%= idAccount %>', 0)" class="linkImg">
 		       						 		<img src="../images/icon/view_profile.png"/>
 										</a>									
 									</td>
@@ -250,7 +246,7 @@
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
 									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>')" class="linkImg">
+										<a title="View Profile" onclick="viewProfile('<%= idAccount %>', 1)" class="linkImg">
 		       						 		<img src="../images/icon/view_profile.png"/>
 										</a>									
 									</td>

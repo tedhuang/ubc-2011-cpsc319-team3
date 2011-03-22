@@ -22,7 +22,7 @@ import managers.DBManager;
 import managers.EmailManager;
 import managers.SystemManager;
 
-/**
+/** 7242371500566734 
  * Servlet implementation class ServletAccount
  * Handles all account related requests, including registration, log-in, forget password, email verification and so on.
  */
@@ -322,12 +322,10 @@ public class ServletAccount extends HttpServlet {
 	private void activateAccountHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String verificationNumber = request.getParameter("id");
 		boolean accountActivated = activateAccount(verificationNumber);
-		if(accountActivated){
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/accountActivationSuccess.html");
-			dispatcher.forward(request, response);
-		}
+		if(accountActivated)
+			response.sendRedirect("account/accountActivationSuccess.html");	
 		else
-			throw new ServletException("Failed account activation action.");
+			response.sendRedirect("error.html");
 	}
 	
 	/***
