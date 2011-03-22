@@ -10,13 +10,13 @@
 .sideNavMenu li a.topMenu{ 	border-bottom: 1px solid #E0E0E0;}
 .sideNavMenu li a.topMenu:hover{cursor: default;}
 .sideNavMenu li a img {   display:block;  margin:0;  padding:3px;  height:40px;  width:40px;  float:left;}
-.sideNavMenu li a h2 {   display:block;  font: bold 12px Verdana, Arial, Helvetica, sans-serif;}
+.sideNavMenu li a span {   display:block;  font: bold 12px Verdana, Arial, Helvetica, sans-serif;}
 .sideNavMenu  li a small {   font: bold 8px Verdana, Arial, Helvetica, sans-serif;}
 .sideNavMenu li a:hover {     color:#FFF;   background: #9EDB04;}
 
 /********************SubMenus***********************/
-.sideNavMenu #subMenu{	padding: 0;	font-size: 12px;	margin: 0;}
-.sideNavMenu #subMenu li {	list-style	: none;	text-align	: right;border-bottom: none;}
-.sideNavMenu #subMenu li a {height	: 15px;	color	: #119f14;	font-size	: 13px;	line-height	: 1.2em;}
-.sideNavMenu #subMenu li a img {   height	:16px;  width		:16px;}
+.sideNavMenu .subMenu{	padding: 0;	font-size: 12px;	margin: 0;}
+.sideNavMenu .subMenu li {	list-style	: none;	text-align	: right;border-bottom: none;}
+.sideNavMenu .subMenu li a {height	: 15px;	color	: #119f14;	font-size	: 13px;	line-height	: 1.2em;}
+.sideNavMenu .subMenu li a img {   height	:16px;  width		:16px;}
 /**/
