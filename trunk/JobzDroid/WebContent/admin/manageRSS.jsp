@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, managers.NewsManager, classes.Session, classes.NewsEntry, classes.Utility, java.util.ArrayList"%>
+    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, managers.RSSManager, managers.SystemManager, classes.Session,
+     classes.Utility, java.util.List, com.sun.syndication.feed.synd.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -30,6 +31,17 @@
 		response.sendRedirect("../index.html");	
 	}
 	else{
+		// read feed information
+		SyndFeed newsFeed, jobAdFeed;
+		try{
+			newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+			jobAdFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/jobAd.xml");
+		}
+		catch(Exception e){
+			throw new ServletException("Error reading feed information: " + e.getMessage());
+		}
+		List<SyndEntry> newsFeedEntries = newsFeed.getEntries();
+		List<SyndEntry> jobAdFeedEntries = jobAdFeed.getEntries();
 	%>	
 	<!--Start tabs-->
 		<div class="main">
@@ -111,12 +123,83 @@
 		  <div id="newsRSSFrame" class="subFrame unremovable">		  
 			<h2 class="welcome"><b><font size='4'> Manage News RSS</font></b></h2>
 		  	  <table>
+		  	  <%
+		  	  	for(int i = 0; i < newsFeedEntries.size(); i++){
+		  	  		SyndEntry entry = newsFeedEntries.get(i);
+		  	  		String title = entry.getTitle();
+		  	  		String content = entry.getDescription().getValue();
+		  	  		long pubDate = entry.getPublishedDate().getTime();
+		  	  		String formattedDate = Utility.longToDateString(pubDate, "PST");
+		  	  %>
+	  			<tr style="font-weight:bold">
+	  				<td>Title: <%= title %> 	  						
+	  					<a title="Delete" onclick="sendDeleteNewsRSSRequest('<%= i %>')" class="linkImg" style="float:right">
+       						 		<img src="../images/icon/delete_icon.png"/>
+						</a>
+	  				</td>
+	  			</tr>
+	  			<tr style="font-style: italic">
+	  				<td><%= formattedDate %></td>
+	  			</tr>
+	  			<tr>
+	  				<td><%= content %></td>
+	  			</tr>	  			
+			  	<tr>
+			  	  <td class="clean"></td>
+			 	</tr>
+			 	<tr>
+			  	  <td class="clean"></td>
+			 	</tr>
+		  	  <%
+		  	  	}
+		  	  %>
 			  </table>
 		  </div> <!--end of NEWS_RSS_FRAME-->		
 		  
 		  <div id="jobAdRSSFrame" class="subFrame unremovable">		  
 			<h2 class="welcome"><b><font size='4'> Manage Job Ads RSS</font></b></h2>
 		  	  <table>
+		  	  <%
+		  	  	for(int i = 0; i < jobAdFeedEntries.size(); i++){
+		  	  		SyndEntry entry = jobAdFeedEntries.get(i);
+		  	  		String title = entry.getTitle();
+		  	  		String content = entry.getDescription().getValue();
+		  	  		long pubDate = entry.getPublishedDate().getTime();
+		  	  		String formattedDate = Utility.longToDateString(pubDate, "PST");
+		  	  		String link = entry.getLink();
+		  	  		
+		  	  		List<SyndCategory> categoryList = entry.getCategories();
+		  	  		String categories = "";
+		  	  		for(int j = 0; j < categoryList.size(); j++){
+		  	  			categories.concat(categoryList.get(j).getName());		  	  			
+		  	  			categories = categories.trim();
+		  	  		}
+		  	  %>
+	  			<tr style="font-weight:bold">
+	  				<td>Title: <%= title %> 	  						
+	  					<a title="Delete" onclick="sendDeleteJobAdRSSRequest('<%= i %>')" class="linkImg" style="float:right">
+       						 		<img src="../images/icon/delete_icon.png"/>
+						</a>
+	  				</td>
+	  			</tr>
+	  			<tr style="font-style: italic">
+	  				<td><%= formattedDate %></td>
+	  			</tr>
+	  			<tr style="font-style: italic">
+	  				<td><%= categories %></td>
+	  			</tr>
+	  			<tr>
+	  				<td><%= content %></td>
+	  			</tr>	  			
+			  	<tr>
+			  	  <td class="clean"></td>
+			 	</tr>
+			 	<tr>
+			  	  <td class="clean"></td>
+			 	</tr>
+		  	  <%
+		  	  	}
+		  	  %>
 			  </table>
 		  </div><!--end of JOB_AD_RSS_FRAME-->
 		    
@@ -132,9 +215,9 @@
 			          		 Choose a Feed: 
 			   			 </td> 
 					  	 <td>
-					        <select id="eduLevel">
-							  <option value="0">News RSS</option>
-							  <option value="1">Job Ad RSS</option>
+					        <select id="feedType">
+							  <option value="news">News RSS</option>
+							  <option value="jobAd">Job Ad RSS</option>
 							</select>
 			  			 </td>
 			    	  </tr>
@@ -144,7 +227,7 @@
 		    			</td>
 					    <td style="width: 272px">
 					        <div>
-					            <input type="text" class="textinput" id="newsTitle" size="134" maxlength="100" tabindex="11"/>
+					            <input type="text" class="textinput" id="titleInput" size="134" maxlength="100" tabindex="11"/>
 					      		<span id="titleError" class="errorTag"></span>
 					        </div>
 					    </td>
@@ -157,7 +240,7 @@
 					        Content:			        
 					    </td> 
 					    <td>
-					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
+					        <textarea id="contentInput" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
 					        <br/>
 					        <span>Note: You can add HTML tags for styling.</span><br/>
 					        <span id="contentInfo"></span>
