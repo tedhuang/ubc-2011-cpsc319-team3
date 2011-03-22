@@ -2,6 +2,7 @@
   <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252"/>
     <TITLE>File Upload Page</TITLE>
+    <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script type="text/javascript">
     
     function uploadFile() {
@@ -48,6 +49,53 @@
 	    }
 	}
     
+	function listUserFiles() {
+    	var sessionKey = document.getElementById("sessionKey").value;
+    	
+    	if (window.XMLHttpRequest)
+  	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  	  xmlhttp=new XMLHttpRequest();
+  	  }
+  	else
+  	  {// code for IE6, IE5
+  	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  	  }
+  	
+  	var Params = "action=listUserDocuments" + "&sessionKey=" + sessionKey;
+  	//send the parameters to the servlet with POST
+  	xmlhttp.open("POST","../ServletDocument" ,true);
+  	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  	xmlhttp.send(Params); 
+  	
+  	xmlhttp.onreadystatechange=function(){
+  	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+  	    {
+  		    //Gets sessionKey and prints it to div
+  			var listFiles = xmlhttp.responseXML.getElementsByTagName("file");
+  			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
+
+  		    if( listFiles != "null" ) 
+  			    { 
+  		    		for ( file in listFiles)
+  		    		{
+  		    			var fileName 	= file.getAttribute("fileName");
+  		    			var size		= file.getAttribute("size")
+  		    			console.log("fileName=" + fileName + " size=" + size + "\n");
+  		    			$("#fileList").append( "fileName=" + fileName + " size=" + size + "\n" );
+  		    		}
+  					
+  					//$("#submitUserID").value = userID;
+  					//$("#close").submit();
+  					//$("#loginBox").remove();
+  		    	}
+  		    else
+  		    	{
+  			    	//TODO: implement error handling
+  		    	}
+  	    }
+  	  };
+    	
+	}
     </script>
     
   </HEAD>
@@ -64,6 +112,34 @@
 		<input id="sessionKey" name="sessionKey"/>
 		</form>
 		
+		
+	<button onclick="listUserFiles();">listFiles</button>
 	<DIV id="uploadResult">before upload</DIV>
+	<div id="fileList"></div>
+	<div id="fileTable" class="resultTableDiv tableClear">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-fileName">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Date</div>
+							</div>
+						</th>
+						<th id="col-fileSize">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Job Title</div>
+							</div>
+						</th>
+						<th id="col-lastModified">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Company</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+	</div><!--ENDOF DIV RESULT TABLE-->     			
   </BODY>
 </HTML>

@@ -387,7 +387,10 @@ public class ServletDocument extends HttpServlet {
 			File[] userfiles = getUserFiles( currSession.getIdAccount() );
 			
 			for( File eachFile: userfiles ) {
-				fileNames = fileNames.concat("\t<file>" + eachFile.getName() + "<\file>\n");
+				fileNames = fileNames.concat("\t<file " +
+						"fileName=\"" + eachFile.getName() + "\" " +
+						"size=\"" + ( FileUtils.sizeOf( eachFile ) / SystemManager.bytesInKB ) + "\" " +
+						">" + "</file>\n");
 				success = true;
 			}
 			
@@ -407,6 +410,9 @@ public class ServletDocument extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
+		System.out.println(XMLResponse);
 	}
+	
+	
 	
 }
