@@ -32,7 +32,9 @@ function copyEmailToInput(email, inputID){
 }
 
 function viewProfile(idAccount){
-	getProfileById(idAccount, 'profileTable', 'profileHeading');
+	hideAllTabFrames();
+	showProfileTab();
+//	getProfileById(idAccount, 'profileTable', 'profileHeading');
 	return false;
 }
 
@@ -168,4 +170,27 @@ function parseUnbanResponse(responseXML){
 	 else
 		 $("#statusTextSecondFrame").addClass("errorTag");
 	 return strMsg;
+}
+
+function hideAllTabFrames(){
+	$(tabFrame, obj).each(function(){
+      $($(this, obj), obj).hide();
+	});
+}
+
+function showProfileTab(){
+	// profile tab is at index 2
+	var tabs = $($("ul > li > a ","#navBar"), obj);
+	var profileTab = tabs.eq(2); 
+    $(tabs, obj).removeClass("curTab");
+    profileTab.addClass("curTab");
+    profileTab.parent().show();
+    $($(profileTab, obj).attr("href"), obj).show();
+    return true;
+}
+function updateTabSet(){
+   	tabs = $($("ul > li > a ","#navBar"), obj);
+   	bindOnClick();
+   	tabNum=tabs.length;
+   	return tabs;
 }
