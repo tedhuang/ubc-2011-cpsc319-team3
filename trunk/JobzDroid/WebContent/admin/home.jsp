@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />	
 	<link href="http://localhost:8080/JobzDroid/css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>		
-	<script type="text/javascript" src='http://localhost:8080/JobzDroid/scripts/Utility.js'></script>
+	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 <title>JobzDroid - Admin Home</title>
 </head>
@@ -16,16 +16,12 @@
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
 	Session s = dbManager.getSessionByKey(sessionKey);
-	// if invalid or non-admin session, then forward to error page.
+	// if invalid or non-admin session, then redirect to index page.
 	if (s == null){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else{
 	%>	

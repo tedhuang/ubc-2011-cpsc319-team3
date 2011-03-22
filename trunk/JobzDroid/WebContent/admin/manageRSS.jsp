@@ -22,16 +22,12 @@
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
 	Session s = dbManager.getSessionByKey(sessionKey);
-	// if invalid or non-admin session, then forward to error page.
+	// if invalid or non-admin session, then redirect to index page.
 	if (s == null){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else if ( !s.getAccountType().equals("admin") && !s.getAccountType().equals("superAdmin")){
-	%>
-		<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("../index.html");	
 	}
 	else{
 	%>	
@@ -148,7 +144,7 @@
 		    			</td>
 					    <td style="width: 272px">
 					        <div>
-					            <input type="text" class="textinput" id="newsTitle" size="125" maxlength="100" tabindex="11"/>
+					            <input type="text" class="textinput" id="newsTitle" size="134" maxlength="100" tabindex="11"/>
 					      		<span id="titleError" class="errorTag"></span>
 					        </div>
 					    </td>
@@ -161,7 +157,7 @@
 					        Content:			        
 					    </td> 
 					    <td>
-					        <textarea id="newsContent" class="textinput" rows="9" cols="126" tabindex="14"></textarea>
+					        <textarea id="newsContent" class="textinput" rows="17" cols="131" tabindex="14"></textarea>
 					        <br/>
 					        <span>Note: You can add HTML tags for styling.</span><br/>
 					        <span id="contentInfo"></span>
@@ -177,6 +173,11 @@
 		</div> <!--ENDOF TABFRAME-->
 	   </div> <!--end of tabs DIV-->	
 	  </div><!-- ENDOF MAIN -->
+	<ul class="footer_wrapper2">
+		<li>
+			©2011 JobzDroid
+		</li>
+	</ul>	
 	<%
 	}
 	%>	

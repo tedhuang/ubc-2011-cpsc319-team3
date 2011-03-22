@@ -5,10 +5,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-	<link href="http://localhost:8080/JobzDroid/css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>		
-	<script type="text/javascript" src='http://localhost:8080/JobzDroid/scripts/Utility.js'></script>
-	<script type="text/javascript" src="http://localhost:8080/JobzDroid/scripts/ResetForgetPassword.js"></script>
+	<script type="text/javascript" src='scripts/Utility.js'></script>
+	<script type="text/javascript" src="scripts/ResetForgetPassword.js"></script>
 	<title>Reset Forgotten Password</title>
 </head>
 <body>
@@ -18,20 +18,18 @@
 	int idAccount = dbManager.getIdAccountFromIdPasswordReset(idPasswordReset);
 	// if password reset id is invalid or expired, then forward to error page.
 	if (idAccount == -1){
-	%>
-	<jsp:forward page="../error.html" />
-	<%
+		response.sendRedirect("error.html");	
 	}
 	else{
 	%>	
 	<div class="main">
 	  <div class="header">
-		<a id="logo" title="home" href="http://localhost:8080/JobzDroid/index.html">
-	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
+		<a id="logo" title="home" href="index.html">
+	        <img src="images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
-		    <li><a href="http://localhost:8080/JobzDroid/news.jsp" class="btn">News</a></li>
-		    <li><a href="http://localhost:8080/JobzDroid/rss/rss.html" class="btn">RSS</a></li>
+		    <li><a href="news.jsp" target="_blank" class="btn">News</a></li>
+		    <li><a href="rss/rss.html" target="_blank" class="btn">RSS</a></li>
 		    <li><a href="#" class="btn">View Job Ads</a></li>
 		</ul>
 	  </div>

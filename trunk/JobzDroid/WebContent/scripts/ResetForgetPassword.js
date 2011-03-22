@@ -67,7 +67,8 @@ function sendResetPassword(evt){
 	request.addParam("idPasswordReset", strIdPasswordReset);
 
 	//send the request to servlet
-	xmlHttpReq.open("POST","http://localhost:8080/JobzDroid/ServletAccount", true);
+//	xmlHttpReq.open("POST","http://localhost:8080/JobzDroid/ServletAccount", true);
+	xmlHttpReq.open("POST","/JobzDroid/ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	

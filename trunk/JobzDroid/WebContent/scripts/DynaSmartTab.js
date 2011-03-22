@@ -5,13 +5,15 @@
  * Inspired By "SmartTab", http://tech-laboratory.blogspot.com
  * 
  */
+
+var curTabIdx = 0;
 (function($){
     $.fn.DynaSmartTab = function(options) {
        var options = $.extend({}, $.fn.DynaSmartTab.defaults, options);//keep default, only update from the "options"
 
         return this.each(function() {
                 obj = $(this);
-                var curTabIdx = options.selected; // Set the current tab index to default tab
+                curTabIdx = options.selected; // Set the current tab index to default tab
                 var tabidPrefix = options.tabidPrefix;
                 var frameidPrefix = options.frameidPrefix;
                 var tabNum = 0;
