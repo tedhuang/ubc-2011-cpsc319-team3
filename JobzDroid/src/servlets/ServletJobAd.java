@@ -47,6 +47,7 @@ public class ServletJobAd extends HttpServlet {
 		getJobAdByOwner,
 		getJobAdById,
 		deleteJobAd,
+		getAllJobAd,
 		
 		adminApprove,
 		adminDeny,
@@ -58,10 +59,6 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-
-
-    
-    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -129,6 +126,10 @@ public class ServletJobAd extends HttpServlet {
 			
 			case loadAdList:
 				searchJobAd(request, response);
+				break;
+			
+			case getAllJobAd:
+				getAllJobAd(request, response);
 				break;
 				
 		/*****************ADMIN ACTIONS***********************/				
@@ -276,12 +277,149 @@ public class ServletJobAd extends HttpServlet {
 	
 
 	
+
+	/**
+	 * Returns an xml formatted arraylist of job advertisements
+	 */
+	private void getAllJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		System.out.println("ServletJobAd: Inside getAllJobAd");
+
+		String message = "getAllJobAd failed";
+		boolean isSuccessful = false;
+		
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		
+//		String sessionKey = request.getParameter("sessionKey");
+//		Session session = dbManager.getSessionByKey(sessionKey);
+
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		Statement stmtLoc = null;
+
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"SELECT * FROM tableJobAd";
+			
+			System.out.println("getAllJobAd query:" + query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			while(result.next()){
+				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+				
+				//Fill in the fields of the jobAd object
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.jobAvailability	= result.getString("jobAvailability");
+				jobAd.status 			= result.getString("status");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.isApproved 		= result.getInt("isApproved");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+
+				//jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.tags 				= result.getString("tags");
+				
+			/**Get Location values */
+				stmtLoc = conn.createStatement();
+				ArrayList<Location> locationList = new ArrayList<Location>();
+				
+				query = "SELECT * FROM tableLocationJobAd WHERE " +
+						"idJobAd= '" + jobAd.jobAdId +"'";
+				
+				isSuccessful = stmtLoc.execute(query);
+				ResultSet locResult = stmtLoc.getResultSet();
+				
+				if(!locResult.first()){
+					System.out.println("Error: failed to find the inserted location");
+				}
+				else{
+					while(locResult.next()){
+						Location location = new Location();
+
+						//Get Address, Longitude, Latitude
+						location.address = result.getString("location");
+						location.longitude = result.getDouble("longitude");
+						location.latitude = result.getDouble("latitude");	
+						locationList.add(location);
+					}
+				}
+				
+				jobAd.locationList = locationList;
+				
+				jobAdList.add(jobAd);
+				
+	//TODO: add get employment type
+				
+				
+			}//END OF WHILE LOOP
+			
+			if(jobAdList.isEmpty()){
+				message = "Error: No Job Ad found";
+				System.out.println("Error: No Job Ad found");
+			}
+			
+			System.out.println("getAllJobAd successful");
+			message = "getAllJobAd successful";
+			isSuccessful = true;
+
+		} //END OF TRY
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		
+		Iterator<JobAdvertisement> itr = jobAdList.iterator();
+		
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+	}
+	
 	
 	
 	
 	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
-		String message = "Create Job Advertisement Failed";
+		String message = "getJobAdByOwner failed";
 		boolean isSuccessful = false;
 		
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
@@ -363,8 +501,8 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Error: No Job Ad found with owner ID =" + ownerId);
 			}
 			
-			System.out.println("getJobAdByStatus successful");
-			message = "getJobAdByStatus successful";
+			System.out.println("getJobAdByOwner successful");
+			message = "getJobAdByOwner successful";
 			isSuccessful = true;
 
 		} //END OF TRY
@@ -490,6 +628,9 @@ public class ServletJobAd extends HttpServlet {
 			
 			jobAd.locationList = locationList;
 			
+//TODO: add get employment type
+			
+			
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
@@ -600,7 +741,6 @@ public class ServletJobAd extends HttpServlet {
 			
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
@@ -610,7 +750,6 @@ public class ServletJobAd extends HttpServlet {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
 	        	System.out.println("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
@@ -618,7 +757,6 @@ public class ServletJobAd extends HttpServlet {
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }

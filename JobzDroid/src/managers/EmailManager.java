@@ -39,6 +39,7 @@ public class EmailManager {
 	 * @param uuid Unique id for confirming the email change request.
 	 */
 	public void sendPrimaryEmailChangeVerificationEmail(String address, UUID uuid){
+		System.out.println("Inside sendPrimaryEmailChangeVerificationEmail");
 		String emailTitle = "JobzDroid Primary Email Change Confirmation";
 		String emailBody = "Greetings,\n\n" +
 							"Please click on the link below to confirm your primary email change:\n" +

@@ -111,11 +111,11 @@ function loadJobAdDetails( responseXML ){
 
 
 //TODO: hook up with UI
-function changeJobAdStatus(){
+function changeJobAdStatus(intJobAdId, strNewStatus){
 	
 	//TODO: use these ID for UI
-	var intJobAdId = document.getElementById("jobAdId").value;
-	var strNewStatus = document.getElementById("newStatus").value; 
+	//var intJobAdId = document.getElementById("jobAdId").value;
+	//var strNewStatus = document.getElementById("newStatus").value; 
 
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");//USE console.log(); instead
@@ -158,10 +158,13 @@ function changeJobAdStatus(){
 	
 }
 
-function adminDeleteJobAd(){
+/**
+ * Admin Function: handles delete job ad
+ */
+function adminDeleteJobAd(intJobAdId){
 	
 	var sessionKey = document.getElementById("sessionKey").value;
-	var intJobAdId = document.getElementById("jobAdId").value;
+	//var intJobAdId = document.getElementById("jobAdId").value;
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -201,10 +204,14 @@ function adminDeleteJobAd(){
 	document.getElementById("feedback").innerHTML="<h2>Sending Delete Request</h2>";
 }
 
-function adminApprove(){
+
+/**
+ * Admin Function: handles approving job ads
+ */
+function adminApprove(intJobAdId){
 	
 	var sessionKey = document.getElementById("sessionKey").value;
-	var intJobAdId = document.getElementById("jobAdId").value;
+	//var intJobAdId = document.getElementById("jobAdId").value;
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -245,10 +252,10 @@ function adminApprove(){
 }
 
 
-function adminDeny(){
+function adminDeny(jobAdId){
 	
 	var sessionKey = document.getElementById("sessionKey").value;
-	var intJobAdId = document.getElementById("jobAdId").value;
+	//var intJobAdId = document.getElementById("jobAdId").value;
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -291,7 +298,7 @@ function adminDeny(){
 
 
 //TODO: hook up with UI
-function extendJobAdExpiry(){
+function extendJobAdExpiry(intJobAdId, longNewExpiry){
 	
 	//TODO: use these ID for UI
 	var longNewExpiry = document.getElementById("newExpiry").value;
@@ -633,6 +640,44 @@ function getJobAdById(mode, id, outputDiv)
 	  }
 	  };
 }
+
+/************************************************************************************************************
+ * 				Get All Job Ads
+ * @param outputDiv
+ ************************************************************************************************************/
+function getAllJobAd(outputDiv){
+	
+	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+	var strSessionKey = $("#sessionKey").val();
+	request = new Request;
+	
+	request.addAction("getAllJobAd");
+	request.addParam("sessionKey", strSessionKey);
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function(){
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  
+		  buildBrowseJobAdTb("jobAd", outputDiv);//uibot
+	    }
+	  else{
+		  //TODO: implement error handling
+	  }
+	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	};	  
+}
+
 
 
 /************************************************************************************************************
