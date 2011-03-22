@@ -212,9 +212,7 @@ public class ServletAdmin extends HttpServlet {
 				result = true;
 				message = "Account " + email + " has been successfully banned.";
 				// send email to inform banned user
-				emailManager.informBan("luolw123@hotmail.com", reason);
-				//TODO 
-			//	emailManager.informBan(email, reason);
+				emailManager.informBan(email, reason);
 			}
 			else
 				message = "An error has occured while performing ban action. Please try again later.";
@@ -288,9 +286,7 @@ public class ServletAdmin extends HttpServlet {
 			if(unbanAccount(email)){
 				result = true;
 				message = "Account " + email + " has been successfully unbanned.";
-				emailManager.informUnban("luolw123@hotmail.com", reason);
-				//TODO
-			//	emailManager.informUnban(email, reason);
+				emailManager.informUnban(email, reason);
 			}
 			else
 				message = "An error has occured while performing unban action. Please try again later.";
@@ -453,9 +449,7 @@ public class ServletAdmin extends HttpServlet {
 				message = "Account " + accountName + " has been successfully deleted.";
 				// inform the user
 				if( !userType.equals("admin") )
-					emailManager.informDeletion("luolw123@hotmail.com", reason);
-				//TODO
-				//	emailManager.informDeletion(email, reason);
+					emailManager.informDeletion(accountName, reason);
 			}
 			else
 				message = "An error has occured while performing delete account action. Please try again later.";
