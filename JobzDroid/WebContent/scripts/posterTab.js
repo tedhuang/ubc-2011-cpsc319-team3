@@ -23,7 +23,7 @@
                 
                 $(obj).addClass(options.tabPaneClass); // Set the CSS on top element
                 
-                bindSideNav();//bind function to sideNavBar
+                bindFuncToBtn();//bind function to btns
                 
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
@@ -68,11 +68,13 @@
      			   bindCloseClick();
      			   return closeBtn;
                }
-     		   function bindSideNav(){
-     			   $('#newadbtn', '#sideMenu').bind("click", function(){
-     				  openTab('newAdTab'); 
-     				  open_newAd_form();
-     			   });
+     		   function bindFuncToBtn(){
+     			   $('.newadbtn')
+     			   .attr('title', 'Compose New Ad')	
+     			   .bind("click", function(){
+     			   		openTab('newAdTab'); 
+     			   		open_newAd_form();
+     			   	});
      		   }
      		   
      		   function bindCloseClick(){

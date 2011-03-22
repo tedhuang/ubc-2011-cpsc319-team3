@@ -70,14 +70,18 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 }
 
 function filterTable(filter, tbContainerId){
+	
 	var tbody  = $("tbody", tbContainerId);
 	var rows   = $('tr', tbody).get();
 	$(rows).each(function(){
-		if($('#td-status', $(this)).html() != filter){
-			$(this).hide();
-		}
-	});
-}
+		$(this).show();
+		if(filter!=""){
+			if($('#td-status', $(this)).html() != filter){
+				$(this).hide();
+			}
+		  }
+		});
+	}
 
 function resetFields(formContainer){
 	

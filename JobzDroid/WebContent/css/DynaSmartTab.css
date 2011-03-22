@@ -15,18 +15,17 @@
     clear: both;   background: #EEEEEE;	   /* -webkit-border-top-left-radius		: 5px;    -webkit-border-top-right-radius	: 5px;
     -webkit-border-bottom-left-radius	: 0px;    -webkit-border-bottom-right-radius	: 0px;*/  }
 .iniHidden{	display: none;}
-.navBar ul li{     position	: relative;  margin: 0;   float	: left;	cursor	: pointer;text-align: center;max-width: 190px;	border-right: 1px solid #E0E0E0;}
-.navBar ul li:hover{     color	: #FFF;   background-color  : #9EDB04; }
-
-.navBar li a{ 	height: 30px;width	: 130px;    display	: block;    margin	: 0;   padding: 2px;  color	: #FFFFFF; border-bottom	: 1px solid #E0E0E0;
-    border-bottom	: none; cursor: pointer; }
+.navBar ul li{ position	: relative;  margin: 0;   float	: left;	cursor	: pointer;text-align: center;max-width: 190px;	border-right: 1px solid #E0E0E0;}
+.navBar ul li:hover{ background-color  : #9EDB04; }
+.navBar li a{height: 30px;width	: 130px;    display	: block;    margin	: 0;   padding: 2px;  color	: #FFFFFF; border-bottom	: 1px solid #E0E0E0;
+    		border-bottom	: none; cursor: pointer; }
 .navBar ul li a img {   display:block;  margin:0;  padding:3px;  height:50px;  width:50px;  float:left;}
-.navBar ul li a h2 {   display	: block;  font: bold 13px Verdana, Arial, Helvetica, sans-serif;}
+.navBar ul li a span {   display	: block;  font: bold 13px Verdana, Arial, Helvetica, sans-serif;}
 .navBar ul li a small {   font: normal 12px Verdana, Arial, Helvetica, sans-serif;  float:left;}
 .navBar ul li a.curTab {   color: #000000;   background-color:#FFF; border-bottom	: none;}
 .navBar ul li a.dis {  color: #CCCCCC;   background	: #F8F8F8;   cursor	:text; }
 .navBar ul li span.close{   position	: absolute;  right	: 10px;  font-size	: 12px;  top: 3px;  cursor	: pointer;}
-.navBar ul li span:hover{font-weight	: bold;	color : #df0000;}
+.navBar ul li span.close:hover{font-weight	: bold;	color : #df0000;}
 
 /********************TabFrame *********************************************************/
 

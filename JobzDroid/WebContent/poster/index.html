@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
 <link rel="SHORTCUT ICON" href="http://localhost:8080/JobzDroid/images/title-icon.png"/>
 <title>JobzDroid | Your Ultimate Talent Resource Bank</title>
 
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="../css/smartLightbox.css"/>
 <!-- <link rel="stylesheet" href="../css/jq-ui/jquery.ui.base.css"/>-->
 
-<!--CAUTION: DO NOT CHANGE THIS LINE!--><script src="http://code.jquery.com/jquery-latest.js"></script>
+<!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript" src="../scripts/jq-ui/jquery.ui.core.js"></script>
 <script type="text/javascript" src="../scripts/jq-ui/jquery.ui.datepicker.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
@@ -38,7 +38,7 @@
     	bindClearError();
 	});
 </script>
-<script>
+<script type="text/javascript" >
 	$(function() {
 		$( "#startTime-field" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
 		$( "#expireTime-field" ).datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
@@ -50,19 +50,19 @@
 	
   <div class="header">
 		<a id="logo" title="home" href="http://localhost:8080/JobzDroid/">
-	        <img src="../images/logo-small.png"/>
+	        <img src="../images/logo-small.png" alt="JOBZDROID"/>
 		</a>
 		<ul id="topnav" class="clearfix">
 		    <li><strong id="displayEmail">Welcome: </strong></li><!--TODO ADD Appending Email method-->
 		    <li>
 		    	<a href="#">
-		    		<img class="link-icon" src="../images/icon/acct-icon.png"/>
+		    		<img class="link-icon" src="../images/icon/acct-icon.png" alt=""/>
 		    		Profile
 				</a>
 			</li>
 		    <li>
 		    	<a href="#" onclick="userLogoutRequest()">
-		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="../images/icon/exit.png"/>
+		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="../images/icon/exit.png" alt=""/>
 		    		Log out
 				</a>
 			</li>
@@ -72,32 +72,32 @@
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a id="newadbtn" class="jsBtn">
-				<img src="../images/icon/new-post.png"/>
-				<h2>New Job Ad</h2>
+			<a class="jsBtn newadbtn">
+				<img src="../images/icon/new-post.png" alt=""/>
+				<span>New Job Ad</span>
 			</a>
 		</li>
 	
 		<li>
 			<a class="topMenu">
-				<h2>Ad Management</h2>
+				<span>Ad Management</span>
 			</a>
-			<ul id="subMenu">
+			<ul class="subMenu">
 				<li><a class="jsBtn">
-					<img src="../images/icon/active.png"/>
+					<img src="../images/icon/active.png" alt=""/>
 					Active</a>
 				</li>
 				<li><a class="jsBtn">
-					<img src="../images/icon/draft.png"/>
+					<img src="../images/icon/draft.png" alt=""/>
 					Draft</a>
 				</li>
 				<li><a class="jsBtn">
-					<img src="../images/icon/pending.png"/>
+					<img src="../images/icon/pending.png" alt=""/>
 					Pending</a>
 				</li>
 				
 				<li><a class="jsBtn">
-					<img src="../images/icon/inactive.png"/>
+					<img src="../images/icon/inactive.png" alt=""/>
 					Inactive</a>
 				</li>
 			</ul>
@@ -105,12 +105,12 @@
 	
 		<li>
 			<a class="topMenu">
-				<h2>Help & Feeds</h2>
+				<span>Help and Feeds</span>
 			</a>
-			<ul id="subMenu">
-				<li><a href="#">RSS<img src="../images/icon/rss.png"/></a></li>
-				<li><a href="#">NEWS<img src="../images/icon/news.png"/></a></li>
-				<li><a href="#">FAQ<img src="../images/icon/faq.png"/></a></li>
+			<ul class="subMenu">
+				<li><a href="#">RSS<img src="../images/icon/rss.png" alt=""/></a></li>
+				<li><a href="#">NEWS<img src="../images/icon/news.png" alt=""/></a></li>
+				<li><a href="#">FAQ<img src="../images/icon/faq.png" alt=""/></a></li>
 			</ul>
 		</li>
   	</ul><!--ENDOF SideMenu-->
@@ -123,22 +123,22 @@
   	  <div id="navBar" class="navBar">
 		<ul>
   			<li id="homeTab">
-  				<a href="#home-frame"><h2>Home</h2></a>
+  				<a href="#home-frame"><span>Home</span></a>
 			</li>
 			<li id="profileTab">
-  				<a href="#profileFrame"><h2>My Profile</h2></a>
+  				<a href="#profileFrame"><span>My Profile</span></a>
 			</li>
 			<li id="edAdTab" class="hideOnly iniHidden">
 			<span class="close">X</span>
-  				<a href="#edAdFrame"><h2>View/Edit Ad</h2></a>
+  				<a href="#edAdFrame"><span>View/Edit Ad</span></a>
 			</li>
 			<li id="newAdTab" class="hideOnly iniHidden">
 				<span class="close">X</span>
-  				<a href="#newAdFrame"><h2>New Ad</h2></a>
+  				<a href="#newAdFrame"><span>New Ad</span></a>
 			</li>
 			<li id="adDetailTab" class="hideOnly iniHidden">
 				<span class="close">X</span>
-  				<a href="#adDetailFrame"><h2>View Detail</h2></a>
+  				<a href="#adDetailFrame"><span>View Detail</span></a>
 			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
@@ -151,12 +151,14 @@
 			Profile goes here
 		</div>
 	          <h2 class="welcome">My Ads</h2>
-		 <div id="adTools">
-	          	<ul>
-	          	<li><a class="jsBtn" onclick="filterTable('open', ownerAdTable)">Open<span id="numActive"></span></a></li>
-				<li><a class="jsBtn">Draft<span id="numDraft"></span></a></li>
-				<li><a class="jsBtn">Pending<span id="numPending"></span></a></li>
-				<li><a class="jsBtn">Inactive<span id="numInactive"></span></a></li>
+		 <div id="headToolBar">
+		 		<a class="jsBtn newadbtn">New AD</a>
+	          	<ul id="filter">
+	          		<li><a class="jsBtn cAll" onclick="filterTable('', ownerAdTable)">View All<span id="numActive"></span></a></li>
+		          	<li><a class="jsBtn cOpen" onclick="filterTable('open', ownerAdTable)">Open<span id="numActive"></span></a></li>
+					<li><a class="jsBtn cDraft" onclick="filterTable('draft', ownerAdTable)">Draft<span id="numDraft"></span></a></li>
+					<li><a class="jsBtn cPending" onclick="filterTable('pending', ownerAdTable)">Pending<span id="numPending"></span></a></li>
+					<li><a class="jsBtn cInact" onclick="filterTable('inactive', ownerAdTable)">Inactive<span id="numInactive"></span></a></li>
 	          	</ul>
 	          </div>
 	          	<div id="ownerAdTable" class="resultTableDiv">
@@ -164,32 +166,32 @@
 				<thead>
 				<tr>
 					<th id="col-viewDate">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Date</div>
 						</div>
 					</th>
 					<th id="col-viewTitle">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div  class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Job Title</div>
 						</div>
 					</th>
 					<th id="col-viewEduReq">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Degree</div>
 						</div>
 					</th>
 					<th id="col-viewAvail">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Availability</div>
 						</div>
 					</th>
 					<th id="col-viewLoc">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Location</div>
 						</div>
 					</th>
 					<th id="col-Tools">
-						<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Status</div>
 						</div>
 					</th>
@@ -200,12 +202,7 @@
 			</table><!--ENDOF TABLE-->
 	          	</div><!--ENDOF DIV RESULT TABLE-->  
 		    <button type="button" onclick="getJobAdByOwner('ownerAdTable')">Load Job Ad by Owner</button>
-			<input type="text" name="tabName"/>
-	            <a class="jsBtn" onclick="addTab();">CLICK TO ADD TAB</a>      
-	            <script>function addTab(){
-	                             var value = $("input[name=tabName]").val();
-	                             $.fn.DynaSmartTab.addTab(value);
-	                     }</script>			
+				
     </div><!-- ENDOF HOME FRAME -->
 		   
 	<div id="newAdFrame" class="subFrame unremovable"></div><!--ENDOF newAd-frame-->
@@ -232,7 +229,7 @@
   </div><!--ENDOF MAIN CONTAINER-->
 </div><!--ENDOF MAIN-->
 <div id="lightBox"></div>
-	<form name="sid" method="get" action="">
+	<form id="sid" name="sid" method="get" action="">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
 </body>
