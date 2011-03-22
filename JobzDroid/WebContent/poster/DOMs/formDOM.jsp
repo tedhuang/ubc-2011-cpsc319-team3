@@ -14,7 +14,7 @@
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
 	<div id="edAdForm" class="edFormContainer">
-		   <div id="head-bar">
+		   <div class="headToolBar">
 					<h2 class="welcome">Editing Ad:</h2>
 						<a class="jsBtn" onclick="postJobAd('draft', 'edAdForm','edAdfb')">Save Another Draft |</a>
 			    		<a class="jsBtn" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a>

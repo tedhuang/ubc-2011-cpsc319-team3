@@ -71,7 +71,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 
 function filterTable(filter, tbContainerId){
 	
-	var tbody  = $("tbody", tbContainerId);
+	var tbody  = $("tbody", "#"+tbContainerId);
 	var rows   = $('tr', tbody).get();
 	$(rows).each(function(){
 		$(this).show();
