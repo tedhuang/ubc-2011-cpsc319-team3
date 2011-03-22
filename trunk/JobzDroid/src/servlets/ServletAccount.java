@@ -227,9 +227,7 @@ public class ServletAccount extends HttpServlet {
 				
 				if(accountCreated){
 					//send verification email to new user
-					//TODO
-				//	emailManager.sendAccountActivationEmail(email, name, uuid);
-					emailManager.sendAccountActivationEmail("luolw123@hotmail.com", name, uuid);
+					emailManager.sendAccountActivationEmail(email, name, uuid);
 					message = "Account creation successful! An email has been sent to your inbox, " +
 							"please follow the instructions to activate your account within "
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
@@ -348,9 +346,7 @@ public class ServletAccount extends HttpServlet {
 			boolean requestAdded = addEmailChangeRequest(sessionKey, newEmail, uuid);			
 			if(requestAdded){
 				//send verification email to new email
-				//TODO
-			//	emailManager.sendAccountActivationEmail(email, name, uuid);
-				emailManager.sendPrimaryEmailChangeVerificationEmail("luolw123@hotmail.com", uuid);
+				emailManager.sendPrimaryEmailChangeVerificationEmail(newEmail, uuid);
 				message = "Email change request successful! An email has been sent to your inbox, " +
 						"please follow the instructions to change your primary Email within "
 				+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
@@ -468,9 +464,7 @@ public class ServletAccount extends HttpServlet {
 			boolean requestAdded = addForgetPasswordRequest(email, uuid, SystemManager.expiryTimeForgetPasswordReset);
 			if(requestAdded){
 				//send verification email to new user
-				//TODO
-			//	emailManager.sendAccountActivationEmail(email, name, uuid);
-				emailManager.sendPasswordResetEmail("luolw123@hotmail.com", uuid);
+				emailManager.sendPasswordResetEmail(email, uuid);
 				message = "An email has been sent to your mail box to reset your password. " +
 					"Please follow the link in your email to reset your password within "
 					+ (int)Math.floor(SystemManager.expiryTimeForgetPasswordReset/(1000*60)) + " minutes.";
