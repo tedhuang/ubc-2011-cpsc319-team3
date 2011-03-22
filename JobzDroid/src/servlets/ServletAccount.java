@@ -45,6 +45,7 @@ public class ServletAccount extends HttpServlet {
 		register,
 		activate,
 		requestEmailChange,
+		requestSecondaryEmailChangeHandler,
 		verifyEmailChange,
 		requestForgetPassword,
 		emailLinkForgetPassword,
@@ -89,7 +90,11 @@ public class ServletAccount extends HttpServlet {
 			// request for a primary email change
 			case requestEmailChange:
 				requestEmailChangeHandler(request, response);
-				break;				
+				break;
+			//request for a secondary email change
+			case requestSecondaryEmailChangeHandler:
+				requestSecondaryEmailChangeHandler(request,response);
+				break;
 			// verify email for changing primary email
 			case verifyEmailChange:
 				verifyEmailChangeHandler(request, response);
@@ -259,8 +264,7 @@ public class ServletAccount extends HttpServlet {
 	
 	
 	
-	private boolean insertAddress(int idAccount, String address, String longitude, String latitude) {
-
+	private boolean insertAddress(int idAccount, String address, String longitude, String latitude) {		
 		boolean isSuccessful = false;
 		
 		Connection conn = dbManager.getConnection();	
@@ -328,18 +332,92 @@ public class ServletAccount extends HttpServlet {
 			response.sendRedirect("error.html");
 	}
 	
+	
+	/**
+	 * Handles Secondary E-mail changes
+	 */
+	private void requestSecondaryEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		System.out.println("Inside Secondary Email Change Handler");
+		
+		boolean isSuccessful = false;
+		String message = "Change secondary e-mail failed";
+		
+		String sessionKey 		= request.getParameter("sessionKey");
+		Session currSession 	= dbManager.getSessionByKey( sessionKey );
+		int accountID 			= currSession.getIdAccount();
+		String secEmail 		= request.getParameter("secEmail");
+		Connection conn 		= dbManager.getConnection();	
+		Statement stmt 			= null;
+
+		secEmail = Utility.checkInputFormat( secEmail );
+
+		try{
+			stmt = conn.createStatement();
+			String query = 
+				"UPDATE tableAccount SET " 
+				+ "secondaryEmail='" 	+ secEmail +  "' " +
+				"WHERE idAccount='" 	+ accountID + "' ";
+
+			// if successful, 1 row should be inserted
+			System.out.println("Change Secondary Email query: " + query);
+			int rowsInserted = stmt.executeUpdate(query);
+			
+			if (rowsInserted == 1){
+				System.out.println("Change Secondary Email success");
+				isSuccessful = true;
+				message = "Change secondary e-mail successful";
+			}
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (stmt != null)
+	            	stmt.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (conn != null)
+	            	conn.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	
 	/***
 	 * Handles primary email change requests.
 	 */
 	private void requestEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+
 		String sessionKey = request.getParameter("sessionKey");
 		String newEmail = request.getParameter("newEmail");		
+		System.out.println("Inside requestEmailChangeHandler, New Email: " + newEmail + "Session Key: " + sessionKey);
+		
 		UUID uuid = UUID.randomUUID();; // verification number
 		boolean result = false;
 		String message = "";
 		
 		// check if email is unique
 		boolean isUnique = !dbManager.checkEmailExists(newEmail);
+		
 		if(isUnique){
 			boolean requestAdded = addEmailChangeRequest(sessionKey, newEmail, uuid);			
 			if(requestAdded){
@@ -713,12 +791,17 @@ public class ServletAccount extends HttpServlet {
 					return false;
 			}
 			
+			
+			
 			//add entry to location table
+			System.out.println("address: " + address);
 			if( address != null){
 				if( !insertAddress(idAccount, address, longitude, latitude) )
 					return false;
 			}
-			
+			else 
+				return true;
+
 			return true;
 		}
 		catch (SQLException e) {
