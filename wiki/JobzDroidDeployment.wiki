@@ -4,7 +4,12 @@
 Add your content here.
 
 
+
 = links=
+
+Apache Deployment Manual
+  * http://tomcat.apache.org/tomcat-5.5-doc/deployer-howto.html
+  * http://tomcat.apache.org/tomcat-5.5-doc/manager-howto.html
 
 Add your content here.  Format your content with:
   * http://oreilly.com/java/archive/tomcat.html
