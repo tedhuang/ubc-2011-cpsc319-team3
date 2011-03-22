@@ -28,6 +28,7 @@ public class JobAdvertisement {
 	
 	public JobAdvertisement(){
 		isApproved = 0;
+		educationReq = 0;
 		status = "inactive";
 	}
 
@@ -46,6 +47,10 @@ public class JobAdvertisement {
 		
 		if(status == null){
 			status = "Not Set";
+		}
+		
+		if(jobAvailability == null){
+			jobAvailability = "Not Specified";
 		}
 		
 		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
