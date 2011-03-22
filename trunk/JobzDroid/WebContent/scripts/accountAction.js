@@ -94,7 +94,7 @@ function userLogoutRequest()
 
 
 /*****************************************************************************************************
- * 					Handles Changes for Primary Email
+ * 					Helper Function - Handles Changes for Primary Email
  ****************************************************************************************************/
 function changePrimaryEmail(sessionKey, newEmail){
 	
@@ -132,7 +132,7 @@ function changePrimaryEmail(sessionKey, newEmail){
 }
 
 /*****************************************************************************************************
- * 					Handles Changes for Secondary Email
+ * 					Helper function - Handles Changes for Secondary Email
  ****************************************************************************************************/
 function changeSecondaryEmail(sessionKey, secEmail){
 	request = new Request;
@@ -170,7 +170,17 @@ function changeSecondaryEmail(sessionKey, secEmail){
 }
 
 /*****************************************************************************************************
- * 					Change Account Fields - E-mail, Password
+ * 					Helper function - Handles Changes for Password
+ ****************************************************************************************************/
+function changePassword(sessionKey, newPassword){
+	
+	
+	
+}
+
+
+/*****************************************************************************************************
+ * 					Change Account Fields - Primary E-mail, Secondary E-mail, Password
  ****************************************************************************************************/
 function submitChangeAccount(){
 	
@@ -189,22 +199,32 @@ function submitChangeAccount(){
 	
 	//Check if secondary e-mail has been given a value
 	if(strSecEmail != ""){
+		//TODO: implement real-time AJAX response for format check
 		changeSecondaryEmail(sessionKey, strSecEmail);
 	}
 
 	//Check if primary e-mail has been given a value
 	if(strNewEmail != ""){
+		//TODO: implement real-time AJAX response for format check
 		changePrimaryEmail(sessionKey, strNewEmail);
 	}
-	
+
 	//Check if password fields have been filled
 	if(strNewPW != ""){
 		if( ( strOldPW != ""  ) && (strRepeatPW != "") ){
 			
-			
+			if(strNewPW != strRepeatPW){
+				//TODO: implement real-time AJAX response
+				alert("Error: new password and repeat password does not match");
+			}
+			else{
+				//Initiate password change functions
+				changePassword(sessionKey, strNewPW);
+			}
+				
 			
 		}else{
-			alert("Some password fields are empty");
+			alert("Error: some password fields are empty");
 			document.getElementById("submitAccountButton").disabled=false;
 			return;
 		}
@@ -212,3 +232,12 @@ function submitChangeAccount(){
 	
 	
 }
+
+
+
+
+
+
+
+
+
