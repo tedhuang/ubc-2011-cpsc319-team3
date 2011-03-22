@@ -45,13 +45,14 @@ public class ServletAccount extends HttpServlet {
 		register,
 		activate,
 		requestEmailChange,
-		requestSecondaryEmailChangeHandler,
+		requestSecondaryEmailChange,
 		verifyEmailChange,
 		requestForgetPassword,
 		emailLinkForgetPassword,
 		resetForgetPassword,
 		requestForLogin,
 		requestForLogout,
+		requestPasswordChange
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class ServletAccount extends HttpServlet {
 				requestEmailChangeHandler(request, response);
 				break;
 			//request for a secondary email change
-			case requestSecondaryEmailChangeHandler:
+			case requestSecondaryEmailChange:
 				requestSecondaryEmailChangeHandler(request,response);
 				break;
 			// verify email for changing primary email
@@ -113,10 +114,12 @@ public class ServletAccount extends HttpServlet {
 				break;
 			case requestForLogin:
 				loginReqTaker(request, response);
-				break;
-			
+				break;			
 			case requestForLogout:
 				logoutReqTaker(request, response);
+				break;
+			case requestPasswordChange:
+				requestChangePasswordHandler(request,response);
 				break;
 		}
 	}
@@ -594,6 +597,60 @@ public class ServletAccount extends HttpServlet {
 				message = "Invalid or expired request.";
 			else{
 				boolean updateSuccessful = resetPassword(idPasswordReset, idAccount, password);
+				if(updateSuccessful){
+					message = "Password change successful!";
+					result = true;
+				}
+				else
+					message = "An error has been encountered during the request.";
+			}
+		}
+		// Write XML containing message and result to response
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + result + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	/***
+	 * Handles user change password requests.
+	 */
+	private void requestChangePasswordHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		// get request parameters
+		String sessionKey = request.getParameter("sessionKey");
+		String oldPassword = request.getParameter("oldPassword");
+		String newPassword = request.getParameter("newPassword");
+		String newPasswordRepeat = request.getParameter("newPasswordRepeat");
+				
+		String message = "";
+		boolean result = false;
+		int idAccount = -1;
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		oldPassword = Utility.checkInputFormat(oldPassword);
+		newPassword = Utility.checkInputFormat(newPassword);
+		
+		Session session = dbManager.getSessionByKey(sessionKey);
+		if( session == null )
+			message = "Invalid request.";
+		else{
+			idAccount = session.getIdAccount();
+			Account userAcc = dbManager.getAccountFromId(idAccount);
+			if( userAcc == null )
+				message = "Invalid request.";
+			// check old password
+			else if( !Utility.md5(oldPassword).equals(userAcc.getPasswordMd5()) )
+				message = "Incorrect old password.";
+			// validate new password	
+			else if( !Utility.validate(newPassword, SystemManager.pwPattern) )
+				message = "Invalid new password format.";
+			else if( !newPassword.equals(newPasswordRepeat) )
+				message = "New passwords do not match.";
+			else{
+				boolean updateSuccessful = changePassword(idAccount, newPassword);
 				if(updateSuccessful){
 					message = "Password change successful!";
 					result = true;
@@ -1162,4 +1219,49 @@ public class ServletAccount extends HttpServlet {
 	    }
 	    return false;
 	}	
+	
+	/***
+	 * Resets password and deletes associated entry from tablePasswordReset
+	 * @param idAccount Account id
+	 * @param newPassword The new password.
+	 * @return boolean indicating whether the password change was successful.
+	 */
+	private boolean changePassword(int idAccount, String newPassword){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int rowsUpdated;
+		newPassword = Utility.checkInputFormat(newPassword);
+		try {
+			stmt = conn.createStatement();
+			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
+			System.out.println(query);
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated == 1)
+				return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	    return false;
+	}
 }

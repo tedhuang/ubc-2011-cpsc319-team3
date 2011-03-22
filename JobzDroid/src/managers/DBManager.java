@@ -115,13 +115,13 @@ public class DBManager {
 		
 		Account account = null;
 		int idAccount;
-		String secondaryEmail, type, status;
+		String secondaryEmail, type, status, passwordMd5;
 		long dateTimeCreated;
 		
 		email = Utility.checkInputFormat(email);
 		try {
 			stmt = conn.createStatement();
-			query = "SELECT idAccount, secondaryEmail, type, status, dateTimeCreated FROM tableAccount WHERE email='" + email + "';";
+			query = "SELECT idAccount, secondaryEmail, type, status, dateTimeCreated, password FROM tableAccount WHERE email='" + email + "';";
 			stmt.executeQuery(query);
 			rs = stmt.getResultSet();
 			if(rs.first()){
@@ -133,7 +133,67 @@ public class DBManager {
 				type = rs.getString("type");
 				status = rs.getString("status");
 				dateTimeCreated = rs.getLong("dateTimeCreated");
-				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated);
+				passwordMd5 = rs.getString("passwordMd5");
+				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
+				return account;
+			}
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        freeConnection(conn);
+	    }
+		return account;
+	}
+	
+	/***
+	 * Returns the account object with the input account ID. 
+	 * Returns null if email address doesn't exist in the account table.
+	 * @param email Account ID to be queried.
+	 * @return Account object with the input account ID. Returns null if not found.
+	 */
+	public Account getAccountFromId(int idAccount){
+		Connection conn = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		
+		Account account = null;
+		String email, secondaryEmail, type, status, passwordMd5;
+		long dateTimeCreated;
+		
+		try {
+			stmt = conn.createStatement();
+			query = "SELECT email, secondaryEmail, type, status, dateTimeCreated, password FROM tableAccount WHERE idAccount='" + idAccount + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			if(rs.first()){
+				email = rs.getString("email");
+				if(rs.getObject("secondaryEmail") == null)
+					secondaryEmail = "";
+				else
+					secondaryEmail = rs.getString("secondaryEmail");
+				type = rs.getString("type");
+				status = rs.getString("status");
+				dateTimeCreated = rs.getLong("dateTimeCreated");
+				passwordMd5 = rs.getString("passwordMd5");
+				account = new Account(idAccount, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
 				return account;
 			}
 		}
@@ -173,7 +233,7 @@ public class DBManager {
 		
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		int idNews;
-		String email, secondaryEmail, type, status;
+		String email, secondaryEmail, type, status, passwordMd5;
 		long dateTimeCreated;
 		try {			
 			stmt = conn.createStatement();
@@ -186,7 +246,8 @@ public class DBManager {
 		    	type = rs.getString("type");
 		    	status = rs.getString("status");
 		    	dateTimeCreated = rs.getLong("dateTimeCreated");
-		        Account acc = new Account(idNews, email, secondaryEmail, type, status, dateTimeCreated);
+		    	passwordMd5 = rs.getString("password");
+		        Account acc = new Account(idNews, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
 		        accounts.add(acc);
 		    }
 		}
@@ -226,7 +287,7 @@ public class DBManager {
 		
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		int idNews;
-		String email, secondaryEmail, type, status;
+		String email, secondaryEmail, type, status, passwordMd5;
 		long dateTimeCreated;
 		try {			
 			stmt = conn.createStatement();
@@ -239,7 +300,8 @@ public class DBManager {
 		    	type = rs.getString("type");
 		    	status = rs.getString("status");
 		    	dateTimeCreated = rs.getLong("dateTimeCreated");
-		        Account acc = new Account(idNews, email, secondaryEmail, type, status, dateTimeCreated);
+		    	passwordMd5 = rs.getString("password");
+		        Account acc = new Account(idNews, email, secondaryEmail, type, status, dateTimeCreated, passwordMd5);
 		        accounts.add(acc);
 		    }
 		}
