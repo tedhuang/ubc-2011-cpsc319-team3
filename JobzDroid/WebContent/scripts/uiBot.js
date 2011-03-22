@@ -118,6 +118,7 @@ function bindClearError(){
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
 function buildAdListTb(targetXMLTag, outputDiv){
+	outputDiv="#"+outputDiv;
 	var tbody  = $("tbody", outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
@@ -136,7 +137,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  
 		  tr.appendTo(tbody);
 		  $("#td-title", tr).click(function(){
-			  getJobAdById("detail", jobAd.attr("jobAdId"),adDetailTable);
+			  getJobAdById("detail", jobAd.attr("jobAdId"),'adDetailTable');
 			 });
 		});
 		 
