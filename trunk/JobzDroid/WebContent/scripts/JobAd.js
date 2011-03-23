@@ -398,7 +398,7 @@ function submitJobAdForApproval(){
 function postJobAd(mode, formDiv, heading){
 	var noNullData=false;
 	var theForm =$("#"+formDiv);
-	var theheading =$("#"+heading);
+	var theheading =$("."+heading);
 	var sessionKey = $("#sessionKey").val();
 	var infoText;
 	request = new Request;

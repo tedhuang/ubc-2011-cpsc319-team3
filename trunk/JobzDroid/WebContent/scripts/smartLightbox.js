@@ -22,26 +22,62 @@
              		 return infoBox;
              	}
         		
-        		function buildBtnBox(){
-             		var btnBox= $('<div></div>').attr('id', 'btnBox');
-             		$('<a></a>')
-             		.addClass("yes jsBtn")
-             		.html("OK")
-             		.appendTo(btnBox);
-             		$('<a></a>')
-             		.addClass("no jsBtn")
-             		.html("Cancel")
-             		.appendTo(btnBox);
-             		
-             		btnBox.delegate('a.no', "click", function(){
-             			rmLightbox(0);
-             		});
-             		
-//             		$('a.yes', btnBox).click( function(){
-//             			$('a.del', "#ownerAdTable").trigger("comfirmDel",[true]);
-//             		});
+        		function buildBtnBox(mode){
+             	 	
+        			var btnBox= $('<div></div>').attr('id', 'btnBox');
+        			switch(mode){
+        			case "closeNewAd":
+        				$('<a></a>')
+                 		.addClass("save jsBtn")
+                 		.html("Save Draft")
+                 		.appendTo(btnBox);
+        				
+        				$('<a></a>')
+                 		.addClass("post jsBtn")
+                 		.html("Post It")
+                 		.appendTo(btnBox);
+        				
+                 		$('<a></a>')
+                 		.addClass("no jsBtn")
+                 		.html("keep writing")
+                 		.appendTo(btnBox);
+        				break;
+        			
+        			case "closeEdAd":
+        				$('<a></a>')
+                 		.addClass("save jsBtn")
+                 		.html("Save Draft")
+                 		.appendTo(btnBox);
+        				
+        				$('<a></a>')
+                 		.addClass("post jsBtn")
+                 		.html("Post It")
+                 		.appendTo(btnBox);
+        				
+                 		$('<a></a>')
+                 		.addClass("no jsBtn")
+                 		.html("keep writing")
+                 		.appendTo(btnBox);
+        				break;
+        				
+        			default:
+        				$('<a></a>')
+                 		.addClass("yes jsBtn")
+                 		.html("OK")
+                 		.appendTo(btnBox);
+                 		$('<a></a>')
+                 		.addClass("no jsBtn")
+                 		.html("Cancel")
+                 		.appendTo(btnBox);
+                 		
+                 		btnBox.delegate('a.no', "click", function(){
+                 			rmLightbox(0);
+                 		});
+        				break;
+        			}
              		 return btnBox;
              	}
+        		
         		function fullLightBox(infoBox){
      		    
      			// hide scrollbars!
@@ -151,8 +187,8 @@
      		divLightBox(div, imgClass, msg);
      	};
      	
-     	$.fn.smartLightBox.diaBox=function(msg,imgClass ){
-     		
+     	$.fn.smartLightBox.diaBox=function(msg,imgClass, mode ){
+     	
      		$('body').css('overflow-y', 'hidden');
  			
  			$('<div id="overlay"></div>').addClass('lb_black')
@@ -164,7 +200,12 @@
  							.appendTo(lightBox);
  			var infoBox = buildInfoBox(msg, imgClass);
  			infoBox.appendTo('#midBox');
- 			buildBtnBox().appendTo('#midBox');
+ 			if(!mode){
+ 				buildBtnBox().appendTo('#midBox');
+ 			}
+ 			else{
+ 				buildBtnBox(mode).appendTo('#midBox');
+ 			}
  			
  			lightBox
  			.addClass('dialog')
