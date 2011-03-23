@@ -22,6 +22,7 @@
 	<script type="text/javascript" src='../scripts/JobAd.js'></script>
 	<script type="text/javascript" src='../scripts/uiBot.js'></script>
 	
+	
 <script type="text/javascript">
    
     $(document).ready(function(){
@@ -30,6 +31,8 @@
   		$('#lightBox').smartLightBox({});
 		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
+
+    	getAllJobAd("allJobAdtable");
 		
     	bindClearError();
 	});
@@ -38,6 +41,8 @@
 	<title>Manage JobAd</title>
 </head>
 <body>
+	<div id="feedback">Debug: Feedback Area</div>
+
 	<%	// check session key
 	DBManager dbManager = DBManager.getInstance();
 	String sessionKey = request.getParameter("sessionKey");
@@ -130,13 +135,6 @@
 		<ul>
 			<li id="jobAdTab">
   				<a href="#allJobAdFrame"><h2>All Job Ads</h2></a>
-			</li>
-			<li id="approvedTab">
-  				<a href="#approveJobAdFrame"><h2>Approved Job Ads</h2></a>
-			</li>
-			<li id="deniedTab">
-  				<a href="#denyJobAdFrame"><h2>Denied Job Ads</h2></a>
-			</li>
 			<li id="jobAdDetailsTab">
   				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
 			</li>
@@ -165,29 +163,25 @@
 	          <table>
 				<thead>
 					<tr>
-						<th id="col-viewDate">
+						<th id="col-viewCreationDate">
 							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Date</div>
+								<div class="headText">Date Posted</div>
 							</div>
 						</th>
+						<th id="col-viewStartingDate">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Job Start Date</div>
+							</div>
+						</th>
+						
 						<th id="col-viewTitle">
 							<div  class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Job Title</div>
 							</div>
-						</th>
-						<th id="col-viewEduReq">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Degree</div>
-							</div>
-						</th>
-						<th id="col-viewAvail">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Form of Employment</div>
-							</div>
-						</th>
+						</th>			
 						<th id="col-viewLoc">
 							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Location</div>
+								<div class="headText">Job Location</div>
 							</div>
 						</th>
 						<th id="col-Tools">
@@ -195,6 +189,27 @@
 								<div class="headText">Status</div>
 							</div>
 						</th>
+						<th id="col-approvalStatus">
+							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Approval Status</div>
+							</div>
+						</th>
+						<th id="col-ButtonApprove">
+							<div class="columnButton" >
+								<div class="headText">Approve</div>
+							</div>
+						</th>
+						<th id="col-ButtonDeny">
+							<div class="columnButton">
+								<div class="headText">Deny</div>
+							</div>
+						</th>
+						<th id="col-ButtonDelete">
+							<div class="columnButton" >
+								<div class="headText">Delete</div>
+							</div>
+						</th>
+						
 					</tr>
 					
 					<!-- 
@@ -220,7 +235,18 @@
 							</td>
 						</th>
 					 -->
-
+		<!--  Do not need these fields for admin to see
+				<th id="col-viewEduReq">
+					<div class="columnButton" onclick=""><
+						<div class="headText">Education Requirement</div>
+					</div>
+				</th>
+				<th id="col-viewAvail">
+					<div class="columnButton" onclick="">
+						<div class="headText">Form of Employment</div>
+					</div>
+				</th> -->
+				
 				</thead>
 					<tbody></tbody>
 				</table><!--ENDOF TABLE-->
@@ -234,68 +260,7 @@
 		    <br/>
 		</div><!--end of ALL JOB AD FRAME-->
 		
-		
-		
-		
-<!-- ==================================================================== -->		
-<!--===================== APPROVED JOB AD FRAME =========================-->
-<!-- ==================================================================== -->	
-		
-		<div id="approvedJobAdFrame" class="subFrame unremovable">
-			<h2 class="welcome"><b><font size='4'>List of Approved Job Ads</font></b></h2>
-			
-			 <table id="tableApprovedJobAd">
-				<thead>
-					<tr>
 
-					</tr>
-				</thead>
-				<tbody>
-
-				</tbody>
-			</table>
-			
-			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
-		    <br/>		
-		</div><!--end of APPROVED JOB AD FRAME-->
-		
-		
-		
-		
-		
-<!-- ==================================================================== -->		
-<!--===================== DENIED JOB AD FRAME ===========================-->
-<!-- ==================================================================== -->	
-		
-		<div id="deniedJobAdFrame" class="subFrame unremovable">
-			<h2 class="welcome"><b><font size='4'>List of Denied Job Ads</font></b></h2>
-			
-			 <table id="tableDeniedJobAd">
-				<thead>
-					<tr>
-
-					</tr>
-				</thead>
-				<tbody>
-
-				</tbody>
-			</table>
-			
-			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
-		    <br/>		
-		</div><!--end of DENIED JOB AD FRAME-->
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 <!-- ==================================================================== -->		
 <!--===================== JOB AD DETAILS FRAME  ==========================-->
 <!-- ==================================================================== -->	
@@ -321,9 +286,12 @@
 			©2011 JobzDroid
 		</li>
 	</ul>	
-	<div id="lightBox"></div>
+	<div id="lightBox"></div>	
 	<form name="sid" method="get" action="">
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>
+	
+	
+	
 </body>
 </html>

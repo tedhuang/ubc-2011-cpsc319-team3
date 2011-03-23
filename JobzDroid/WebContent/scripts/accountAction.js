@@ -126,7 +126,7 @@ function changePrimaryEmail(sessionKey, newEmail){
 	    {
 			document.getElementById("submitAccountButton").disabled=false;
 		  //TODO: parse response
-			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue );
 	    }
 	  };
 }

@@ -19,6 +19,9 @@ function jobAdReqDispatcher(req, outputDiv)
 }
 
 
+/**
+ * DEPRECATED - DELETE DURING REFACTOR
+ */
 function loadAdList(outputDiv){
 	//TODO Testing ONLY, RM after testing
 	$("#ListJobAdButton").attr("disabled", true);
@@ -56,7 +59,9 @@ function loadAdList(outputDiv){
 	  
 }
 
-
+/**
+ * DEPRECATED - DELETE DURING REFACTOR
+ */
 function loadJobAdDetails( responseXML ){
 	
 	var jobAd = responseXML.getElementsByTagName("jobAd").item(0);
@@ -188,10 +193,16 @@ function adminDeleteJobAd(intJobAdId){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		   var message = xmlhttp.responseXML.getElementById("message");
-		   var result = xmlhttp.responseXML.getElementById("result");
-		   var responseText= result + ": " + message;
+		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 		   document.getElementById("feedback").innerHTML=responseText;
+		   if (result){
+			   //TODO: add UI transition handling
+			   alert("Job Ad Deleted Successfully (TODO: add UI tranisition)");
+		   }
+		   else{
+			   alert("Failed to Delete Job Ad");
+		   }
 	    }
 	  };
 	
@@ -230,17 +241,6 @@ function adminApprove(intJobAdId){
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var message = xmlhttp.responseXML.getElementById("message");
-		   var result = xmlhttp.responseXML.getElementById("result");
-		   var responseText= result + ": " + message;
-		   document.getElementById("feedback").innerHTML=responseText;
-	    }
-	  };
 	
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
@@ -249,10 +249,27 @@ function adminApprove(intJobAdId){
 
 	//change the text while sending the request
 	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
+		   document.getElementById("feedback").innerHTML=responseText;
+		   if (result){
+			   //TODO: add UI transition handling
+			   alert("Job Ad Approved Successfully (TODO: add UI tranisition)");
+		   }
+		   else{
+			   alert("Failed to Approve Job Ad");
+		   }
+	    }
+	  };
 }
 
 
-function adminDeny(jobAdId){
+function adminDeny(intJobAdId){
 	
 	var sessionKey = document.getElementById("sessionKey").value;
 	//var intJobAdId = document.getElementById("jobAdId").value;
@@ -275,17 +292,6 @@ function adminDeny(jobAdId){
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
 	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var message = xmlhttp.responseXML.getElementById("message");
-		   var result = xmlhttp.responseXML.getElementById("result");
-		   var responseText= result + ": " + message;
-		   document.getElementById("feedback").innerHTML=responseText;
-	    }
-	  };
-	
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -294,6 +300,23 @@ function adminDeny(jobAdId){
 	//change the text while sending the request
 	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 	
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
+		   document.getElementById("feedback").innerHTML=responseText;
+		   if (result){
+			   //TODO: add UI transition handling
+			   alert("Job Ad Denied Successfully (TODO: add UI tranisition)");
+		   }
+		   else{
+			   alert("Failed to Deny Job Ad");
+		   }
+	    }
+	  };
 }
 
 
@@ -323,6 +346,16 @@ function extendJobAdExpiry(intJobAdId, longNewExpiry){
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
 	  
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send( request.toString() );
+
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -333,23 +366,14 @@ function extendJobAdExpiry(intJobAdId, longNewExpiry){
 		   document.getElementById("feedback").innerHTML=responseText;
 	    }
 	  };
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
 }
 
 
 //TODO: hook up with UI
-function submitJobAdForApproval(){
+function submitJobAdForApproval(intJobAdId){
 	
 	//TODO: use these ID for UI
-	var intJobAdId = document.getElementById("jobAdId").value;
+	//var intJobAdId = document.getElementById("jobAdId").value;
 
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -369,6 +393,15 @@ function submitJobAdForApproval(){
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
 	  
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send( request.toString() );
+
+	//change the text while sending the request
+	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -379,15 +412,6 @@ function submitJobAdForApproval(){
 		   document.getElementById("feedback").innerHTML=responseText;
 	    }
 	  };
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
 }
 
 /*******************************************************************************************************************************
