@@ -16,7 +16,7 @@ public class SystemManager {
 	/***
 	 * Global system variables with their default values. Values are overwritten after loading the configuration file.
 	 */
-	public static String    serverBaseURL                           = "http://localhost:8080/JobzDroid";
+	public static String    serverBaseURL                           = "http://localhost:8080/JobzDroid/";
 	
 	public static long 		sessionRenewPeriodAfterExpiry 			= 15 * 60 * 1000;				// default 15 mins
 	public static long 		expiryTimeSession 						= 1 * 60 * 60 * 1000; 			// default 1 hour

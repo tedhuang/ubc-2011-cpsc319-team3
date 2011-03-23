@@ -55,7 +55,7 @@ public class RSSManager {
         List<SyndCategory> catagoryList = new ArrayList<SyndCategory>();
         for(int i = 0; i < categories.length; i++){
         	SyndCategory category = new SyndCategoryImpl();
-            category.setName(categories[i]);
+            category.setName(categories[i].trim());
             catagoryList.add(category);
         }
         entry.setCategories(catagoryList);        

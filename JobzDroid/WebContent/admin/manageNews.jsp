@@ -39,7 +39,7 @@
 			</a>
 			<ul id="topnav" class="topnav">
 			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
-			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
+			    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>
@@ -159,7 +159,7 @@
 					    <td class="clean"></td>
 					  </tr>
 					  <tr>
-		    			<td style="width: 155px;" class="label">
+		    			<td style="width: 155px" class="label">
 		          		    Title: 
 		    			</td>
 					    <td style="width: 272px">

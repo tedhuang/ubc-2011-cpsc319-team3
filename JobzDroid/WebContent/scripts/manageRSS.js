@@ -32,9 +32,11 @@ function postRSS(evt){
 	$("#submitButton").attr("disabled", true);
 	$("#statusText").removeClass();	
 	var strRSSTitle = trim($("#titleInput").val());
+	var strLink = trim($("#linkInput").val());
 	var strRSSContent = $("#contentInput").val();
 	var strSessionKey = $("#sessionKey").val();
 	var strFeedType = $("#feedType").val(); 
+	var strCategories = trim($("#caterogiesInput").val());
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -58,22 +60,26 @@ function postRSS(evt){
 						 $("#submitButton").removeAttr("disabled");
 						 $("#titleInput").val("");
 						 $("#contentInput").val("");
+						 $("#caterogiesInput").val("");
+						 $("#strLink").val("");
 						 loadPageWithSession('manageRSS.jsp');
 					 }
 					 else
 						 $("#statusText").addClass("errorTag");		
 					 
-					$("#submitButton").removeAttr("disabled");
+			//		$("#submitButton").removeAttr("disabled");
 			    	$("#statusText").text(responseText);
 				}
 			}};
 	}
 	request = new Request;
-	request.addAction("postRSS");
+	request.addAction("postRSSEntry");
 	request.addSessionKey(strSessionKey);
 	request.addParam("title", strRSSTitle);
+	request.addParam("link", strLink);
 	request.addParam("content", strRSSContent);
 	request.addParam("type", strFeedType);
+	request.addParam("categories", strCategories);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
