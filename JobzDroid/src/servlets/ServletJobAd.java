@@ -42,6 +42,7 @@ public class ServletJobAd extends HttpServlet {
 		createJobAdvertisement,
 		editJobAd,
 		saveJobAdDraft,
+		updateDraft,
 		
 		searchJobAdvertisement,
 		getJobAdByOwner,
@@ -105,7 +106,10 @@ public class ServletJobAd extends HttpServlet {
 			case saveJobAdDraft:
 				postJobAd(request, response);
 				break;
-			case submitJobAdForApproval://WHY DO WE HAVE THIS?
+			case updateDraft:
+				postJobAd(request, response);
+				break;
+			case submitJobAdForApproval://TODO WHY DO WE HAVE THIS?
 				submitJobAdForApproval(request, response);
 				break;
 			case deleteJobAd:
@@ -1939,6 +1943,10 @@ public class ServletJobAd extends HttpServlet {
 			stm2.append( qcmd.VALUES + qcmd.PRNTHS);
 			stm1.insert(stm1.length()-2, "status"+qcmd.COMA);
 		}
+		else if( ( action.equals("updateDraft") )){
+			stm1.append( qcmd.UPDATE + "tableJobAd " + qcmd.SET );
+			stm2.append( qcmd.WHERE);
+		}
 	    
 		int mode=-1;
 		if(action.equals("saveJobAdDraft")){
@@ -1953,6 +1961,9 @@ public class ServletJobAd extends HttpServlet {
 			stm1.append("status" + qcmd.EQ+ qcmd.SQUO+ "pending" + qcmd.SQUO + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
 			mode=2;
 		}
+		else if(action.equals("updateDraft")){
+			mode=2;
+		  }
 		switch (mode){
 		
 		case 1:

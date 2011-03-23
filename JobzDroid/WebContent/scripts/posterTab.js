@@ -79,18 +79,22 @@
      		   
      		   function bindCloseClick(){
      		   	$(closeBtn).unbind('click').bind("click", function(){
-     		   	var nokpwrt=true;
+     		   	var kpwrt=true;
      		   	 if($(this).hasClass('confirmReq')){
+     		   		 var tabToRm=$(this);
      		   		$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeNewAd");
      		   		$('a.save', "#btnBox").click(function(){
 						$("#btnBox", "#lightBox").hide();
 						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
 						$("#lbMsg","#lightBox").html("Saving Draft");
 						postJobAd("draft", "newAdForm", "feedback");
-						closeTab.call(this);
+						closeTab.call(tabToRm);
 					});
-     		   		
-     		   		
+	     		   	$('a.notsave', "#btnBox").click(function(){
+	     		   		$.fn.smartLightBox.closeLightBox(0);
+	     		   		closeTab.call(tabToRm);
+					});
+	     		   		
      		   	 }
      		   	 else{
      		   		 closeTab.call(this);
@@ -302,13 +306,14 @@
          		    }, function() {
          		        tool.animate({opacity: "hide", left: "0"}, 0);
          		    });
-         			tool.appendTo(tRow);
+         			tool.unbind('click').appendTo(tRow);
          			
 //         			tRow.find('a.edit').click(function(){ loadEdit(adId);});
+         			var status=tRow.find('td.td-status').text();
          			tRow.delegate("a.edit", "click", function(){
          				openTab('edAdTab');
-                 		open_edAd_form();
-         				getJobAdById("edit",adId, "edAdForm");
+                 		open_edAd_form(status);
+         				getJobAdById("edit",adId, "edAdForm" );
          				
          			});
          			tRow.delegate('a.view', "click", function(){
@@ -337,15 +342,15 @@
          	});
         }
         
-        function open_edAd_form(){
+        function open_edAd_form(status){
         	$("#edAdFrame").load("DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
         		$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
         		$( "#startTime-field","#edAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
-        		bindHeadToolBar("edAdTool");
+        		bindHeadToolBar("edAdTool", status);
         	});
         }
-        function bindHeadToolBar(toolBarId){
+        function bindHeadToolBar(toolBarId, status){
         	var toolBar=$("#"+toolBarId);
         	
         	switch(toolBarId){
@@ -353,7 +358,8 @@
         	case "edAdTool":
         		
         		toolBar.delegate('a.ed_saveDraft', "click", function(){
-        			postJobAd('draft', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT
+        			status=="draft"?
+        			postJobAd("updateDraft",'edAdForm','edAdfb'):postJobAd('draft', 'edAdForm','edAdfb');
         		});
         		toolBar.delegate('a.ed_update', "click", function(){
         			postJobAd('edit', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT

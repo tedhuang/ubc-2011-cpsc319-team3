@@ -144,7 +144,9 @@ public class DBColName{
 				  ||
 				 action.equals("saveJobAdDraft")
 				  ||
-				 action.equals("editJobAd"))
+				 action.equals("editJobAd")
+				  ||
+				  action.equals("updateDraft"))
 		{
 			return colDictEditJobAd;
 		}

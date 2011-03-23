@@ -439,9 +439,13 @@ function postJobAd(mode, formDiv, heading){
 	else if(mode=="edit"){
 		request.addAction("editJobAd");
 		noNullData = checkMandatory(theForm);
-		infoText="Updating Your Request...";
+		infoText="Updating...";
 	}
-	
+	else if(mode=="updateDraft"){
+		request.addAction("updateDraft");
+		noNullData = checkMandatory(theForm);
+		infoText="Updating...";
+	}
 	if(noNullData){
 		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
@@ -715,7 +719,6 @@ function getJobAdByOwner(outputDiv){
 	request = new Request;
 	request.addAction("getJobAdByOwner");
 	request.addParam("sessionKey", strSessionKey);
-	
 	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
 	}

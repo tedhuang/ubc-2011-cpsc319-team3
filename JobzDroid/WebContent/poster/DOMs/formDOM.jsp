@@ -17,7 +17,7 @@
 		<h2 class="welcome">Editing Ad:</h2>
 		   <div class="headToolBar">
 					<ul id="edAdTool">
-						<li><a class="jsBtn ed_saveDraft" onclick="postJobAd('draft', 'edAdForm','edAdfb')">Save Another Draft |</a></li>
+						<li><a class="jsBtn ed_saveDraft">Save Another Draft |</a></li>
 						<li><a class="jsBtn ed_update" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a></li>
 						<li><a class="jsBtn ed_reset" > Reset Fields</a></li>
 					</ul>
