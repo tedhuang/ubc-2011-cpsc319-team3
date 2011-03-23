@@ -456,11 +456,12 @@ public class ServletAccount extends HttpServlet {
 		String verificationNumber = request.getParameter("id");
 		boolean emailChanged = verifyChangePrimaryEmail(verificationNumber);
 		if(emailChanged){
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/account/emailChangeSuccess.html");
-			dispatcher.forward(request, response);
+			response.sendRedirect("account/emailChangeSuccess.html");	
 		}
-		else
-			throw new ServletException("Failed verify email change action.");
+		else{
+			response.sendRedirect("error.html");
+			System.out.println("Failed to verify email change.");
+		}
 	}
 	
 

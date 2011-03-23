@@ -55,7 +55,7 @@ public class ServletAdmin extends HttpServlet {
 		deleteAccount,
 		postNews,
 		deleteNews,
-		addRSSEntry,
+		postRSSEntry,
 		removeRSSEntry
 	}
 
@@ -105,8 +105,8 @@ public class ServletAdmin extends HttpServlet {
 			case deleteNews:
 				deleteNewsHandler(request, response);
 				break;
-			case addRSSEntry:
-				addRSSEntryHandler(request, response);
+			case postRSSEntry:
+				postRSSEntryHandler(request, response);
 				break;
 			case removeRSSEntry:
 				removeRSSEntryHandler(request, response);
@@ -474,8 +474,7 @@ public class ServletAdmin extends HttpServlet {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");		
 		sessionKey = Utility.checkInputFormat(sessionKey);
-		title = Utility.checkInputFormat(title);
-		content = Utility.checkInputFormat(content);
+		
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
@@ -493,11 +492,22 @@ public class ServletAdmin extends HttpServlet {
 				allGood = false;
 				message = "Unauthorized post news action.";
 			}
+			else if( title == null || title.equals("") ){
+				allGood = false;
+				message = "Title cannot be empty.";
+			}
 		}
-		
-		if(allGood){
+		// check input
+		title = Utility.checkInputFormat(title);
+		if(content != null){
+			content = Utility.checkInputFormat(content);
 			// process line breaks and white spaces in content
 			content = Utility.processLineBreaksWhiteSpaces(content);
+		}		
+		else
+			content = "";
+		
+		if(allGood){
 			long currentTime = Utility.getCurrentTime();
 			// reduce precision to 1 second to work with ROME library's pubDate 
 			currentTime = currentTime / 1000 * 1000;			
@@ -507,10 +517,10 @@ public class ServletAdmin extends HttpServlet {
 				message = "News entry has been successfully posted.";
 				// add entry to the top of news RSS
 				try {
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
 					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(currentTime), content);
 					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
-					String newsPath = getServletContext().getRealPath("/rss/news.xml");
+					String newsPath = getServletContext().getRealPath("news.xml");
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 
 				catch (Exception e) {
@@ -578,8 +588,8 @@ public class ServletAdmin extends HttpServlet {
 				message = "News entry has been successfully deleted.";
 				// find and remove the first matching news entry in the RSS
 				try {
-					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					String newsPath = getServletContext().getRealPath("news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
 					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
 					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
@@ -607,60 +617,82 @@ public class ServletAdmin extends HttpServlet {
 	/***
 	 * Handles add RSS entry requests from admins.
 	 */
-	private void addRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void postRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
-		String feedType = request.getParameter("feedType");
+		String feedType = request.getParameter("type");
 		String title = request.getParameter("title");
-		String content = request.getParameter("content");		
+		String link = request.getParameter("link");
+		String content = request.getParameter("content");	
+		String categories = request.getParameter("categories");	
+		
 		sessionKey = Utility.checkInputFormat(sessionKey);
-		title = Utility.checkInputFormat(title);
-		content = Utility.checkInputFormat(content);
-		content = Utility.processLineBreaksWhiteSpaces(content);
 		
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
+		String[] categoriesArray = {};
 
 		// session check
 		Session session = dbManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
-			message = "Unauthorized post news action.";
+			message = "Unauthorized post RSS action.";
 		}
 		else{
 			// check if user is authorized
 			String userType = session.getAccountType();
 			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
 				allGood = false;
-				message = "Unauthorized post news action.";
+				message = "Unauthorized post RSS action.";
+			}
+			else if( title == null || title.equals("") ){
+				allGood = false;
+				message = "Title cannot be empty.";
+			}			
+			else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
+				allGood = false;
+				message = "Invalid feed type.";
 			}
 		}
 		
-		if(allGood){
-			// process line breaks and white spaces in content
+		// check/process inputs
+		title = Utility.checkInputFormat(title);
+		feedType = Utility.checkInputFormat(feedType);
+		if(link != null)
+			link = Utility.checkInputFormat(link);
+		if(content != null){
+			content = Utility.checkInputFormat(content);
 			content = Utility.processLineBreaksWhiteSpaces(content);
+		}
+		if(categories != null){
+			categories = Utility.checkInputFormat(categories);
+			categoriesArray = categories.split(",");
+		}
+		if(allGood){
 			long currentTime = Utility.getCurrentTime();
 			// reduce precision to 1 second to work with ROME library's pubDate 
 			currentTime = currentTime / 1000 * 1000;			
-			
-			if(newsManager.addNewsEntry(title, content, currentTime)){
+		
+			// add entry to the top of selected RSS
+			try {
+				String feedFile;
+				if( feedType.equals("news") )
+					feedFile = "news.xml";
+				else
+					feedFile = "jobAd.xml";
+					
+				SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + feedFile);
+				SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(currentTime), content, link, categoriesArray);
+				RSSManager.addEntryToFeed(feed, entry, 0);
+				String filePath = getServletContext().getRealPath(feedFile);
+				RSSManager.writeFeedToFile(feed, filePath);
 				result = true;
-				message = "News entry has been successfully posted.";
-				// add entry to the top of news RSS
-				try {
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
-					SyndEntry newsEntry = RSSManager.createFeedEntry(title, new java.util.Date(currentTime), content);
-					RSSManager.addEntryToFeed(newsFeed, newsEntry, 0);
-					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					RSSManager.writeFeedToFile(newsFeed, newsPath);
-				} 
-				catch (Exception e) {
-					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
-					message = "News entry has been successfully posted, but there was an error updating News RSS.";
-				}				
+				message = "New RSS entry has been successfully posted.";
+			} 
+			catch (Exception e) {
+				Utility.logError("Failed to post RSS entry '" + title + "' to RSS: " + e.getMessage());
+				message = "Failed to post RSS entry '" + title + "' to " + feedType + " RSS: " + e.getMessage();
 			}
-			else
-				message = "An error has occured while performing post news action. Please try again later.";
 		}
 		
 		// Write XML containing message and result to response
@@ -719,8 +751,8 @@ public class ServletAdmin extends HttpServlet {
 				message = "News entry has been successfully deleted.";
 				// find and remove the first matching news entry in the RSS
 				try {
-					String newsPath = getServletContext().getRealPath("/rss/news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
+					String newsPath = getServletContext().getRealPath("news.xml");
+					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
 					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
 					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
 					RSSManager.writeFeedToFile(newsFeed, newsPath);

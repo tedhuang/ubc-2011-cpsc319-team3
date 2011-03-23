@@ -34,8 +34,8 @@
 		// read feed information
 		SyndFeed newsFeed, jobAdFeed;
 		try{
-			newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/news.xml");
-			jobAdFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "/rss/jobAd.xml");
+			newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
+			jobAdFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
 		}
 		catch(Exception e){
 			throw new ServletException("Error reading feed information: " + e.getMessage());
@@ -51,7 +51,7 @@
 			</a>
 			<ul id="topnav" class="topnav">
 			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
-			    <li><a href="../rss/rss.html" target="_blank" class="btn">RSS</a></li>
+			    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
 			    <li><a href="#" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>
@@ -132,7 +132,8 @@
 		  	  		String formattedDate = Utility.longToDateString(pubDate, "PST");
 		  	  %>
 	  			<tr style="font-weight:bold">
-	  				<td>Title: <%= title %> 	  						
+	  				<td style="width: 955px">
+	  					Title: <%= title %> 	  						
 	  					<a title="Delete" onclick="sendDeleteNewsRSSRequest('<%= i %>')" class="linkImg" style="float:right">
        						 		<img src="../images/icon/delete_icon.png"/>
 						</a>
@@ -176,7 +177,7 @@
 		  	  		}
 		  	  %>
 	  			<tr style="font-weight:bold">
-	  				<td>Title: <%= title %> 	  						
+	  				<td style="width: 955px">Title: <%= title %> 	  						
 	  					<a title="Delete" onclick="sendDeleteJobAdRSSRequest('<%= i %>')" class="linkImg" style="float:right">
        						 		<img src="../images/icon/delete_icon.png"/>
 						</a>
@@ -186,7 +187,7 @@
 	  				<td><%= formattedDate %></td>
 	  			</tr>
 	  			<tr style="font-style: italic">
-	  				<td><%= categories %></td>
+	  				<td>Categories: <%= categories %></td>
 	  			</tr>
 	  			<tr>
 	  				<td><%= content %></td>
@@ -222,14 +223,30 @@
 			  			 </td>
 			    	  </tr>
 					  <tr>
-		    			<td style="width: 155px;" class="label">
+		    			<td class="label">
 		          		    Title: 
 		    			</td>
 					    <td style="width: 272px">
-					        <div>
-					            <input type="text" class="textinput" id="titleInput" size="134" maxlength="100" tabindex="11"/>
-					      		<span id="titleError" class="errorTag"></span>
-					        </div>
+				            <input type="text" class="textinput" id="titleInput" size="134" maxlength="100" tabindex="11"/>
+				      		<span id="titleError" class="errorTag"></span>
+					    </td>
+					  </tr>
+					  <tr>
+					  	<td class="label">
+		          		    Link: 
+		    			</td>
+					    <td>
+					        <input type="text" class="textinput" id="linkInput" size="134" maxlength="100" tabindex="11"/><br/>
+					        <span>For example: Entering "index.html" will make the link "<%= SystemManager.serverBaseURL %>index.html".</span>
+					    </td>
+					  </tr>
+					  <tr>
+					  	<td class="label">
+		          		    Categories: 
+		    			</td>
+					    <td>
+					        <input type="text" class="textinput" id="caterogiesInput" size="134" maxlength="100" tabindex="11"/><br/>
+					        <span>Enter categories each separated by a comma. <br/>Each feed entry may belong to multiple categories for readers to filter. </span>
 					    </td>
 					  </tr>
 					  <tr>
