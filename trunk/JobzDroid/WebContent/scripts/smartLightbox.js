@@ -83,7 +83,7 @@
      			// hide scrollbars!
      			$('body').css('overflow-y', 'hidden');
      			
-     			$('<div id="overlay"></div>').addClass('lb_black')
+     			$('<div id="overlay"></div>').addClass('whitebg')
      			.css('opacity', '0').animate({'opacity': '0.5'}, 1000)
      			.appendTo(lightBox);
      			
@@ -116,7 +116,7 @@
      			   .appendTo("#"+div);
      		
      		$('<div id="overlay"></div>')
-	     		.addClass('lb_black')
+	     		.addClass('whitebg')
 	 			.css('opacity', '0')
 	 			.animate({'opacity': '0.5'}, 1000)
 	 			.appendTo(lbClone);
@@ -191,7 +191,7 @@
      	
      		$('body').css('overflow-y', 'hidden');
  			
- 			$('<div id="overlay"></div>').addClass('lb_black')
+ 			$('<div id="overlay"></div>').addClass('whitebg')
  			.css('opacity', '0').animate({'opacity': '0.5'}, 1000)
  			.appendTo(lightBox);
  			

@@ -78,22 +78,23 @@
      		   }
      		   
      		   function bindCloseClick(){
-     		   	$(closeBtn).bind("click", function(){
+     		   	$(closeBtn).unbind('click').bind("click", function(){
      		   	var nokpwrt=true;
-//     		   	 if($(this).hasClass('confirmReq')){
-//     		   		$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeNewAd");
-//     		   		$('a.save', "#btnBox").click(function(){
-//						$("#btnBox", "#lightBox").hide();
-//						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
-//						$("#lbMsg","#lightBox").html("Saving Draft");
-//						postJobAd("draft", "newAdForm", "feedback");
-//					});
-//     		   		
-//     		   		
-//     		   	 }
-//     		   	 else{
+     		   	 if($(this).hasClass('confirmReq')){
+     		   		$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeNewAd");
+     		   		$('a.save', "#btnBox").click(function(){
+						$("#btnBox", "#lightBox").hide();
+						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+						$("#lbMsg","#lightBox").html("Saving Draft");
+						postJobAd("draft", "newAdForm", "feedback");
+						closeTab.call(this);
+					});
+     		   		
+     		   		
+     		   	 }
+     		   	 else{
      		   		 closeTab.call(this);
-//     		   	 }
+     		   	 }
      		   	});
      		   }
      		   function closeTab(){
