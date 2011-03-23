@@ -61,12 +61,64 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		  var jobAd = $(this);
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-sDate').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
+		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
+		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
+		  var isApprovedFormatted;
+		  if(jobAd.attr("isApproved") == 0)
+				isApprovedFormatted = "Not Approved";
+		  else
+				isApprovedFormatted = "Approved";
+		  $('<td></td>').attr("id", id='td-approval').text(isApprovedFormatted).appendTo(tr);
+		  
+		  
+		  //ADD ADMIN FUNCTIONS:
+		  var approveButton = $('<td></td>');
+		  var denyButton = $('<td></td>');
+		  var deleteButton = $('<td></td>');
+		  
+		  approveButton.appendTo(tr);
+		  denyButton.appendTo(tr);
+		  deleteButton.appendTo(tr);
+		  
+		  $("<button>Approve</button>").attr("id", id='td-approveButton').click(
+			function() {
+			  if(jobAd.attr("isApproved") == 1)
+				  alert("This Job Ad has already been approved");
+			  else{			  
+			      alert("Approving Job Ad - TODO: Add transition loading screen..");
+				  adminApprove(jobAd.attr("jobAdId"));
+			      //TODO: implement transition loading screen - UI
+			  }
+		  }).appendTo(approveButton);
+		  //$('<td></td>').appendTo(tr);
+		  
+		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
+					function() {
+					  if(jobAd.attr("isApproved") == 0)
+						  alert("This Job Ad has not yet been approved");
+					  else{			  
+					      alert("Denying Job Ad - TODO: Add transition loading screen..");
+					      adminDeny(jobAd.attr("jobAdId"));
+					      //TODO: implement transition loading screen - UI
+					  }
+		  }).appendTo(denyButton);
+		  
+		  $("<button>Delete</button>").attr("id", id='td-deleteButton').click(
+					function() {
+						  alert("This Job Ad will be permanently deleted! (TODO: Add Checks)");
+						  adminDeleteJobAd(jobAd.attr("jobAdId"));
+					      //TODO: implement transition loading screen - UI
+					  }
+		  ).appendTo(deleteButton);
+		  
+		  
+		  
+		  //TODO: get the tabs working with approve/deny/delete
 		  //$.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		  

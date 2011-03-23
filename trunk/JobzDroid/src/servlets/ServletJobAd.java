@@ -2009,7 +2009,7 @@ public class ServletJobAd extends HttpServlet {
 	private void deleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		mysqlCmd qcmd = new mysqlCmd(); 
-		String feedback="";
+		String feedback="adminDeleteJobAd failed";
 		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 //		Session userSession = dbManager.getSessionByKey(sessKey);
@@ -2050,7 +2050,6 @@ public class ServletJobAd extends HttpServlet {
 		Statement stmt = null;
 		
 		boolean isSuccessful = false;
-		String message = "adminDeleteJobAd failed";
 		
 		try {
 //			stmt = conn.createStatement();

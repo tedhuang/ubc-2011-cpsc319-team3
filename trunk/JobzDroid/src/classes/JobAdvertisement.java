@@ -46,21 +46,27 @@ public class JobAdvertisement {
 		}
 		
 		if(status == null){
-			status = "Not Set";
+			status = "N/A";
 		}
 		
 		if(jobAvailability == null){
-			jobAvailability = "Not Specified";
+			jobAvailability = "N/A";
 		}
 		
 		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
 		creationDateFormatted	= Utility.dateConvertor(creationDate);
 		expiryDateFormatted 	= Utility.dateConvertor(expiryDate);
-		startingDateFormatted	= Utility.dateConvertor(startingDate);
-		String jobAvail			= Utility.jobTypeTranslator(false,jobAvailability);
+		String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
+
+		
+		if(startingDate == 0)
+			startingDateFormatted = "N/A";
+		else
+			startingDateFormatted = Utility.dateConvertor(startingDate);
+
 		
 		if(eduReqFormatted == null){
-			eduReqFormatted = "Not Specificed";
+			eduReqFormatted = "N/A";
 		}
 		
 		String result =  "\t<jobAd" +
