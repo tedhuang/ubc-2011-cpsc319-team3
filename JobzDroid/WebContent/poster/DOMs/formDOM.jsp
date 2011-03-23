@@ -14,12 +14,14 @@
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
 	<div id="edAdForm" class="edFormContainer">
+		<h2 class="welcome">Editing Ad:</h2>
 		   <div class="headToolBar">
-					<h2 class="welcome">Editing Ad:</h2>
-						<a class="jsBtn" onclick="postJobAd('draft', 'edAdForm','edAdfb')">Save Another Draft |</a>
-			    		<a class="jsBtn" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a>
-						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
-						<span class="feedback">Feed Back Area</span>
+					<ul id="edAdTool">
+						<li><a class="jsBtn ed_saveDraft" onclick="postJobAd('draft', 'edAdForm','edAdfb')">Save Another Draft |</a></li>
+						<li><a class="jsBtn ed_update" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a></li>
+						<li><a class="jsBtn ed_reset" > Reset Fields</a></li>
+					</ul>
+						<!-- <span class="feedback">Feed Back Area</span>-->
 			  </div><!--ENDOF headBar-->
 			  
 		  	<div id="typeInForm" class="fillInForm"> 

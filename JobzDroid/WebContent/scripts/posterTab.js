@@ -79,8 +79,26 @@
      		   
      		   function bindCloseClick(){
      		   	$(closeBtn).bind("click", function(){
-     		   	 tabToRm = $($(this).parent().find("a"),obj);
-     		   	if(tabToRm.length){
+     		   	var nokpwrt=true;
+//     		   	 if($(this).hasClass('confirmReq')){
+//     		   		$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeNewAd");
+//     		   		$('a.save', "#btnBox").click(function(){
+//						$("#btnBox", "#lightBox").hide();
+//						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+//						$("#lbMsg","#lightBox").html("Saving Draft");
+//						postJobAd("draft", "newAdForm", "feedback");
+//					});
+//     		   		
+//     		   		
+//     		   	 }
+//     		   	 else{
+     		   		 closeTab.call(this);
+//     		   	 }
+     		   	});
+     		   }
+     		   function closeTab(){
+     			  tabToRm = $($(this).parent().find("a"),obj);
+     		   	  if(tabToRm.length){
  			  		$.each(tabToRm, function(){
  			  			
  			  			if($($(this).parent(), obj).hasClass("hideOnly")){
@@ -97,12 +115,11 @@
  			  					$($(this).attr("href"), obj).remove();
  			  			}
  			  		});
-     		   	 }
-	 			    refreshTabs();
-	 			  	tabNum--;
-	         	    curTabIdx=0;
-	         	    showTab();
-     		   	});
+     		   	  }
+     		   	refreshTabs();
+ 			  	tabNum--;
+         	    curTabIdx=0;
+         	    showTab();
      		   }
      		   function autoCloseTab(){
      			  
@@ -324,7 +341,32 @@
         		$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
         		$( "#startTime-field","#edAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
+        		bindHeadToolBar("edAdTool");
         	});
+        }
+        function bindHeadToolBar(toolBarId){
+        	var toolBar=$("#"+toolBarId);
+        	
+        	switch(toolBarId){
+        	
+        	case "edAdTool":
+        		
+        		toolBar.delegate('a.ed_saveDraft', "click", function(){
+        			postJobAd('draft', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT
+        		});
+        		toolBar.delegate('a.ed_update', "click", function(){
+        			postJobAd('edit', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT
+        		});
+        		toolBar.delegate('a.ed_reset', "click", function(){
+        			$.fn.smartLightBox.diaBox("you unsaved data will be reset continue?", "alert");
+ 					$('a.yes', "#btnBox").click(function(){
+ 						resetFields('edAdForm');
+ 						$.fn.smartLightBox.closeLightBox(0);
+ 					});
+        		});
+        	
+        	}
+        	
         }
         function open_adDetail(){
        	 $("#adDetailFrame").load("DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
@@ -332,7 +374,7 @@
         	});
        }
         $.fn.DynaSmartTab.close=function(){
-        	autoCloseTab();
+        	autoCloseTab();//for close tab after action performed
         };
 //     function loadEdData(targetXMLTag, edFormContainer, mode){
         $.fn.DynaSmartTab.loadEdData=function(targetXMLTag, edFormContainer, mode){
