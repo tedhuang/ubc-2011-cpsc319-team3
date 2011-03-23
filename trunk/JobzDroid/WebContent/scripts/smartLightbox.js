@@ -33,8 +33,8 @@
                  		.appendTo(btnBox);
         				
         				$('<a></a>')
-                 		.addClass("post jsBtn")
-                 		.html("Post It")
+                 		.addClass("notsave jsBtn")
+                 		.html("Don't save")
                  		.appendTo(btnBox);
         				
                  		$('<a></a>')
@@ -70,11 +70,11 @@
                  		.html("Cancel")
                  		.appendTo(btnBox);
                  		
-                 		btnBox.delegate('a.no', "click", function(){
-                 			rmLightbox(0);
-                 		});
         				break;
         			}
+        			btnBox.delegate('a.no', "click", function(){
+             			rmLightbox(0);
+             		});
              		 return btnBox;
              	}
         		
