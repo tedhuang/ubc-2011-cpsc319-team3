@@ -22,7 +22,7 @@ import managers.DBManager;
 import managers.EmailManager;
 import managers.SystemManager;
 
-/** 7242371500566734 
+/**
  * Servlet implementation class ServletAccount
  * Handles all account related requests, including registration, log-in, forget password, email verification and so on.
  */
