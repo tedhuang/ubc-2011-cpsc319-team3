@@ -94,7 +94,6 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 			      //TODO: implement transition loading screen - UI
 			  }
 		  }).appendTo(approveButton);
-		  //$('<td></td>').appendTo(tr);
 		  
 		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
 					function() {
@@ -238,9 +237,6 @@ function buildAdListTb(targetXMLTag, outputDiv){
 	}
 }
 
-//function viewDetail(mode, adId, outputDiv){
-//	getJobAdById(mode, adId, outputDiv);
-//}
 /********************************************************************************************************************
  * 						Build a table for profile
  * @param targetXMLTag
@@ -309,15 +305,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
 	}
 	else{
-		var accountType = profile.attr("accountType");
-		
-//		var email = profile.attr("email");
-//		var secEmail = profile.attr("secondaryEmail");
-//		var name = profile.attr("name");
-//		var phone = profile.attr("phone");
-//		var description = profile.attr("selfDescription");
-		
-		
+		var accountType = profile.attr("accountType");	
 		var tbCell = $('<td></td>');
 		var inputForm =$('<input/>');
 		var enableEdBtn=$('<button></button>').attr({ type: 'button', 
