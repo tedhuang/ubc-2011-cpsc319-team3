@@ -6,6 +6,7 @@ import managers.SystemManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -374,7 +375,7 @@ public class ServletDocument extends HttpServlet {
 		
 		Session currSession = dbManager.getSessionByKey(sessionKey);
 		
-		String fileNames = "";
+		String fileData = "";
 		
 		boolean success = false;
 		earlyExit: {
@@ -387,9 +388,12 @@ public class ServletDocument extends HttpServlet {
 			File[] userfiles = getUserFiles( currSession.getIdAccount() );
 			
 			for( File eachFile: userfiles ) {
-				fileNames = fileNames.concat("\t<file " +
+				BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
+				fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
+				
+				fileData = fileData.concat("\t<file " +
 						"fileName=\"" + eachFile.getName() + "\" " +
-						"size=\"" + ( FileUtils.sizeOf( eachFile ) / SystemManager.bytesInKB ) + "\" " +
+						"size=\"" + (  fileSizeMB  ) + "\" " +
 						">" + "</file>\n");
 				success = true;
 			}
@@ -405,7 +409,7 @@ public class ServletDocument extends HttpServlet {
 		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append("\t<action>" + action + "</action>\n");
 		if(success = true) {
-			XMLResponse.append(fileNames);
+			XMLResponse.append(fileData);
 		}
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
