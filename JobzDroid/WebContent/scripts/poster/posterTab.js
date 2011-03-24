@@ -318,7 +318,7 @@
          			});
          			tRow.delegate('a.view', "click", function(){
          				openTab('adDetailTab'); 
-            			open_adDetail();
+            			open_adDetail(adId);
             			getJobAdById("detail",adId, "adDetailTable");
          				
          			});
@@ -375,7 +375,7 @@
         	}
         	
         }
-        function open_adDetail(){
+        function open_adDetail(adId){
        	 $("#adDetailFrame").load("DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
        		$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
        		$("div.headToolBar").unbind('click');

@@ -1617,17 +1617,17 @@ public class ServletJobAd extends HttpServlet {
     	   String value = entry.getValue();
     	   if(!(column.equals("quickSearch"))){
     		   
-    		   if(DbCols.get(column).equals("title")||DbCols.get(column).equals("tags")){
+    		   if(column.equals("title")||column.equals("tags")){
     			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
     		   }
-    		   else if(DbCols.get(column).equals("jobAvailability")){
+    		   else if(column.equals("jobAvailability")){
     			   //if search by the availability term use IN
    	    		    queryBuf.append(column+ inKeyword + value + andKeyword);
     		   }
-    		   else if(DbCols.get(column).equals("educationRequired")){
+    		   else if(column.equals("educationRequired")){
    	    		    queryBuf.append(column+ "=" + value + andKeyword);
     		   }
-//    		   else if(DbCols.get(column).equals("location")){
+//    		   else if(column.equals("location")){
 //    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
 //    		   }
     		   else{//TODO NOT WORKING NEED TO FIX 

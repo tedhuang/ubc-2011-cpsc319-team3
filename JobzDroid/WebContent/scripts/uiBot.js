@@ -140,8 +140,8 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
-//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
-		$("#"+outputDiv).html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+		$("#"+outputDiv).hide();
+		$("<h2 class='info'></h2>").html("You Have Not Yet Posted Anything").insertBefore("#"+outputDiv);
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
@@ -167,20 +167,18 @@ function filterTable(filter, tbContainerId){
 	
 	var tbody  = $("tbody", "#"+tbContainerId);
 	var rows   = $('tr', tbody).get();
-	$(rows).each(function(){
-		$(this).show();
-		if(filter!=""){
-			if($('#td-status', $(this)).html() != filter){
-				$(this).hide();
-			}
-		  }
+	filter==""?
+			$(rows).show():
+			$(rows).each(function(){
+				$('td.td-status', $(this)).html()==filter?
+						$(this).show():$(this).hide();
 		});
 	}
 
 function resetFields(formContainer){
 	
 	var temp = $(':input', "#"+formContainer);
-	if(temp.length >0){//TODO ALERT USER TO CONFIRM
+	if(temp.length >0){
 		
 		temp
 		 .not(':button, :submit, :reset, :hidden')
@@ -243,10 +241,6 @@ function buildAdListTb(targetXMLTag, outputDiv){
 //function viewDetail(mode, adId, outputDiv){
 //	getJobAdById(mode, adId, outputDiv);
 //}
-
-
-
-
 /********************************************************************************************************************
  * 						Build a table for profile
  * @param targetXMLTag
@@ -299,7 +293,6 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		 $("#detailFB").hide();
 	}
 }
-
 
 
 /********************************************************************************************************************
