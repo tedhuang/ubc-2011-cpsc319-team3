@@ -167,121 +167,6 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 
-
-	/******************************************************************************************************************
-	 * 					ADLISTLOAD
-	 * LOAD JOB AD LIST BY CRITERIAs
-	 ******************************************************************************************************************/
-	private void adListLoader( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
-		boolean isSuccessful=false;
-		String message="";
-		
-	/*
-		ArrayList <String> reqParaNameList = new ArrayList<String>();
-		ArrayList <String> reqParaValList = new ArrayList<String>();
-		
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-		    //Get the parameters' names
-			String paraName = (String) paramNames.nextElement();
-		    reqParaNameList.add(paraName);
-		    //Get the parameters' values
-		    reqParaValList.add(request.getParameter(paraName));
-		    
-		    System.out.println("Parameter: " + paraName + "\n" +
-		    					"Value: " + request.getParameter(paraName));
-		}
-		String criteria = reqParaNameList.get(0);
-		String condition = reqParaValList.get(0);
-		*/
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
-		
-		String query = buildSearchQuery(request);
-		
-		try {
-			stmt = conn.createStatement();
-			
-//			String query = 
-//				"SELECT idJobAd, title, datePosted, contactInfo, educationRequired " +//TODO JOIN with LOCATION Table
-//				"FROM tableJobAd WHERE " + criteria+"=" + condition;
-			
-			System.out.println("getJobAdById query:" + query);
-			isSuccessful = stmt.execute(query);
-			
-			ResultSet result = stmt.getResultSet();
-			
-			if (result.first()){
-				System.out.println("getJobAd successful by QUERY" + query);
-				message = "getJobAd successful";
-				
-				//Fill in the fields of the jobAd object
-				
-				jobAd.contactInfo 		= result.getString("contactInfo");
-				jobAd.educationReq 		= result.getInt("educationRequired");
-				jobAd.jobAdTitle		= result.getString("title");
-				jobAd.jobAdId 			= result.getInt("idJobAd");
-				jobAd.creationDate 		= result.getLong("datePosted");
-				
-				
-//				jobAd.ownerID 			= result.getInt("idAccount");
-//				jobAd.jobAdDescription 	= result.getString("description");
-//				jobAd.expiryDate		= result.getLong("expiryDate");
-//				jobAd.startingDate 		= result.getLong("dateStarting");
-//				jobAd.status 			= result.getString("status");
-//				jobAd.tags 				= result.getString("tags");
-//				jobAd.numberOfViews 	= result.getInt("numberOfViews");
-//				jobAd.isApproved 		= result.getBoolean("isApproved");
-				
-			}
-			else{ //Error case
-				isSuccessful = false;
-				message = "Error: AD not found with Query" + query;
-				System.out.println(message);
-			}
-			
-			
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append(jobAd.toXMLContent() );
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-	}
-	
-
-	
-
 	/**
 	 * Returns an xml formatted arraylist of job advertisements
 	 */
@@ -591,7 +476,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.ownerID 			= result.getInt("idAccount");
 				jobAd.jobAdTitle		= result.getString("title");
 				jobAd.jobAdDescription 	= result.getString("description");
-				jobAd.jobAvailability	= result.getString("jobAvailability");
+				//jobAd.jobAvailability	= result.getString("jobAvailability");
 				jobAd.expiryDate		= result.getLong("expiryDate");
 				jobAd.startingDate 		= result.getLong("dateStarting");
 				jobAd.creationDate 		= result.getLong("datePosted");
@@ -601,6 +486,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.tags 				= result.getString("tags");
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 				jobAd.isApproved 		= result.getInt("isApproved");
+				jobAd.hasGradFunding	= result.getInt("hasGradFunding");
 				
 			}
 			else{ //Error case
@@ -614,7 +500,7 @@ public class ServletJobAd extends HttpServlet {
 			Location location = new Location();
 			
 			query = "SELECT * FROM tableLocationJobAd WHERE " +
-					"idJobAd= '" + jobAdId +"'";
+					"idJobAd= '" + jobAdId + "'";
 			result = stmt.getResultSet();
 			
 			if(!result.first()){
@@ -632,9 +518,50 @@ public class ServletJobAd extends HttpServlet {
 			
 			jobAd.locationList = locationList;
 			
-//TODO: add get employment type
-			
-			
+
+			/**Get Employment Availability values */
+
+				String empAvail = "";
+				int fullTime = 0;
+				int partTime = 0;
+				int internship = 0;
+				
+				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+				"idJobAd= '" + jobAdId + "'";
+				System.out.println(query);
+				
+				isSuccessful = stmt.execute(query);
+				result = stmt.getResultSet();
+				
+				if(!result.first()){
+						System.out.println("No Employment Type Found");
+				}
+				else{
+					fullTime = result.getInt("fullTime");
+					partTime = result.getInt("partTime");
+					internship = result.getInt("internship");	
+
+					if( (fullTime+partTime+internship) == 0 ){
+						empAvail = "Not Specified"; //no preference
+					}
+					else{
+						if( fullTime == 1){
+							empAvail += "Full-time ";
+						}
+						
+						if(partTime == 1){
+							empAvail += "Part-time ";
+						}
+						
+						if(internship == 1){
+							empAvail += "Internship";
+						}
+					}
+					System.out.println("Job Positions Available: " + empAvail);
+					jobAd.jobAvailability = empAvail;
+				}
+				
+
 		}
 		catch (SQLException e) {
 			//TODO log SQL exception
@@ -672,317 +599,6 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 
-
-
-	private void editJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
-		//initialize return statements
-		String message = "Create Job Advertisement Failed";
-		boolean isSuccessful = false;
-		
-		int jobAdId 				 = Integer.parseInt(request.getParameter("jobAdId"));
-		
-		String jobAdvertisementTitle = request.getParameter("strTitle");
-		String jobDescription 		 = request.getParameter("strDescription");
-		String contactInfo 			 = request.getParameter("strContactInfo");
-		String strTags 				 = request.getParameter("strTags");
-		String jobAvailability	 	 = request.getParameter("strJobAvailability");
-		
-		int educationRequirement 	 = Integer.parseInt(request.getParameter("educationRequirement"));
-		
-		int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
-		String expiryMonth 			 = request.getParameter("expiryMonth");
-		int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
-		
-		int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
-		String startingMonth 		 = request.getParameter("startingMonth");
-		int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
-				
-		long millisExpiryDate 		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
-		long millisStartingDate 	 = Utility.calculateDate(startingYear, startingMonth, startingDay);
-		
-		String address 				 = request.getParameter("address");
-		double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
-		double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
-		
-
-		System.out.println(jobAdvertisementTitle);
-		System.out.println(jobDescription);
-		System.out.println(contactInfo);
-		System.out.println(strTags);
-		System.out.println(" Expire On: " + millisExpiryDate);
-		System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		try{
-			stmt = conn.createStatement();
-			
-			String query = 
-				"UPDATE tableJobAd SET " 
-				+ "title='" 			+ jobAdvertisementTitle + "','" 
-				+ "description='" 		+ jobDescription + "','" 
-				+ "expiryDate='" 		+ millisExpiryDate + "','" 
-				+ "dateStarting='" 		+ millisStartingDate + "','" 
-				+ "contactInfo='" 		+ contactInfo + "','" 
-				+ "educationRequired='"	+ educationRequirement + "','" 
-				+ "jobAvailability='" 	+ jobAvailability + "','" 
-				+ "tags='" 				+ strTags + "' " +
-				"WHERE idJobAd='" 		+ jobAdId + "' ";
-				
-			System.out.println("Edit JobAd Query: " + query);
-			
-			if( stmt.executeUpdate(query) != 1 ){ //Error Check
-				System.out.println("Error: Update Query Failed");
-			}
-			else{
-				isSuccessful = true;
-				message = "Edit Job Ad success!";
-				System.out.println("Edit Job Ad success!");
-			}
-	
-			
-		}
-		catch (SQLException e) {
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		
-	}
-	
-	
-	/**
-	 * Creates a new job advertisement entry in the database with the given values
-	 * @param jobAdvertisementTitle
-	 * @param jobDescription
-	 * @param jobLocation
-	 * @param contactInfo
-	 * @param strTags
-	 * @return idJobAd
-	 * @throws IOException 
-	 */
-	private void createJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		System.out.println("Entered createJobAdvertisement");
-		
-		//initialize return statements
-		String message = "Create Job Advertisement Failed";
-		boolean isSuccessful = false;
-		
-		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
-		
-		//Checks the user's privilege
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
-		
-		earlyExit: {
-			System.out.println("Entered user sessionKey");
-				
-			if ( userSession == null ) {
-				//TODO session invalid, handle error
-				System.out.println("session is null");
-				message = "Failed to authenticate user session";
-				break earlyExit;
-			}
-			else {
-				//TODO implmement this
-				System.out.println("checking usertype");
-				System.out.println("usertype = " + userSession.getAccountType());
-				
-				if( userSession.getAccountType().equals("poster") ||
-						userSession.getAccountType().equals("admin")) {
-					System.out.print("User has the correct priviliege");
-				}
-				else {
-					message = "User does not have the right privilege";
-					break earlyExit;
-				}
-	
-			}
-			
-			System.out.print("User session sucessful for key " + userSession.getKey() );
-			
-			String jobAdvertisementTitle = request.getParameter("strTitle");
-			String jobDescription 		 = request.getParameter("strDescription");
-			String contactInfo 			 = request.getParameter("strContactInfo");
-			String tags 				 = request.getParameter("strTags");
-			String jobAvailability	 	 = request.getParameter("strJobAvailability");
-
-			int educationRequirement 	 = Integer.parseInt(request.getParameter("strEducationReq"));
-			
-			int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
-			String expiryMonth 			 = request.getParameter("expiryMonth");
-			int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
-			
-			int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
-			String startingMonth 		 = request.getParameter("startingMonth");
-			int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
-			
-			Calendar cal 				 = Calendar.getInstance();
-			long millisDateCreated 		 = cal.getTimeInMillis();
-			long millisExpiryDate		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
-			long millisStartingDate		 = Utility.calculateDate(startingYear, startingMonth, startingDay);
-
-			String address 				 = request.getParameter("address");
-			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
-			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
-			
-			int jobAdId = -1;
-			
-			System.out.println(jobAdvertisementTitle);
-			System.out.println(jobDescription);
-			System.out.println(contactInfo);
-			System.out.println(tags);
-			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
-			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
-			
-			Connection conn = dbManager.getConnection();	
-			Statement stmt = null;
-			
-			try {
-				System.out.println("Inserting new Job Ad into DB");
-				
-				stmt = conn.createStatement();
-				
-				jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
-				jobDescription = Utility.checkInputFormat( jobDescription );
-				contactInfo = Utility.checkInputFormat( contactInfo );
-				tags = Utility.checkInputFormat( tags );
-				
-			//Add new entry with specified paramters into database
-				String query = 
-					"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, jobAvailability, tags ) " +
-					"VALUES " + "('" 
-						+ jobAdvertisementTitle + "','" 
-						+ jobDescription + "','" 
-						+ millisExpiryDate + "','" 
-						+ millisStartingDate + "','" 
-						+ millisDateCreated + "','"
-						+ contactInfo + "','" 
-						+ educationRequirement + "','"
-						+ jobAvailability + "','"
-						+ tags + 
-					"')";
-				
-				// if successful, 1 row should be inserted
-				System.out.println("New Job Ad Query: " + query);
-				int rowsInserted = stmt.executeUpdate(query);
-				
-				if (rowsInserted != 1){
-					System.out.println("New JobAd Creation failed");
-					Utility.logError("New JobAd insert in DB failed");
-				}
-				
-			//Get jobAdId
-				query = "SELECT idJobAd FROM tableJobAd WHERE " +
-						"title='" + jobAdvertisementTitle + "' AND " +
-						"datePosted='" + millisDateCreated + "'";
-				ResultSet result = stmt.executeQuery(query);
-				
-				if(result.first()){
-					jobAdId = result.getInt("idJobAd");
-					System.out.println("Job Ad ID: " + jobAdId);
-				}
-				else{
-					System.out.println("Error: Job Ad ID not found after creation");
-				}
-				
-			//Insert location values into location table
-				query = 
-					"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
-					"VALUES " + "('" 
-					+ address + "','" 
-					+ longitude + "','" 
-					+ latitude + "','" 
-					+ jobAdId +
-				"');";
-				
-				System.out.println("Location table query: " + query);
-				
-				rowsInserted = stmt.executeUpdate(query);
-				
-				System.out.println("Row Inserted: " + rowsInserted);
-				
-				if (rowsInserted == 1){
-					System.out.println("New JobAd Creation success (DB)");
-					isSuccessful = true;
-					message = "Create Job Advertisement Successful";
-				}
-				else{
-					System.out.println("Insert location for new job ad failed");
-					Utility.logError("Insert location for new job ad failed");
-				}
-
-				//Debug print
-				System.out.println("Location Query: "+ query);
-				
-				if( stmt.executeUpdate(query) != 1 ){ //Error Check
-					System.out.println("Error: Location Update Failed");
-				}
-				
-			}
-			catch (SQLException e) {
-				//TODO log SQL exception
-				Utility.logError("SQL exception : " + e.getMessage());
-			}
-			// close DB objects
-		    finally {
-		        try{
-		            if (stmt != null)
-		                stmt.close();
-		        }
-		        catch (Exception e) {
-		        	//TODO log "Cannot close Statement"
-		        	System.out.println("Cannot close Statement : " + e.getMessage());
-		        }
-		        try {
-		            if (conn  != null)
-		                conn.close();
-		        }
-		        catch (SQLException e) {
-		        	//TODO log Cannot close Connection
-		        	System.out.println("Cannot close Connection : " + e.getMessage());
-		        }
-		    }
-		}//earlyExit:
-		
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		
-	}
-	
-	
-	
 	/*
 	 * Changes the targetted Job ad status to pending
 	 */
@@ -1783,7 +1399,6 @@ public class ServletJobAd extends HttpServlet {
 //			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
 //			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
 			
-			
 //			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
 //			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
 			
@@ -2067,11 +1682,10 @@ public class ServletJobAd extends HttpServlet {
 			
 			//Delete designed job Ad
 			String query = qBuf.toString();
-;			System.out.println("Processin Query: " + query);
+			System.out.println("Processin Query: " + query);
 			ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
 							   .executeQuery(query);
 			
-			//Debug print
 //			stmt.executeQuery(query);
 			
 //			ResultSet rs = stmt.getResultSet();
@@ -2251,3 +1865,443 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 }//ENDOF SERVLETJobAD
+
+
+
+
+/***********************************************************************
+ ********************** DEPRECATED FUNCTIONS: **************************
+ ***********************************************************************/
+//
+///******************************************************************************************************************
+// * 					ADLISTLOAD
+// * LOAD JOB AD LIST BY CRITERIAs
+// ******************************************************************************************************************/
+//private void adListLoader( HttpServletRequest request, HttpServletResponse response) throws IOException{
+//	
+//	boolean isSuccessful=false;
+//	String message="";
+//	
+///*
+//	ArrayList <String> reqParaNameList = new ArrayList<String>();
+//	ArrayList <String> reqParaValList = new ArrayList<String>();
+//	
+//	Enumeration paramNames = request.getParameterNames();
+//	while (paramNames.hasMoreElements()) {
+//	    //Get the parameters' names
+//		String paraName = (String) paramNames.nextElement();
+//	    reqParaNameList.add(paraName);
+//	    //Get the parameters' values
+//	    reqParaValList.add(request.getParameter(paraName));
+//	    
+//	    System.out.println("Parameter: " + paraName + "\n" +
+//	    					"Value: " + request.getParameter(paraName));
+//	}
+//	String criteria = reqParaNameList.get(0);
+//	String condition = reqParaValList.get(0);
+//	*/
+//	
+//	Connection conn = dbManager.getConnection();	
+//	Statement stmt = null;
+//	JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+//	
+//	String query = buildSearchQuery(request);
+//	
+//	try {
+//		stmt = conn.createStatement();
+//		
+////		String query = 
+////			"SELECT idJobAd, title, datePosted, contactInfo, educationRequired " +//TODO JOIN with LOCATION Table
+////			"FROM tableJobAd WHERE " + criteria+"=" + condition;
+//		
+//		System.out.println("getJobAdById query:" + query);
+//		isSuccessful = stmt.execute(query);
+//		
+//		ResultSet result = stmt.getResultSet();
+//		
+//		if (result.first()){
+//			System.out.println("getJobAd successful by QUERY" + query);
+//			message = "getJobAd successful";
+//			
+//			//Fill in the fields of the jobAd object
+//			
+//			jobAd.contactInfo 		= result.getString("contactInfo");
+//			jobAd.educationReq 		= result.getInt("educationRequired");
+//			jobAd.jobAdTitle		= result.getString("title");
+//			jobAd.jobAdId 			= result.getInt("idJobAd");
+//			jobAd.creationDate 		= result.getLong("datePosted");
+//			jobAd.hasGradFunding	= result.getInt("hasGradFunding");
+//			jobAd.isApproved 		= result.getInt("isApproved");
+//			
+////			jobAd.ownerID 			= result.getInt("idAccount");
+////			jobAd.jobAdDescription 	= result.getString("description");
+////			jobAd.expiryDate		= result.getLong("expiryDate");
+////			jobAd.startingDate 		= result.getLong("dateStarting");
+////			jobAd.status 			= result.getString("status");
+////			jobAd.tags 				= result.getString("tags");
+////			jobAd.numberOfViews 	= result.getInt("numberOfViews");
+//			
+//		}
+//		else{ //Error case
+//			isSuccessful = false;
+//			message = "Error: AD not found with Query" + query;
+//			System.out.println(message);
+//		}
+//		
+//		
+//	}
+//	catch (SQLException e) {
+//		//TODO log SQL exception
+//		Utility.logError("SQL exception : " + e.getMessage());
+//	}
+//	// close DB objects
+//    finally {
+//        try{
+//            if (stmt != null)
+//                stmt.close();
+//        }
+//        catch (Exception e) {
+//        	//TODO log "Cannot close Statement"
+//        	System.out.println("Cannot close Statement : " + e.getMessage());
+//        }
+//        try {
+//            if (conn  != null)
+//                conn.close();
+//        }
+//        catch (SQLException e) {
+//        	//TODO log Cannot close Connection
+//        	System.out.println("Cannot close Connection : " + e.getMessage());
+//        }
+//    }
+//    StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append(jobAd.toXMLContent() );
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+//}
+//
+//
+//
+//
+//private void editJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
+//	
+//	//initialize return statements
+//	String message = "Create Job Advertisement Failed";
+//	boolean isSuccessful = false;
+//	
+//	int jobAdId 				 = Integer.parseInt(request.getParameter("jobAdId"));
+//	
+//	String jobAdvertisementTitle = request.getParameter("strTitle");
+//	String jobDescription 		 = request.getParameter("strDescription");
+//	String contactInfo 			 = request.getParameter("strContactInfo");
+//	String strTags 				 = request.getParameter("strTags");
+//	String jobAvailability	 	 = request.getParameter("strJobAvailability");
+//	
+//	int educationRequirement 	 = Integer.parseInt(request.getParameter("educationRequirement"));
+//	
+//	int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
+//	String expiryMonth 			 = request.getParameter("expiryMonth");
+//	int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
+//	
+//	int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
+//	String startingMonth 		 = request.getParameter("startingMonth");
+//	int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
+//			
+//	long millisExpiryDate 		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
+//	long millisStartingDate 	 = Utility.calculateDate(startingYear, startingMonth, startingDay);
+//	
+//	String address 				 = request.getParameter("address");
+//	double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+//	double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
+//	
+//
+//	System.out.println(jobAdvertisementTitle);
+//	System.out.println(jobDescription);
+//	System.out.println(contactInfo);
+//	System.out.println(strTags);
+//	System.out.println(" Expire On: " + millisExpiryDate);
+//	System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+//	
+//	Connection conn = dbManager.getConnection();	
+//	Statement stmt = null;
+//	
+//	try{
+//		stmt = conn.createStatement();
+//		
+//		String query = 
+//			"UPDATE tableJobAd SET " 
+//			+ "title='" 			+ jobAdvertisementTitle + "','" 
+//			+ "description='" 		+ jobDescription + "','" 
+//			+ "expiryDate='" 		+ millisExpiryDate + "','" 
+//			+ "dateStarting='" 		+ millisStartingDate + "','" 
+//			+ "contactInfo='" 		+ contactInfo + "','" 
+//			+ "educationRequired='"	+ educationRequirement + "','" 
+//			+ "jobAvailability='" 	+ jobAvailability + "','" 
+//			+ "tags='" 				+ strTags + "' " +
+//			"WHERE idJobAd='" 		+ jobAdId + "' ";
+//			
+//		System.out.println("Edit JobAd Query: " + query);
+//		
+//		if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//			System.out.println("Error: Update Query Failed");
+//		}
+//		else{
+//			isSuccessful = true;
+//			message = "Edit Job Ad success!";
+//			System.out.println("Edit Job Ad success!");
+//		}
+//
+//		
+//	}
+//	catch (SQLException e) {
+//		Utility.logError("SQL exception : " + e.getMessage());
+//	}
+//	// close DB objects
+//    finally {
+//        try{
+//            if (stmt != null)
+//                stmt.close();
+//        }
+//        catch (Exception e) {
+//        	System.out.println("Cannot close Statement : " + e.getMessage());
+//        }
+//        try {
+//            if (conn  != null)
+//                conn.close();
+//        }
+//        catch (SQLException e) {
+//        	System.out.println("Cannot close Connection : " + e.getMessage());
+//        }
+//    }
+//    
+//	StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+//	
+//}
+//
+//
+///**
+// * Creates a new job advertisement entry in the database with the given values
+// * @param jobAdvertisementTitle
+// * @param jobDescription
+// * @param jobLocation
+// * @param contactInfo
+// * @param strTags
+// * @return idJobAd
+// * @throws IOException 
+// */
+//private void createJobAdvertisement(HttpServletRequest request, HttpServletResponse response) throws IOException{
+//	System.out.println("Entered createJobAdvertisement");
+//	
+//	//initialize return statements
+//	String message = "Create Job Advertisement Failed";
+//	boolean isSuccessful = false;
+//	
+//	System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+//	
+//	//Checks the user's privilege
+//	Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+//	
+//	earlyExit: {
+//		System.out.println("Entered user sessionKey");
+//			
+//		if ( userSession == null ) {
+//			//TODO session invalid, handle error
+//			System.out.println("session is null");
+//			message = "Failed to authenticate user session";
+//			break earlyExit;
+//		}
+//		else {
+//			//TODO implmement this
+//			System.out.println("checking usertype");
+//			System.out.println("usertype = " + userSession.getAccountType());
+//			
+//			if( userSession.getAccountType().equals("poster") ||
+//					userSession.getAccountType().equals("admin")) {
+//				System.out.print("User has the correct priviliege");
+//			}
+//			else {
+//				message = "User does not have the right privilege";
+//				break earlyExit;
+//			}
+//
+//		}
+//		
+//		System.out.print("User session sucessful for key " + userSession.getKey() );
+//		
+//		String jobAdvertisementTitle = request.getParameter("strTitle");
+//		String jobDescription 		 = request.getParameter("strDescription");
+//		String contactInfo 			 = request.getParameter("strContactInfo");
+//		String tags 				 = request.getParameter("strTags");
+//		String jobAvailability	 	 = request.getParameter("strJobAvailability");
+//
+//		int educationRequirement 	 = Integer.parseInt(request.getParameter("strEducationReq"));
+//		
+//		int expiryYear 				 = Integer.parseInt( request.getParameter("expiryYear"));
+//		String expiryMonth 			 = request.getParameter("expiryMonth");
+//		int expiryDay 				 = Integer.parseInt( request.getParameter("expiryDay"));
+//		
+//		int startingYear 			 = Integer.parseInt(request.getParameter("startingYear"));
+//		String startingMonth 		 = request.getParameter("startingMonth");
+//		int startingDay 			 = Integer.parseInt(request.getParameter("startingDay"));
+//		
+//		Calendar cal 				 = Calendar.getInstance();
+//		long millisDateCreated 		 = cal.getTimeInMillis();
+//		long millisExpiryDate		 = Utility.calculateDate(expiryYear,expiryMonth,expiryDay);
+//		long millisStartingDate		 = Utility.calculateDate(startingYear, startingMonth, startingDay);
+//
+//		String address 				 = request.getParameter("address");
+//		double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+//		double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
+//		
+//		int jobAdId = -1;
+//		
+//		System.out.println(jobAdvertisementTitle);
+//		System.out.println(jobDescription);
+//		System.out.println(contactInfo);
+//		System.out.println(tags);
+//		System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
+//		System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+//		
+//		Connection conn = dbManager.getConnection();	
+//		Statement stmt = null;
+//		
+//		try {
+//			System.out.println("Inserting new Job Ad into DB");
+//			
+//			stmt = conn.createStatement();
+//			
+//			jobAdvertisementTitle = Utility.checkInputFormat( jobAdvertisementTitle );
+//			jobDescription = Utility.checkInputFormat( jobDescription );
+//			contactInfo = Utility.checkInputFormat( contactInfo );
+//			tags = Utility.checkInputFormat( tags );
+//			
+//		//Add new entry with specified paramters into database
+//			String query = 
+//				"INSERT INTO tableJobAd(title, description, expiryDate, dateStarting, datePosted, contactInfo, educationRequired, jobAvailability, tags ) " +
+//				"VALUES " + "('" 
+//					+ jobAdvertisementTitle + "','" 
+//					+ jobDescription + "','" 
+//					+ millisExpiryDate + "','" 
+//					+ millisStartingDate + "','" 
+//					+ millisDateCreated + "','"
+//					+ contactInfo + "','" 
+//					+ educationRequirement + "','"
+//					+ jobAvailability + "','"
+//					+ tags + 
+//				"')";
+//			
+//			// if successful, 1 row should be inserted
+//			System.out.println("New Job Ad Query: " + query);
+//			int rowsInserted = stmt.executeUpdate(query);
+//			
+//			if (rowsInserted != 1){
+//				System.out.println("New JobAd Creation failed");
+//				Utility.logError("New JobAd insert in DB failed");
+//			}
+//			
+//		//Get jobAdId
+//			query = "SELECT idJobAd FROM tableJobAd WHERE " +
+//					"title='" + jobAdvertisementTitle + "' AND " +
+//					"datePosted='" + millisDateCreated + "'";
+//			ResultSet result = stmt.executeQuery(query);
+//			
+//			if(result.first()){
+//				jobAdId = result.getInt("idJobAd");
+//				System.out.println("Job Ad ID: " + jobAdId);
+//			}
+//			else{
+//				System.out.println("Error: Job Ad ID not found after creation");
+//			}
+//			
+//		//Insert location values into location table
+//			query = 
+//				"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
+//				"VALUES " + "('" 
+//				+ address + "','" 
+//				+ longitude + "','" 
+//				+ latitude + "','" 
+//				+ jobAdId +
+//			"');";
+//			
+//			System.out.println("Location table query: " + query);
+//			
+//			rowsInserted = stmt.executeUpdate(query);
+//			
+//			System.out.println("Row Inserted: " + rowsInserted);
+//			
+//			if (rowsInserted == 1){
+//				System.out.println("New JobAd Creation success (DB)");
+//				isSuccessful = true;
+//				message = "Create Job Advertisement Successful";
+//			}
+//			else{
+//				System.out.println("Insert location for new job ad failed");
+//				Utility.logError("Insert location for new job ad failed");
+//			}
+//
+//			//Debug print
+//			System.out.println("Location Query: "+ query);
+//			
+//			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//				System.out.println("Error: Location Update Failed");
+//			}
+//			
+//		}
+//		catch (SQLException e) {
+//			//TODO log SQL exception
+//			Utility.logError("SQL exception : " + e.getMessage());
+//		}
+//		// close DB objects
+//	    finally {
+//	        try{
+//	            if (stmt != null)
+//	                stmt.close();
+//	        }
+//	        catch (Exception e) {
+//	        	//TODO log "Cannot close Statement"
+//	        	System.out.println("Cannot close Statement : " + e.getMessage());
+//	        }
+//	        try {
+//	            if (conn  != null)
+//	                conn.close();
+//	        }
+//	        catch (SQLException e) {
+//	        	//TODO log Cannot close Connection
+//	        	System.out.println("Cannot close Connection : " + e.getMessage());
+//	        }
+//	    }
+//	}//earlyExit:
+//	
+//	StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+//	
+//}
+
+
+
+
+
+
+
+
+
+
+
+

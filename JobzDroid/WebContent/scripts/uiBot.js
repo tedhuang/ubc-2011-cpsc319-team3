@@ -21,7 +21,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 				var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
 			  				"<tr><td>Location</td><td>"						+ jobAd.children("location").attr("address")	+ "</td></tr>" +
 			  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
-			  				"<tr><td>Job Type</td><td>"						+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
+			  				"<tr><td>Available Positions</td><td>"			+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
 			  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
 			  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
 			  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +

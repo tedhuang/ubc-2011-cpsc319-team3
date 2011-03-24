@@ -23,7 +23,8 @@ public class DBColName{
 				"jobAvailability",
 				"tags",
 				"numberOfViews",
-				"isApproved"
+				"isApproved",
+				"hasGradFunding"
 				
 	};
 	private Map<String, String>tbJobAdColMap=new HashMap<String, String>();
@@ -92,7 +93,8 @@ public class DBColName{
 		  			"pt-field",
 		  			"is-field",//pos:11
 		  			"tag-field",
-		  			"adId-field"
+		  			"adId-field",
+		  			"gf-field"
 //		  			"loc-field"//pos:15
 			
 	};
@@ -199,6 +201,8 @@ public class DBColName{
 		colDictEditJobAd.put(adEditFieldsMap.get("tag-field"), 			tbJobAdColMap.get("tags"));
 		colDictEditJobAd.put(adEditFieldsMap.get("expireTime-field"),	tbJobAdColMap.get("expiryDate"));
 		colDictEditJobAd.put(adEditFieldsMap.get("adId-field"),			tbJobAdColMap.get("idJobAd"));
+		colDictEditJobAd.put(adEditFieldsMap.get("gf-field"),			tbJobAdColMap.get("hasGradFunding"));
+		
 		//Location?
 //		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"), 		"address");
 		
