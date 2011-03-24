@@ -34,13 +34,11 @@
 						<label for="contact-field" >Company:</label> 
 						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
 					</div>
-					
 					<div class="field"> 
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
-				
-				</div><!--ENDOF typeInForm-->
+			</div><!--ENDOF typeInForm-->
 				
 		<div id="chooseForm" class="fillInForm">
 			<div class="field"> 
@@ -74,16 +72,6 @@
    		 			Internship
 				</label>
 			</div>
-					<!--  <div class="field"> 
-						<label for="loc-field" >Job Location:</label> 
-						<input id="address" name="loc-field" class="textBox" value=""/>
-						<input id="lat-field" name="lat-field" class="textBox" value=""/>
-						<input id="lng-field" name="lgn-field" class="textBox" value=""/>
-						<span id=locFeedback></span>
-						<button type="button" onclick="calculateLocation()">Find Location</button><br/>
-						<table id="lookUpTable"></table><br />
-					</div>
-					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 			   <div id="desc-div" class="descForm">
 			       <div class="field"> 
@@ -119,8 +107,13 @@
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
-				
-				</div><!--ENDOF typeInForm-->
+				<div class="field"> 
+					<label>Is Graduate Funding Available:</label>
+						<input type="radio" name="gf-field" value="1" id="gf-field" class="mustNotNull"/> Yes
+						<input type="radio" name="gf-field" value="0" id="gf-field" class="mustNotNull"/> No
+						
+				</div>
+			</div><!--ENDOF typeInForm-->
 				
 		<div id="chooseForm" class="fillInForm">
 			<div class="field"> 
@@ -143,7 +136,7 @@
 			</div>
 					
 					<div class="field"> 
-						<label>Employment Type:</label>
+						<label>Available Positions:</label>
 						<label class="group">
 							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
 							Full Time

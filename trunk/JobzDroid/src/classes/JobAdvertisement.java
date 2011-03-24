@@ -17,18 +17,16 @@ public class JobAdvertisement {
 	public String	status;
 	public String	jobAdDescription;
 	public int		isApproved; // 0 = false, 1 = true
+	public int	 	hasGradFunding; // 0 = false, 1 = true
 	public String	jobAvailability;
-	
-	public ArrayList<Location> locationList;
-	
-	/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
-	//public String	creationDateFormatted;
-	//public String 	eduReqFormatted;
 
-	
+	public ArrayList<Location> locationList;
+		
 	public JobAdvertisement(){
+		//Set Default values
 		isApproved = 0;
 		educationReq = 0;
+		hasGradFunding = 0;
 		status = "inactive";
 		locationList = new ArrayList<Location>();
 	}
@@ -51,7 +49,7 @@ public class JobAdvertisement {
 		}
 		
 		if(jobAvailability == null){
-			jobAvailability = "N/A";
+			jobAvailability = "Not Specified";
 		}
 		
 		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
@@ -82,6 +80,7 @@ public class JobAdvertisement {
 		" startingDate=\"" 			+ startingDate + "\"" +
 		" creationDate=\"" 			+ creationDate + "\"" +
 		" educationReq=\"" 			+ educationReq + "\"" +
+		" hasGradFunding=\"" 		+ hasGradFunding + "\"" +
 		
 		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 		" creationDateFormatted=\"" + creationDateFormatted + "\"" +
