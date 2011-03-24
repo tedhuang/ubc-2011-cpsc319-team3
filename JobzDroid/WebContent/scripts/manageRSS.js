@@ -1,5 +1,5 @@
 /**
- * Javascript file for managing RSS (admin)
+ * Javascript file for managing RSS (admin) 
  */
 
 $("document").ready(function() {
