@@ -16,6 +16,7 @@ public class ProfileSearcher {
 	
 	public String email = "";
 	public String secondaryEmail = "";
+	public String startingDateFormatted = "";
 	public String educationFormatted = "";
 	
 	public ArrayList<Location> addressList;
@@ -23,15 +24,17 @@ public class ProfileSearcher {
 	
 	public ProfileSearcher(){
 		accountType = "searcher";
+		addressList = new ArrayList<Location>();
+		preferredStartDate = 0; //This is handled as not specified
 	}
 	
 	public String toXMLContent(){
 
 		//Empty location just to avoid null pointers
-		Location loc = new Location("");
-		addressList.add(loc);
-		
-		String startingDateFormatted;
+		if(addressList.isEmpty()){
+			Location loc = new Location("Not Specified");
+			addressList.add(loc);
+		}
 		
 		if(preferredStartDate == 0)
 			startingDateFormatted = "N/A";

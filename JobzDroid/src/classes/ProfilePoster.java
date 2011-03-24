@@ -17,14 +17,17 @@ public class ProfilePoster {
 	
 	public ProfilePoster(){
 		accountType = "poster";
+		addressList = new ArrayList<Location>();
 	}
 	
 	
 	public String toXMLContent(){
 		
 		//Empty location just to avoid null pointers
-		Location loc = new Location("");
-		addressList.add(loc);
+		if(addressList.isEmpty()){
+			Location loc = new Location("Not Specified");
+			addressList.add(loc);
+		}
 		
 		if( secondaryEmail == null || secondaryEmail == ""){
 			secondaryEmail = "N/A";
