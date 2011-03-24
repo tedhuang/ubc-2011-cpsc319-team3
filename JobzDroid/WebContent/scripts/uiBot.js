@@ -506,3 +506,34 @@ function enableProfileEdit(accountType)
 	        });
 	    };
 	};
+
+
+
+/******************************************************
+ * 			build jobSearcher Search List
+ ******************************************************/
+	function buildJSListTb(targetXMLTag, outputDiv){
+		var tbody  = $("tbody", outputDiv).html("");
+		var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+		if(xmlObj.length==0){//if no results
+			$("#feedback").html("<h2 class='error'>No Results Found. Profile.</h2>");
+		}
+		else{
+			xmlObj.each(function() {//for All returned xml obj
+			  var profileSearcherXML = $(this);
+			  var tr =$('<tr></tr>');
+			  $('<td></td>').attr("id", id='td-name').addClass('jsDetailBtn').text(profileSearcherXML.attr("name")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-eduReq').text(profileSearcherXML.attr("educationLevel")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-loc').text(profileSearcherXML.children("location").attr("address")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("preferredStartDate")).appendTo(tr);
+			  
+			  tr.appendTo(tbody);
+			  $("#td-name", tr).click(function(){
+				  buildProfileTb(targetXMLTag, outputDiv, heading);
+				 });
+			});
+			 
+			 $("tr:odd", tbody).addClass("oddRow");
+			 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+		}
+	}	

@@ -240,12 +240,10 @@ public class dbworldintegration {
 			//This clears all "marked for deletion" flags. We can then explicitly delete the messages ourselves.
 			prop.put("mail.pop3.rsetbeforequit", true);				
 			
-			//Close connection-By closing connection. All read messages (msg that have gone thru InputStream)
-			//will be deleted. To prevent this, do not close store and inbox.
-			/**
+			//Close connection-By closing connection.			
 			inbox.close(true);
 			store.close();       
-    		**/
+    		
 			
 		}/**end of try block**/
     
