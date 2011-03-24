@@ -90,9 +90,15 @@ function postRSS(evt){
 	$("#statusText").text("Processing...This may take a moment.");
 }
 
+function deleteNewsRssEntry(index){
+	
+}
 
+function deleteJobAdRssEntry(index){
+	
+}
 
-function sendDeleteRSSRequest(index){
+function sendDeleteRSSRequest(type, index){
 	var strSessionKey = $("#sessionKey").val();
     var b = confirm("Are you sure to delete News ID: " + idNews + "?\nIts associated RSS entry will also be removed.");
     if (b == false)

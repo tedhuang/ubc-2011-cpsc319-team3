@@ -639,7 +639,6 @@ public class ServletAdmin extends HttpServlet {
 			message = "Unauthorized post RSS action.";
 		}
 		else{
-			// check if user is authorized
 			String userType = session.getAccountType();
 			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
 				allGood = false;
@@ -711,7 +710,8 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void removeRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
-		String strIdNews = request.getParameter("idNews");
+		String entryIndex = request.getParameter("entryIndex");
+		String feedType = request.getParameter("feedType");
 		int idNews = -1;
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		boolean allGood = true;
@@ -722,23 +722,17 @@ public class ServletAdmin extends HttpServlet {
 		Session session = dbManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
-			message = "Unauthorized delete news action.";
+			message = "Unauthorized post RSS action.";
 		}
 		else{
-			// check if user is authorized
 			String userType = session.getAccountType();
 			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
 				allGood = false;
-				message = "Unauthorized delete news action.";
+				message = "Unauthorized post RSS action.";
 			}
-			else{
-				try{
-					idNews = Integer.parseInt(strIdNews);
-				}
-				catch(NumberFormatException ex){
-					allGood = false;
-					message = "Invalid News ID.";
-				}
+			else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
+				allGood = false;
+				message = "Invalid feed type.";
 			}
 		}
 		
@@ -753,8 +747,8 @@ public class ServletAdmin extends HttpServlet {
 				try {
 					String newsPath = getServletContext().getRealPath("news.xml");
 					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
-					int entryIndex = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
-					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, entryIndex);
+					int index = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
+					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, index);
 					RSSManager.writeFeedToFile(newsFeed, newsPath);
 				} 
 				catch (Exception e) {

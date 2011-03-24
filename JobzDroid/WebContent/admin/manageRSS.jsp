@@ -134,7 +134,7 @@
 	  			<tr style="font-weight:bold">
 	  				<td style="width: 955px">
 	  					Title: <%= title %> 	  						
-	  					<a title="Delete" onclick="sendDeleteNewsRSSRequest('<%= i %>')" class="linkImg" style="float:right">
+	  					<a title="Delete" onclick="deleteNewsRssEntry('<%= i %>')" class="linkImg" style="float:right">
        						 		<img src="../images/icon/delete_icon.png"/>
 						</a>
 	  				</td>
@@ -178,7 +178,7 @@
 		  	  %>
 	  			<tr style="font-weight:bold">
 	  				<td style="width: 955px">Title: <%= title %> 	  						
-	  					<a title="Delete" onclick="sendDeleteJobAdRSSRequest('<%= i %>')" class="linkImg" style="float:right">
+	  					<a title="Delete" onclick="deleteJobAdRssEntry('<%= i %>')" class="linkImg" style="float:right">
        						 		<img src="../images/icon/delete_icon.png"/>
 						</a>
 	  				</td>
