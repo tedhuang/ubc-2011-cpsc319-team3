@@ -128,7 +128,7 @@
   				<a href="#home-frame"><span>Home</span></a>
 			</li>
 			<li id="profileTab">
-  				<a href="#profileFrame"><span>My Profile</span></a>
+  				<a href="#profileFrame" onclick='getProfileBySessionKey(profileTable, profileHeading)'><span>My Profile</span></a>
 			</li>
 			<li id="edAdTab" class="hideOnly iniHidden">
 			<span class="close confirmReq">X</span>
@@ -151,6 +151,10 @@
 	    <h2 class="welcome">My Profile Summary</h2>
 		<div id="profileArea">
 			Profile goes here
+			
+			
+			
+			
 		</div>
 	          <h2 class="welcome">My Ads</h2>
 		 <div class="headToolBar">
@@ -214,7 +218,7 @@
 		 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
 			<table><tbody></tbody></table>
 		 </div>	
-		 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Get My Profile!</button>	
+		 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Refresh Profile Details</button>	
 	</div><!--end of TABPROFILEFRAME-->
 		
 		

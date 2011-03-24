@@ -30,6 +30,7 @@ public class JobAdvertisement {
 		isApproved = 0;
 		educationReq = 0;
 		status = "inactive";
+		locationList = new ArrayList<Location>();
 	}
 
 	
@@ -41,7 +42,7 @@ public class JobAdvertisement {
 		String expiryDateFormatted;
 		
 		if(locationList.isEmpty()){
-			Location loc =new Location("Not Specified");
+			Location loc = new Location("Not Specified");
 			locationList.add(loc);
 		}
 		
