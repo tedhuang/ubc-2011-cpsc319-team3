@@ -26,6 +26,8 @@ import classes.ProfileSearcher;
 import classes.Session;
 import classes.Utility;
 
+import servlets.ServletDocument;
+
 import managers.DBManager;
 import managers.EmailManager;
 
@@ -298,6 +300,8 @@ public class ServletProfile extends HttpServlet{
 		Statement stmt = null;
 		Object profile = null;
 		
+//		String documentList = "";
+		
 		earlyExit:
 		{
 		try{
@@ -435,6 +439,10 @@ public class ServletProfile extends HttpServlet{
 				}
 			}// END OF EMPLOYMENT PREFERENCE
 			
+//			if( currSession.getAccountType().equalsIgnoreCase("searcher") ) {
+//				documentList = ServletDocument.getXMLDocumentList( currSession );
+//			}
+			
 			
 		}
 		catch (SQLException e) {
@@ -442,7 +450,6 @@ public class ServletProfile extends HttpServlet{
 			System.out.println("SQL exception : " + e.getMessage());
 	
 		}
-		
 		// close DB objects
 	    finally {
 	        try{
@@ -474,6 +481,7 @@ public class ServletProfile extends HttpServlet{
 		
 		if ( currSession.getAccountType().equals("searcher") ) {
 			XMLResponse.append( ((ProfileSearcher)profile).toXMLContent() );
+//			XMLResponse.append( documentList );
 		}
 		else if ( currSession.getAccountType().equals("poster") ) {
 			XMLResponse.append( ((ProfilePoster)profile).toXMLContent() );

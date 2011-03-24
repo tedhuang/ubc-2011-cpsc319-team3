@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/JobAd.js"></script>
-<script type="text/javascript" src="../scripts/Profile.js"></script>
+<script type="text/javascript" src="../scripts/searcher/searcherProfile.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/uiBot.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
@@ -108,7 +108,7 @@
   				<a href="#searchJob-frame"><h2>Jobs</h2></a>
 			</li>
 			<li id="Tab2">
-  				<a href="#profileFrame" onclick='getProfileBySessionKey(profileTable, profileHeading)'><h2>My Profile</h2></a>
+  				<a href="#profileFrame" ><h2>My Profile</h2></a>
 			</li>
 			
 		</ul>
@@ -276,8 +276,30 @@
 					</tbody>
 				</table>
 			 </div>	
-			 <button onclick='getProfileBySessionKey(profileTable, profileHeading)'>Refresh Profile</button>	
-		</div><!--end of TABPROFILEFRAME-->
+			 <div id="fileTable" class="resultTableDiv">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-fileName">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">File Name</div>
+							</div>
+						</th>
+						<th id="col-fileSize">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Size (in MB)</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+		</div><!--ENDOF File TABLE--> 
+			 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
+		</div><!--end of TABPROFILEFRAME listUserFiles("file", "fileTable");  -->
+		
+		
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  
