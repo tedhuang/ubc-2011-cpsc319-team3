@@ -17,8 +17,8 @@
 		<h2 class="welcome">Editing Ad:</h2>
 		   <div class="headToolBar">
 					<ul id="edAdTool">
-						<li><a class="jsBtn ed_saveDraft">Save Another Draft |</a></li>
-						<li><a class="jsBtn ed_update" onclick="postJobAd('edit','edAdForm','edAdfb')">Update it |</a></li>
+						<li><a class="jsBtn ed_saveDraft">Save Draft |</a></li>
+						<li><a class="jsBtn ed_update" >Publish |</a></li>
 						<li><a class="jsBtn ed_reset" > Reset Fields</a></li>
 					</ul>
 						<!-- <span class="feedback">Feed Back Area</span>-->
@@ -154,7 +154,7 @@
 						</label>
 					</div>
 					<!--  <div class="field"> 
-						<label for="loc-field" >Job Location:</label> 
+						<label for="loc-field" >Location:</label> 
 						<input id="address" name="loc-field" class="textBox" value=""/>
 						<input id="lat-field" name="lat-field" class="textBox" value=""/>
 						<input id="lng-field" name="lgn-field" class="textBox" value=""/>
@@ -172,7 +172,14 @@
 				</div>
 		 </div><!--ENDOF newAdForm-->
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
+
 		<div id="adDetailFrame" class="subFrame">
+			<div class="headToolBar">
+					<ul id="ownerDtlViewTool">
+						<li><a class="jsBtn edit">Edit |</a></li>
+						<li><a class="jsBtn del" >Delete </a></li>
+					</ul>
+			</div>
 			 <div id="adDetailTable" class="resultTableDiv noBorder">
 			 	<span class="feedback"></span>
 			 	<h2 id="adDetailHeading" class="welcome heading"></h2>

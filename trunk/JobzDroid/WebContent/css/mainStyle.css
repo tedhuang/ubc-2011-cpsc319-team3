@@ -131,6 +131,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 					background-color: white;text-align: center;}
 .resultTableDiv td.nameCol{	border-right: 1px solid blue;	min-width: 100px;	text-align: left;	padding: 0.5em;	font-weight: bold;}
 .resultTableDiv td.dataCol{	border-right: 1px solid blue;	min-width: 500px;text-align	: left;	padding	: 0.5em;}
+.resultTableDiv td.td-title{max-width:200px;}
 .resultTableDiv td.clean {	padding: 0 5px;}
 .resultTableDiv td.hide{display: none;}
 .resultTableDiv td span{margin: 0;}
@@ -142,12 +143,12 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 				font-weight:normal;  color:#333;  margin:0px; padding:0; width: 100%; cursor:pointer;}
 .headToolBar{ height:32px; padding: 1em;}
 .headToolBar a.newadbtn{float:left; padding: 1em;}
-.headToolBar ul#filter, ul#newAdTool, ul#edAdTool{list-style: none; float:left;list-style-image: none;list-style-position: outside;list-style-type: none;margin: 0;padding-left: 4em;}
+.headToolBar ul#filter, ul#newAdTool, ul#edAdTool, ul#ownerDtlViewTool{list-style: none; float:left;list-style-image: none;list-style-position: outside;list-style-type: none;margin: 0;padding-left: 4em;}
 .headToolBar ul li{  float:left; padding: 1em;position: relative;}
  /***********RESULT TABLE-HEADER COLUNMS*******/
 #col-viewDate{	min-width: 68px;}
 
-#col-jsName{min-width: 68px;} <!--for posteradvsearch.html-->
+#col-jsName{min-width: 68px;} /*for posteradvsearch.html*/
 /***************Create Job Advertisement *******************************************/
 #createJobAdForm{float: left;width: 100%;margin-bottom: 14px;}
 .columnBoxContainer{float	: left;	margin: 0px 70px !important;width	: 700px;}
