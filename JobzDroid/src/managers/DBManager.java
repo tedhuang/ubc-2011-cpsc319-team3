@@ -496,7 +496,7 @@ public class DBManager {
 			System.out.println("check email:" + email + "password" + pw);
 			rs = stmt.executeQuery( "SELECT * FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
-					   						  "AND password = md5('" + pw + "')" );//TODO original md5 not working
+					   						  "AND password = md5('" + pw + "')" );
 			
 			System.out.println( Utility.md5(pw) );
 			if(rs.first()){
@@ -753,7 +753,7 @@ public class DBManager {
 				
 			}
 			else {//if the key is expired but within 30min
-				if( currSession.getExpiryTime() <= currentTime + SystemManager.sessionRenewPeriodAfterExpiry ) {
+				if( currSession.getExpiryTime() + SystemManager.sessionRenewPeriodAfterExpiry >= currentTime  ) {
 					// renew user's sessionKey
 					currSession = extendSessionExpiryTime(currSession);
 				}

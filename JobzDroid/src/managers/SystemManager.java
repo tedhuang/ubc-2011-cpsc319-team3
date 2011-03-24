@@ -18,7 +18,7 @@ public class SystemManager {
 	 */
 	public static String    serverBaseURL                           = "http://localhost:8080/JobzDroid/";
 	
-	public static long 		sessionRenewPeriodAfterExpiry 			= 15 * 60 * 1000;				// default 15 mins
+	public static long 		sessionRenewPeriodAfterExpiry 			= 30 * 60 * 1000;				// default 15 mins
 	public static long 		expiryTimeSession 						= 1 * 60 * 60 * 1000; 			// default 1 hour
 	public static long 		expiryTimeEmailVerification 			= 60 * 60 * 1000;				// default 60 minutes
 	public static long 		expiryTimeForgetPasswordReset 			= 60 * 60 * 1000;  				// default 60 minutes
@@ -59,8 +59,8 @@ public class SystemManager {
 	public static String[] validFileExtensions
 						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" }; //TODO check SRS for file extensions
 	public static String documentDirectory		= "/JobzDroid/Documents/"; //TODO maybe change to default user path
-	public final static long bytesInKB			=  1000;
-	public static long fileStorageSizeLimit		= 5 * 1000 * bytesInKB; // limit is 5 Mb, base unit is byte
+	public final static long bytesInMB			=  1000 * 1000;
+	public static long fileStorageSizeLimit		= 5 * bytesInMB; // limit is 5 Mb, base unit is byte
 	
 	/***********************************************************************************************************************/
 	
