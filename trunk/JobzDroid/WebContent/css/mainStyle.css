@@ -147,6 +147,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
  /***********RESULT TABLE-HEADER COLUNMS*******/
 #col-viewDate{	min-width: 68px;}
 
+#col-jsName{min-width: 68px;} <!--for posteradvsearch.html-->
 /***************Create Job Advertisement *******************************************/
 #createJobAdForm{float: left;width: 100%;margin-bottom: 14px;}
 .columnBoxContainer{float	: left;	margin: 0px 70px !important;width	: 700px;}

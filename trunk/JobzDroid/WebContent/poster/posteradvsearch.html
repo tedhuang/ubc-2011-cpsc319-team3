@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+<title>JobzDroid | Your Ultimate Database Job Market </title>
+
+<link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
+<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<link href="../css/jq-ui/jquery.ui.all.css" rel="stylesheet" type="text/css"/>
+
+<!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src='../scripts/DynaSmartTab.js'></script>
+<script type="text/javascript" src='../scripts/Utility.js'></script>
+<script type="text/javascript" src='../scripts/Profile.js'></script>
+<script type="text/javascript" src='../scripts/uiBot.js'></script>
+<script type="text/javascript" src='../scripts/jq-ui/jquery.ui.datepicker.js'></script>
+<script type="text/javascript" src='../scripts/jq-ui/jquery.ui.core.js'></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+		$( "#jsStartTime-field").datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
+	});
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+		$('#tabs').DynaSmartTab({});
+		
+		//init customized element style
+		$('body').addClass('has-style');
+	    $('.label-cb, .label-rb').click(function(){
+	        setupLabel();
+	    });
+	    setupLabel(); 
+	});
+
+</script>
+</head>
+
+<body>
+<div class="main">
+  	<div class="header">
+		<a id="logo" title="home" href="../">
+	        <img src="../images/logo-small.png"/>
+		</a>
+		<ul id="topnav" class="topnav">
+		    <li><a href="#" class="btn">News</a></li>
+		    <li><a href="rss.xml" class="btn">RSS</a></li>
+		    <li><a href="#" class="btn">View Job Ads</a></li>
+		</ul>
+	  </div><!--ENDOF DIV header-->
+	  
+	<div id="main-container">
+	  <!--STARTOF CONENT FRAMES-->
+	  <div id="content" class="fixclear">
+		<!--Start tabs-->
+		<div id="tabs" class="tabPane">
+	  	  <div id="navBar" class="navBar">
+			<ul>
+	  			<li id="tab1">
+	  				<a href="#advSearchFrame"><h2>Search</h2></a>
+				</li>
+				<li id="tab2">
+	  				<a href="#adDetailFrame"><h2>Details</h2></a>
+				</li>
+			</ul>
+		  </div><!--ENDOF NAVBAR-->
+	
+	
+		  <div id="tabFrame">
+			<div id="advSearchFrame" class="subFrame">
+				
+			  <div id="advSearchForm" class="content">
+		       	<label class="heading-text">Advanced Search</label><br/><br/>
+			   
+			     <div class="columnBox">
+			     	<div class="formFieldWrapper">
+						<label class="formFieldLabel">Job Searcher's Name: </label><br/>
+						<input id="nameSearch" type="text" name="searchName" size="40" />
+					</div>
+					<div class="formFieldWrapper">
+						<label class="formFieldLabel">Location:</label><br />
+						<input id="jsLocSearch" type="text" name="searchJSLoc" size="40" />
+					</div>
+				  	<div class="formFieldWrapper">
+						<label class="formFieldLabel">Tags: </label><br />
+						<input id="searchJSTags" type="text" name="jsTags" size="40" /><br />
+				  	</div>
+				 </div>	<!--ENDOF columnBox-->
+				 
+			 <div class="columnBox">
+			 	<div class="formFieldWrapper">
+					<label class="formFieldLabel">Minimum Educational Requirement: </label><br />
+					<select id="jsEduReqSearch" name="searchJSEduReq">
+							<option value="">Choose a degree</option>
+							<option value="1">B.Sc.</option>
+							<option value="2">M.Sc.</option>
+							<option value="3">Ph.D.</option>
+					</select>
+				</div>
+				<div class="formFieldWrapper">
+					<label class="formFieldLabel">Can Work Starting:</label><br/>
+					<input id="jsStartTime-field" type="text" size="40" />
+				</div>	
+			  </div><!--ENDOF columnBox-->
+			  <br/>
+			  <div class="floatLeftBtn"> 
+				<button id="newJSSearchBtn" type="button" onclick="searchSearcherProfile('resultTable')">Search</button>
+				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
+			  </div><!--  ENDOF floatLeftBtn -->			  
+
+	
+			</div><!--END ADVSEARCHFORM-->
+			
+			<div id="resultTable" class="resultTableDiv">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-jsName">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Name</div>
+							</div>
+						</th>
+						<th id="col-jsEduReq">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-jsLocation">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+						<th id="col-jsStartDate">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Starting Date</div>
+							</div>
+						</th>
+						<th id="col-tools">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Tools</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+			  </div><!--ENDOF DIV RESULT TABLE-->
+			 
+		</div><!--ENDOF DIV SEARCH TAB-->	
+		<div id="adDetailFrame" class="subFrame">
+			 <div id="adDetailTable" class="resultTableDiv noBorder">
+			 	<span id="detailFB"></span>
+			 	<h2 id="adDetailHeading" class="welcome"></h2>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABDETAILFRAME-->  
+	  </div><!--ENDOF TABFRAME-->
+ 	 </div><!--ENDOF TABS-->
+	</div><!--ENDOF CONTENT-->
+  </div><!--ENDOF MAIN CONTAINER-->
+ </div><!--ENDOF DIV MAIN-->
+
+
+</body>
+</html>

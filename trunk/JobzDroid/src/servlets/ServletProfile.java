@@ -46,6 +46,7 @@ public class ServletProfile extends HttpServlet{
 		getProfileById,
 		getProfileBySessionKey,
 		searchProfile,
+		searchSearcherProfile,
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
 	{
@@ -89,6 +90,10 @@ public class ServletProfile extends HttpServlet{
 			
 			case searchProfile:
 				searchProfile(request,response);
+				break;
+				
+			case searchSearcherProfile:
+				searchSearcherProfile(request, response);
 				break;
 				
 			default:
@@ -361,24 +366,28 @@ public class ServletProfile extends HttpServlet{
 				
 				
 			/**Get Location values */
+			
 			query = "SELECT * FROM tableLocationProfile WHERE " +
 						"idAccount= '" + currSession.getIdAccount() +"'";
-			System.out.println(query);
-			isSuccessful = stmt.execute(query);
+			
 			result = stmt.getResultSet();
 			
 			ArrayList<Location> fetchedAddressList = new ArrayList<Location>();
 			
-			Location address = new Location();
-			while(result.next()){
-
-				System.out.println("Location Found: " + result.getString("location"));
-				//Get Address, Longitude, Latitude
-				address.address = result.getString("location");
-				address.longitude = result.getDouble("longitude");
-				address.latitude = result.getDouble("latitude");	
+			if(!result.first()){
+					System.out.println("Error: failed to find the inserted location");
 			}
-			fetchedAddressList.add(address);
+			else{
+				Location address = new Location();
+				while(result.next()){
+					//Get Address, Longitude, Latitude
+					address.address = result.getString("location");
+					address.longitude = result.getDouble("longitude");
+					address.latitude = result.getDouble("latitude");	
+				}
+				fetchedAddressList.add(address);
+			}
+			
 			
 			if ( currSession.getAccountType().equals("searcher") ) {
 				searcher.addressList = fetchedAddressList;
@@ -387,48 +396,6 @@ public class ServletProfile extends HttpServlet{
 				poster.addressList = fetchedAddressList;
 			}
 			
-			
-			/**Get Employment Preference values */
-			if ( currSession.getAccountType().equals("searcher") ) {
-				String empPref = "";
-				int fullTime = 0;
-				int partTime = 0;
-				int internship = 0;
-				
-				query = "SELECT * FROM tableSearcherEmpPref WHERE " +
-				"idAccount= '" + currSession.getIdAccount() +"'";
-				System.out.println(query);
-				isSuccessful = stmt.execute(query);
-				result = stmt.getResultSet();
-				
-				if(!result.first()){
-						System.out.println("No Employment Preference Found");
-				}
-				else{
-					fullTime = result.getInt("fullTime");
-					partTime = result.getInt("partTime");
-					internship = result.getInt("internship");	
-
-					if( (fullTime+partTime+internship) == 3 ){
-						empPref = "N/A"; //no preference
-					}
-					else{
-						if( fullTime == 1){
-							empPref += "Full-time ";
-						}
-						
-						if(partTime == 1){
-							empPref += "Part-time ";
-						}
-						
-						if(internship == 1){
-							empPref += "Internship";
-						}
-					}
-					
-					searcher.employmentPreference = empPref;
-				}
-			}// END OF EMPLOYMENT PREFERENCE
 			
 		}
 		catch (SQLException e) {
@@ -886,8 +853,97 @@ public class ServletProfile extends HttpServlet{
 		
 	}
 
-}
 
+
+/*******************************************************
+ * searchSearcherProfile
+ * 
+ * 
+ * 
+ * @param
+ * @param
+ * 
+ ********************************************************/
+	public void searchSearcherProfile(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
+			
+		//tags = Utility.checkInputFormat( tags );
+		//location = Utility.checkInputFormat( location );
+		//education = Utility.checkInputFormat( education );
+			
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+			
+		try {		
+			stmt = conn.createStatement();
+/**BUILD SEARCH QUERY(REQUEST)**/
+			//Add individual queries onto total query
+			String query = buildSearchQuery(request);
+				
+			//DEBUG
+			System.out.println(query);
+				
+			stmt.execute(query);
+			ResultSet result = stmt.getResultSet();
+				
+			//Compile the result into the arraylist
+			while( result.next() ) {
+				ProfileSearcher temp = new ProfileSearcher();
+					
+				temp.accountID 				= result.getInt("idAccount");
+				temp.name					= result.getString("name");
+				temp.educationLevel			= result.getInt("educationLevel");
+				temp.preferredStartDate		= result.getLong("startingDate");
+//				temp.tags 					= result.getString("tags");
+					
+				jsList.add( temp ); //add to the temporary list
+			}
+				
+			stmt.close();
+				
+			System.out.println("Query Successfully Finished");
+//			return jobAdList;
+				
+		} catch (SQLException e1) {
+		e1.printStackTrace();
+		}
+			
+			
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+			
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		Iterator<ProfileSearcher> itr = jsList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+			
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+
+}
 
 
 
