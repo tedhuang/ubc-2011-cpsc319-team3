@@ -333,7 +333,7 @@ public class ServletDocument extends HttpServlet {
 		
 	}
 	
-	private File getUserDirectory( int idAccount ) throws IOException {
+	private static File getUserDirectory( int idAccount ) throws IOException {
 		File userDirectory = new File( SystemManager.documentDirectory + idAccount +"/");
 		
 		if ( !userDirectory.exists() ) {
@@ -347,7 +347,7 @@ public class ServletDocument extends HttpServlet {
 		return userDirectory;
 	}
 	
-	public File[] getUserFiles( int idAccount ) {
+	public static File[] getUserFiles( int idAccount ) {
 		File userDirectory = null;
 		
 		try {
@@ -363,6 +363,31 @@ public class ServletDocument extends HttpServlet {
 		else {
 			return userDirectory.listFiles();
 		}
+		
+	}
+	
+	public static String getXMLDocumentList( Session userSession ) {
+
+		String fileData = "";
+			
+		if( userSession == null ) {
+			return "";
+		}
+			
+		File[] userfiles = getUserFiles( userSession.getIdAccount() );
+			
+		for( File eachFile: userfiles ) {
+			BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
+			fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
+			
+			fileData = fileData.concat("\t<file " +
+					"fileName=\"" + eachFile.getName() + "\" " +
+					"size=\"" + (  fileSizeMB  ) + "\" " +
+					">" + "</file>\n");
+
+		}
+		
+		return fileData;
 		
 	}
 	

@@ -3,6 +3,7 @@
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252"/>
     <TITLE>File Upload Page</TITLE>
     <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="../scripts/uiBot.js"></script>
     <script type="text/javascript">
     
     function uploadFile() {
@@ -72,54 +73,11 @@
   	    {
   		buildOwnerFileTb("file", "fileTable" );
   		    //Gets sessionKey and prints it to div
-  			/*
-  			var listFiles = xmlhttp.responseXML.getElementsByTagName("file");
-  			//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
-
-  		    if( listFiles != "null" ) 
-  			    { 
-  		    		
-  		    		
-  		    		for ( file in listFiles)
-  		    		{
-  		    			var fileName 	= file.getAttribute("fileName");
-  		    			var size		= file.getAttribute("size")
-  		    			console.log("fileName=" + fileName + " size=" + size + "\n");
-  		    			$("#fileList").append( "fileName=" + fileName + " size=" + size + "\n" );
-  		    		}
-  					
-  					//$("#submitUserID").value = userID;
-  					//$("#close").submit();
-  					//$("#loginBox").remove();
-  		    	}
-  		    else
-  		    	{
-  			    	//TODO: implement error handling
-  		    	}
-  		    */
   	    }
   	  };
     	
 	}
 	
-	function buildOwnerFileTb(targetXMLTag, outputDiv){
-		var tbody  = $("tbody", "#"+outputDiv).html("");
-		var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-		if(xmlObj.length==0){//if no results
-		}
-		else{
-			xmlObj.each(function() {//for All returned xml obj
-			  var jobAd = $(this);
-			  var tr = $('<tr></tr>');
-			  $('<td></td>').attr("id", id='td-fileName').text(jobAd.attr("fileName")).appendTo(tr);
-			  $('<td></td>').attr("id", id='td-size').text(jobAd.attr("size")).appendTo(tr);
-			  
-			  tr.appendTo(tbody);
-			  
-			});
-			 $("tr:odd", tbody).addClass("oddRow");
-		}
-	}
     </script>
     
   </HEAD>
@@ -146,17 +104,12 @@
 					<tr>
 						<th id="col-fileName">
 							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Date</div>
+								<div class="headText">File Name</div>
 							</div>
 						</th>
 						<th id="col-fileSize">
 							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Job Title</div>
-							</div>
-						</th>
-						<th id="col-lastModified">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Company</div>
+								<div class="headText">Size (in MB)</div>
 							</div>
 						</th>
 					</tr>

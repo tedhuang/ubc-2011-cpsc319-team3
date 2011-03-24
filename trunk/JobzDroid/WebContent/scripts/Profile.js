@@ -182,7 +182,6 @@ function getProfileBySessionKey(outputDiv, heading){
 //	    	loadProfileDetails(xmlhttp.responseXML);
 		  //you can find this in uiBot.js under scripts folder
 		  buildProfileEditTb("profile", outputDiv, heading);
-		  	
 	    }
 	  };	
 }

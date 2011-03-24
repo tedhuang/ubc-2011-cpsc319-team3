@@ -299,13 +299,151 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 
 
 /********************************************************************************************************************
+ * 						Build a table for searcher profile editing
+ * @param targetXMLTag
+ * @param outputDiv
+ * @param heading
+ *********************************************************************************************************************/
+function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
+	var tbody  = $( "tbody", "#"+outputDiv).html("");
+	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	
+	if(profile.length==0){//if no results
+		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+	}
+	else{
+		var accountType = profile.attr("accountType");	
+		var tbCell = $('<td></td>');
+		var inputForm =$('<input/>');
+		var enableEdBtn=$('<button></button>').attr({ type: 'button', 
+													  onclick: 'enableProfileEdit('+accountType+')'
+													  
+													  });
+		var editEmailButton 	= "<button id='editEmailButton' style='DISPLAY: none;' onclick='buildEditEmail(\"tbody\")' >Change Email</button>";
+		var editPasswordButton	= "<button id=\"editPasswordButton\" style = \"DISPLAY: none;\" onclick=\"buildEditPassword()\">Change Password</button>";
+		
+		var educationLevelSelection = 	"<select id=\"educationLevel\" name=\"educationLevel\" style = \"DISPLAY: none;\"> " +
+											"<option value=\"0\">None</option>"  +
+											"<option value=\"1\">B.Sc.</option>" +
+											"<option value=\"2\">M.Sc.</option>" +
+											"<option value=\"3\">Ph.D.</option>" +
+											"</select>";
+		
+		var employmentPrefSelection = "<div id=empPrefSelectionDiv style='DISPLAY: none'>" +
+										  "<input type='checkbox' name='partTimeCheck' id='partTimeCheck' value='parttime'  > Part-Time " +
+										  "<input type='checkbox' name='fullTimeCheck' id='fullTimeCheck' value='fulltime'  > Full-Time" +
+										  "<input type='checkbox' name='internCheck'   id='internCheck'   value='internship'> Internship" +
+									  "</div>";
+		
+		var addressButton = "<button type='button' id=\"addressButton\" style = 'DISPLAY: none;' onclick='calculateLocation()'>Find Location</button>";
+		var addressResult = "<span type='text' id='locFeedback'></span>" +
+							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
+		
+
+		var accountText = 
+				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
+				"<tr id=newEmailRow 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
+				"<tr><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
+				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
+				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
+				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /></td></tr>" +
+				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat'/></td></tr>";
+
+			
+		var profileText =
+			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
+			
+			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='4' cols='20' style = 'DISPLAY: none;'/></td></tr>";
+		
+
+	
+		//Add Searcher Fields
+
+		profileText +=
+			"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
+			"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
+			"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
+
+		
+		//Add Address Input Field
+		var address = profile.find("location").attr("address");		
+			
+		profileText += 
+			"<tr><td>Your Address</td>  <td>"+address +"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
+			"<tr><td></td><td></td><td>" + addressButton + "</td></tr>" +
+			"<tr><td></td><td></td><td>" + addressResult + "</td></tr>";
+			
+			
+		//Add buttons 
+		buttonHTML = 
+			"<tr>" +
+				"<td><button id=\"enableAccountEditButton\" type=\"button\" onclick=\'enableAccountEdit(\""+accountType+"\")'>Change E-mail and Password</button></td>" +
+				"<td></td><td><button id='submitAccountButton' style = 'DISPLAY: none;' onclick=\'submitChangeAccount()'>Submit</button></td>" +
+			"</tr>"+
+			"<tr>" +
+				"<td><button id=\"enableProfileEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Change Profile Fields</button></td>" +
+				"<td></td><td><button id='submitProfileButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
+			"</tr>";
+			
+		//Display the old values		
+		 $(tbody).append(accountText);
+		 $(tbody).append(profileText);
+		 $(tbody).append(buttonHTML);
+		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $("#detailFB").hide();
+		 
+		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
+		 
+		$("#emailNew").val(profile.attr("email")); 
+		$("#secondaryEmail").val(profile.attr("secondaryEmail"));
+
+		$("#name").val(profile.attr("name"));
+		$("#phone").val(profile.attr("phone"));
+		$("#selfDescription").val(profile.attr("selfDescription"));
+		$("#loc-filed").val(profile.attr("address"));
+		
+		
+		$("#startingDate").val(profile.attr("startingDateFormatted"));
+		//$("#empPrefSelectionDiv").show(); //TODO: make the check boxes check the correct submitted employment preference
+		var empPref = profile.attr("employmentPreference");
+		//$("input[id=partTimeCheck]").attr('checked');
+		$("#educationLevel").val(profile.attr("educationLevel"));
+	}
+}
+
+/******************************************************
+ * 			build file list
+ ******************************************************/
+function buildSearcherFileTb(targetXMLTag, outputDiv){
+	var tbody  = $("tbody", "#"+outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var tr = $('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-fileName').text(jobAd.attr("fileName")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-size').text(jobAd.attr("size")).appendTo(tr);
+		  
+		  tr.appendTo(tbody);
+		  
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+	}
+}
+
+
+/********************************************************************************************************************
  * 						Build a table for profile editing
  * @param targetXMLTag
  * @param outputDiv
  * @param heading
  *********************************************************************************************************************/
 function buildProfileEditTb(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", outputDiv).html("");
+	var tbody  = $( "tbody", "#"+outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
 	
 	if(profile.length==0){//if no results
@@ -524,4 +662,5 @@ function enableProfileEdit(accountType)
 			 $("tr:odd", tbody).addClass("oddRow");
 			 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		}
-	}	
+	}
+	

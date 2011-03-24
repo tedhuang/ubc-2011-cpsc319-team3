@@ -16,11 +16,35 @@
    
     $(document).ready(function(){
 		loadSessionKeyFromURL();
-		
 		getProfileBySessionKey();
+		listUserFiles();
 		});
 		
-	
+    function listUserFiles() {
+    	var sessionKey = document.getElementById("sessionKey").value;
+    	
+    	if (window.XMLHttpRequest) {
+    		// code for IE7+, Firefox, Chrome, Opera, Safari
+    		xmlhttp=new XMLHttpRequest();
+    		}
+    	else {// code for IE6, IE5
+    		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    	}
+
+    	var Params = "action=listUserDocuments" + "&sessionKey=" + sessionKey;
+	  	//send the parameters to the servlet with POST
+		xmlhttp.open("POST","../ServletDocument" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(Params); 
+	  	
+		xmlhttp.onreadystatechange=function(){
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				//build file list table
+				buildOwnerFileTb("file", "fileTable" );
+				}
+			};
+	}
+    
 	</script>
 	
 </head>
@@ -120,6 +144,28 @@
         <br>
 	</div>
   </div>
+
+<div id="fileTable" class="resultTableDiv tableClear">
+		<table>
+			<thead>
+			<tr>
+				<th id="col-fileName">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">File Name</div>
+					</div>
+				</th>
+				<th id="col-fileSize">
+					<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+						<div class="headText">Size (in MB)</div>
+					</div>
+				</th>
+			</tr>
+			</thead>
+				<tbody>
+				</tbody>
+		</table><!--ENDOF TABLE-->
+</div><!--ENDOF DIV RESULT TABLE-->  
+
 </div> <!-- ENDOF MAIN-->
 	<form name="sid" method="get" action="">
 		<input id="sessionKey" name="sessionKey"/>
