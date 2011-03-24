@@ -364,21 +364,15 @@ public class ServletJobAd extends HttpServlet {
 				isSuccessful = stmtLoc.execute(query);
 				ResultSet locResult = stmtLoc.getResultSet();
 				
-				if(!locResult.first()){
-					System.out.println("Error: failed to find the inserted location");
-				}
-				else{
-					while(locResult.next()){
-						Location location = new Location();
+				while(locResult.next()){
+					Location location = new Location();
 
-						//Get Address, Longitude, Latitude
-						location.address = result.getString("location");
-						location.longitude = result.getDouble("longitude");
-						location.latitude = result.getDouble("latitude");	
-						locationList.add(location);
-					}
+					//Get Address, Longitude, Latitude
+					location.address = result.getString("location");
+					location.longitude = result.getDouble("longitude");
+					location.latitude = result.getDouble("latitude");	
+					locationList.add(location);
 				}
-				
 				jobAd.locationList = locationList;
 				
 				jobAdList.add(jobAd);
@@ -503,22 +497,15 @@ public class ServletJobAd extends HttpServlet {
 					"idJobAd= '" + jobAdId + "'";
 			result = stmt.getResultSet();
 			
-			if(!result.first()){
-				System.out.println("Error: failed to find the inserted location");
-			}
-			else{
-				while(result.next()){
-					//Get Address, Longitude, Latitude
-					location.address = result.getString("location");
-					location.longitude = result.getDouble("longitude");
-					location.latitude = result.getDouble("latitude");	
-				}
+			while(result.next()){
+				//Get Address, Longitude, Latitude
+				location.address = result.getString("location");
+				location.longitude = result.getDouble("longitude");
+				location.latitude = result.getDouble("latitude");	
 				locationList.add(location);
 			}
-			
 			jobAd.locationList = locationList;
 			
-
 			/**Get Employment Availability values */
 
 				String empAvail = "";
