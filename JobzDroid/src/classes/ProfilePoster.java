@@ -26,6 +26,10 @@ public class ProfilePoster {
 		Location loc = new Location("");
 		addressList.add(loc);
 		
+		if( secondaryEmail == null || secondaryEmail == ""){
+			secondaryEmail = "N/A";
+		}
+		
 		String result =  "\t\t<profile" +
 			" accountID=\"" + accountID + "\"" +
 			" accountType=\"" + accountType + "\"" +

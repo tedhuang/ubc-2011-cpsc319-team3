@@ -31,7 +31,19 @@ public class ProfileSearcher {
 		Location loc = new Location("");
 		addressList.add(loc);
 		
+		String startingDateFormatted;
+		
+		if(preferredStartDate == 0)
+			startingDateFormatted = "N/A";
+		else
+			startingDateFormatted = Utility.dateConvertor(preferredStartDate);
+	
+		if( secondaryEmail == null || secondaryEmail == ""){
+			secondaryEmail = "N/A";
+		}
+		
 		educationFormatted = Utility.degreeConvertor( educationLevel );
+		
 		
 		String result = "\t\t<profile" +
 		" accountID=\"" + accountID + "\"" +
@@ -42,6 +54,7 @@ public class ProfileSearcher {
 		" docLink=\"" + docLink + "\"" +
 		" employmentPreference=\"" + employmentPreference + "\"" +
 		" preferredStartDate=\"" + preferredStartDate + "\"" +
+		" startingDateFormatted=\"" + startingDateFormatted + "\"" +
 		" educationLevel=\"" + educationLevel + "\"" +
 		" email=\"" + email + "\"" +
 		" secondaryEmail=\"" + secondaryEmail + "\"" +

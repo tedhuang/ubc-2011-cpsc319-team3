@@ -361,28 +361,24 @@ public class ServletProfile extends HttpServlet{
 				
 				
 			/**Get Location values */
-			
 			query = "SELECT * FROM tableLocationProfile WHERE " +
 						"idAccount= '" + currSession.getIdAccount() +"'";
-			
+			System.out.println(query);
+			isSuccessful = stmt.execute(query);
 			result = stmt.getResultSet();
 			
 			ArrayList<Location> fetchedAddressList = new ArrayList<Location>();
 			
-			if(!result.first()){
-					System.out.println("Error: failed to find the inserted location");
+			Location address = new Location();
+			while(result.next()){
+
+				System.out.println("Location Found: " + result.getString("location"));
+				//Get Address, Longitude, Latitude
+				address.address = result.getString("location");
+				address.longitude = result.getDouble("longitude");
+				address.latitude = result.getDouble("latitude");	
 			}
-			else{
-				Location address = new Location();
-				while(result.next()){
-					//Get Address, Longitude, Latitude
-					address.address = result.getString("location");
-					address.longitude = result.getDouble("longitude");
-					address.latitude = result.getDouble("latitude");	
-				}
-				fetchedAddressList.add(address);
-			}
-			
+			fetchedAddressList.add(address);
 			
 			if ( currSession.getAccountType().equals("searcher") ) {
 				searcher.addressList = fetchedAddressList;
@@ -391,6 +387,48 @@ public class ServletProfile extends HttpServlet{
 				poster.addressList = fetchedAddressList;
 			}
 			
+			
+			/**Get Employment Preference values */
+			if ( currSession.getAccountType().equals("searcher") ) {
+				String empPref = "";
+				int fullTime = 0;
+				int partTime = 0;
+				int internship = 0;
+				
+				query = "SELECT * FROM tableSearcherEmpPref WHERE " +
+				"idAccount= '" + currSession.getIdAccount() +"'";
+				System.out.println(query);
+				isSuccessful = stmt.execute(query);
+				result = stmt.getResultSet();
+				
+				if(!result.first()){
+						System.out.println("No Employment Preference Found");
+				}
+				else{
+					fullTime = result.getInt("fullTime");
+					partTime = result.getInt("partTime");
+					internship = result.getInt("internship");	
+
+					if( (fullTime+partTime+internship) == 3 ){
+						empPref = "N/A"; //no preference
+					}
+					else{
+						if( fullTime == 1){
+							empPref += "Full-time ";
+						}
+						
+						if(partTime == 1){
+							empPref += "Part-time ";
+						}
+						
+						if(internship == 1){
+							empPref += "Internship";
+						}
+					}
+					
+					searcher.employmentPreference = empPref;
+				}
+			}// END OF EMPLOYMENT PREFERENCE
 			
 		}
 		catch (SQLException e) {

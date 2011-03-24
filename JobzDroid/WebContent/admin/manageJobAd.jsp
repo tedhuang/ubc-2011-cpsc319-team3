@@ -157,6 +157,7 @@
 				<li><a class="jsBtn cDraft" onclick="filterTable('draft', allJobAdtable)">Draft<span id="numDraft"></span></a></li>
 				<li><a class="jsBtn cPending" onclick="filterTable('pending', allJobAdtable)">Pending<span id="numPending"></span></a></li>
 				<li><a class="jsBtn cInact" onclick="filterTable('inactive', allJobAdtable)">Inactive<span id="numInactive"></span></a></li>
+          		
           	</ul>
           </div>
 	       <div id="allJobAdtable" class="resultTableDiv">
