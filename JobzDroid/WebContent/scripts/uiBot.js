@@ -251,7 +251,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
  * @param heading
  *********************************************************************************************************************/
 function buildProfileTb(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", outputDiv).html("");
+	var tbody  = $( "tbody", "#" + outputDiv).html("");
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
 	if(profile.length==0){//if no results
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");

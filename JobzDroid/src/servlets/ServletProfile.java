@@ -109,39 +109,79 @@ public class ServletProfile extends HttpServlet{
 	
 	private void getProfileById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
-		//TODO change this later
-		//Poster = 1, Searcher = 2
-		int accountType = Integer.parseInt(request.getParameter("accountType")); 	
+		String sessionKey = request.getParameter("sessionKey");
+		
 		int accountID = Integer.parseInt(request.getParameter("accountID"));
+		Session currSession = dbManager.getSessionByKey(sessionKey );
 		
 		//Initialize Return statments
 		boolean isSuccessful = false;
 		String message = "Failure to create new profile";
 		
+		Object profile = null;
+		ProfileSearcher searcher = new ProfileSearcher();
+		ProfilePoster poster = new ProfilePoster();
+		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		
+		String accountType = "";
+		
+		earlyExit: {
 		try{
 			stmt = conn.createStatement();
+		
+		if ( currSession == null ) {
+			message = "Invalid Session";
+			break earlyExit;
+		}
+		
+		if ( currSession.checkPrivilege("poster", "admin", "superAdmin") == false) {
+			message = "User does not have privilige to get profile by ID";
+			break earlyExit;
+		}
+
+		
+		String query = 		
+			"SELECT * FROM tableAccount WHERE idAccount=" + accountID;
+		
+		System.out.println( query );
+		stmt.executeQuery(query);
+		
+		ResultSet result = stmt.getResultSet();
+		
+		// get info out from account table
+		if ( result.first() ) {
+			accountType = result.getString("type");
+			if( accountType.equalsIgnoreCase("searcher") ) {
+				profile = searcher;
+				searcher.accountID	= result.getInt("idAccount");
+				searcher.email		= result.getString("email");
+				accountType = "Searcher";
+			}
+			else if ( result.getString("accountType").equalsIgnoreCase("poster") ) {
+				profile = poster;
+				poster.accountID	= result.getInt("idAccount");
+				poster.email		= result.getString("email");
+				accountType = "Poster";
+			}
 			
-		//Get Job Poster Profile			
-			if(accountType == 1){
-				System.out.println("Getting Job Poster Profile");
-				
-				ProfilePoster poster = new ProfilePoster();
-				
-			/**Get field values */
-				String query = 
-					"SELECT * FROM tableProfilePoster WHERE idAccount=" + accountID;
-				
-				System.out.println("getProfileById query:" + query);
-				isSuccessful = stmt.execute(query);
-				
-				ResultSet result = stmt.getResultSet();
-				
+		}
+		
+		query = "SELECT * FROM tableProfile"+ accountType +" INNER JOIN tableAccount " + 
+		"USING (idAccount) WHERE idAccount=" + accountID;
+		
+		isSuccessful = stmt.execute(query);
+		
+		result = stmt.getResultSet();
+		
+		//Get Job Poster Profile
+			if( accountType.equalsIgnoreCase("poster") ){
+				System.out.println("Getting Job poster Profile");
+
 				if (result.first()){
-					System.out.println("getProfileById successful");
-					message = "getProfileById successful";
+					System.out.println("got Job poster profile");
+					message = "got Job poster profile";
 					
 					poster.accountID		= result.getInt("idAccount");
 					poster.name				= result.getString("name");
@@ -152,6 +192,7 @@ public class ServletProfile extends HttpServlet{
 					isSuccessful = false;
 					message = "Error: Profile not found with ID=" + accountID;
 					System.out.println("Error: Profile not found with ID=" + accountID);
+					break earlyExit;
 				}
 				
 				
@@ -181,23 +222,14 @@ public class ServletProfile extends HttpServlet{
 			}
 			
 		//Get Job Searcher Profile
-			else{
+			else if (accountType.equalsIgnoreCase("searcher") ){
 				System.out.println("Getting Job Searcher Profile");
 				
-				ProfileSearcher searcher = new ProfileSearcher();
-				
 				/**Get field values */
-					String query = 
-						"SELECT * FROM tableProfileSearcher WHERE idAccount=" + accountID;
-					
-					System.out.println("getProfileById query:" + query);
-					isSuccessful = stmt.execute(query);
-					
-					ResultSet result = stmt.getResultSet();
 					
 					if (result.first()){
-						System.out.println("getProfileById successful");
-						message = "getProfileById successful";
+						System.out.println("got Job poster profile");
+						message = "got Job poster profile";
 						
 						searcher.accountID			= result.getInt("idAccount");
 						searcher.name				= result.getString("name");
@@ -211,6 +243,7 @@ public class ServletProfile extends HttpServlet{
 						isSuccessful = false;
 						message = "Error: Profile not found with ID=" + accountID;
 						System.out.println("Error: Profile not found with ID=" + accountID);
+						break earlyExit;
 					}
 					
 					
@@ -239,7 +272,6 @@ public class ServletProfile extends HttpServlet{
 
 				/** TODO: GET EMPLOYMENT PREFERENCE **/
 				
-					
 			}
 		}
 		catch (SQLException e) {
@@ -267,7 +299,8 @@ public class ServletProfile extends HttpServlet{
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
-	    
+		}//earlyExit:
+		
 	    System.out.println("Checkpoint: End of create profile - Message: " + message);
 	    
 		StringBuffer XMLResponse = new StringBuffer();	
@@ -276,8 +309,15 @@ public class ServletProfile extends HttpServlet{
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
 		XMLResponse.append("\t<message>" + message + "</message>\n");
 		//TODO pass back XML formatted profile data
+		if( accountType.equalsIgnoreCase("searcher") ) {
+			XMLResponse.append(searcher.toXMLContent() );
+		} else if ( accountType.equalsIgnoreCase("poster") ) {
+			XMLResponse.append(poster.toXMLContent() );
+		}
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
+		
+		System.out.println(XMLResponse);
 		response.getWriter().println(XMLResponse);
 		
 		
@@ -293,12 +333,12 @@ public class ServletProfile extends HttpServlet{
 		boolean isSuccessful = false;
 		String message = "Failure to fetch profile by Session Key";
 		
+		Object profile = null;
 		ProfileSearcher searcher = new ProfileSearcher();
 		ProfilePoster poster = new ProfilePoster();
 		
 		Connection conn = null;	
 		Statement stmt = null;
-		Object profile = null;
 		
 //		String documentList = "";
 		
