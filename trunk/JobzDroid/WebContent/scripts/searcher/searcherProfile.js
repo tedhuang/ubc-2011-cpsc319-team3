@@ -146,9 +146,9 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 	  {
 	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
 	    {
-//	    	loadProfileDetails(xmlhttp.responseXML);
 		  //you can find this in uiBot.js under scripts folder
-		  buildProfileSearcherEditTb("profile", profileOutputDiv, profileHeading);
+		 //buildProfileSearcherEditTb("profile", profileOutputDiv, profileHeading);
+		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
 		  listUserFiles(fileOutputDiv);
 	    }
 	  };	
