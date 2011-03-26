@@ -11,7 +11,7 @@
 	<title>Post News</title>
 </head>
 <body>
-	<%	// Example URL to access this page: http://localhost:8080/JobsDroid/downloadDoc?idDoc=1&sessionKey=12345
+	<%
 	int idAccSession, idAccDoc;
 	int idDoc = -1; 
 	// check session key and document id to determine if the user has permission
@@ -32,14 +32,12 @@
 	}
 	// if invalid session, then redirect to login page
 	if (s == null){
+		System.out.println("session null");
 		response.sendRedirect("index.html");
 	}
 	// if session belongs to a searcher that does not own the document, then redirect to error page
-	else if ( s.getAccountType().equals("searcher") ){
-		idAccSession = s.getIdAccount();
-		if( idAccSession != idOwner ){
-			response.sendRedirect("error.html");	
-		}
+	else if ( s.getAccountType().equals("searcher") && s.getIdAccount() != idOwner ){
+		response.sendRedirect("error.html");
 	}
 	else{
 		// if all checks pass, then allow user to download file
@@ -49,7 +47,7 @@
 		try{
 			File file = new File( filepath + filename );
 			// clear web page headers from from output stream
-			out.clear();
+	//		out.clear();
 			//set response headers
 			response.setContentType("text/plain");			
 			response.addHeader("Content-Disposition","attachment; filename=" + filename );

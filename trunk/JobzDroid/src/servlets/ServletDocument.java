@@ -392,26 +392,46 @@ public class ServletDocument extends HttpServlet {
 		
 	}
 	
+	/***
+	 * TODO
+	 */
 	private void listUserDocuments( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String message = "ServletDocument: listUserDocuments() did not work as intended";
 		String action = "";
 		
-		String sessionKey = request.getParameter("sessionKey");
-		
+		String sessionKey = request.getParameter("sessionKey");		
 		Session currSession = dbManager.getSessionByKey(sessionKey);
+
+		
+		// check privilege and determine what to use for doc owner ID
+		int idOwner = -1;
+		
+		if (currSession == null)
+			response.sendRedirect("index.html");
+		else {
+			if ( currSession.checkPrivilege("searcher") ) {
+				idOwner = currSession.getIdAccount();
+			}
+			else if( currSession.checkPrivilege("poster", "admin", "superAdmin")) {
+				try{
+					idOwner = Integer.parseInt(request.getParameter("idOwner"));
+				}
+				catch(Exception e){
+					response.sendRedirect("error.html");
+				}
+			}
+		}
+		
+		if(idOwner == -1)
+			response.sendRedirect("index.html");
 		
 		String fileData = "";
 		
 		boolean success = false;
 		earlyExit: {
 			
-			if( currSession == null ) {
-				message = "ServletDocument: session invalid or expired";
-				break earlyExit;
-			}
-			
-			File[] userfiles = getUserFiles( currSession.getIdAccount() );
+			File[] userfiles = getUserFiles( idOwner );
 			
 			for( File eachFile: userfiles ) {
 				BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
@@ -420,6 +440,7 @@ public class ServletDocument extends HttpServlet {
 				fileData = fileData.concat("\t<file " +
 						"fileName=\"" + eachFile.getName() + "\" " +
 						"size=\"" + (  fileSizeMB  ) + "\" " +
+						"idOwner=\"" + (  idOwner  ) + "\" " +
 						">" + "</file>\n");
 				success = true;
 			}

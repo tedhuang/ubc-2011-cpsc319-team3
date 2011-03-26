@@ -365,14 +365,20 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 function buildSearcherFileTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	var sKey = $("#sessionKey").val();
 	if(xmlObj.length==0){//if no results
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
+		  var file = $(this);
+		  var filename = file.attr("fileName");
+		  var idOwner = file.attr("idOwner");
 		  var tr = $('<tr></tr>');
-		  $('<td></td>').attr("id", id='td-fileName').text(jobAd.attr("fileName")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-size').text(jobAd.attr("size")).appendTo(tr);
+		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
+		  var filenameCell = $('<td></td>');
+		  filenameAnchor.appendTo(filenameCell);
+		  filenameCell.appendTo(tr);
+		  $('<td></td>').text(file.attr("size")).appendTo(tr);
 		  
 		  tr.appendTo(tbody);
 		  
