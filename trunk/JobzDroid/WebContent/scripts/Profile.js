@@ -51,13 +51,12 @@ function loadProfileDetails(responseXML){
 function submitChangeProfile(accountType){
 	
 	//disables button to prevent multiple submit
-	document.getElementById("submitProfileButton").disabled=true;
+	//document.getElementById("submitProfileButton").disabled=true;
 	
 	var sessionKey = $("#sessionKey").val();
 		
 	//Profile Changes
 	var strName 		= document.getElementById("name").value;
-	var strSecEmail		= document.getElementById("secondaryEmail").value;
 	var strPhone 		= document.getElementById("phone").value;
 	var strDescripton 	= document.getElementById("selfDescription").value;
 	
@@ -70,8 +69,24 @@ function submitChangeProfile(accountType){
 		var boolEmpPrefFT			= document.getElementById("fullTimeCheck").checked;
 		var boolEmpPrefIn			= document.getElementById("internCheck").checked;
 		
-		var strPreferredStartDate 	= document.getElementById("startingDate");
+		var strPreferredStartDate 	= document.getElementById("startingDate").value;
 		var intEducationLevel 		= document.getElementById("educationLevel").value;
+		
+		
+		var strDatePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+		if( strPreferredStartDate && strPreferredStartDate != "" ) {
+			if(strDatePattern.test(strPreferredStartDate) == false){
+				$("#startingDateError").text("Invalid date format");
+				alert("Invalid Date Format");
+				return;
+			}
+			else
+				$("#startingDateError").text("");
+		}
+		else{
+			$("#startingDateError").text("Please input a preferred starting date");
+			alert("Please Input a preffered starting date");
+		}
 		
 	}
 	
@@ -91,7 +106,6 @@ function submitChangeProfile(accountType){
 	request.addSessionKey(sessionKey);
 	
 	request.addParam("name",strName);
-	request.addParam("secEmail",strSecEmail);
 	request.addParam("phone",strPhone);
 	request.addParam("descripton",strDescripton);
 	
@@ -104,7 +118,7 @@ function submitChangeProfile(accountType){
 		request.addParam("empPrefFT", boolEmpPrefFT);
 		request.addParam("empPrefIn", boolEmpPrefIn);
 		request.addParam("educationLevel",intEducationLevel);
-		request.addParam("preferredStartDate", strPreferredStartDate); //This is taken as a long
+		request.addParam("preferredStartDate", strPreferredStartDate); 
 	}
 	
 
@@ -121,6 +135,7 @@ function submitChangeProfile(accountType){
 		    //parse XML response from server
 		  	//TODO: implement response
 		  alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+		  getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");
 		  
 	    }
 	  };	

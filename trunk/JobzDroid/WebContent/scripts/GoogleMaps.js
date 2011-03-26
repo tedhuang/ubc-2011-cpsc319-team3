@@ -93,7 +93,7 @@ function listLocationChoices(googleMapsResults){
 		//$("#tmp"+currAddrNum).text(latitude + ", " + longitude);
 		$("#longitude").text("Longitude: " + longitude);
 		$("#latitude").text("Latitude: " + latitude);
-		$("#locFeedback").text(address);
+		$("#locFeedback").text("Location Saved: " + address);
 		
 	});
 }

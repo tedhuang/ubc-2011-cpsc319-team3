@@ -412,21 +412,21 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 									  "</div>";
 		
 		var addressButton = "<button type='button' id=\"addressButton\" style = 'DISPLAY: none;' onclick='calculateLocation()'>Find Location</button>";
-		var addressResult = "<span type='text' id='locFeedback'></span>" +
+		var addressResult = "<span type='text' id='locFeedback'></span><br><br>" +
 							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
 		
 		var accountText = 
 				"<tr id='oldEmailRow' ><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
-				"<tr id='newEmailRow' 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
+				"<tr id='newEmailRow' 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /><span id='emailError'></td></tr>" +
 				"<tr id='oldSecEmailRow'><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
 				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
 				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
-				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /></td></tr>" +
+				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /><span id='pwError'></td></tr>" +
 				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat'/></td></tr>";
 
 		var profileText =
-			"<tr id='nameRow'><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr id='phoneRow'><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr id='nameRow'><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name' style='DISPLAY: none;'/><span id='nameError'></td></tr>" +
+			"<tr id='phoneRow'><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone'style='DISPLAY: none;'/><span id='phoneError'></td></tr>" +
 			"<tr id='descRow' ><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 
 		//Add Searcher Fields
@@ -434,7 +434,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			profileText +=
 				"<tr id='eduRow'><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
 				"<tr id='epRow'><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
-				"<tr id='sdRow'><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
+				"<tr id='sdRow'><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> <span id='startingDateError'></span> </td></tr>";
 		}
 		
 		//Add Address Input Field

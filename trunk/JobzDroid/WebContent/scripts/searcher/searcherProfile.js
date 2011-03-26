@@ -44,83 +44,83 @@
 //}
 
 
-function submitChangeProfile(accountType){
-	
-	//disables button to prevent multiple submit
-	document.getElementById("submitProfileButton").disabled=true;
-	
-	var sessionKey = $("#sessionKey").val();
-		
-	//Profile Changes
-	var strName 		= document.getElementById("name").value;
-	var strSecEmail		= document.getElementById("secondaryEmail").value;
-	var strPhone 		= document.getElementById("phone").value;
-	var strDescripton 	= document.getElementById("selfDescription").value;
-	
-	var strAddress 		= getAddress();
-	var strLong			= getLongitude();
-	var strLat			= getLatitude();
-	
-	if (accountType == "searcher"){
-		var boolEmpPrefPT			= document.getElementById("partTimeCheck").checked;
-		var boolEmpPrefFT			= document.getElementById("fullTimeCheck").checked;
-		var boolEmpPrefIn			= document.getElementById("internCheck").checked;
-		
-		var strPreferredStartDate 	= document.getElementById("startingDate");
-		var intEducationLevel 		= document.getElementById("educationLevel").value;
-		
-	}
-	
-	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	
-	
-	request = new Request;
-	request.addAction("editProfile");
-	request.addSessionKey(sessionKey);
-	
-	request.addParam("name",strName);
-	request.addParam("secEmail",strSecEmail);
-	request.addParam("phone",strPhone);
-	request.addParam("descripton",strDescripton);
-	
-	request.addParam("address", strAddress);
-	request.addParam("longitude", strLong);
-	request.addParam("latitude", strLat);
-	
-	if(accountType == "searcher"){
-		request.addParam("empPrefPT", boolEmpPrefPT);
-		request.addParam("empPrefFT", boolEmpPrefFT);
-		request.addParam("empPrefIn", boolEmpPrefIn);
-		request.addParam("educationLevel",intEducationLevel);
-		request.addParam("preferredStartDate", strPreferredStartDate); //This is taken as a long
-	}
-	
-
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-
-
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		    //parse XML response from server
-		  	//TODO: implement response
-		  alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
-		  
-	    }
-	  };	
-}
+//function submitChangeProfile(accountType){
+//	
+//	//disables button to prevent multiple submit
+//	document.getElementById("submitProfileButton").disabled=true;
+//	
+//	var sessionKey = $("#sessionKey").val();
+//		
+//	//Profile Changes
+//	var strName 		= document.getElementById("name").value;
+//	var strSecEmail		= document.getElementById("secondaryEmail").value;
+//	var strPhone 		= document.getElementById("phone").value;
+//	var strDescripton 	= document.getElementById("selfDescription").value;
+//	
+//	var strAddress 		= getAddress();
+//	var strLong			= getLongitude();
+//	var strLat			= getLatitude();
+//	
+//	if (accountType == "searcher"){
+//		var boolEmpPrefPT			= document.getElementById("partTimeCheck").checked;
+//		var boolEmpPrefFT			= document.getElementById("fullTimeCheck").checked;
+//		var boolEmpPrefIn			= document.getElementById("internCheck").checked;
+//		
+//		var strPreferredStartDate 	= document.getElementById("startingDate");
+//		var intEducationLevel 		= document.getElementById("educationLevel").value;
+//		
+//	}
+//	
+//	var xmlHttpReq;
+//	if (window.XMLHttpRequest)
+//	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+//	  xmlhttp=new XMLHttpRequest();
+//	  }
+//	else
+//	  {// code for IE6, IE5
+//	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+//	  }
+//	
+//	
+//	request = new Request;
+//	request.addAction("editProfile");
+//	request.addSessionKey(sessionKey);
+//	
+//	request.addParam("name",strName);
+//	request.addParam("secEmail",strSecEmail);
+//	request.addParam("phone",strPhone);
+//	request.addParam("descripton",strDescripton);
+//	
+//	request.addParam("address", strAddress);
+//	request.addParam("longitude", strLong);
+//	request.addParam("latitude", strLat);
+//	
+//	if(accountType == "searcher"){
+//		request.addParam("empPrefPT", boolEmpPrefPT);
+//		request.addParam("empPrefFT", boolEmpPrefFT);
+//		request.addParam("empPrefIn", boolEmpPrefIn);
+//		request.addParam("educationLevel",intEducationLevel);
+//		request.addParam("preferredStartDate", strPreferredStartDate); //This is taken as a long
+//	}
+//	
+//
+//	//send the parameters to the servlet with POST
+//	xmlhttp.open("POST","../ServletProfile" ,true);
+//	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//	xmlhttp.send(request.toString());
+//
+//
+//	xmlhttp.onreadystatechange=function()
+//	  {
+//	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+//	    {
+//		    //parse XML response from server
+//		  	//TODO: implement response
+//		  alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+//		  
+//	    }
+//	  };	
+//}
 
 
 function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv ){
