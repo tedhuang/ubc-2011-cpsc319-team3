@@ -341,7 +341,11 @@ public class ServletProfile extends HttpServlet{
 		Statement stmt = null;
 		
 //		String documentList = "";
-		
+		// if invalid session, redirect to error page
+		if(currSession == null){
+			response.sendRedirect("error.html");
+			return;
+		}
 		earlyExit:
 		{
 		try{
