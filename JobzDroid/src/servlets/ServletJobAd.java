@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+
 import classes.DBColName;
 import classes.JobAdvertisement;
 import classes.Location;
@@ -17,6 +20,8 @@ import classes.Session;
 import classes.Utility;
 
 import managers.DBManager;
+import managers.RSSManager;
+import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletJobAdvertisement
@@ -95,7 +100,6 @@ public class ServletJobAd extends HttpServlet {
 		
 		/*****************POST AD ACTIONS***********************/
 			case createJobAdvertisement :
-//				createJobAdvertisement(request, response);
 				postJobAd(request, response);
 				break;
 				
@@ -772,6 +776,37 @@ public class ServletJobAd extends HttpServlet {
 				isSuccessful = true;
 				System.out.println("adminApprove worked!");
 				message = "adminApprove worked!";
+
+				// get new job ad info and update job ad RSS feed
+				query = "SELECT * FROM tableJobAd WHERE idJobAd = '" + jobAdId +"';";
+				stmt.executeQuery(query);
+				ResultSet rs = stmt.getResultSet();
+				if(rs.first()){
+					String title = rs.getString("title");
+					String desc = rs.getString("description");
+					long datePosted = rs.getLong("datePosted");
+					String tags = rs.getString("tags");
+					String[] feedCategory = null;					
+					if(tags != null){
+						feedCategory = tags.split(",");
+					}
+					try {
+						SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
+						//TODO add link
+						SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(datePosted),
+								desc, null, feedCategory);
+						RSSManager.addEntryToFeed(feed, entry, 0);
+						
+						String jobAdRSSPath = getServletContext().getRealPath("jobAd.xml");
+						RSSManager.writeFeedToFile(feed, jobAdRSSPath);
+					} 
+					catch (Exception e) {
+						Utility.logError("Failed to post RSS entry '" + title + "' to Job Ad RSS: " + e.getMessage());
+					}
+				}
+				
+
+				
 			}
 		}
 		catch (SQLException e) {
@@ -1416,7 +1451,7 @@ public class ServletJobAd extends HttpServlet {
 				else{
 					System.out.println("Error: Job Ad ID not found after creation");
 				}
-			   if(jobAdId != -1){	
+			   if(jobAdId != -1){
 			   	//Insert location values into location table
 //				query = 
 //					"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
@@ -1436,6 +1471,7 @@ public class ServletJobAd extends HttpServlet {
 				if (success == 1){
 					System.out.println("New JobAd Creation success (DB)");
 					isSuccessful = true;
+
 //					message = "Create Job Advertisement Successful";
 				}
 				else{

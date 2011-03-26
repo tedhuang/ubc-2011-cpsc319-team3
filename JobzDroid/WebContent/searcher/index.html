@@ -29,10 +29,10 @@
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
   		$('#sideMenu').sideNavMenu({});
 		$('#tabs').DynaSmartTab({});
-		// MOVED TO AUTHENTICATION.JS
-			//loadSessionKeyFromURL();
-		
-		
+
+       	$("#desc-field").bind("keyup", function(){
+       		limitChars('desc-field', 1000, 'desc-info');
+       	});
 		});
 		
 	

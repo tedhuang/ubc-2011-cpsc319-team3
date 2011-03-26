@@ -111,7 +111,7 @@ public class ServletProfile extends HttpServlet{
 		
 		String sessionKey = request.getParameter("sessionKey");
 		
-		int accountID = Integer.parseInt(request.getParameter("accountID"));
+		int accountID = Integer.parseInt(request.getParameter("idAccount"));
 		Session currSession = dbManager.getSessionByKey(sessionKey );
 		
 		//Initialize Return statments
@@ -137,7 +137,7 @@ public class ServletProfile extends HttpServlet{
 		}
 		
 		if ( currSession.checkPrivilege("poster", "admin", "superAdmin") == false) {
-			message = "User does not have privilige to get profile by ID";
+			message = "User does not have privilige to get profile by ID.";
 			break earlyExit;
 		}
 

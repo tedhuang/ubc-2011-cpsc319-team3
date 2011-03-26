@@ -44,9 +44,9 @@ $("document").ready(function() {
 	});
 	// client side error checking
 	$("input").bind("change", validateForm);
-	// allow description to have maximum 250 characters
+	// allow description to have maximum 1000 characters
 	$("#description").bind("keyup", function(){
-		limitChars('description', 250, 'descInfo');
+		limitChars('description', 5000, 'descInfo');
 	});
 	// send request to account servlet on submit
 	$("#submitButton").bind("click",sendRegRequest);

@@ -38,8 +38,8 @@ public class ServletInitializer extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		// load configuration file
-		String realConfigPath = getServletContext().getRealPath("/WEB-INF/config.ini");
-		systemManager.loadConfigFile(realConfigPath);
+		String configPath = getServletContext().getRealPath("/WEB-INF/config.ini");
+		systemManager.loadConfigFile(configPath);
 		// schedule automated tasks
 	    class AutomatedTasks extends TimerTask {
 	        public void run() {
@@ -52,9 +52,10 @@ public class ServletInitializer extends HttpServlet {
 	        }
 	    }
 	    
+		final String jobAdRSSPath = getServletContext().getRealPath("jobAd.xml");
 	    class AutomatedTasksDBWorld extends TimerTask {
 	    	public void run(){
-	            dbworldintegration.emailParse(SystemManager.dbWorldEmailAddress, SystemManager.dbWorldEmailPw);	    		
+	            dbworldintegration.emailParse(SystemManager.dbWorldEmailAddress, SystemManager.dbWorldEmailPw, jobAdRSSPath);	    		
 	    	}
 	    }
 	    

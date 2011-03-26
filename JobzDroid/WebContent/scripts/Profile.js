@@ -135,7 +135,7 @@ function getProfileById(idAccount, outputDiv, heading){
 	request = new Request;
 	request.addAction("getProfileById");
 	request.addSessionKey(strSessionKey);
-	request.addParam("accountID", idAccount);
+	request.addParam("idAccount", idAccount);
 
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
