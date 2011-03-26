@@ -710,9 +710,9 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void removeRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String sessionKey = request.getParameter("sessionKey");
-		String entryIndex = request.getParameter("entryIndex");
+		String strEntryIndex = request.getParameter("entryIndex");
 		String feedType = request.getParameter("feedType");
-		int idNews = -1;
+		int entryIndex = -1;
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		boolean allGood = true;
 		boolean result = false;
@@ -728,36 +728,45 @@ public class ServletAdmin extends HttpServlet {
 			String userType = session.getAccountType();
 			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
 				allGood = false;
-				message = "Unauthorized post RSS action.";
+				message = "Unauthorized delete RSS action.";
 			}
 			else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
 				allGood = false;
 				message = "Invalid feed type.";
 			}
+			else{
+				try{
+					entryIndex = Integer.parseInt(strEntryIndex);
+				}
+				catch(NumberFormatException e){}
+				// report error if index failed to be parsed, or an invalid index was passed in
+				if(entryIndex < 0){
+					allGood = false;
+					message = "Invalid entry index.";
+				}
+			}
 		}
 		
-		if(allGood){
-			// load news before we delete 
-			NewsEntry newsEntry = newsManager.getNewsEntryById(idNews);
-			
-			if(newsManager.deleteNewsEntry(idNews)){
+		if(allGood){		
+			// delete RSS entry with the given index
+			try {
+				String feedFile;
+				if( feedType.equals("news") )
+					feedFile = "news.xml";
+				else
+					feedFile = "jobAd.xml";
+					
+				SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + feedFile);
+				RSSManager.removeEntryFromFeed(feed, entryIndex);
+				String filePath = getServletContext().getRealPath(feedFile);
+				RSSManager.writeFeedToFile(feed, filePath);
 				result = true;
-				message = "News entry has been successfully deleted.";
-				// find and remove the first matching news entry in the RSS
-				try {
-					String newsPath = getServletContext().getRealPath("news.xml");
-					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
-					int index = RSSManager.searchEntry( newsFeed, newsEntry.getTitle(), newsEntry.getContent(), new java.util.Date(newsEntry.getDateTimePublished()) );
-					newsFeed = RSSManager.removeEntryFromFeed(newsFeed, index);
-					RSSManager.writeFeedToFile(newsFeed, newsPath);
-				} 
-				catch (Exception e) {
-					Utility.logError("Failed to remove news (Title: " + newsEntry.getTitle() + ") from RSS: " + e.getMessage());
-					message = "News entry has been successfully deleted, but there was an error updating News RSS: " + e.getMessage();
-				}				
+				message = "New RSS entry has been successfully deleted.";
+			} 
+			catch (Exception e) {
+				Utility.logError("Failed to remove RSS entry with index '" + entryIndex + "' from RSS: " + e.getMessage());
+				message = "Failed to remove RSS entry with index '" + entryIndex + "' from RSS: " + e.getMessage();
 			}
-			else
-				message = "An error has occured while performing delete news action. Please try again later.";
 		}
 		
 		// Write XML containing message and result to response
