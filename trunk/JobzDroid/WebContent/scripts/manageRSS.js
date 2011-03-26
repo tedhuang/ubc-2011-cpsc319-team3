@@ -57,18 +57,11 @@ function postRSS(evt){
 					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
 					 if(boolResult == "true"){
 						 $("#statusText").addClass("successTag");
-						 $("#submitButton").removeAttr("disabled");
-						 $("#titleInput").val("");
-						 $("#contentInput").val("");
-						 $("#caterogiesInput").val("");
-						 $("#strLink").val("");
-						 loadPageWithSession('manageRSS.jsp');
+						 setTimeout("loadPageWithSession('manageRSS.jsp')",3000);
 					 }
 					 else
-						 $("#statusText").addClass("errorTag");		
-					 
-			//		$("#submitButton").removeAttr("disabled");
-			    	$("#statusText").text(responseText);
+						 $("#statusText").addClass("errorTag");
+				    	$("#statusText").text(responseText + " Page content will refresh in 3 seconds...");
 				}
 			}};
 	}
@@ -91,16 +84,16 @@ function postRSS(evt){
 }
 
 function deleteNewsRssEntry(index){
-	
+	sendDeleteRSSRequest("news", index);
 }
 
 function deleteJobAdRssEntry(index){
-	
+	sendDeleteRSSRequest("jobAd", index);
 }
 
 function sendDeleteRSSRequest(type, index){
 	var strSessionKey = $("#sessionKey").val();
-    var b = confirm("Are you sure to delete News ID: " + idNews + "?\nIts associated RSS entry will also be removed.");
+    var b = confirm("Are you sure to delete the selected feed entry?");
     if (b == false)
         return false;
     
@@ -124,16 +117,18 @@ function sendDeleteRSSRequest(type, index){
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;				
 					 $(".linkImg").removeAttr("disabled");
-					 alert(strMsg);
-					 if(boolResult == "true")
-						 loadPageWithSession('manageRSS.jsp');
+					 if(boolResult == "true"){
+						 alert(strMsg + " Page content will refresh in 3 seconds...");
+						 setTimeout("loadPageWithSession('manageRSS.jsp')",3500);
+					 }
 				}
 			}};
 	}
 	request = new Request;
-	request.addAction("deleteRSSEntry");
+	request.addAction("removeRSSEntry");
 	request.addSessionKey(strSessionKey);
-	request.addParam("entryIndex", entryIndex);
+	request.addParam("entryIndex", index);
+	request.addParam("feedType", type);
 	
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);

@@ -175,6 +175,8 @@
 		  	  			categories.concat(categoryList.get(j).getName());		  	  			
 		  	  			categories = categories.trim();
 		  	  		}
+		  	  		if(categories.equals(""))
+		  	  			categories = "None";
 		  	  %>
 	  			<tr style="font-weight:bold">
 	  				<td style="width: 955px">Title: <%= title %> 	  						
