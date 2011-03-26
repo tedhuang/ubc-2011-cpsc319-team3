@@ -216,7 +216,7 @@ public class Utility {
 	
 	
 /*******************************************************************************************************************
- * 							Date Convention Function Group
+ * 							Date Convertion Function Group
  *******************************************************************************************************************/
 	public static String dateConvertor(long milSecDate){
 		

@@ -546,7 +546,6 @@ public class ServletProfile extends HttpServlet{
 		String accountType 		= currSession.getAccountType();
 		
 		String name 			= request.getParameter("name");
-		//String secEmail 		= request.getParameter("secEmail");
 		String phone 			= request.getParameter("phone");
 		String selfDescription 	= request.getParameter("descripton");
 		
@@ -619,7 +618,9 @@ public class ServletProfile extends HttpServlet{
 				String preferredStartDate = request.getParameter("preferredStartDate");
 				int educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
 				
-				long startDateMS = Utility.dateStringToLong(preferredStartDate); //Convert to milliseconds
+				System.out.println("Starting Date String: " + preferredStartDate);
+				
+				long startDateMS = Utility.dateConvertor(preferredStartDate); //Convert to milliseconds
 				
 				//TODO: include address
 				String query = 
