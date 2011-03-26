@@ -34,7 +34,7 @@ function copyEmailToInput(email, inputID){
 function viewProfile(idAccount, currTabIndex){
 	hideFrame(currTabIndex);
 	showProfileTab();
-//	getProfileById(idAccount, 'profileTable', 'profileHeading');
+	getProfileById(idAccount, 'profileTable', 'profileHeading');
 	return false;
 }
 

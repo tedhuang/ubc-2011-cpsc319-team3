@@ -262,26 +262,23 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		
 		case("searcher"):
 			
-		  $(heading).html( profile.attr("name") + "'s Profile");
-		  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-		  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-		  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
-		  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td></tr>" +
-		  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td></tr>" +
-		  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td></tr>" +
-		  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+		  $("#"+heading).html( profile.attr("name") + "'s Profile");
+		  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+		  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+		  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
+		  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
+		  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
+		  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
+		  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
 		  break;
 		  
 		case "poster":
 			
-			$(heading).html( profile.attr("name") + "'s Profile");
-			  var rowText = "<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-			  				"<tr><td>Your Backup Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-			  				"<tr><td>Your Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
-			  				"<tr><td>Your Job Type</td><td>"		+ profile.attr("empPref") 			+ "</td></tr>" +
-			  				"<tr><td>Your Location</td><td>"		+ profile.attr("address")			+ "</td></tr>" +
-			  				"<tr><td>You're Available From</td><td>"+ profile.attr("startingDate")		+ "</td></tr>" +
-			  				"<tr><td>More About You</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+			$("#"+heading).html( profile.attr("name") + "'s Profile");
+			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+			  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
+			  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
 			
 		  break;
 		  
@@ -354,7 +351,7 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
 			
-			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='4' cols='20' style = 'DISPLAY: none;'/></td></tr>";
+			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 		
 
 	
@@ -402,6 +399,9 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 		$("#name").val(profile.attr("name"));
 		$("#phone").val(profile.attr("phone"));
 		$("#selfDescription").val(profile.attr("selfDescription"));
+		$("#selfDescription").bind("keyup", function(){
+			limitChars('selfDescription', 5000, 'descInfo');
+		});
 		$("#loc-filed").val(profile.attr("address"));
 		
 		
@@ -492,7 +492,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
 			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
 			
-			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='4' cols='20' style = 'DISPLAY: none;'/></td></tr>";
+			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 		
 
 	
@@ -540,6 +540,9 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		$("#name").val(profile.attr("name"));
 		$("#phone").val(profile.attr("phone"));
 		$("#selfDescription").val(profile.attr("selfDescription"));
+		$("#selfDescription").bind("keyup", function(){
+			limitChars('selfDescription', 5000, 'descInfo');
+		});
 		$("#loc-filed").val(profile.attr("address"));
 		
 		if(accountType == "searcher"){

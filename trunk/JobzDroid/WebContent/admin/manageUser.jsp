@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/Profile.js"></script>
+	<script type="text/javascript" src="../scripts/uiBot.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	<script type="text/javascript" src="../scripts/deleteAccount.js"></script>
@@ -299,7 +300,7 @@
 		
 		<div id="profileFrame" class="subFrame">
 			 <div id="profileTable" class="resultTableDiv noBorder">
-			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
+			 	<h2 id="profileHeading" class="welcome">Please select a user first.</h2><span id="profileFB"></span>
 				<table>
 					<tbody>
 					</tbody>

@@ -49,16 +49,18 @@ public class RSSManager {
 	 * @return SyndEntry object.
 	 */
 	public static SyndEntry createFeedEntry(String title, Date pubDate, String description,  String link, String[] categories){
-		SyndEntry entry = createFeedEntry(title, pubDate, description);		
-		entry.setLink(link);
-        
-        List<SyndCategory> catagoryList = new ArrayList<SyndCategory>();
-        for(int i = 0; i < categories.length; i++){
-        	SyndCategory category = new SyndCategoryImpl();
-            category.setName(categories[i].trim());
-            catagoryList.add(category);
+		SyndEntry entry = createFeedEntry(title, pubDate, description);	
+		if(link != null)
+			entry.setLink(link);
+        if(categories != null){
+	        List<SyndCategory> catagoryList = new ArrayList<SyndCategory>();
+	        for(int i = 0; i < categories.length; i++){
+	        	SyndCategory category = new SyndCategoryImpl();
+	            category.setName(categories[i].trim());
+	            catagoryList.add(category);
+	        }
+	        entry.setCategories(catagoryList);        
         }
-        entry.setCategories(catagoryList);        
 		return entry;
 	}
 	

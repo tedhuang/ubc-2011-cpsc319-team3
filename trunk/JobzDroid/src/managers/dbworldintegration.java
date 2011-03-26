@@ -31,10 +31,14 @@ import javax.mail.Store;
 
 import org.apache.commons.io.IOUtils;
 
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+
 import classes.Utility;
 
 import managers.DBManager;
 
+import servlets.ServletInitializer;
 import sun.net.www.URLConnection;
 
 
@@ -78,7 +82,7 @@ public class dbworldintegration {
  * @param: password - The password of the email account
  * 
  */
-	public void emailParse(String username,String password) {
+	public void emailParse(String username,String password, String jobAdRSSPath) {
 		
 		//Setup to connect to JobzDroid database. Create connection.
 		Connection conn = dbManager.getConnection();
@@ -202,7 +206,7 @@ public class dbworldintegration {
 						if("Y".equalsIgnoreCase(prompt)){
 						**/
 							createJobAdvertisementWithEmail(stmt, subject, message, webPage, 
-							millisStartDate, millisExpiryDate, millisSentDate);
+							millisStartDate, millisExpiryDate, millisSentDate, jobAdRSSPath);
 						//}
 						
 					}/**end of inner if() block **/						
@@ -424,7 +428,7 @@ public class dbworldintegration {
  * 
  */
 	protected void createJobAdvertisementWithEmail(Statement stmt, String subject, String message, String webPage, 
-			long millisStartDate, long millisExpiryDate, long millisSentDate){
+			long millisStartDate, long millisExpiryDate, long millisSentDate, String jobAdRSSPath){
 		try{
 			int jobAdId = -1;
 			String jobAdvertisementTitle = subject;
@@ -447,14 +451,30 @@ public class dbworldintegration {
 						+ jobDescription + "','" + jobContactInfo + "','" 
 						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "')"); 
 		
-			//If successful, 1 row should be inserted
+			// If successful, 1 row should be inserted
 			System.out.println("New Job Ad query: " + query);
 
 			int rowsInserted = stmt.executeUpdate(query);
 			
-			if(rowsInserted!= 1){
+			if(rowsInserted != 1){
 				System.out.println("New JobAd Creation failed");
 				Utility.logError("New JobAd insert in DB failed");
+			}
+			// update job ad RSS
+			else{
+				try {						
+					// set feed category to "DBWorld"
+					String[] feedCategory = {"DBWorld"};
+					SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
+					//TODO add link maybe?
+					SyndEntry entry = RSSManager.createFeedEntry(jobAdvertisementTitle, new java.util.Date(millisSentDate),
+							jobDescription, null, feedCategory);
+					RSSManager.addEntryToFeed(feed, entry, 0);
+					RSSManager.writeFeedToFile(feed, jobAdRSSPath);
+				} 
+				catch (Exception e) {
+					Utility.logError("Failed to post RSS entry '" + jobAdvertisementTitle + "' to Job Ad RSS: " + e.getMessage());
+				}
 			}
 
 			//Get jobAdId

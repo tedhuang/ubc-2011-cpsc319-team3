@@ -8,8 +8,16 @@
 <link href="../../css/mainStyle.css" rel="stylesheet" type="text/css"/>
 <link href="../../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../scripts/Utility.js"></script>
 </head>
 <body>
+<script type="text/javascript">   
+    $(document).ready(function(){
+    	$("#desc-field").bind("keyup", function(){
+    		limitChars('desc-field', 1000, 'desc-info');
+    	});
+	});
+</script>
 <div class="main">
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
@@ -160,7 +168,8 @@
 			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
+						<textarea id="desc-field" name="desc-field" class="textBoxXL mustNotNull"></textarea> <br/>
+						<span id="desc-info"></span>
 				   </div>
 				</div>
 		 </div><!--ENDOF newAdForm-->

@@ -59,7 +59,7 @@
 	<!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">
 		<li>
-			<a id="newadbtn" class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
+			<a class="jsBtn" onclick="loadPageWithSession('manageJobAd.jsp')">
 				<img src="../images/icon/ad_icon.png"/>
 				<h2>Manage Job Ads</h2>
 			</a>

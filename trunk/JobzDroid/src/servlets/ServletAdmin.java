@@ -654,19 +654,12 @@ public class ServletAdmin extends HttpServlet {
 			}
 		}
 		
-		// check/process inputs
-		title = Utility.checkInputFormat(title);
-		feedType = Utility.checkInputFormat(feedType);
-		if(link != null)
-			link = Utility.checkInputFormat(link);
-		if(content != null){
-			content = Utility.checkInputFormat(content);
+		// process inputs
+		if(content != null)
 			content = Utility.processLineBreaksWhiteSpaces(content);
-		}
-		if(categories != null){
-			categories = Utility.checkInputFormat(categories);
+		if(categories != null)
 			categoriesArray = categories.split(",");
-		}
+		
 		if(allGood){
 			long currentTime = Utility.getCurrentTime();
 			// reduce precision to 1 second to work with ROME library's pubDate 
