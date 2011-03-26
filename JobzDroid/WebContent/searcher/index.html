@@ -107,7 +107,7 @@
   				<a href="#searchJob-frame"><h2>Jobs</h2></a>
 			</li>
 			<li id="Tab2">
-  				<a href="#profileFrame" ><h2>My Profile</h2></a>
+  				<a href="#profileFrame" onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");' ><h2>My Profile</h2></a>
 			</li>
 			
 		</ul>
@@ -267,6 +267,7 @@
 			  </div><!--ENDOF DIV RESULT TABLE-->
 		</div><!--ENDOF DIV SEARCH TAB-->
 		
+		 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
 		<div id="profileFrame" class="subFrame">
 			 <div id="profileTable" class="resultTableDiv noBorder">
 			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
@@ -303,7 +304,6 @@
 					</tbody>
 				</table><!--ENDOF TABLE-->
 		</div><!--ENDOF File TABLE--> 
-			 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
 		</div><!--end of TABPROFILEFRAME listUserFiles("file", "fileTable");  -->
 		
 		
