@@ -245,6 +245,7 @@ public class ServletDocument extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
+//		response.sendRedirect( SystemManager.serverBaseURL + "/searcher/index.html" + "?sessionKey=" + sessionKey );
 		
 	}
 	
