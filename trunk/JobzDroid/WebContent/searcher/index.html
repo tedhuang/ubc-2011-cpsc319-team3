@@ -276,6 +276,14 @@
 					</tbody>
 				</table>
 			 </div>	
+			 <div id="fileUploadDIV">
+	    		<form name="fileUploadForm" onsubmit="uploadFile()" method="post" enctype="multipart/form-data">
+       				<input type="hidden" name="sessionKey"/>
+					File: <input type="file" name="file"/><input type="submit" value="Upload"/>
+    			</form>
+				<div id="fileUploadFeedback">
+				</div>
+			 </div>
 			 <div id="fileTable" class="resultTableDiv">
 				<table>
 					<thead>

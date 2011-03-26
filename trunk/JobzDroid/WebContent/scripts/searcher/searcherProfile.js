@@ -182,6 +182,31 @@ function listUserFiles( outputDiv ) {
 	
 }
 
+function uploadFile() {
+	
+	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
+	document.fileUploadForm.action = "../ServletDocument";
+
+	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+    	xmlhttp=new XMLHttpRequest();
+    }
+		else {// code for IE6, IE5
+	   		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	   	}
+
+	xmlhttp.onreadystatechange = fileUploadProgress;
+	
+    document.fileUploadForm.submit();
+}
+
+function fileUploadProgress() {
+
+	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+		var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;;
+		document.getElementById("fileUploadFeedback").innerHTML = message;
+    }
+}
+
 
 
 
