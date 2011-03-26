@@ -277,7 +277,7 @@
 				</table>
 			 </div>	
 			 <div id="fileUploadDIV">
-	    		<form name="fileUploadForm" onsubmit="uploadFile()" method="post" enctype="multipart/form-data">
+	    		<form name="fileUploadForm" onsubmit="uploadFile()" method="post" enctype="multipart/form-data" target="error.html">
        				<input type="hidden" name="sessionKey"/>
 					File: <input type="file" name="file"/><input type="submit" value="Upload"/>
     			</form>
@@ -317,5 +317,8 @@
 	<form name="sid" method="get" action="">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
+	
+	<iframe id="hiddenUploadFrame" name="hiddenUploadFrame" style="display:none"></iframe>
+	 
 </body>
 </html>
