@@ -244,56 +244,6 @@ function buildAdListTb(targetXMLTag, outputDiv){
 	}
 }
 
-/********************************************************************************************************************
- * 						Build a table for profile
- * @param targetXMLTag
- * @param outputDiv
- * @param heading
- *********************************************************************************************************************/
-function buildProfileTb(targetXMLTag, outputDiv, heading){
-	var tbody  = $( "tbody", "#" + outputDiv).html("");
-	var profile = $(targetXMLTag, xmlhttp.responseXML);
-	if(profile.length==0){//if no results
-		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
-	}
-	else{
-		
-		switch(profile.attr("accountType")){
-		
-		case("searcher"):
-			
-		  $("#"+heading).html( profile.attr("name") + "'s Profile");
-		  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-		  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-		  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
-		  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
-		  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
-		  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
-		  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
-		  break;
-		  
-		case "poster":
-			
-			$("#"+heading).html( profile.attr("name") + "'s Profile");
-			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-			  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
-			  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
-			
-		  break;
-		  
-		default:
-			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
-			break;
-		
-		}
-		 $(tbody).append(rowText);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
-		 $("#detailFB").hide();
-	}
-}
-
 
 /********************************************************************************************************************
  * 						Build a table for searcher profile editing
@@ -353,10 +303,6 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 			
 			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 		
-
-	
-		//Add Searcher Fields
-
 		profileText +=
 			"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
 			"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
@@ -451,21 +397,13 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	}
 	else{
 		var accountType = profile.attr("accountType");	
-		var tbCell = $('<td></td>');
-		var inputForm =$('<input/>');
-		var enableEdBtn=$('<button></button>').attr({ type: 'button', 
-													  onclick: 'enableProfileEdit('+accountType+')'
-													  
-													  });
-		var editEmailButton 	= "<button id='editEmailButton' style='DISPLAY: none;' onclick='buildEditEmail(\"tbody\")' >Change Email</button>";
-		var editPasswordButton	= "<button id=\"editPasswordButton\" style = \"DISPLAY: none;\" onclick=\"buildEditPassword()\">Change Password</button>";
-		
+
 		var educationLevelSelection = 	"<select id=\"educationLevel\" name=\"educationLevel\" style = \"DISPLAY: none;\"> " +
 											"<option value=\"0\">None</option>"  +
 											"<option value=\"1\">B.Sc.</option>" +
 											"<option value=\"2\">M.Sc.</option>" +
 											"<option value=\"3\">Ph.D.</option>" +
-											"</select>";
+										"</select>";
 		
 		var employmentPrefSelection = "<div id=empPrefSelectionDiv style='DISPLAY: none'>" +
 										  "<input type='checkbox' name='partTimeCheck' id='partTimeCheck' value='parttime'  > Part-Time " +
@@ -477,40 +415,34 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		var addressResult = "<span type='text' id='locFeedback'></span>" +
 							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
 		
-
 		var accountText = 
-				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
-				"<tr id=newEmailRow 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
-				"<tr><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
+				"<tr id='oldEmailRow' ><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
+				"<tr id='newEmailRow' 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
+				"<tr id='oldSecEmailRow'><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
 				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
 				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
 				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /></td></tr>" +
 				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat'/></td></tr>";
 
-			
 		var profileText =
-			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
-			
-			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
-		
+			"<tr id='nameRow'><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr id='phoneRow'><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr id='descRow' ><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 
-	
 		//Add Searcher Fields
 		if( accountType == "searcher"){	
 			profileText +=
-				"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
-				"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
-				"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
+				"<tr id='eduRow'><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
+				"<tr id='epRow'><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
+				"<tr id='sdRow'><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
 		}
 		
 		//Add Address Input Field
 		var address = profile.find("location").attr("address");		
-			
 		profileText += 
-			"<tr><td>Your Address</td>  <td>"+address +"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
-			"<tr><td></td><td></td><td>" + addressButton + "</td></tr>" +
-			"<tr><td></td><td></td><td>" + addressResult + "</td></tr>";
+			"<tr id='addrRow'><td>Your Address</td>  <td>"+address +"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
+			"<tr id='addrBRow'><td></td><td></td><td>" + addressButton + "</td></tr>" +
+			"<tr id='addrRRow'><td></td><td></td><td>" + addressResult + "</td></tr>";
 			
 			
 		//Add buttons 
@@ -522,7 +454,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 			"<tr>" +
 				"<td><button id=\"enableProfileEditButton\" type=\"button\" onclick=\'enableProfileEdit(\""+accountType+"\")'>Change Profile Fields</button></td>" +
 				"<td></td><td><button id='submitProfileButton' style = 'DISPLAY: none;' onclick=\'submitChangeProfile(\""+accountType+"\")'>Submit</button></td>" +
-			"</tr>";
+			"</tr>"+
 			
 		//Display the old values		
 		 $(tbody).append(accountText);
@@ -559,7 +491,15 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
  * 						Enable Account Edit
  *********************************************************************************************************************/
 function enableAccountEdit(accountType){
+	$("#emailNew").show();
+	$("#secondaryEmail").show();
+	$("#passwordOld").show();
+	$("#passwordNew").show();
+	$("#passwordRepeat").show();
+	
+	$("#oldEmailRow").show();
 	$("#newEmailRow").show();
+	$("#oldSecEmailRow").show();
 	$("#secEmailRow").show();
 	$("#oldPWRow").show();
 	$("#newPWRow").show();
@@ -567,9 +507,16 @@ function enableAccountEdit(accountType){
 	$("#submitAccountButton").show();
 	
 	//Hide Edit Profile Fields
+	$("#nameRow").hide();
+	$("#phoneRow").hide();
+	$("#descRow").hide();
+	$("#addrRow").hide();
+	$("#addrBRow").hide();
+	$("#addrRRow").hide();
+	
+	$("#addressButton").hide();
 	$("#name").hide();
 	$("#phone").hide();
-	$("#educationLevel").hide();
 	$("#selfDescription").hide();
 	$("#loc-filed").hide();
 	$("#addressButton").hide();
@@ -577,6 +524,10 @@ function enableAccountEdit(accountType){
 	if(accountType == "searcher"){
 		$("#startingDate").hide();
 		$("#empPrefSelectionDiv").hide(); 
+		$("#educationLevel").hide();
+		$("#eduRow").hide();
+		$("#epRow").hide();
+		$("#sdRow").hide();
 	}
 	$("#submitProfileButton").hide();
 	
@@ -589,6 +540,14 @@ function enableAccountEdit(accountType){
  *********************************************************************************************************************/
 function enableProfileEdit(accountType)
 {
+	$("#nameRow").show();
+	$("#phoneRow").show();
+	$("#descRow").show();
+	$("#addrRow").show();
+	$("#addrBRow").show();
+	$("#addrRRow").show();
+	
+	$("#addressButton").show();
 	$("#name").show();
 	$("#phone").show();
 	$("#selfDescription").show();
@@ -599,17 +558,64 @@ function enableProfileEdit(accountType)
 		$("#startingDate").show();
 		$("#empPrefSelectionDiv").show(); 
 		$("#educationLevel").show();
+		$("#eduRow").show();
+		$("#epRow").show();
+		$("#sdRow").show();
 	}
 	$("#submitProfileButton").show();
 	
 	//Hide Account Fields
-	$("#secEmailRow").hide();
+	$("#oldEmailRow").hide();
 	$("#newEmailRow").hide();
+	$("#oldSecEmailRow").hide();
+	$("#secEmailRow").hide();
 	$("#oldPWRow").hide();
 	$("#newPWRow").hide();
 	$("#repeatPWRow").hide();
 	$("#submitAccountButton").hide();
 }
+
+
+/********************************************************************************************************************
+ * 						Reverts back to Profile Display
+ *********************************************************************************************************************/
+function redisplayProfile(accountType)
+{
+	$("#nameRow").show();
+	$("#phoneRow").show();
+	$("#descRow").show();
+	$("#addrRow").show();
+	$("#addrBRow").hide();
+	$("#addrRRow").hide();
+	
+	$("#addressButton").hide();
+	$("#name").hide();
+	$("#phone").hide();
+	$("#selfDescription").hide();
+	$("#loc-filed").hide();
+	$("#addressButton").hide();
+	
+	if(accountType == "searcher"){
+		$("#startingDate").hide();
+		$("#empPrefSelectionDiv").hide(); 
+		$("#educationLevel").hide();
+		$("#eduRow").show();
+		$("#epRow").show();
+		$("#sdRow").show();
+	}
+	$("#submitProfileButton").hide();
+	
+	//Hide Account Fields
+	$("#oldEmailRow").show();
+	$("#newEmailRow").hide();
+	$("#oldSecEmailRow").show();
+	$("#secEmailRow").hide();
+	$("#oldPWRow").hide();
+	$("#newPWRow").hide();
+	$("#repeatPWRow").hide();
+	$("#submitAccountButton").hide();
+}
+
 
 
 
@@ -666,4 +672,64 @@ function enableProfileEdit(accountType)
 			 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		}
 	}
+	
+	
+	
+	
+	
+/**************************
+ * DEPRECATED FUNCTIONS:
+ **************************/
+//	/********************************************************************************************************************
+//	 * 						Build a table for profile
+//	 * @param targetXMLTag
+//	 * @param outputDiv
+//	 * @param heading
+//	 *********************************************************************************************************************/
+//	function buildProfileTb(targetXMLTag, outputDiv, heading){
+//		var tbody  = $( "tbody", "#" + outputDiv).html("");
+//		var profile = $(targetXMLTag, xmlhttp.responseXML);
+//		if(profile.length==0){//if no results
+//			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+//		}
+//		else{
+//			
+//			switch(profile.attr("accountType")){
+//			
+//			case("searcher"):
+//				
+//			  $("#"+heading).html( profile.attr("name") + "'s Profile");
+//			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+//			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+//			  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
+//			  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
+//			  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
+//			  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
+//			  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+//			  break;
+//			  
+//			case "poster":
+//				
+//				$("#"+heading).html( profile.attr("name") + "'s Profile");
+//				  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+//				  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+//				  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
+//				  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
+//				
+//			  break;
+//			  
+//			default:
+//				$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+//				break;
+//			
+//			}
+//			 $(tbody).append(rowText);
+//			 $(tbody).find('tr').find('td:first').addClass("nameCol");
+//			 $(tbody).find('tr').find('td:last').addClass("dataCol");
+//			 $("#detailFB").hide();
+//		}
+//	}
+//	
+
+	
 	
