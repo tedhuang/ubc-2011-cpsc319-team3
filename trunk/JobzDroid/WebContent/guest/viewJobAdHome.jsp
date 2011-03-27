@@ -12,7 +12,6 @@
 	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
@@ -32,7 +31,6 @@
 		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
 
-    	guestViewJobAd("allJobAdtable", "next");
 		
     	bindClearError();
 	});
@@ -85,7 +83,7 @@
 
 		 <div id="headToolBar">
           </div>
-	       <div id="allJobAdtable" class="resultTableDiv">
+	       <div id="allJobAdtable" class="resultTableDiv noBorder">
 	          <table>
 				<thead>
 					<tr>
@@ -140,7 +138,10 @@
 <!-- ==================================================================== -->	
 
 	<div id="adDetailFrame" class="subFrame unremovable">
-		<table id="adDetailTable"></table>
+		<div id="adDetailTable" class="resultTableDiv noBorder ">
+			<h2 id="adDetailHeading" class="welcome heading"></h2>
+			<table><tbody></tbody></table>
+		</div>
 	</div><!--end of EDADFRAME-->
 
 		</div>

@@ -68,19 +68,19 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  
+		  $.fn.DynaSmartTab.guestTool(tr, jobAd.attr("jobAdId"));
 
-		  var viewButton = $('<td></td>');
-		  viewButton.appendTo(tr);
+//		  var viewButton = $('<td></td>');
+//		  viewButton.appendTo(tr);
 		  
-		  $("<button>View</button>").attr("id", id='td-viewButton').click(
-			function() {
- 				openTab('adDetailTab'); 
-    			open_adDetail(jobAd.attr("jobAdId"));
-				getJobAdById("detail", jobAd.attr("jobAdId"), "adDetailTable");
-			     //TODO: implement transition loading screen - UI
-			  }
-		  ).appendTo(viewButton);
+//		  $("<button>View</button>").attr("id", id='td-viewButton').click(
+//			function() {
+// 				openTab('adDetailTab'); 
+//    			open_adDetail(jobAd.attr("jobAdId"));
+//				getJobAdById("detail", jobAd.attr("jobAdId"), "adDetailTable");
+//			     //TODO: implement transition loading screen - UI
+//			  }
+//		  ).appendTo(viewButton);
 		  
 		// $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
@@ -753,7 +753,8 @@ function redisplayProfile(accountType)
 		  				"<tr><td>Secondary Email</td><td>"				+ profile.attr("secondaryEmail")				+ "</td></tr>" +
 		  				"<tr><td>Phone</td><td>"						+ profile.attr("phone")							+ "</td></tr>" +
 		  				"<tr><td>Education Level</td><td>"				+ profile.attr("educationFormatted") 				+ "</td></tr>" +
-		  				"<tr><td>Preferred Start Date</td><td>"			+ profile.attr("preferredStartDate")			+ "</td></tr>" +
+		  				"<tr><td>Preferred Start Date</td><td>"			+ profile.attr("startingDateFormatted")			+ "</td></tr>" +
+		  				"<tr><td>Employment Preference</td><td>"		+ profile.attr("employmentPreference")			+ "</td></tr>" +
 		  				"<tr><td>Location</td><td>"						+ profile.children("location").attr("address")	+ "</td></tr>" +
 		  				"<tr><td>Self Description</td><td>"				+ profile.attr("selfDescription")				+ "</td></tr>" +
 		  				"<tr class='clean'></tr>";

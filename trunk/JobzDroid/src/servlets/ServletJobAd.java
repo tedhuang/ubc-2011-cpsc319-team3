@@ -231,69 +231,47 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.tags 				= result.getString("tags");
 				
-			/**Get Location values */
-				stmtLoc = conn.createStatement();
-				ArrayList<Location> locationList = new ArrayList<Location>();
-				
-				query = "SELECT * FROM tableLocationJobAd WHERE " +
-						"idJobAd= '" + jobAd.jobAdId +"'";
-				
-				System.out.println(query);
-				isSuccessful = stmtLoc.execute(query);
-				ResultSet locResult = stmtLoc.getResultSet();
-				
-				while(locResult.next()){
-					Location location = new Location();
-
-					//Get Address, Longitude, Latitude
-					location.address = result.getString("location");
-					location.longitude = result.getDouble("longitude");
-					location.latitude = result.getDouble("latitude");	
-					locationList.add(location);
-				}
-				
-				jobAd.locationList = locationList;
 				
 				jobAdList.add(jobAd);
-				
-			/**Get Employment Availability values */
-				stmtEmp = conn.createStatement();
-
-				
-				String empAvail = "";
-				int fullTime = 0;
-				int partTime = 0;
-				int internship = 0;
-				
-				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
-				"idJobAd= '" + result.getInt("idJobAd") + "'";
-				System.out.println(query);
-				
-				isSuccessful = stmtEmp.execute(query);
-				ResultSet empResult = stmtEmp.getResultSet();
-				
-				if(!empResult.first()){
-						System.out.println("No Employment Type Found");
-				}
-				else{
-					fullTime = empResult.getInt("fullTime");
-					partTime = empResult.getInt("partTime");
-					internship = empResult.getInt("internship");	
-
-					if( (fullTime+partTime+internship) == 0 ){
-						empAvail = "Not Specified"; //no preference
-					}
-					else{
-						if( fullTime == 1)
-							empAvail += "Full-time ";
-						if(partTime == 1)
-							empAvail += "Part-time ";
-						if(internship == 1)
-							empAvail += "Internship";
-					}
-					System.out.println("Job Positions Available: " + empAvail);
-					jobAd.jobAvailability = empAvail;
-				}
+//				
+//			/**Get Employment Availability values */
+//				stmtEmp = conn.createStatement();
+//
+//				
+//				String empAvail = "";
+//				int fullTime = 0;
+//				int partTime = 0;
+//				int internship = 0;
+//				
+//				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+//				"idJobAd= '" + result.getInt("idJobAd") + "'";
+//				System.out.println(query);
+//				
+//				isSuccessful = stmtEmp.execute(query);
+//				ResultSet empResult = stmtEmp.getResultSet();
+//				
+//				if(!empResult.first()){
+//						System.out.println("No Employment Type Found");
+//				}
+//				else{
+//					fullTime = empResult.getInt("fullTime");
+//					partTime = empResult.getInt("partTime");
+//					internship = empResult.getInt("internship");	
+//
+//					if( (fullTime+partTime+internship) == 0 ){
+//						empAvail = "Not Specified"; //no preference
+//					}
+//					else{
+//						if( fullTime == 1)
+//							empAvail += "Full-time ";
+//						if(partTime == 1)
+//							empAvail += "Part-time ";
+//						if(internship == 1)
+//							empAvail += "Internship";
+//					}
+//					System.out.println("Job Positions Available: " + empAvail);
+//					jobAd.jobAvailability = empAvail;
+//				}
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){

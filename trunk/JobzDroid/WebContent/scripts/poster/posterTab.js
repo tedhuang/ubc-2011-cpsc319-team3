@@ -2,7 +2,6 @@
  * DynaSmartTab
  * jQuery Tab Control Plugin
  * Author: Cheng Chen
- * Inspired By "SmartTab", http://tech-laboratory.blogspot.com
  * 
  */
 (function($){

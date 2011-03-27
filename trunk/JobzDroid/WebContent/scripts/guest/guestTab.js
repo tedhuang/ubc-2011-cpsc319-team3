@@ -2,7 +2,6 @@
  * DynaSmartTab
  * jQuery Tab Control Plugin
  * Author: Cheng Chen
- * Inspired By "SmartTab", http://tech-laboratory.blogspot.com
  * 
  */
 (function($){
@@ -23,18 +22,13 @@
                 
                 $(obj).addClass(options.tabPaneClass); // Set the CSS on top element
                 
-                bindFuncToBtn();//bind function to btns
-                
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
      		    initHome();
      		   
    /************************STARTOF FUNCTION GROUP******************************************************************************/
      		   function initHome(){
-//     			  $.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
-     			  getJobAdByOwner("ownerAdTable");
-//     			 $.fn.smartLightBox.closeLightBox(1000,"home-frame");
-     			  
+     		    	guestViewJobAd("allJobAdtable", "next");
      		   }
      		    function refreshTabs(){
      			   //update to the latest tab info, any change involving position-changing, visual-changing need to call it at the end  
@@ -68,39 +62,14 @@
      			   bindCloseClick();
      			   return closeBtn;
                }
-     		   function bindFuncToBtn(){
-     			   $('.newadbtn')
-     			   .attr('title', 'Compose New Ad')	
-     			   .bind("click", function(){
-     			   		openTab('newAdTab'); 
-     			   		open_newAd_form();
-     			   	});
-     		   }
+     		   
      		   
      		   function bindCloseClick(){
      		   	$(closeBtn).unbind('click').bind("click", function(){
-     		   	var kpwrt=true;
-     		   	 if($(this).hasClass('confirmReq')){
-     		   		 var tabToRm=$(this);
-     		   		$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeNewAd");
-     		   		$('a.save', "#btnBox").click(function(){
-						$("#btnBox", "#lightBox").hide();
-						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
-						$("#lbMsg","#lightBox").html("Saving Draft");
-						postJobAd("draft", "newAdForm", "feedback");
-						closeTab.call(tabToRm);
-					});
-	     		   	$('a.notsave', "#btnBox").click(function(){
-	     		   		$.fn.smartLightBox.closeLightBox(0);
-	     		   		closeTab.call(tabToRm);
-					});
-	     		   		
-     		   	 }
-     		   	 else{
      		   		 closeTab.call(this);
-     		   	 }
      		   	});
      		   }
+     		   
      		   function closeTab(){
      			  tabToRm = $($(this).parent().find("a"),obj);
      		   	  if(tabToRm.length){
@@ -114,7 +83,7 @@
  			  			}
  			  			
  			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
- 			  				$($(this).attr("href"), obj).empty().hide();
+ 			  				$($(this).attr("href"), obj).hide();
  			  			}
  			  			else{
  			  					$($(this).attr("href"), obj).remove();
@@ -126,33 +95,6 @@
          	    curTabIdx=0;
          	    showTab();
      		   }
-     		   function autoCloseTab(){
-     			  
-     				tabToRm = tabs.eq(curTabIdx); 
-     			  	if(tabToRm.length){
-     			  		$.each(tabToRm, function(){
-     			  			
-     			  			if($($(this).parent(), obj).hasClass("hideOnly")){
-     			  				$($(this).parent(), obj).hide();
-     			  			}
-     			  			else{
-     			  				$($(this).parent(), obj).remove();
-     			  			}
-     			  			
-     			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
-     			  				$($(this).attr("href"), obj).empty().hide();
-     			  			}
-     			  			else{
-     			  					$($(this).attr("href"), obj).remove();
-     			  			}
-     			  		});
-     			  	}
-     			    refreshTabs();
-     			  	tabNum--;
-             	    curTabIdx=0;
-             	    showTab();
-     			  	
-             	  }
      		   
                 function bindOnClick()
                 {
@@ -289,27 +231,24 @@
                   }
                 };
     /*********************************************************************************************************************
-     * 						floatingTool
+     * 						guest Tool
      * - Add FLOATING TOOL BAR TO THE LIST table row and bind them with different functions
      * - Publicly Accessible
      *
      * ********************************************************************************************************************/ 
-                $.fn.DynaSmartTab.floatingTool=function(tRow, adId){
+                $.fn.DynaSmartTab.guestTool=function(tRow, adId){
          			
-         			var tool= $('<span></span>').addClass('edTool');
-         			$('<a></a>').addClass('jsBtn').addClass('view').text('view | ').appendTo(tool);
+//         			var tool= $('<button></button>').addClass('guestView');
+         			
          			tRow.hover(function() {
-         		        tool.animate({opacity: "show", left: "0"}, 0);
-         		    }, function() {
-         		        tool.animate({opacity: "hide", left: "0"}, 0);
-         		    });
-         			tool.unbind('click').appendTo(tRow);
-         			
-         			var status=tRow.find('td.td-status').text();
-         			tRow.delegate('a.view', "click", function(){
+         		        $(this).addClass("hover");
+         		    }, function(){
+         		    	$(this).removeClass("hover");
+         		    })
+         			.unbind('click')
+         			.click( function(){
          				openTab('adDetailTab'); 
-            			open_adDetail(adId);
-            			getJobAdById("detail",adId, "adDetailTable");
+         				getJobAdById("detail", adId, "adDetailTable");
          			});
 
          };
@@ -317,14 +256,7 @@
   * 
   ************************************************************************************************************************/
 
-        function open_adDetail(adId){
-        	//hard coded
-       	 $("#adDetailFrame").load("../poster/DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
-       		$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
-       		$("div.headToolBar").unbind('click');
-       		       		
-       	 });
-       }
+        
         $.fn.DynaSmartTab.close=function(){
         	autoCloseTab();//for close tab after action performed
         };
