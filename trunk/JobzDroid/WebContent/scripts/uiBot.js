@@ -768,61 +768,56 @@ function redisplayProfile(accountType)
 
 	
 	
+
+/********************************************************************************************************************
+ * 						Build a table for profile
+ * @param targetXMLTag
+ * @param outputDiv
+ * @param heading
+ *********************************************************************************************************************/
+function buildProfileTb(targetXMLTag, outputDiv, heading){
+	var tbody  = $( "tbody", "#" + outputDiv).html("");
+	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	if(profile.length==0){//if no results
+		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+	}
+	else{
+		
+		switch(profile.attr("accountType")){
+		
+		case("searcher"):
+			
+		  $("#"+heading).html( profile.attr("name") + "'s Profile");
+		  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+		  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+		  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
+		  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
+		  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
+		  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
+		  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+		  break;
+		  
+		case "poster":
+			
+			$("#"+heading).html( profile.attr("name") + "'s Profile");
+			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+			  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
+			  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
+			
+		  break;
+		  
+		default:
+			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+			break;
+		
+		}
+		 $(tbody).append(rowText);
+		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $("#detailFB").hide();
+	}
+}
 	
-	
-	
-/**************************
- * DEPRECATED FUNCTIONS:
- **************************/
-//	/********************************************************************************************************************
-//	 * 						Build a table for profile
-//	 * @param targetXMLTag
-//	 * @param outputDiv
-//	 * @param heading
-//	 *********************************************************************************************************************/
-//	function buildProfileTb(targetXMLTag, outputDiv, heading){
-//		var tbody  = $( "tbody", "#" + outputDiv).html("");
-//		var profile = $(targetXMLTag, xmlhttp.responseXML);
-//		if(profile.length==0){//if no results
-//			$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
-//		}
-//		else{
-//			
-//			switch(profile.attr("accountType")){
-//			
-//			case("searcher"):
-//				
-//			  $("#"+heading).html( profile.attr("name") + "'s Profile");
-//			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-//			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-//			  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
-//			  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
-//			  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
-//			  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
-//			  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
-//			  break;
-//			  
-//			case "poster":
-//				
-//				$("#"+heading).html( profile.attr("name") + "'s Profile");
-//				  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
-//				  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-//				  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
-//				  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
-//				
-//			  break;
-//			  
-//			default:
-//				$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
-//				break;
-//			
-//			}
-//			 $(tbody).append(rowText);
-//			 $(tbody).find('tr').find('td:first').addClass("nameCol");
-//			 $(tbody).find('tr').find('td:last').addClass("dataCol");
-//			 $("#detailFB").hide();
-//		}
-//	}
-//	
 
 

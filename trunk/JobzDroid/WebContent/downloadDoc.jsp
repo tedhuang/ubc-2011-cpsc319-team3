@@ -32,7 +32,6 @@
 	}
 	// if invalid session, then redirect to login page
 	if (s == null){
-		System.out.println("session null");
 		response.sendRedirect("index.html");
 	}
 	// if session belongs to a searcher that does not own the document, then redirect to error page
