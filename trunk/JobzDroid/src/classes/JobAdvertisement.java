@@ -55,7 +55,7 @@ public class JobAdvertisement {
 		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
 		creationDateFormatted	= Utility.dateConvertor(creationDate);
 		expiryDateFormatted 	= Utility.dateConvertor(expiryDate);
-		String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
+		//String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
 
 		
 		if(startingDate == 0)
