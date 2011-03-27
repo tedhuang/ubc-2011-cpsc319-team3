@@ -49,7 +49,6 @@ public class SystemManager {
 //	public static String dbUser 	= "blitzcriegteam";
 //	public static String dbPassword	= "cs319team3";
 	
-	
 	public static int maxDBConnectionPoolSize = 0;									// 0 means no limit
 	
 	// system email variables

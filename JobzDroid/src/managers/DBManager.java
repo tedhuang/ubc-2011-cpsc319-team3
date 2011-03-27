@@ -493,7 +493,7 @@ public class DBManager {
 		try{
 			// retrieve the account ID from login information
 			stmt = conn.createStatement();
-			System.out.println("check email:" + email + "password" + pw);
+			System.out.println("check email:" + email + " password" + pw);
 			rs = stmt.executeQuery( "SELECT * FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
 					   						  "AND password = md5('" + pw + "')" );
