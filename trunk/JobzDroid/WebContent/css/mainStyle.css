@@ -35,6 +35,7 @@ h2.info{  background-color : #d2d200;}
 
 h2.welcome{	border-bottom: 2px solid;	border-bottom-color: #0C3E74;	padding: 0 0 3px;}
 
+.jsDetailBtn{cursor: pointer;}
 .jsBtn{/*We will have a Click cursor without <a>!*/	cursor	: pointer;}
 /************************ENDOF BASIC STRUCTURE**********************************/
 .pagefont {	padding: 3px 8px 3px 8px; 	vertical-align: middle; 	font-size: 13px;}
