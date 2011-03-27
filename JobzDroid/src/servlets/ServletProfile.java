@@ -317,6 +317,7 @@ public class ServletProfile extends HttpServlet{
 		//TODO pass back XML formatted profile data
 		if( accountType.equalsIgnoreCase("searcher") ) {
 			XMLResponse.append(searcher.toXMLContent() );
+			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( currSession.getIdAccount() ));
 		} else if ( accountType.equalsIgnoreCase("poster") ) {
 			XMLResponse.append(poster.toXMLContent() );
 		}
@@ -624,6 +625,7 @@ public class ServletProfile extends HttpServlet{
 		
 		if ( currSession.getAccountType().equals("searcher") ) {
 			XMLResponse.append( ((ProfileSearcher)profile).toXMLContent() );
+			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( currSession.getIdAccount() ));
 //			XMLResponse.append( documentList );
 		}
 		else if ( currSession.getAccountType().equals("poster") ) {

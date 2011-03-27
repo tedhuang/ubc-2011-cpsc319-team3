@@ -278,11 +278,11 @@
 				</table>
 			 </div>	
 			 <div id="fileUploadDIV">
-	    		<form name="fileUploadForm" onsubmit="uploadFile()" method="post" enctype="multipart/form-data" target="error.html">
+	    		<form name="fileUploadForm" onsubmit="uploadSearcherFile()" method="post" enctype="multipart/form-data" target="error.html">
        				<input type="hidden" name="sessionKey"/>
 					File: <input type="file" name="file"/><input type="submit" value="Upload"/>
     			</form>
-				<div id="fileUploadFeedback">
+				<div id="fileFeedback">
 				</div>
 			 </div>
 			 <div id="fileTable" class="resultTableDiv">
@@ -297,7 +297,7 @@
 						</th>
 					</tr>
 				</thead>
-					<tbody style="text-align:justify">
+					<tbody>
 					</tbody>
 				</table><!--ENDOF TABLE-->
 		</div><!--ENDOF File TABLE--> 

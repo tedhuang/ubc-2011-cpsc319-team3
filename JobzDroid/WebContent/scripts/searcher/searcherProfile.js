@@ -121,7 +121,10 @@
 //	    }
 //	  };	
 //}
-
+//function getProfileAndFileList(profileOutputDiv, profileHeading, fileOutputDiv){
+//	getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv );
+//	listUserFiles(fileOutputDiv);
+//}
 
 function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv ){
   
@@ -149,7 +152,7 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 		  //you can find this in uiBot.js under scripts folder
 		 //buildProfileSearcherEditTb("profile", profileOutputDiv, profileHeading);
 		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
-		  listUserFiles(fileOutputDiv);
+		  buildSearcherFileTb("file", fileOutputDiv);
 	    }
 	  };	
 }
@@ -182,7 +185,7 @@ function listUserFiles( outputDiv ) {
 	
 }
 
-function uploadFile() {
+function uploadSearcherFile() {
 	
 	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
 	document.fileUploadForm.action = "../ServletDocument";
@@ -203,10 +206,42 @@ function fileUploadProgress() {
 
 	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 		var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;;
-		document.getElementById("fileUploadFeedback").innerHTML = message;
+		document.getElementById("fileFeedback").innerHTML = message;
     }
 }
 
-
+function deleteSearcherFile(filename) {
+    var b = confirm("Are you sure to PERMANENTLY delete the selected file?");
+    if (b == false)
+        return false;
+	var strSessionKey = document.getElementById("sessionKey").value;
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	request = new Request;
+	request.addAction("deleteDocument");
+	request.addSessionKey(strSessionKey);
+	request.addParam("fileName", filename);
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletDocument" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString()); 
+	
+	xmlhttp.onreadystatechange=function(){
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+		  var msg =  (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+		  $("#fileFeedback").text(msg);
+	    }
+	  };
+}
 
 
