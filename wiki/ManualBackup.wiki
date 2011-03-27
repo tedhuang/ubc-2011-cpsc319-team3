@@ -1,0 +1,36 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Add your content here.
+
+= Steps for Backup =
+
+Steps
+  * backup MySQL DB
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
+
+Backup MySQL DB
+{{{
+.\mysqldump.exe -u *username* -h *hostIP* --database *dbname* -p > *filename.sql*
+}}}
+Notes: succeeded when using mysqldump.exe from MySQL Server 5.1, the one packaged with MySQL workbench did not work
+
+= Steps for Restoration =
+
+Restoring MySQL DB
+  * use mySQL console and type in
+{{{
+source *filename.sql*;
+}}}
+  * or run mysql.exe by this...
+{{{
+./mysql.exe -u *username* -p < *filename.sql
+}}}
+
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
