@@ -45,7 +45,8 @@ source *filename.sql*;
 }}}
   * or run mysql.exe by this...
 {{{
-./mysql.exe -u *username* -p < *filename.sql
+if on windows
+./mysql.exe -u *username* -p --lower_case_table_names=2 < *filename.sql
 }}}
 
 
