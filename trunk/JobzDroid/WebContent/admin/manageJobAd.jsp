@@ -62,7 +62,7 @@
 	
 	<div class="main">
 		  <div class="header">
-			<a id="logo" title="Home" href="#" onclick="loadPageWithSession('home.jsp')">
+			<a id="logo" title="Home" href="../index.html" target="_blank">
 		        <img src="../images/logo-small.png"/>
 			</a>
 			<ul id="topnav" class="topnav">

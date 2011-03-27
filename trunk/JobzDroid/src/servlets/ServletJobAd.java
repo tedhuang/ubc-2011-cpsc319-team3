@@ -1001,6 +1001,9 @@ public class ServletJobAd extends HttpServlet {
 					String[] feedCategory = null;					
 					if(tags != null){
 						feedCategory = tags.split(",");
+						// remove spaces before and after each category
+						for(int i = 0; i < feedCategory.length; i++)
+							feedCategory[i] = feedCategory[i].trim();
 					}
 					try {
 						SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");

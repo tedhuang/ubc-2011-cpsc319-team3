@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />	
-	<link href="http://localhost:8080/JobzDroid/css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>		
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
