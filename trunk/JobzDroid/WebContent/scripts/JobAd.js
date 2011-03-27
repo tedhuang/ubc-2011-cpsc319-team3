@@ -449,16 +449,31 @@ function postJobAd(mode, formDiv, heading){
 	if(noNullData){
 		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
-		var searchFields = $(":input", theForm).serializeArray();
+		var searchFields = $(":input:not('.map')", theForm).serializeArray();
 		
 		jQuery.each(searchFields, function(i, field){
 	          if(field.name=="expireTime-field" || field.name=="startTime-field"){
-	        	request.addParam(field.name, field.value);
+	        	request.addParam(field.name, field.value);//TODO ???
 	          }
 	          else{
 				request.addParam(field.name, field.value); //add parameter to the request
 	          }
 		   });
+		//get location info
+		var locList = $("li", $("#locList", theForm)).get();
+//		var locations=[];
+		var i = 1;
+		$.each(locList, function(){
+//			var loc = ({"addr": $(this).data("addr"),"latlng":$(this).data("latlng")});
+//			locations.push(loc);
+			request.addParam("addr"+i, $(this).data("addr"));
+			request.addParam("latlng"+i, $(this).data("latlng"));
+			i++;
+		});
+//		$each(locList, function(){
+//			
+//			request.addParam(field.name, field.value);
+//		});
 		
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
@@ -827,13 +842,11 @@ function delJobAd(tbRow, jobAdId){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		  $("#lbImg", "#lightBox").removeClass("load").addClass("good");
-		  $("#lbMsg","#lightBox").html("Your Ad is now deleted!");
+		  $("#lbMsg","#lightBox").html("Your Ad Was Deleted!");
 		  $.fn.smartLightBox.closeLightBox(1500);
 		  tbRow.remove();
-//		  tbRow.find("td:last").text("Inactive");
 	    }
-	  else{
-		  if ( xmlhttp.status!=200){
+	  else if ( xmlhttp.status!=200){
 			  console.log("delete was unsuccessful");
 		  }
 		  //TODO Lightbox error

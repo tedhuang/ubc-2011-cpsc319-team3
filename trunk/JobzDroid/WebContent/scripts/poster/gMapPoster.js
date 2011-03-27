@@ -1,5 +1,5 @@
 (function($){
-	$.fn.smartGMap=function(setting){
+	$.fn.smartMap=function(setting){
 		var setting = $.extend({}, $.fn.smartMap.defaults, setting);
 		
 		return this.each(function(){

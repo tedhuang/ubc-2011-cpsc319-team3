@@ -30,9 +30,9 @@
 /********************TabFrame *********************************************************/
 
 #tabFrame{	width: 100%;	background-color: white;	display	: inline;	float: left;	border: 1px solid #CCC;   border-top-width	: 0 !important;
-		position: relative;	margin	: 0;	-webkit-border-bottom-left-radius	: 5px;    -webkit-border-bottom-right-radius	: 5px;}
-#tabFrame div.subFrame{	margin	: 0;	padding	: 10px; min-height: 450px;}
-#tabFrame div.subFrame div{ text-align	: left;    font	: normal 12px Verdana, Arial, Helvetica, sans-serif; }
+		position: relative;	margin	: 0;	-webkit-border-bottom-left-radius	: 5px;    -webkit-border-bottom-right-radius	: 5px; overflow:auto;}
+#tabFrame div.subFrame{	margin	: 0;	padding	: 10px; min-height: 450px; }
+#tabFrame div.subFrame div{ text-align	: left;    font	: normal 12px Verdana, Arial, Helvetica, sans-serif;}
 #tabFrame div.subFrame .newFormContainer,
 #tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0; bottom: 0;	background-color: white;}
 .edFormContainer .fillInForm,

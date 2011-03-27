@@ -51,7 +51,7 @@
 	               	return tabs;
                }
                
-               function updatetabIdList(){ // TODO MERGE with updateTabSet
+               function updatetabIdList(){ 
 	               	var IdList =new Array();
 	               	var tabArray = $($("ul > li","#navBar"), obj).get();
 	               	$.each(tabArray, function(){
@@ -300,7 +300,7 @@
          			var tool= $('<span></span>').addClass('edTool');
          			$('<a></a>').addClass('jsBtn').addClass('view').text('view | ').appendTo(tool);
          			$('<a></a>').addClass('jsBtn').addClass('edit').text('edit | ').appendTo(tool);
-         			$('<a></a>').addClass('jsBtn').addClass('del').text('delete').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
          			tRow.hover(function() {
          		        tool.animate({opacity: "show", left: "0"}, 0);
          		    }, function() {
@@ -339,6 +339,12 @@
         	 $("#newAdFrame").load("DOMs/formDOM.jsp #newAdForm",function(){//TODO move this to server side for security reason
          		$( "#startTime-field","#newAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
          		$( "#expireTime-field" ,"#newAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
+         		$("#mapPanel", "#newAdFrame").smartMap({});
+         		$(".btn-slide").click(function(){
+       			 $("#mapPanel").slideToggle("slow");
+       	 			$.fn.smartMap.resize();
+       	 			$(this).toggleClass("active"); return false;
+       	    });
          	});
         }
         
