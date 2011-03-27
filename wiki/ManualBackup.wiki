@@ -17,6 +17,25 @@ Backup MySQL DB
 }}}
 Notes: succeeded when using mysqldump.exe from MySQL Server 5.1, the one packaged with MySQL workbench did not work
 
+= Installation =
+
+  * Install Java
+  * Install Apache Tomcat
+  * Install MySQL
+  * Setup DB
+  * Setup FileSystem
+  * Setup Tomcat
+
+== Install Java ==
+
+Installing Java is dependent on the Operating System, simply follow instructions from [http://www.java.com/en/download/index.jsp]
+
+Install JRE or JDK
+  * If installed JRE, make sure 
+    * JRE_HOME - environmental variable points to the folder JRE is installed
+  * If installed JDK, make sure
+    * JAVA_HOME - environmental variable points to the folder JDK is installed
+
 = Steps for Restoration =
 
 Restoring MySQL DB
