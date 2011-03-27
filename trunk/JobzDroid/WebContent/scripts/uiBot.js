@@ -375,13 +375,15 @@ function buildSearcherFileTb(targetXMLTag, outputDiv){
 		  var idOwner = file.attr("idOwner");
 		  var tr = $('<tr></tr>');
 		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
+		  var deleteAnchor =  "<a title='Delete' onclick='deleteSearcherFile(\"" + filename +"\")'" +
+		  		" class='linkImg' style='float:right'><img src='../images/icon/delete_icon.png'/></a>";
 		  var filenameCell = $('<td></td>');
 		  filenameAnchor.appendTo(filenameCell);
 		  filenameCell.appendTo(tr);
 		  $('<td></td>').text(file.attr("size")).appendTo(tr);
+		  tr.append(deleteAnchor);
 		  
-		  tr.appendTo(tbody);
-		  
+		  tr.appendTo(tbody);		  
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
 	}
@@ -399,7 +401,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 	var profile = $(targetXMLTag, xmlhttp.responseXML);
 	
 	if(profile.length==0){//if no results
-		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something does not exist</h2>");
+		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something that does not exist!</h2>");
 	}
 	else{
 		var accountType = profile.attr("accountType");	

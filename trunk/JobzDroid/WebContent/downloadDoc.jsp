@@ -47,7 +47,7 @@
 		try{
 			File file = new File( filepath + filename );
 			// clear web page headers from from output stream
-	//		out.clear();
+			out.clear();
 			//set response headers
 			response.setContentType("text/plain");			
 			response.addHeader("Content-Disposition","attachment; filename=" + filename );

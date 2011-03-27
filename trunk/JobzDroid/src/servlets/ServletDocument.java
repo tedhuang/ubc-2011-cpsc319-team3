@@ -84,10 +84,6 @@ public class ServletDocument extends HttpServlet {
 				case deleteDocument:
 					deleteDocument(request, response);
 					break;
-					
-				case listUserDocuments:
-					listUserDocuments(request, response);
-					break;
 			}
 		}
 
@@ -253,7 +249,6 @@ public class ServletDocument extends HttpServlet {
 	private void deleteDocument(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String message = "ServletDocument: deleteDocument() did not work as intended";
-		String action = "";
 		
 		String sessionKey = request.getParameter("sessionKey");
 		String fileName = request.getParameter("fileName");
@@ -275,7 +270,7 @@ public class ServletDocument extends HttpServlet {
 				success = fileToBeDeleted.delete();
 				
 				if( success ) {
-					
+					message = "ServletDocument: deleted " + fileName + " from system";
 				}
 				else {
 					message = "ServletDocument: failed to delete " + fileName + " from system";
@@ -293,9 +288,7 @@ public class ServletDocument extends HttpServlet {
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
 		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("\t<action>" + action + "</action>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
@@ -392,78 +385,103 @@ public class ServletDocument extends HttpServlet {
 		
 	}
 	
-	/***
-	 * TODO
-	 */
-	private void listUserDocuments( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		String message = "ServletDocument: listUserDocuments() did not work as intended";
-		String action = "";
+	
+	public static String getFilesXMLByOwnerID( int idOwner ) {
 		
-		String sessionKey = request.getParameter("sessionKey");		
-		Session currSession = dbManager.getSessionByKey(sessionKey);
-
-		
-		// check privilege and determine what to use for doc owner ID
-		int idOwner = -1;
-		
-		if (currSession == null)
-			response.sendRedirect("index.html");
-		else {
-			if ( currSession.checkPrivilege("searcher") ) {
-				idOwner = currSession.getIdAccount();
-			}
-			else if( currSession.checkPrivilege("poster", "admin", "superAdmin")) {
-				try{
-					idOwner = Integer.parseInt(request.getParameter("idOwner"));
-				}
-				catch(Exception e){
-					response.sendRedirect("error.html");
-				}
-			}
-		}
-		
-		if(idOwner == -1)
-			response.sendRedirect("index.html");
-		
+		File[] userfiles = getUserFiles( idOwner );
 		String fileData = "";
 		
-		boolean success = false;
-		earlyExit: {
+		for( File eachFile: userfiles ) {
+			BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
+			fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
 			
-			File[] userfiles = getUserFiles( idOwner );
-			
-			for( File eachFile: userfiles ) {
-				BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
-				fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
-				
-				fileData = fileData.concat("\t<file " +
-						"fileName=\"" + eachFile.getName() + "\" " +
-						"size=\"" + (  fileSizeMB  ) + "\" " +
-						"idOwner=\"" + (  idOwner  ) + "\" " +
-						">" + "</file>\n");
-				success = true;
-			}
-			
-			message = "ServletDocument: filename gotten";
-		}//earlyExit:
-		System.out.println(message);
-		
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("\t<action>" + action + "</action>\n");
-		if(success = true) {
-			XMLResponse.append(fileData);
+			fileData = fileData.concat("\t<file " +
+					"fileName=\"" + eachFile.getName() + "\" " +
+					"size=\"" + (  fileSizeMB  ) + "\" " +
+					"idOwner=\"" + (  idOwner  ) + "\" " +
+					">" + "</file>\n");
 		}
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		System.out.println(XMLResponse);
+		
+		return fileData;
 	}
 	
-	
-	
 }
+
+
+
+
+
+
+
+///***
+// * TODO
+// */
+//private void listUserDocuments( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//
+//	String message = "ServletDocument: listUserDocuments() did not work as intended";
+//	String action = "";
+//	
+//	String sessionKey = request.getParameter("sessionKey");		
+//	Session currSession = dbManager.getSessionByKey(sessionKey);
+//
+//	
+//	// check privilege and determine what to use for doc owner ID
+//	int idOwner = -1;
+//	
+//	if (currSession == null)
+//		response.sendRedirect("index.html");
+//	else {
+//		if ( currSession.checkPrivilege("searcher") ) {
+//			idOwner = currSession.getIdAccount();
+//		}
+//		else if( currSession.checkPrivilege("poster", "admin", "superAdmin")) {
+//			try{
+//				idOwner = Integer.parseInt(request.getParameter("idOwner"));
+//			}
+//			catch(Exception e){
+//				response.sendRedirect("error.html");
+//			}
+//		}
+//	}
+//	
+//	if(idOwner == -1)
+//		response.sendRedirect("index.html");
+//	
+//	String fileData = "";
+//	
+//	boolean success = false;
+//	earlyExit: {
+//		
+//		File[] userfiles = getUserFiles( idOwner );
+//		
+//		for( File eachFile: userfiles ) {
+//			BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
+//			fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
+//			
+//			fileData = fileData.concat("\t<file " +
+//					"fileName=\"" + eachFile.getName() + "\" " +
+//					"size=\"" + (  fileSizeMB  ) + "\" " +
+//					"idOwner=\"" + (  idOwner  ) + "\" " +
+//					">" + "</file>\n");
+//			success = true;
+//		}
+//		
+//		message = "ServletDocument: filename gotten";
+//	}//earlyExit:
+//	System.out.println(message);
+//	
+//	StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append("\t<action>" + action + "</action>\n");
+//	if(success = true) {
+//		XMLResponse.append(fileData);
+//	}
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+//	System.out.println(XMLResponse);
+//}
