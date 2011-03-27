@@ -100,7 +100,8 @@ public class ServletJobAd extends HttpServlet {
 		
 		/*****************POST AD ACTIONS***********************/
 			case createJobAdvertisement :
-				postJobAd(request, response);
+//				createJobAdvertisement(request, response);
+				createJobAd(request, response);
 				break;
 				
 			case editJobAd:
@@ -541,7 +542,7 @@ public class ServletJobAd extends HttpServlet {
 			stmt = conn.createStatement();
 			
 			String query = 
-				"SELECT * FROM tableJobAd " + 
+				"SELECT jobAdId,ownerID, creationDate,  jobAdTitle, expiryDate, jobAvailability,status , educationReq,  FROM tableJobAd " + 
 				"WHERE idAccount=" + ownerId;
 			
 			System.out.println("getJobAdByOwner query:" + query);
@@ -561,8 +562,8 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.jobAvailability	= result.getString("jobAvailability");
 				jobAd.status 			= result.getString("status");
 				jobAd.educationReq 		= result.getInt("educationRequired");
-				jobAd.isApproved 		= result.getInt("isApproved");
-				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+//				jobAd.isApproved 		= result.getInt("isApproved");
+//				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 
 //				jobAd.jobAdDescription 	= result.getString("description");
 //				jobAd.startingDate 		= result.getLong("dateStarting");
@@ -1658,6 +1659,250 @@ public class ServletJobAd extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 		
 	}
+/****************************************************************************************************************
+ * 
+ * @param request
+ * @param response
+ * @throws IOException
+ */
+private void createJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		mysqlCmd qcmd = new mysqlCmd();
+		//Debug
+		System.out.println("Entered createJobAdvertisement");
+		//initialize return statements
+		boolean isSuccessful = false;
+		String msg = "";
+		
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		
+		String sKey=request.getParameter("sessionKey");
+		System.out.println("sessionKey=" +sKey );
+		//Checks the user's privilege
+		int acctId=-1;
+		
+		StringBuffer qBuf =sessAuthQuery(sKey,qcmd);
+		String query=qBuf.substring(1, qBuf.length()-2);//Remove bracket
+		System.out.println(query);
+
+//			String address 				 = request.getParameter("address");
+//			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
+//			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
+			
+//			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
+//			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {
+				
+				System.out.println("Processing " + query);
+				stmt = conn.createStatement();
+				ResultSet authRs = stmt.executeQuery(query);
+				if(authRs.next()){
+					acctId=authRs.getInt("idAccount");
+				}
+				if(acctId==-1){
+					stmt.close();
+					conn.close();
+				}
+				else{
+					stmt=conn.createStatement(); //create a new statement
+					StringBuffer[]postQuery=buildPostAdQuery(request, acctId);
+					query = postQuery[0].toString(); //The Post Ad Query
+					
+					int success = stmt.executeUpdate(query);
+					if (success != 1){
+						System.out.println("New JobAd Creation failed");
+						Utility.logError("New JobAd insert in DB failed");
+					}
+					
+					msg = "Action Performed Successfully";
+					//Get jobAdId By Using select the last inserted ID
+					PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+					ResultSet rs = getLastInsertId.executeQuery();
+					
+					int jobAdId = -1;
+					if (rs.next()){
+						jobAdId = rs.getInt("last_insert_id()"); 
+						System.out.println("Retrived: Job Ad ID: " + jobAdId);
+					}
+					else{
+						System.out.println("Error: Job Ad ID not found after creation");
+					}
+				   if(jobAdId != -1){	
+					   stmt=conn.createStatement(); //create a new statement maybe not needed
+					   PreparedStatement postLocation = conn.prepareStatement(postQuery[1].toString());
+					   postLocation.setInt(1, jobAdId);
+//					   query = postQuery[1].toString(); //Insert location values into location table
+					   //DEBUG
+					   System.out.println("Location table query: " + postLocation.toString());
+					
+					   postLocation.executeUpdate();
+					   
+					   rs = getLastInsertId.executeQuery();
+					   if(rs.next()){
+					  	 System.out.println("Location Inserted With Job Id: " + rs.getInt("last_insert_id()"));
+					   }
+					   
+					   else{
+						System.out.println("Insert location for new job ad failed");
+						Utility.logError("Insert location for new job ad failed");
+					}
+	
+				  }//ENDOF INSERT INTO LOCATION TABLE 
+				}
+			}
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		        }
+		        catch (Exception e) {
+		        	//TODO log "Cannot close Statement"
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	//TODO log Cannot close Connection
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+//		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + msg + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+/***************************************************************************************************************
+ * 					Build Post Job Ad Query
+ * - In charge of Creating and Drafting Job Ad
+ * @param request
+ * @param IdAcct
+ * @return
+ ***************************************************************************************************************/
+private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
+//	String query=null;
+	StringBuffer [] queriesBuffer = new StringBuffer[2];//size 2
+	mysqlCmd qcmd 	 			= new mysqlCmd(); 
+	Map<String, Object>paraMap	= new HashMap<String, Object>();//JobAd Table Mapping
+	Map<String, String>locMap	= new HashMap<String, String>();//JobAd Location Table Mapping
+	StringBuffer queryBuf 		= new StringBuffer();
+	StringBuffer locQueryBuf	= new StringBuffer();
+	String action = request.getParameter("action");
+	
+	Map<String, String> paraColMap = DbDict.getDict(action);
+	Map<String, String> jobLocMap  = DbDict.getDict("jobAdLocation");
+	
+	Enumeration paramNames = request.getParameterNames();
+	while (paramNames.hasMoreElements()) {
+		
+		String paraName = (String) paramNames.nextElement();
+		if( !paraName.equals("action") && !paraName.equals("sessionKey")){//Not query "action"&"sKey"
+			//debug
+			System.out.println("Request: "  + paraName + " Value: " +request.getParameter(paraName));
+			
+			if(paraName.matches("(?i).*addr.*") || paraName.matches("(?i).*latlng.*")){//Distinguish the location
+				String colName = jobLocMap.get(paraName);
+				locMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );
+				//Debug
+			    System.out.println("Column: " + colName + " Value: " + locMap.get(colName)+"\n");
+			}
+			
+			else{
+				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
+				
+				//Put the parameters' names and values into the MAP
+				if(colName.equals("dateStarting")||colName.equals("expiryDate")){
+					long aDate=Utility.dateConvertor(request.getParameter(paraName));
+					paraMap.put(colName, aDate);
+				}
+				else{
+					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );//will fail if no value is actually passed
+				}
+				//Debug
+			    System.out.println("Column: " + colName + " Value: " + paraMap.get(colName)+"\n");
+			}
+			
+			
+		} //ENDOF IF SET COL-VAL IN PARAMAP
+		
+	  	
+	  }//ENDOF WHILE paramNames.hasMoreElements()
+	paraMap.put("idAccount", IdAcct);//set the owner id
+	paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the modified time
+	
+	/*
+	 * Entering Query making
+	 * CAUTION: SPACE IMPORTANT
+	 */
+	StringBuffer stm1 = new StringBuffer();
+	StringBuffer stm2 = new StringBuffer();
+	
+	stm1.append( qcmd.INSERT + qcmd.INTO + "tableJobAd " + qcmd.PRNTHS);
+	stm2.append( qcmd.VALUES + qcmd.PRNTHS);
+	stm1.insert(stm1.length()-2, "status"+qcmd.COMA);
+    
+	if(action.equals("saveJobAdDraft")){//status is draft
+		stm2.insert(stm2.length()-2, "'draft'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
+	  }
+	else if(action.equals("createJobAdvertisement")){//TODO CHCK SYSTEM SETTING IF NEEDS APPROVAL
+		//status is pending
+		stm2.insert(stm2.length()-2, "'pending'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
+	}
+	
+	for(Map.Entry<String, Object> entry : paraMap.entrySet()){
+		String column= entry.getKey();
+		Object value = entry.getValue();
+		stm1.insert(stm1.length()-2 , column+ qcmd.COMA);//insert col into the parentheses
+		stm2.insert(stm2.length()-2,  qcmd.SQUO+ value + qcmd.SQUO + qcmd.COMA);
+	}
+		stm1.delete(stm1.length() - qcmd.COMA.length()-2, stm1.length()-2);//get rid of last coma
+		stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
+		queryBuf.append(stm1.append(stm2));//merge the query
+	
+	
+	//Handle Location query
+	stm1.setLength(0);
+	stm2.setLength(0);
+	stm1.append( qcmd.INSERT + qcmd.INTO + "tableLocationJobAd " + qcmd.PRNTHS);
+//	stm1.insert(stm1.length()-2, "idJobAd, "); //Prepare for the job id
+	stm2.append( qcmd.VALUES + qcmd.PRNTHS);
+	locMap.put("idJobAd", "?");//This will be used in the preparedStatement
+	
+	for(Map.Entry<String, String> entry : locMap.entrySet()){
+		String column= entry.getKey();
+		String value = entry.getValue();
+		stm1.insert(stm1.length()-2 , column+ qcmd.COMA);//insert col into the parentheses
+		if(column.equals("idJobAd")){
+		 stm2.insert(stm2.length()-2,  value + qcmd.COMA);
+		}
+		else{
+			stm2.insert(stm2.length()-2,  qcmd.SQUO+ value + qcmd.SQUO + qcmd.COMA);
+		}
+	}
+		stm1.delete(stm1.length() - qcmd.COMA.length()-2, stm1.length()-2);//get rid of last coma
+		stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
+		locQueryBuf.append(stm1.append(stm2));//merge the query
+	
+	queriesBuffer[0]=queryBuf;
+	queriesBuffer[1]=locQueryBuf;
+//	query = queryBuf.toString();
+	return queriesBuffer;
+}
 /**********************************************************************************************************************
  * 								build Post Query
  * This function will build query for SUBMIT AD AND SAVE DARFT
@@ -1707,7 +1952,7 @@ public class ServletJobAd extends HttpServlet {
 		 */
 		StringBuffer stm1 = new StringBuffer();
 		StringBuffer stm2 = new StringBuffer();
-		if( action.equals("editJobAd") ){
+		if(action.equals("editJobAd")){
 			stm1.append( qcmd.UPDATE + "tableJobAd " + qcmd.SET );
 			stm2.append( qcmd.WHERE);
 		}  
@@ -1803,34 +2048,6 @@ public class ServletJobAd extends HttpServlet {
 		String feedback="adminDeleteJobAd failed";
 		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
-//		Session userSession = dbManager.getSessionByKey(sessKey);
-//		int acctId;
-		
-//		earlyExit: {
-//			System.out.println("Checking user's sessionKey" + sessKey);
-//				
-//			if ( userSession == null ) {
-//				System.out.println("session is null, Failed to authenticate user session");
-//				feedback = "Have You Logged in? Please Try Re-login";
-//				break earlyExit;
-//			}
-//			else {
-//				String uType=userSession.getAccountType();
-//				System.out.println("checking usertype...\n"+"usertype = " + uType);
-//				
-//				if( uType.equals("poster") || uType.equals("admin")){
-//					System.out.print("User is " + uType+ ". Priviliege Confirmed.");
-//					acctId= userSession.getIdAccount();
-//				}
-//				else {
-//					System.out.print( "User is" + uType +". Privilege Denied.");
-//					break earlyExit;
-//				}
-//			}
-//		}//ENDOF EARLY EXIT
-			
-//		System.out.print("User Access Granted for key: " + userSession.getKey() +"\n" );
-//		System.out.println("Starting Deleting JobAd with ID " + jobAdId);
 		
 		StringBuffer qBuf = sessAuthQuery(sessKey, qcmd); 
 		qBuf.insert(0, qcmd.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
@@ -2011,7 +2228,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		StringBuffer qAcctTb =new StringBuffer();
 		
 		qSessTb.append(qcmd.PRNTHS);
-		qAcctTb.append(qcmd.PRNTHS);
+		qAcctTb.append(qcmd.PRNTHS); //append brackets
 		
 		qSessTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableSession" +  
 						  qcmd.WHERE +"sessionKey" + qcmd.EQ + qcmd.SQUO +sKey + qcmd.SQUO);

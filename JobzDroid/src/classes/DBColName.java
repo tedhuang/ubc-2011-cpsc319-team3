@@ -8,8 +8,9 @@ import java.util.*;
 
 public class DBColName{
 	
-//	private static Map <String, String> DBcolNameDict=new HashMap<String, String>();
-	
+/**********************************************************************************************
+ * 			SEARCHING AND POSTING JOB AD MAPPING 
+ **********************************************************************************************/
 	private final String[]tbJobAdColArray={
 				"idJobAd",
 				"idAccount",
@@ -29,39 +30,11 @@ public class DBColName{
 	};
 	private Map<String, String>tbJobAdColMap=new HashMap<String, String>();
 	
-	
-	
-	private final String[]tbProfileColArray={
-			"idAccount",
-			"name",
-			"phone",
-			"selfDescription", 
-			"educationlevel",
-			"startingDate"
-	};
-	private Map<String, String>tbProfileColMap=new HashMap<String, String>();
-	
-	
-	private final String[]tbProfileSearcherColArray={
-		"name",
-		"educationLevel",
-		"location",
-		"startingDate",
-		"educationFormatted"
-	};
-	private Map<String, String>tbProfileSearcherColMap = new HashMap<String, String>();
-		
-		
-
-
-/*
- * PROFILE SEARCH MAPPING
- */
 	private final String[]searchAdFields={
-			/************************************************************************************
-			 * Those are input forms' name, MUST be matched
-			 * Entries Starts With NO means CLIENTS CANNOT DO SUCH REQUEST (YET)
-			 ************************************************************************************/
+	/******************************************************************************
+	 * Those are input forms' name, MUST be matched
+	 * Entries Starts With NO means CLIENTS CANNOT DO SUCH REQUEST (YET)
+	 *****************************************************************************/
 			"searchJobId",
 			"searchTitle",
 			"searchStartDate",
@@ -85,13 +58,11 @@ public class DBColName{
 	};
 	private Map<String, String>searchAdFieldsMap=new HashMap<String, String>();
 	
-	
-	
 	private final String[]adEditFields={
-			/************************************************************************************
-			 * Those are input forms' name, MUST be matched
-			 * Entries ""--NULL means CLIENTS CANNOT MODIFY SUCH Field (YET)
-			 ************************************************************************************/
+	/***************************************************************************
+	 * Those are input forms' name, MUST be matched
+	 * Entries ""--NULL means CLIENTS CANNOT MODIFY SUCH Field (YET)
+	 ***************************************************************************/
 					"title-field",
 			  		"desc-field",
 			  		"expireTime-field",
@@ -112,9 +83,26 @@ public class DBColName{
 	
 	
 	
-/*
- * PROFILE SEARCH MAPPING
- */
+/**********************************************************************************************
+ * 				PROFILE SEARCH MAPPING
+ **********************************************************************************************/
+	private final String[]tbProfileColArray={
+			"idAccount",
+			"name",
+			"phone",
+			"selfDescription", 
+			"educationlevel",
+			"startingDate"
+	};
+	private Map<String, String>tbProfileColMap=new HashMap<String, String>();
+	private final String[]tbProfileSearcherColArray={
+			"name",
+			"educationLevel",
+			"location",
+			"startingDate",
+			"educationFormatted"
+		};
+	private Map<String, String>tbProfileSearcherColMap = new HashMap<String, String>();
 	private final String[]searchProfileFields={
 			/************************************************************************************
 			 * Those are input forms' name, MUST be matched
@@ -130,6 +118,29 @@ public class DBColName{
 	};
 	private Map<String, String>searchProfileFieldsMap=new HashMap<String, String>();
 	
+/***********************************************************************************
+ * 			JOB AD LOCATION Input and Column Name Group
+ **********************************************************************************/
+	private final String[]tbAdLocColArray={
+			"idJobAd",
+			"addr1",
+			"addr2",
+			"addr3", 
+			"latlng1",
+			"latlng2",
+			"latlng3",
+	};
+	private Map<String, String>tbAdLocColMap=new HashMap<String, String>();
+	private final String[]tbAdLocInput={
+			"idJobAd",
+			"addr1",
+			"addr2",
+			"addr3", 
+			"latlng1",
+			"latlng2",
+			"latlng3",
+	};
+	private Map<String, String>tbAdLocFieldMap=new HashMap<String, String>();
 	
 	private final String[]searchSearcherProfileFields={
 			/************************************************************************************
@@ -145,18 +156,24 @@ public class DBColName{
 	private Map<String, String>searchSearcherProfileFieldsMap=new HashMap<String, String>();
 	
 	
-	
+/***********************************************************************************
+ * Constructor INIT all Dictionary
+ **********************************************************************************/
 	public DBColName(){
 		initColMap();
 		makeAdPostDict();
 		makeSearchAdDict();
 		makeSearchProfileDict();
 		makeSearchSearcherProfileDict();
+		makeAdLocDict();
 	}
 	
 	private void initColMap(){
 		for(int i=0; i<tbJobAdColArray.length; i++){
 			tbJobAdColMap.put(tbJobAdColArray[i], tbJobAdColArray[i]);
+		}
+		for(int i=0; i<tbAdLocColArray.length; i++){//init tbAdLocColMap
+			tbAdLocColMap.put(tbAdLocColArray[i], tbAdLocColArray[i]);
 		}
 		for(int i=0; i<tbProfileSearcherColArray.length; i++){
 			tbProfileSearcherColMap.put(tbProfileSearcherColArray[i], tbProfileSearcherColArray[i]);
@@ -184,6 +201,9 @@ public class DBColName{
 		//Profile Functions:
 		else if(action.equals("searchProfile")){
 			return colDictSearchProfile;
+		}
+		else if(action.equals("jobAdLocation")){
+			return colDictAdLoc;
 		}
 		
 		else if(action.equals("searchSearcherProfile")){
@@ -275,5 +295,21 @@ public class DBColName{
 		colDictSearchJobAd = Collections.unmodifiableMap(colDictSearchJobAd);
 	}
 	
+	
+	private static Map <String, String> colDictAdLoc=new HashMap<String, String>();
+	private void makeAdLocDict(){//CREATE AND EDIT AD
+		for(int i=0; i<tbAdLocInput.length; i++){
+			tbAdLocFieldMap.put(tbAdLocInput[i], tbAdLocInput[i]);
+		}
+		colDictAdLoc.put(tbAdLocFieldMap.get("idJobAd"), 			tbAdLocColMap.get("idJobAd"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr1"),				tbAdLocColMap.get("addr1"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr2"), 				tbAdLocColMap.get("addr2"));//TODO CHANGE DB COL
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr3"),				tbAdLocColMap.get("addr3"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("latlng1"), 			tbAdLocColMap.get("latlng1"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("latlng2"), 			tbAdLocColMap.get("latlng2"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("latlng3"), 			tbAdLocColMap.get("latlng3"));
+		
+		colDictAdLoc = Collections.unmodifiableMap(colDictAdLoc);
+	}
 	
 }

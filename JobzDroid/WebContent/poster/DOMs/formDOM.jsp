@@ -8,16 +8,8 @@
 <link href="../../css/mainStyle.css" rel="stylesheet" type="text/css"/>
 <link href="../../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="../scripts/Utility.js"></script>
 </head>
 <body>
-<script type="text/javascript">   
-    $(document).ready(function(){
-    	$("#desc-field").bind("keyup", function(){
-    		limitChars('desc-field', 1000, 'desc-info');
-    	});
-	});
-</script>
 <div class="main">
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
@@ -119,7 +111,6 @@
 					<label>Is Graduate Funding Available:</label>
 						<input type="radio" name="gf-field" value="1" id="gf-field" class="mustNotNull"/> Yes
 						<input type="radio" name="gf-field" value="0" id="gf-field" class="mustNotNull"/> No
-						
 				</div>
 			</div><!--ENDOF typeInForm-->
 				
@@ -154,22 +145,24 @@
 		   		 			Internship
 						</label>
 					</div>
-					<!--  <div class="field"> 
-						<label for="loc-field" >Location:</label> 
-						<input id="address" name="loc-field" class="textBox" value=""/>
-						<input id="lat-field" name="lat-field" class="textBox" value=""/>
-						<input id="lng-field" name="lgn-field" class="textBox" value=""/>
-						<span id=locFeedback></span>
-						<button type="button" onclick="calculateLocation()">Find Location</button><br/>
-						<table id="lookUpTable"></table><br />
-					</div>
-					-->
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
+			   <div id="fields">
+				  <div id="mapPanel">
+				 	<div id="theMap">
+					    <label>Address: </label><input id="address" class="map" type="text" />
+					    <div id="map_canvas" ></div><br/>
+					    <label>latitude: </label><input id="latitude" class="map"type="text"/><br/>
+					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
+					    <button id="rmPtr">Clear Map</button>
+				  	</div>
+				  	<ul id="locList"></ul>
+				 </div>
+				</div><!-- ENDOF MAP -->
+				<span class="jsBtn btn-slide">Show Map</span>
 			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
-						<textarea id="desc-field" name="desc-field" class="textBoxXL mustNotNull"></textarea> <br/>
-						<span id="desc-info"></span>
+						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
 				   </div>
 				</div>
 		 </div><!--ENDOF newAdForm-->
