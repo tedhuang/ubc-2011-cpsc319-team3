@@ -1,12 +1,31 @@
-
-jQuery.fn.smartSort = (function(){
+/**
+ * author:James Padolsey, http://james.padolsey.com
+ * jQuery.fn.sortElements
+ * --------------
+ * @param Function comparator:
+ *   Exactly the same behaviour as [1,2,3].sort(comparator)
+ *   
+ * @param Function getSortable
+ *   A function that should return the element that is
+ *   to be sorted. The comparator will run on the
+ *   current collection, but you may want the actual
+ *   resulting sort to occur on a parent or another
+ *   associated element.
+ *   
+ *   E.g. $('td').sortElements(comparator, function(){
+ *      return this.parentNode; 
+ *   })
+ *   
+ *   The <td>'s parent (<tr>) will be sorted instead
+ *   of the <td> itself.
+ */
+jQuery.fn.sortElements = (function(){
  
     var sort = [].sort;
  
-    return function(comparator, columnToSort) {//this is the argument of the function
-    	
-       //Get all the element that to be sorted
-       var elmToSort = columnToSort.find('td').filter(function(){return $(this).index()===columnToSort.index();});
+    return function(comparator, getSortable) {
+ 
+        getSortable = getSortable || function(){return this;};
  
         var placements = this.map(function(){
  
@@ -45,17 +64,3 @@ jQuery.fn.smartSort = (function(){
     };
  
 })();
-
-
-function genericComparator(a,b){
-	inverse = false;
-	a = $(a).text();
-    b = $(b).text();
-    
-    return (
-        isNaN(a) || isNaN(b) ?
-            a > b : +a > +b
-        ) ?
-            inverse ? -1 : 1 :
-            inverse ? 1 : -1;
-}
