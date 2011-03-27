@@ -850,7 +850,5 @@ function delJobAd(tbRow, jobAdId){
 			  console.log("delete was unsuccessful");
 		  }
 		  //TODO Lightbox error
-		  
-	  }
 	  };	  
 }
