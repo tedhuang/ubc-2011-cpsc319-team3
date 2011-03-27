@@ -73,6 +73,8 @@ public class ProfileSearcher {
 		
 		result = result.concat( "\t\t</profile>\n" );
 		
+		System.out.println(result);
+		
 		return result;
 	}
  	

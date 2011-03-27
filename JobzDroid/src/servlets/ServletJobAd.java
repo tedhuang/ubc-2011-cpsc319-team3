@@ -728,11 +728,9 @@ public class ServletJobAd extends HttpServlet {
 						if( fullTime == 1){
 							empAvail += "Full-time ";
 						}
-						
 						if(partTime == 1){
 							empAvail += "Part-time ";
 						}
-						
 						if(internship == 1){
 							empAvail += "Internship";
 						}

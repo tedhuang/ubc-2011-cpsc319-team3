@@ -355,6 +355,7 @@ public class ServletProfile extends HttpServlet{
 					"FROM tableProfileSearcher " +
 					"INNER JOIN tableAccount USING (idAccount)" +
 					"INNER JOIN tableLocationProfile USING (idAccount) " +
+					"INNER JOIN tableSearcherEmpPref USING (idAccount) " +
 					"WHERE idAccount="+profileSearcherId;
 			
 			System.out.println("getProfileSearcherById query:"+query);
@@ -367,6 +368,12 @@ public class ServletProfile extends HttpServlet{
 			if(result.first()){
 				System.out.println("result.first()");
 				message = "Profile Search successful";
+				
+				String empPref = "";
+				int fullTime = 0;
+				int partTime = 0;
+				int internship = 0;
+				
 				profileSearcher.accountID = result.getInt("idAccount");
 				profileSearcher.name = result.getString("name");
 				profileSearcher.phone = result.getString("phone");
@@ -387,6 +394,24 @@ public class ServletProfile extends HttpServlet{
 				location.latitude = result.getDouble("latitude");
 				locationList.add(location);
 				profileSearcher.addressList = locationList;
+				
+				//Load Employment Preference vales
+				fullTime = result.getInt("fullTime");
+				partTime = result.getInt("partTime");
+				internship = result.getInt("internship");	
+				
+				if( (fullTime+partTime+internship) == 3   || (fullTime+partTime+internship) == 0)
+					empPref = "N/A"; //no preference
+				else{					
+					if( fullTime == 1)
+						empPref += "Full-time ";
+					if(partTime == 1)
+						empPref += "Part-time ";
+					if(internship == 1)
+						empPref += "Internship";
+				}
+				System.out.println("Employment Preference: " + empPref);
+				profileSearcher.employmentPreference = empPref;
 			}
 			else{
 				isSuccessful = false;
@@ -567,23 +592,18 @@ public class ServletProfile extends HttpServlet{
 					partTime = result.getInt("partTime");
 					internship = result.getInt("internship");	
 
-					if( (fullTime+partTime+internship) == 3 ){
+					if( (fullTime+partTime+internship) == 3   || (fullTime+partTime+internship) == 0)
 						empPref = "N/A"; //no preference
-					}
 					else{
-						if( fullTime == 1){
+						if( fullTime == 1)
 							empPref += "Full-time ";
-						}
-						
-						if(partTime == 1){
+						if(partTime == 1)
 							empPref += "Part-time ";
-						}
-						
-						if(internship == 1){
+						if(internship == 1)
 							empPref += "Internship";
-						}
 					}
 					
+					System.out.println("Employment Preference: " + empPref);
 					searcher.employmentPreference = empPref;
 				}
 			}// END OF EMPLOYMENT PREFERENCE
