@@ -745,7 +745,7 @@ function guestViewJobAd(outputDiv, mode){
 	}
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","/JobzDroid/ServletJobAd" ,true);
+	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	

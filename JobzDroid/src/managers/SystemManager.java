@@ -40,9 +40,16 @@ public class SystemManager {
 	
 	// DB connection variables
 	public static String dbDriver 	= "com.mysql.jdbc.Driver";
-	public static String dbURL 		= "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
-	public static String dbUser 	= "blitzcriegteam";
-	public static String dbPassword	= "cs319team3";
+	public static String dbURL 		= "jdbc:mysql://70.79.38.90:3306/dbjobzdriod"; //jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
+	public static String dbUser 	= "root";//"blitzcriegteam";
+	public static String dbPassword	= "cs319CS#!(";//"cs319team3";
+	
+	
+//	public static String dbURL 		= "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
+//	public static String dbUser 	= "blitzcriegteam";
+//	public static String dbPassword	= "cs319team3";
+	
+	
 	public static int maxDBConnectionPoolSize = 0;									// 0 means no limit
 	
 	// system email variables

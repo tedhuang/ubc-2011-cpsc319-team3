@@ -107,7 +107,7 @@
   	  <div id="navBar" class="navBar">
 		<ul>
   			<li id="homeTab">
-  				<a href="#home-frame"><h2>Home</h2></a>
+  				<a href="#home-frame" onclick="guestViewJobAd('allJobAdtable', 'prev')"><h2>Home</h2></a>
 			</li>
   			<li id="Tab1">
   				<a href="#searchJob-frame"><h2>Jobs</h2></a>
@@ -122,12 +122,7 @@
 	
   <div id="tabFrame">
 	<div id="home-frame" class="subFrame unremovable">
-            <h2 class="welcome">My Profile Summary</h2>
-			<div id="profileArea">
-				Profile goes here
-			</div>
-            <h2 class="welcome">My Job Feeds</h2>
-            
+         	<h2 class="welcome">My Job Feeds</h2>
 	       <div id="allJobAdtable" class="resultTableDiv">
 	          <table>
 				<thead>
@@ -169,7 +164,7 @@
 				</table><!--ENDOF TABLE-->
 			</div>
 			
-            <button type="button" id='prevButton'onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 10</button>
+            <button type="button" id='prevButton' onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 10</button>
 			<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 10</button>		
 			 
 			 
@@ -250,18 +245,18 @@
 				</div>
 				<div class="formFieldWrapper">
 					  	 <label class="formFieldLabel">Employment Type:</label><br />
-								<label for="ftChk">
-								  <input type="checkbox" name="searchFT" value="fullTime" id="ftChk"/>
-									Full Time
+							<label for="ftChk">
+							  <input type="checkbox" name="searchFT" value="fullTime" id="ftChk"/>
+								Full Time
 								</label>
-				   		<label for="ptChk">
-							 <input type="checkbox" name="searchPT" value="partTime" id="ptChk"/>
-				    		 Part Time
-						</label>
-						<label for="isChk">
-				    		<input type="checkbox" name="searchIS" value="internship" id="isChk"/>
-				   		 	Internship
-						</label>
+					   		<label for="ptChk">
+								 <input type="checkbox" name="searchPT" value="partTime" id="ptChk"/>
+					    		 Part Time
+							</label>
+							<label for="isChk">
+					    		<input type="checkbox" name="searchIS" value="internship" id="isChk"/>
+					   		 	Internship
+							</label>
 				</div>
 			  </div><!--ENDOF columnBox-->
 			  
