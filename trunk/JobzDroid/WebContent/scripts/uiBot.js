@@ -13,33 +13,30 @@ function buildDetailTable(targetXMLTag, outputDiv){
 		fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
 	}
 	else{
-//		switch (mode){
-//			case "detail":
-				
-				var gradFunding = jobAd.attr("hasGradFunding");
-				if( gradFunding == 1 )
-					gradFunding = "Yes";
-				else
-					gradFunding = "No";
-		
-				var tbody  = $( "tbody", "#"+outputDiv).html("");
-				heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
-				var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
-			  				"<tr><td>Location</td><td>"						+ jobAd.find("location").attr("address")		+ "</td></tr>" +
-			  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
-			  				"<tr><td>Available Positions</td><td>"			+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
-			  				"<tr><td>Has Graduate Funding</td><td>"			+ gradFunding									+ "</td></tr>" +
-			  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
-			  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
-			  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
-			  				"<tr class='clean'></tr>" +	
-			  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
-			  
-			    $(tbody).append(rowText);
-			 	$(tbody).find('tr').find('td:first').addClass("nameCol");
-			 	$(tbody).find('tr').find('td:last').addClass("dataCol");
-			 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
-			 	fb.hide();
+		var gradFunding = jobAd.attr("hasGradFunding");
+		if( gradFunding == 1 )
+			gradFunding = "Yes";
+		else
+			gradFunding = "No";
+
+		var tbody  = $( "tbody", "#"+outputDiv).html("");
+		heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
+		var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
+	  				"<tr><td>Location</td><td>"						+ jobAd.find("location").attr("address")		+ "</td></tr>" +
+	  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
+	  				"<tr><td>Available Positions</td><td>"			+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
+	  				"<tr><td>Has Graduate Funding</td><td>"			+ gradFunding									+ "</td></tr>" +
+	  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
+	  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
+	  				"<tr><td>Job Description</td><td>"				+ jobAd.attr("jobAdDescription")				+ "</td></tr>" +
+	  				"<tr class='clean'></tr>" +	
+	  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
+	  
+	    $(tbody).append(rowText);
+	 	$(tbody).find('tr').find('td:first').addClass("nameCol");
+	 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+	 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
+	 	fb.hide();
 	}
 }
 
@@ -78,13 +75,14 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  
 		  $("<button>View</button>").attr("id", id='td-viewButton').click(
 			function() {
-				alert("TODO: add the link to details");
-				//TODO: add link to display job ad details
+ 				openTab('adDetailTab'); 
+    			open_adDetail(jobAd.attr("jobAdId"));
+				getJobAdById("detail", jobAd.attr("jobAdId"), "adDetailTable");
 			     //TODO: implement transition loading screen - UI
 			  }
 		  ).appendTo(viewButton);
 		  
-
+		 $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");

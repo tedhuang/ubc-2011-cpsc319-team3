@@ -5,22 +5,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-	<link href="./css/mainStyle.css" rel="stylesheet" type="text/css" />
-	<link href="./css/smartLightbox.css" rel="stylesheet" type="text/css" />
-	<link href="./css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
-	<link href="./css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
-	<link rel="stylesheet" href="./css/jq-ui/jquery.ui.all.css"/>
+	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
+	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
+	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script type="text/javascript" src="./scripts/sideNavMenu.js"></script>
-	<script type="text/javascript" src="./scripts/smartLightbox.js"></script>
-	<script type="text/javascript" src="./scripts/Utility.js"></script>
-	<script type="text/javascript" src="./scripts/authentication.js"></script>
-	<script type="text/javascript" src="./scripts/Profile.js"></script>
-	<script type="text/javascript" src="./scripts/sideNavMenu.js"></script>
-	<script type="text/javascript" src="./scripts/DynaSmartTab.js"></script>
-	<script type="text/javascript" src='./scripts/JobAd.js'></script>
-	<script type="text/javascript" src='./scripts/uiBot.js'></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
+	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
+	<script type="text/javascript" src="../scripts/Utility.js"></script>
+	<script type="text/javascript" src="../scripts/authentication.js"></script>
+	<script type="text/javascript" src="../scripts/Profile.js"></script>
+	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
+	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	<script type="text/javascript" src='../scripts/JobAd.js'></script>
+	<script type="text/javascript" src='../scripts/uiBot.js'></script>
+	<script type="text/javascript" src='../scripts/guest/guestTab.js'></script>
 
 <script type="text/javascript">
    
@@ -46,12 +47,12 @@
 
    <div class="main">
 	  <div class="header">
-		<a id="logo" title="Home" href="#">
-	        <img src="images/logo-small.png"/>
+		<a id="logo" title="Home" href="index.html">
+	        <img src="../images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
 		    <li><a href="news.jsp" target="_blank" class="btn">News</a></li>
-		    <li><a href="rss/rss.html" target="_blank" class="btn">RSS</a></li>
+		    <li><a href="rss.html" target="_blank" class="btn">RSS</a></li>
 		    <li><a href="#" target="_blank" class="btn">View Job Ads</a></li>
 		</ul>
 	  </div><!--ENDOF DIV header-->		  
@@ -65,9 +66,11 @@
   	  <div id="navBar" class="navBar">
 		<ul>
 			<li id="jobAdTab">
-  				<a href="#allJobAdFrame"><h2>All Job Ads</h2></a>
-			<li id="jobAdDetailsTab">
-  				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
+  				<a href="#allJobAdFrame"><span>View Job Ads</span></a>
+  			</li>
+			<li id="adDetailTab" class="hideOnly iniHidden">
+				<span class="close">X</span>
+  				<a href="#adDetailFrame"><span>View Detail</span></a>
 			</li>
 		</ul>
 	  </div><!--ENDOF NAVBAR-->
@@ -132,8 +135,19 @@
 		    <br/>
 		</div><!--end of ALL JOB AD FRAME-->
 
+<!-- ==================================================================== -->		
+<!--===================== JOB AD DETAILS FRAME ==========================-->
+<!-- ==================================================================== -->	
 
-	</div><!--ENDOF MAIN-->
+	<div id="adDetailFrame" class="subFrame unremovable">
+		<table id="adDetailTable"></table>
+	</div><!--end of EDADFRAME-->
+
+		</div>
+	</div><!--ENDOF TABFRAME-->
+</div><!--ENDOF MAIN-->
+	
+
 	<ul class="footer_wrapper"><li>©2011 JobzDroid</li></ul>
 	<div id="lightBox"></div>
 	<form name="sid" method="get" action=""><input type="hidden" id="sessionKey" name="sessionKey"/></form>
