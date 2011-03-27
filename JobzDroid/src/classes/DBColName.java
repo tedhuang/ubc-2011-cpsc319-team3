@@ -40,6 +40,16 @@ public class DBColName{
 			"startingDate"
 	};
 	private Map<String, String>tbProfileColMap=new HashMap<String, String>();
+	
+	
+	private final String[]tbProfileSearcherColArray={
+		"name",
+		"educationLevel",
+		"location",
+		"startingDate",
+		"educationFormatted"
+	};
+	private Map<String, String>tbProfileSearcherColMap = new HashMap<String, String>();
 		
 		
 
@@ -121,17 +131,35 @@ public class DBColName{
 	private Map<String, String>searchProfileFieldsMap=new HashMap<String, String>();
 	
 	
+	private final String[]searchSearcherProfileFields={
+			/************************************************************************************
+			 * Those are input forms' name, MUST be matched
+			 * Entries Starts With NO means CLIENTS CANNOT DO SUCH REQUEST (YET)
+			 ************************************************************************************/
+			"searchJSName",
+			"searchJSEduReq",
+			"searchJSLoc",
+			"searchJSStartTime",
+			"searchJSEduForm",
+	};
+	private Map<String, String>searchSearcherProfileFieldsMap=new HashMap<String, String>();
+	
+	
 	
 	public DBColName(){
 		initColMap();
 		makeAdPostDict();
 		makeSearchAdDict();
 		makeSearchProfileDict();
+		makeSearchSearcherProfileDict();
 	}
 	
 	private void initColMap(){
 		for(int i=0; i<tbJobAdColArray.length; i++){
 			tbJobAdColMap.put(tbJobAdColArray[i], tbJobAdColArray[i]);
+		}
+		for(int i=0; i<tbProfileSearcherColArray.length; i++){
+			tbProfileSearcherColMap.put(tbProfileSearcherColArray[i], tbProfileSearcherColArray[i]);
 		}
 	}
 	public Map<String, String> getColNameMap(){
@@ -158,6 +186,11 @@ public class DBColName{
 			return colDictSearchProfile;
 		}
 		
+		else if(action.equals("searchSearcherProfile")){
+			System.out.println("SSP2");
+			return colDictSearchSearcherProfile;
+		}
+		
 		return null;
 	}
 	
@@ -182,6 +215,19 @@ public class DBColName{
 		colDictSearchProfile = Collections.unmodifiableMap(colDictSearchProfile);
 	}
 	
+	private static Map<String, String> colDictSearchSearcherProfile = new HashMap<String,String>();
+	private void makeSearchSearcherProfileDict(){
+		for(int i=0; i<searchSearcherProfileFields.length; i++){
+			searchSearcherProfileFieldsMap.put(searchSearcherProfileFields[i], searchSearcherProfileFields[i]);
+		}
+		colDictSearchSearcherProfile.put(searchSearcherProfileFieldsMap.get("searchJSName"),	tbProfileSearcherColMap.get("name"));
+		colDictSearchSearcherProfile.put(searchSearcherProfileFieldsMap.get("searchJSEduReq"), tbProfileSearcherColMap.get("educationLevel"));
+		colDictSearchSearcherProfile.put(searchSearcherProfileFieldsMap.get("searchJSLoc"), tbProfileSearcherColMap.get("location"));
+		colDictSearchSearcherProfile.put(searchSearcherProfileFieldsMap.get("searchJSStartTime"), tbProfileSearcherColMap.get("startingDate"));
+		colDictSearchSearcherProfile.put(searchSearcherProfileFieldsMap.get("searchJSEduForm"), tbProfileSearcherColMap.get("educationFormatted"));
+		
+		colDictSearchSearcherProfile = Collections.unmodifiableMap(colDictSearchSearcherProfile);
+	}
 	
 	
 	private static Map <String, String> colDictEditJobAd=new HashMap<String, String>();

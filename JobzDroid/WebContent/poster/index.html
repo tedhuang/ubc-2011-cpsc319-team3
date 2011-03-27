@@ -26,6 +26,11 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
+<script type="text/javascript">
+$(document).ready(function(){
+		$( "#jsStartTime-field").datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
+	});
+</script>
 
 
 <script type="text/javascript">   
@@ -128,6 +133,12 @@
 			<li id="profileTab">
   				<a href="#profileFrame" onclick="getProfileBySessionKey('profileTable', 'profileHeading')"><span>My Profile</span></a>
 			</li>
+			<li id="searchJSTab">
+				<a href="#searchSearcherFrame"><span>Job Searchers</span></a>
+			</li>
+			<li id="jsProfileTab">
+				<a href="#jsDetailFrame"><span>Searcher Details</span></a>
+			</li>
 			<li id="edAdTab" class="hideOnly iniHidden">
 			<span class="close confirmReq">X</span>
   				<a href="#edAdFrame"><span>View/Edit Ad</span></a>
@@ -142,7 +153,6 @@
 			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
-	
 	
   <div id="tabFrame">
 	<div id="home-frame" class="subFrame unremovable">
@@ -221,6 +231,90 @@
 	
 	<div id="adDetailFrame" class="subFrame unremovable">
 	</div><!--end of EDADFRAME-->
+	
+	<div id="searchSearcherFrame" class="subFrame">
+				
+			  <div id="advSearchForm" class="content">
+		       	<label class="heading-text">Search Job Searchers</label><br/><br/>
+			   
+			     <div class="columnBox">
+			     	<div class="formFieldWrapper">
+						<label class="formFieldLabel">Job Searcher's Name: </label><br/>
+						<input id="nameSearch" type="text" name="searchJSName" size="40" />
+					</div>
+					<div class="formFieldWrapper">
+						<label class="formFieldLabel">Location:</label><br />
+						<input id="jsLocSearch" type="text" name="searchJSLoc" size="40" />
+					</div>
+				 </div>	<!--ENDOF columnBox-->
+				 
+			 <div class="columnBox">
+			 	<div class="formFieldWrapper">
+					<label class="formFieldLabel">Minimum Educational Requirement: </label><br />
+					<select id="jsEduReqSearch" name="searchJSEduReq">
+							<option value="">Choose a degree</option>
+							<option value="1">B.Sc.</option>
+							<option value="2">M.Sc.</option>
+							<option value="3">Ph.D.</option>
+					</select>
+				</div>
+				<div class="formFieldWrapper">
+					<label class="formFieldLabel">Can Work Starting:</label><br/>
+					<input id="jsStartTime-field" name="searchJSStartTime" type="text" size="40" />
+				</div>	
+			  </div><!--ENDOF columnBox-->
+			  <br/>
+			  <div class="floatLeftBtn"> 
+				<button id="newJSSearchBtn" type="button" onclick="searchSearcherProfile('resultTable')">Search</button>
+				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
+			  </div><!--  ENDOF floatLeftBtn -->			  
+
+	
+			</div><!--END ADVSEARCHFORM-->
+			
+			<div id="resultTable" class="resultTableDiv">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-jsName">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Name</div>
+							</div>
+						</th>
+						<th id="col-jsEduReq">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-jsLocation">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+						<th id="col-jsStartDate">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Starting Date</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->	
+			  </div><!--ENDOF DIV RESULT TABLE-->
+			 
+		</div><!--ENDOF DIV SEARCH TAB-->	
+		<div id="jsDetailFrame" class="subFrame">
+			<div id="jsDetailTable" class="resultTableDiv noBorder">
+			 	<span id="detailFB"></span>
+			 	<h2 class="jsDetailHeading" class="welcome"></h2>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABDETAILFRAME-->  
+
 	
 	</div><!--ENDOF TABFRAME-->
   </div><!--end of tabs DIV-->  

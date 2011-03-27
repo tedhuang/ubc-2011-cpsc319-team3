@@ -654,6 +654,7 @@ function redisplayProfile(accountType)
  * 			build jobSearcher Search List
  ******************************************************/
 	function buildJSListTb(targetXMLTag, outputDiv){
+		outputDiv="#"+outputDiv;
 		var tbody  = $("tbody", outputDiv).html("");
 		var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 		if(xmlObj.length==0){//if no results
@@ -664,20 +665,56 @@ function redisplayProfile(accountType)
 			  var profileSearcherXML = $(this);
 			  var tr =$('<tr></tr>');
 			  $('<td></td>').attr("id", id='td-name').addClass('jsDetailBtn').text(profileSearcherXML.attr("name")).appendTo(tr);
-			  $('<td></td>').attr("id", id='td-eduReq').text(profileSearcherXML.attr("educationLevel")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-eduReq').text(profileSearcherXML.attr("educationFormatted")).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-loc').text(profileSearcherXML.children("location").attr("address")).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("preferredStartDate")).appendTo(tr);
 			  
 			  tr.appendTo(tbody);
-			  $("#td-name", tr).click(function(){
-				  buildProfileTb(targetXMLTag, outputDiv, heading);
-				 });
+			  console.log(profileSearcherXML.attr("accountID"));
+			  tr.delegate("#td-name", 'click', function(){
+				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable');
+			  });
+//			  $("#td-name", tr).click(function(){
+//				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable');
+//				 });
 			});
 			 
 			 $("tr:odd", tbody).addClass("oddRow");
 			 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		}
+	}	
+	
+/***************************************************************
+ * buildSearcherDetailTable(targetXMLTag, outputDiv)
+ ****************************************************************/
+	function buildSearcherDetailTable(targetXMLTag, outputDiv){
+		outputDiv='jsDetailTable';
+		var tbody  = $("tbody", "#"+outputDiv).html("");
+		var fb =$(".detailFB", "#"+outputDiv);
+		var heading=$('.jsDetailHeading', "#"+outputDiv);
+		var profile = $(targetXMLTag,xmlhttp.responseXML);
+		if(profile.length==0){//if no results
+			fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
+		}
+		else{				
+			heading.text(profile.attr("name")+"\'s Profile");//TODO FIX the HEADING
+			var rowText = "<tr><td>Email</td><td>" 						+ profile.attr("email") 						+ "</td></tr>" +
+		  				"<tr><td>Secondary Email</td><td>"				+ profile.attr("secondaryEmail")				+ "</td></tr>" +
+		  				"<tr><td>Phone</td><td>"						+ profile.attr("phone")							+ "</td></tr>" +
+		  				"<tr><td>Education Level</td><td>"				+ profile.attr("educationFormatted") 				+ "</td></tr>" +
+		  				"<tr><td>Preferred Start Date</td><td>"			+ profile.attr("preferredStartDate")			+ "</td></tr>" +
+		  				"<tr><td>Location</td><td>"						+ profile.children("location").attr("address")	+ "</td></tr>" +
+		  				"<tr><td>Self Description</td><td>"				+ profile.attr("selfDescription")				+ "</td></tr>" +
+		  				"<tr class='clean'></tr>";
+		  
+		    $(tbody).append(rowText);
+		 	$(tbody).find('tr').find('td:first').addClass("nameCol");
+		 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+		 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
+		 	fb.hide();
+		}
 	}
+
 	
 	
 	
@@ -737,5 +774,4 @@ function redisplayProfile(accountType)
 //	}
 //	
 
-	
-	
+

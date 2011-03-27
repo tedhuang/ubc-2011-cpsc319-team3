@@ -46,6 +46,7 @@ public class ServletProfile extends HttpServlet{
 		//createProfile,
 		editProfile,
 		getProfileById,
+		getProfileSearcherById,
 		getProfileBySessionKey,
 		searchProfile,
 		searchSearcherProfile,
@@ -76,6 +77,11 @@ public class ServletProfile extends HttpServlet{
 		
 			case getProfileById:
 				getProfileById(request,response);
+				break;
+				
+			case getProfileSearcherById:
+				getProfileSearcherById(request,response);
+				System.out.println("DAN DAN DAN");
 				break;
 				
 //			case createProfile:
@@ -323,6 +329,99 @@ public class ServletProfile extends HttpServlet{
 		
 	}
 	
+/*
+ * getProfileSearcherById()
+ */
+	private void getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+		System.out.println("getProfileSearcherById method successfully entered");
+		boolean isSuccessful = false;
+		String message = "Profile Search Failed";
+		
+		String profileSearcherId = request.getParameter("accountId");
+		
+		Connection conn=dbManager.getConnection();
+		Statement stmt =null;
+		ProfileSearcher profileSearcher = new ProfileSearcher();
+		
+		try{
+			stmt = conn.createStatement();
+			String query = "SELECT * " +
+					"FROM tableProfileSearcher " +
+					"INNER JOIN tableAccount USING (idAccount)" +
+					"INNER JOIN tableLocationProfile USING (idAccount) " +
+					"WHERE idAccount="+profileSearcherId;
+			
+			System.out.println("getProfileSearcherById query:"+query);
+			stmt.executeQuery(query);
+			System.out.println(isSuccessful);
+			ResultSet result = stmt.getResultSet();
+			Location location = new Location("Not Specified");
+			ArrayList<Location> locationList = new ArrayList<Location>();
+			
+			if(result.first()){
+				System.out.println("result.first()");
+				message = "Profile Search successful";
+				profileSearcher.accountID = result.getInt("idAccount");
+				profileSearcher.name = result.getString("name");
+				profileSearcher.phone = result.getString("phone");
+				profileSearcher.selfDescription = result.getString("selfDescription");
+				//profileSearcher.docLink = "";
+				//profileSearcher.employmentPreference = result.getString("");
+				profileSearcher.preferredStartDate = result.getLong("startingDate");
+				profileSearcher.educationLevel = result.getInt("educationLevel");
+				
+				profileSearcher.email = result.getString("email");
+				profileSearcher.secondaryEmail = result.getString("secondaryEmail");
+				//profileSearcher.startingDateFormatted = "";
+				//profileSearcher.educationFormatted = "";
+				
+				//profileSearcher.addressList = "";
+				location.address = result.getString("location");
+				location.longitude = result.getDouble("longitude");
+				location.latitude = result.getDouble("latitude");
+				locationList.add(location);
+				profileSearcher.addressList = locationList;
+			}
+			else{
+				isSuccessful = false;
+				System.out.println("Error: Profile not found with ID:" +profileSearcherId);
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append(profileSearcher.toXMLContent() );
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
 	
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
@@ -971,11 +1070,12 @@ public class ServletProfile extends HttpServlet{
 			stmt = conn.createStatement();
 /**BUILD SEARCH QUERY(REQUEST)**/
 			//Add individual queries onto total query
-			String query = buildSearchQuery(request);
+			String query = buildSearchSearcherQuery(request);
 				
 			//DEBUG
 			System.out.println(query);
-				
+			Location location = new Location();
+			ArrayList<Location> locationList = new ArrayList<Location>();
 			stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
 				
@@ -987,7 +1087,12 @@ public class ServletProfile extends HttpServlet{
 				temp.name					= result.getString("name");
 				temp.educationLevel			= result.getInt("educationLevel");
 				temp.preferredStartDate		= result.getLong("startingDate");
-//				temp.tags 					= result.getString("tags");
+
+				location.address = result.getString("location");
+				location.longitude = result.getDouble("longitude");
+				location.latitude = result.getDouble("latitude");
+				locationList.add(location);
+				temp.addressList = locationList;
 					
 				jsList.add( temp ); //add to the temporary list
 			}
@@ -995,7 +1100,7 @@ public class ServletProfile extends HttpServlet{
 			stmt.close();
 				
 			System.out.println("Query Successfully Finished");
-//			return jobAdList;
+
 				
 		} catch (SQLException e1) {
 		e1.printStackTrace();
@@ -1035,6 +1140,105 @@ public class ServletProfile extends HttpServlet{
 		response.getWriter().println(XMLResponse);
 	}
 
+
+
+/*****************************************************************************************************************
+ * 					buildSearchSearcherQuery Function
+ * Dynamically making the query as the user's interests
+ * Caller Function:  searchSearcherProfile()
+ *****************************************************************************************************************/
+	private String buildSearchSearcherQuery(HttpServletRequest request){
+		Map<String, String>paraMap = new HashMap<String, String>();//col-value
+		boolean qkSearch=false;
+		
+		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
+		
+		
+		Enumeration paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {			
+			String paraName = (String) paramNames.nextElement();
+			//If request parameter name is "action", this will cause colName to be null. Hence, do and write nothing.
+			if( paraName.equals("action")){
+				//do and write nothing
+			}
+			//Else if paraName is something else i.e.) a request parameter name of an html input:
+			else
+			{
+				System.out.println("paraName: "+ paraName);
+				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
+				//Put the parameters' names and values into the MAP
+				paraMap.put(colName,request.getParameter(paraName) );
+				//Debug
+				System.out.println("Column: " + colName); 
+				System.out.println("Value: " + paraMap.get(colName));
+			}
+		}
+		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
+		String query 			="SELECT * FROM tableProfileSearcher INNER JOIN tableLocationProfile USING (idAccount) WHERE ";
+		String panicQuery		="SELECT idAccount, name, educationLevel, startingDate FROM tableProfileSearcher";
+		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
+		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
+		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
+		String likeKeyword		= " LIKE "; 	//CAUTION: SPACE IMPORTANT
+		String regExKeyword 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
+		String whereKeyword		= " WHERE ";	//CAUTION: SPACE IMPORTANT
+		String orderByKeyword	= " ORDER BY "; //CAUTION: SPACE IMPORTANT
+		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
+		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
+		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
+		boolean panic = false;
+		
+		StringBuffer queryBuf = new StringBuffer();
+		queryBuf.append(query);
+		
+       for(Map.Entry<String, String> entry : paraMap.entrySet()){
+    	   String column = entry.getKey();
+    	   String value = entry.getValue();
+    	   if(!(column.equals("quickSearch"))){
+    		   System.out.println(column);
+    		   if(column.equals("name")){
+    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
+    		   }
+    		   else if(column.equals("educationLevel")){
+   	    		    queryBuf.append(column+ "=" + value + andKeyword);
+    		   }
+    		   else if(column.equals("startingDate")){
+    			   long dateInLong = Utility.dateStringToLong(value);
+    			   dateInLong = -dateInLong;
+    			   queryBuf.append(column+ ">=" +dateInLong +andKeyword);
+    		   }
+    		   else if(column.equals("location")){
+    			   queryBuf.append(column + likeKeyword + "\'%" +value+"%\'" + andKeyword);
+    		   }
+ 
+    		   else{//TODO NOT WORKING NEED TO FIX 
+    			   panic= true;
+	    		   System.out.println("PANIC ACTION!");
+	    		   queryBuf.setLength(0);
+	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
+	    		   query = queryBuf.toString();
+	    		   break;
+    		   }
+    	   }//ENDOF IF NOT QUICK SEARCH
+    	   
+        }//ENDOF FOR-MAP LOOP
+       
+       
+    	   if (!panic){
+	  			
+	  			if(!qkSearch){
+	  				queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
+	  			}
+	  			else{
+	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
+	  			}
+	  			//queryBuf.append(orderByKeyword + "datePosted" + descKeyword);//TODO Can have pages using limited
+	  			query = queryBuf.toString();
+			}
+       
+		return query;
+	}
+	
 }
 
 

@@ -72,7 +72,7 @@
      			   $('.newadbtn')
      			   .attr('title', 'Compose New Ad')	
      			   .bind("click", function(){
-     			   		openTab('newAdTab'); 
+    			   		openTab('newAdTab'); 
      			   		open_newAd_form();
      			   	});
      		   }

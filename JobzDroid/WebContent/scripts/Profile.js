@@ -208,7 +208,7 @@ function getProfileBySessionKey(outputDiv, heading){
 function searchSearcherProfile(outputDiv){
 	
 	request = new Request;
-	request.addAction("searchProfile");
+	request.addAction("searchSearcherProfile");
 	
 	var searchFields = $(":input", "#advSearchForm").serializeArray();
 	var emptyCounts=0;
@@ -251,6 +251,49 @@ function searchSearcherProfile(outputDiv){
 		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
 	   }
 		  
+}
+
+/************************************************************************************************************
+ * 				View Job Searcher Detail
+ * - View Job Searcher Profile
+ * 
+ ************************************************************************************************************/
+function getProfileSearcherById(mode, id, outputDiv)
+{
+//	$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
+	request = new Request;
+	request.addAction("getProfileSearcherById");
+	request.addParam("accountId", id);
+	var fb = $(".feedback", "#"+outputDiv);
+	//change the text while sending the request
+	fb.html("<h2>Sending getProfileSearcherById Request</h2>");
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		    //parse XML response from server
+		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
+		  if(mode=="detail"){
+		  	buildSearcherDetailTable("profile", outputDiv);
+		  }
+	    }
+	  else if(xmlhttp.status!=200){
+		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
+	  }
+	  };
 }
 
 /**************

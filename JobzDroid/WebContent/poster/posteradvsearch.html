@@ -77,7 +77,7 @@ $(document).ready(function(){
 			     <div class="columnBox">
 			     	<div class="formFieldWrapper">
 						<label class="formFieldLabel">Job Searcher's Name: </label><br/>
-						<input id="nameSearch" type="text" name="searchName" size="40" />
+						<input id="nameSearch" type="text" name="searchJSName" size="40" />
 					</div>
 					<div class="formFieldWrapper">
 						<label class="formFieldLabel">Location:</label><br />
@@ -101,7 +101,7 @@ $(document).ready(function(){
 				</div>
 				<div class="formFieldWrapper">
 					<label class="formFieldLabel">Can Work Starting:</label><br/>
-					<input id="jsStartTime-field" type="text" size="40" />
+					<input id="jsStartTime-field" name="searchJSStartTime" type="text" size="40" />
 				</div>	
 			  </div><!--ENDOF columnBox-->
 			  <br/>
@@ -135,11 +135,6 @@ $(document).ready(function(){
 						<th id="col-jsStartDate">
 							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Starting Date</div>
-							</div>
-						</th>
-						<th id="col-tools">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Tools</div>
 							</div>
 						</th>
 					</tr>
