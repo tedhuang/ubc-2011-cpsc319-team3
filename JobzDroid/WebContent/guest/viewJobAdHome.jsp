@@ -47,7 +47,7 @@
 
    <div class="main">
 	  <div class="header">
-		<a id="logo" title="Home" href="index.html">
+		<a id="logo" title="Home" href="../index.html">
 	        <img src="../images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
