@@ -59,7 +59,6 @@ public class ServletJobAd extends HttpServlet {
 		adminApprove,
 		adminDeny,
 		adminDeleteJobAd,
-		changeJobAdStatus,
 		submitJobAdForApproval,
 		extendJobAdExpiry,		
 		loadAdList //search loader(?)
@@ -121,6 +120,10 @@ public class ServletJobAd extends HttpServlet {
 				deleteJobAd(request, response);
 				break;
 				
+//			case deactivateJobAd:
+//				deactivateJobAd(request, response);
+//				break;
+				
 		/*****************Retrieve AD ACTIONS***********************/		
 			case searchJobAdvertisement:
 				searchJobAd(request, response);
@@ -155,10 +158,6 @@ public class ServletJobAd extends HttpServlet {
 				
 			case adminDeleteJobAd:
 				adminDeleteJobAd(request, response);
-				break;
-				
-			case changeJobAdStatus:
-				changeJobAdStatus(request, response);
 				break;
 				
 			case extendJobAdExpiry://WHY DO WE HAVE THIS?
@@ -1133,82 +1132,6 @@ public class ServletJobAd extends HttpServlet {
 		
 	}
 	
-	/*
-	 * Changes the status of the targetted job ad to the specified status
-	 */
-	private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
-		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
-		String status = request.getParameter("status");
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		boolean isSuccessful = false;
-		String message = "changeJobAdStatus failed";
-		
-		try {
-			stmt = conn.createStatement();
-			
-			//Update status
-			String query = 
-				"UPDATE tableJobAd " + 
-				"SET status='" + status +"' " +
-				"WHERE idJobAd='" + jobAdId + "'";
-			
-			//Debug print
-			System.out.println("Update Query: " + query);
-			
-			if( stmt.executeUpdate(query) != 1 ){ //Error Check
-				System.out.println("Error: Update Query Failed");
-			}
-			else{
-				isSuccessful = true;
-				message = "changeJobAdStatus worked!";
-			}
-		}
-		catch (SQLException e) {
-			//TODO log SQL exception
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		
-		
-	}
-	
-	
-	
-	
-	
-	
-	
 	public ArrayList<JobAdvertisement> searchJobAdvertisement(String keywords, //TODO: change keywords to array 
 			  String location, 
 			  String education
@@ -1614,8 +1537,9 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("usertype = " + userSession.getAccountType());
 				acctId= userSession.getIdAccount();
 				
-				if( userSession.getAccountType().equals("poster") ||
-						userSession.getAccountType().equals("admin")) {
+//				if( userSession.getAccountType().equals("poster") ||
+//						userSession.getAccountType().equals("admin")) {
+				if( userSession.checkPrivilege("poster", "admin", "superAdmin")) {
 					System.out.print("User has the correct priviliege\n");
 				}
 				else {
@@ -1783,7 +1707,7 @@ public class ServletJobAd extends HttpServlet {
 		 */
 		StringBuffer stm1 = new StringBuffer();
 		StringBuffer stm2 = new StringBuffer();
-		if(action.equals("editJobAd")){
+		if( action.equals("editJobAd") ){
 			stm1.append( qcmd.UPDATE + "tableJobAd " + qcmd.SET );
 			stm2.append( qcmd.WHERE);
 		}  
@@ -1798,6 +1722,12 @@ public class ServletJobAd extends HttpServlet {
 			stm2.append( qcmd.WHERE);
 		}
 	    
+		/*
+		 * Job Ad modes dependent on "action"
+		 * createJobAdvertisement --> "draft"
+		 * 
+		 */
+		
 		int mode=-1;
 		if(action.equals("saveJobAdDraft")){
 			stm2.insert(stm2.length()-2, qcmd.SQUO+ "draft" + qcmd.SQUO + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
@@ -2627,6 +2557,89 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 //	response.getWriter().println(XMLResponse);
 //	
 //}
+
+/*
+ * Changes the status of the targetted job ad to the specified status
+ */
+//private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException{
+//	
+//	int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+//	String status = request.getParameter("status");
+//	
+//	Connection conn = dbManager.getConnection();	
+//	Statement stmt = null;
+//	
+//	boolean isSuccessful = false;
+//	String message = "changeJobAdStatus failed";
+//	
+//	// check if the request is to deactivate a Job Ad, we need to acquire new expiryTime if true
+//	boolean setToInactive = false;
+//	if( status.equalsIgnoreCase("inactive")) {
+//		setToInactive = true;
+//	}
+//	
+//	try {
+//		stmt = conn.createStatement();
+//		
+//		String setExpiryTime = "";
+//		if ( setToInactive ) {
+//			setExpiryTime = "expiryDate='" + Utility.getCurrentTime() + "' ";
+//		}
+//		
+//		//Update status
+//		//setExpiryTime empty unless setting Job Ad to "inactive"
+//		String query = 
+//			"UPDATE tableJobAd " + 
+//			"SET status='" + status +"' " + setExpiryTime +
+//			"WHERE idJobAd='" + jobAdId + "'";
+//		
+//		//Debug print
+//		System.out.println("Update Query: " + query);
+//		
+//		if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//			System.out.println("Error: Update Query Failed");
+//		}
+//		else{
+//			isSuccessful = true;
+//			message = "changeJobAdStatus to " + status + " worked";
+//		}
+//	}
+//	catch (SQLException e) {
+//		//TODO log SQL exception
+//		Utility.logError("SQL exception : " + e.getMessage());
+//	}
+//	// close DB objects
+//    finally {
+//        try{
+//            if (stmt != null)
+//                stmt.close();
+//        }
+//        catch (Exception e) {
+//        	//TODO log "Cannot close Statement"
+//        	System.out.println("Cannot close Statement : " + e.getMessage());
+//        }
+//        try {
+//            if (conn  != null)
+//                conn.close();
+//        }
+//        catch (SQLException e) {
+//        	//TODO log Cannot close Connection
+//        	System.out.println("Cannot close Connection : " + e.getMessage());
+//        }
+//    }
+//    
+//	StringBuffer XMLResponse = new StringBuffer();	
+//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//	XMLResponse.append("<response>\n");
+//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+//	XMLResponse.append("\t<message>" + message + "</message>\n");
+//	XMLResponse.append("</response>\n");
+//	response.setContentType("application/xml");
+//	response.getWriter().println(XMLResponse);
+//	
+//	
+//}
+
 
 
 

@@ -827,13 +827,17 @@ function delJobAd(tbRow, jobAdId){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		  $("#lbImg", "#lightBox").removeClass("load").addClass("good");
-		  $("#lbMsg","#lightBox").html("Your Ad Was Deleted!");
+		  $("#lbMsg","#lightBox").html("Your Ad is now deleted!");
 		  $.fn.smartLightBox.closeLightBox(1500);
 		  tbRow.remove();
+//		  tbRow.find("td:last").text("Inactive");
 	    }
 	  else{
+		  if ( xmlhttp.status!=200){
+			  console.log("delete was unsuccessful");
+		  }
 		  //TODO Lightbox error
-		  console.log("delete was unsuccessful");
+		  
 	  }
 	  };	  
 }
