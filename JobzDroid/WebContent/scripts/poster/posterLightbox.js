@@ -10,7 +10,7 @@
 
         return this.each(function() {
         	
-        		lightBox = $(this);
+        		var lightBox = $(this);
         		
 //        		fullLightBox(buildInfoBox("test","alert"),true);
 //        		divLightBox('loginbox','load','loading...');

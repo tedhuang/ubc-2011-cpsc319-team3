@@ -8,7 +8,7 @@ $("document").ready(function(){
  ****************************************************************************************************/
 function userLoginRequest(){
 	
-//	$("#submitButton").attr("disabled", true);
+	$("#submitButton").attr("disabled", true);
 //	$("#submitButton").text("Processing...");
 //	$("#loginError").text("");
 	//TODO ADD LOGIN FORM
@@ -31,6 +31,7 @@ function userLoginRequest(){
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		    {
+			    $("#submitButton").removeAttr("disabled");
 			    //Gets sessionKey and prints it to div
 				var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
 				//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
@@ -60,11 +61,11 @@ function userLoginRequest(){
 function adminLoginRequest()
 {
 	$("#submitButton").attr("disabled", true);
-	$("#submitButton").text("Processing...");
+//	$("#submitButton").text("Processing...");
 	$("#loginError").text("");
 	var strEmail = document.getElementById("email").value;
 	var strPassword = document.getElementById("password").value;
-	
+	$.fn.smartLightBox.openlb('small','Signing in...','load');
 	if (window.XMLHttpRequest)
 		xmlHttpReq = new XMLHttpRequest();
 	else
@@ -73,6 +74,7 @@ function adminLoginRequest()
 	xmlHttpReq.onreadystatechange=function(){
 	  if (xmlHttpReq.readyState==4 && xmlHttpReq.status==200)
 	    {
+		  	$("#submitButton").removeAttr("disabled");
 		    // get sessionKey
 			var sessionKey = (xmlHttpReq.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;			
 		    if( sessionKey != "null" ) { 
@@ -82,7 +84,9 @@ function adminLoginRequest()
 		    	document.sid.submit();
 		    }
 		    else {
-	    		$("#submitButton").removeAttr("disabled");
+				$("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+				$("#lbMsg","#lightBox").html("Incorrect account and password combination.");
+				$.fn.smartLightBox.closeLightBox(2000);
 	    		$("#submitButton").text("Log in");
 				$("#loginError").text("Failed admin login attempt.");
 	    	}
