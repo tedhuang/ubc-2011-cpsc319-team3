@@ -326,8 +326,6 @@ public class ServletProfile extends HttpServlet{
 		
 		System.out.println(XMLResponse);
 		response.getWriter().println(XMLResponse);
-		
-		
 	}
 	
 /*
@@ -339,6 +337,13 @@ public class ServletProfile extends HttpServlet{
 		String message = "Profile Search Failed";
 		
 		String profileSearcherId = request.getParameter("accountId");
+		int intProfileId = -1;
+		try{
+			intProfileId = Integer.parseInt(profileSearcherId);
+		}
+		catch(NumberFormatException e){
+			response.sendRedirect("error.html");
+		}
 		
 		Connection conn=dbManager.getConnection();
 		Statement stmt =null;
@@ -418,10 +423,10 @@ public class ServletProfile extends HttpServlet{
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
 		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append(profileSearcher.toXMLContent() );
+		XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( intProfileId ));
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-		
+		response.getWriter().println(XMLResponse);		
 	}
 	
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
@@ -1206,7 +1211,7 @@ public class ServletProfile extends HttpServlet{
     		   }
     		   else if(column.equals("startingDate")){
     			   long dateInLong = Utility.dateStringToLong(value);
-    			   dateInLong = -dateInLong;
+    		//	   dateInLong = -dateInLong;
     			   queryBuf.append(column+ ">=" +dateInLong +andKeyword);
     		   }
     		   else if(column.equals("location")){
