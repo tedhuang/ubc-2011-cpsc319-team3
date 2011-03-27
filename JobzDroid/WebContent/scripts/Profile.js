@@ -257,13 +257,13 @@ function searchSearcherProfile(outputDiv){
  * - View Job Searcher Profile
  * 
  ************************************************************************************************************/
-function getProfileSearcherById(mode, id, outputDiv)
+function getProfileSearcherById(mode, id, profileDiv, fileDiv)
 {
 //	$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
 	request = new Request;
 	request.addAction("getProfileSearcherById");
 	request.addParam("accountId", id);
-	var fb = $(".feedback", "#"+outputDiv);
+	var fb = $(".feedback", "#"+profileDiv);
 	//change the text while sending the request
 	fb.html("<h2>Sending getProfileSearcherById Request</h2>");
 	
@@ -286,7 +286,8 @@ function getProfileSearcherById(mode, id, outputDiv)
 		    //parse XML response from server
 		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
 		  if(mode=="detail"){
-		  	buildSearcherDetailTable("profile", outputDiv);
+		  	buildSearcherDetailTable("profile", profileDiv);
+		  	buildSearcherFileTb("file", fileDiv);
 		  }
 	    }
 	  else if(xmlhttp.status!=200){

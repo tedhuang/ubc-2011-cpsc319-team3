@@ -723,7 +723,7 @@ function redisplayProfile(accountType)
 			  tr.appendTo(tbody);
 			  console.log(profileSearcherXML.attr("accountID"));
 			  tr.delegate("#td-name", 'click', function(){
-				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable');
+				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable', 'fileDiv');
 			  });
 //			  $("#td-name", tr).click(function(){
 //				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable');
