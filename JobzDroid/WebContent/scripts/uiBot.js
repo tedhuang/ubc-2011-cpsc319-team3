@@ -45,6 +45,54 @@ function buildDetailTable(targetXMLTag, outputDiv){
 
 
 
+/************************************************************************************************
+ * 					BUILD TABLE CONTAINING LIMITED NUMBER JOB ADS - used by Guests and Searchers
+ * INSERT RETURNED DATA INTO THE TABLE
+ * @param xmlObj: THE xmlObject name returned from the server
+ * @param outputDiv: The DIV where the table is held
+**************************************************************************************************/
+function buildGuestJobAdTb(targetXMLTag, outputDiv){
+	
+	//TODO: finish implementing
+	
+	var tbody  = $("tbody", "#"+outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAd = $(this);
+		  var tr = $('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
+		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
+		  
+
+		  var viewButton = $('<td></td>');
+		  viewButton.appendTo(tr);
+		  
+		  $("<button>View</button>").attr("id", id='td-viewButton').click(
+			function() {
+				alert("TODO: add the link to details");
+				//TODO: add link to display job ad details
+			     //TODO: implement transition loading screen - UI
+			  }
+		  ).appendTo(viewButton);
+		  
+
+		  tr.appendTo(tbody);
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}
+
+
 
 
 /************************************************************************************************
@@ -68,6 +116,7 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		  var jobAd = $(this);
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 

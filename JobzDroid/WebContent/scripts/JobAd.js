@@ -709,6 +709,64 @@ function getAllJobAd(outputDiv){
 
 
 /************************************************************************************************************
+ * 				Get Job Ad for Guest
+ * @param outputDiv
+ ************************************************************************************************************/
+function guestViewJobAd(outputDiv, mode){
+	
+	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+
+	var index = $("#browseIndex").val();
+		
+	request = new Request;
+	request.addAction("getSomeJobAd");
+	request.addParam("startingIndex", index);
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","/JobzDroid/ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function(){
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  
+		  buildGuestJobAdTb("jobAd", outputDiv);//uibot
+		  
+			if(index <= 0){
+				$("#prevButton").attr("disabled", true);
+			}else
+				$("#prevButton").attr("disabled", false);
+			
+		
+			if(mode == "next")
+				index = parseInt(index)+10;
+			else if(mode == "prev"){
+				index = parseInt(index)-10;
+			}
+			else
+				alert("Error in guestViewJobAd: Mode parameter wrong");
+		  
+
+		  
+		  $("#browseIndex").val(index ); //increase index by 10
+		  $("#feedback").text("Browse Index: " + $("#browseIndex").val() );
+	    }
+	  else{
+		  //TODO: implement error handling
+	  }
+	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	};	  
+}
+
+
+/************************************************************************************************************
  * 				Get Owner's Ad
  * @param outputDiv
  ************************************************************************************************************/
