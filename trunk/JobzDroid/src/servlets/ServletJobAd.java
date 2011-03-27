@@ -54,6 +54,7 @@ public class ServletJobAd extends HttpServlet {
 		getJobAdById,
 		deleteJobAd,
 		getAllJobAd,
+		getSomeJobAd,
 		
 		adminApprove,
 		adminDeny,
@@ -140,6 +141,9 @@ public class ServletJobAd extends HttpServlet {
 				getAllJobAd(request, response);
 				break;
 				
+			case getSomeJobAd:
+				getSomeJobAd(request, response);
+				break;	
 		/*****************ADMIN ACTIONS***********************/				
 			case adminApprove:
 				adminApprove(request, response);
@@ -150,7 +154,7 @@ public class ServletJobAd extends HttpServlet {
 				break;
 				
 			case adminDeleteJobAd:
-				deleteJobAd(request, response);
+				adminDeleteJobAd(request, response);
 				break;
 				
 			case changeJobAdStatus:
@@ -170,9 +174,186 @@ public class ServletJobAd extends HttpServlet {
 	}
 	
 	
+	
+	
+	
+	private void getSomeJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		System.out.println("ServletJobAd: Inside getSomeJobAd");
+
+		String message = "getSomeJobAd failed";
+		boolean isSuccessful = false;
+		
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		
+//		String sessionKey = request.getParameter("sessionKey");
+//		Session session = dbManager.getSessionByKey(sessionKey);
+
+		int numToGet = 9; //request.getParameter("numToGet");
+		int index = Integer.parseInt(request.getParameter("startingIndex"));
+		
+		System.out.println("Browse index: " + index);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		Statement stmtLoc = null;
+		Statement stmtEmp = null;
+
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				 	"SELECT * FROM tableJobAd " +
+					" ORDER BY datePosted DESC "+
+				 	"LIMIT " + index +  ", " + numToGet;
+			
+			System.out.println(query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			while(result.next()){
+				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+				
+				//Fill in the fields of the jobAd object
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.jobAvailability	= result.getString("jobAvailability");
+				jobAd.status 			= result.getString("status");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.isApproved 		= result.getInt("isApproved");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+
+				//jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.tags 				= result.getString("tags");
+				
+			/**Get Location values */
+				stmtLoc = conn.createStatement();
+				ArrayList<Location> locationList = new ArrayList<Location>();
+				
+				query = "SELECT * FROM tableLocationJobAd WHERE " +
+						"idJobAd= '" + jobAd.jobAdId +"'";
+				
+				System.out.println(query);
+				isSuccessful = stmtLoc.execute(query);
+				ResultSet locResult = stmtLoc.getResultSet();
+				
+				while(locResult.next()){
+					Location location = new Location();
+
+					//Get Address, Longitude, Latitude
+					location.address = result.getString("location");
+					location.longitude = result.getDouble("longitude");
+					location.latitude = result.getDouble("latitude");	
+					locationList.add(location);
+				}
+				
+				jobAd.locationList = locationList;
+				
+				jobAdList.add(jobAd);
+				
+			/**Get Employment Availability values */
+				stmtEmp = conn.createStatement();
+
+				
+				String empAvail = "";
+				int fullTime = 0;
+				int partTime = 0;
+				int internship = 0;
+				
+				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+				"idJobAd= '" + result.getInt("idJobAd") + "'";
+				System.out.println(query);
+				
+				isSuccessful = stmtEmp.execute(query);
+				ResultSet empResult = stmtEmp.getResultSet();
+				
+				if(!empResult.first()){
+						System.out.println("No Employment Type Found");
+				}
+				else{
+					fullTime = empResult.getInt("fullTime");
+					partTime = empResult.getInt("partTime");
+					internship = empResult.getInt("internship");	
+
+					if( (fullTime+partTime+internship) == 0 ){
+						empAvail = "Not Specified"; //no preference
+					}
+					else{
+						if( fullTime == 1)
+							empAvail += "Full-time ";
+						if(partTime == 1)
+							empAvail += "Part-time ";
+						if(internship == 1)
+							empAvail += "Internship";
+					}
+					System.out.println("Job Positions Available: " + empAvail);
+					jobAd.jobAvailability = empAvail;
+				}
+			}//END OF WHILE LOOP
+			
+			if(jobAdList.isEmpty()){
+				message = "Error: No Job Ad found";
+				System.out.println("Error: No Job Ad found");
+			}
+			else{
+				System.out.println("getSomeJobAd successful");
+				message = "getSomeJobAd successful";
+				isSuccessful = true;
+			}
+					
+			
+		} //END OF TRY
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	            if(stmtLoc != null)
+	            	stmtLoc.close();
+	            if(stmtEmp != null)
+	            	stmtEmp.close();
+	        }
+	        catch (Exception e) {
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		
+		Iterator<JobAdvertisement> itr = jobAdList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+		
+	
 
 	/**
-	 * Returns an xml formatted arraylist of job advertisements
+	 * Returns an xml formatted arraylist of all job advertisements
 	 */
 	private void getAllJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println("ServletJobAd: Inside getAllJobAd");
@@ -188,12 +369,12 @@ public class ServletJobAd extends HttpServlet {
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		Statement stmtLoc = null;
+		Statement stmtEmp = null;
 
 		try {
 			stmt = conn.createStatement();
 			
-			String query = 
-				"SELECT * FROM tableJobAd";
+			String query = "SELECT * FROM tableJobAd";
 			
 			System.out.println("getAllJobAd query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -227,42 +408,74 @@ public class ServletJobAd extends HttpServlet {
 				query = "SELECT * FROM tableLocationJobAd WHERE " +
 						"idJobAd= '" + jobAd.jobAdId +"'";
 				
+				System.out.println(query);
 				isSuccessful = stmtLoc.execute(query);
 				ResultSet locResult = stmtLoc.getResultSet();
 				
-				if(!locResult.first()){
-					System.out.println("Error: failed to find the inserted location");
-				}
-				else{
-					while(locResult.next()){
-						Location location = new Location();
+				while(locResult.next()){
+					Location location = new Location();
 
-						//Get Address, Longitude, Latitude
-						location.address = result.getString("location");
-						location.longitude = result.getDouble("longitude");
-						location.latitude = result.getDouble("latitude");	
-						locationList.add(location);
-					}
+					//Get Address, Longitude, Latitude
+					location.address = result.getString("location");
+					location.longitude = result.getDouble("longitude");
+					location.latitude = result.getDouble("latitude");	
+					locationList.add(location);
 				}
-				
 				jobAd.locationList = locationList;
 				
 				jobAdList.add(jobAd);
 				
-	//TODO: add get employment type
+			/**Get Employment Availability values */
+				stmtEmp = conn.createStatement();
+
 				
+				String empAvail = "";
+				int fullTime = 0;
+				int partTime = 0;
+				int internship = 0;
 				
+				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+				"idJobAd= '" + result.getInt("idJobAd") + "'";
+				System.out.println(query);
+				
+				isSuccessful = stmtEmp.execute(query);
+				ResultSet empResult = stmtEmp.getResultSet();
+				
+				if(!empResult.first()){
+						System.out.println("No Employment Type Found");
+				}
+				else{
+					fullTime = empResult.getInt("fullTime");
+					partTime = empResult.getInt("partTime");
+					internship = empResult.getInt("internship");	
+
+					if( (fullTime+partTime+internship) == 0 ){
+						empAvail = "Not Specified"; //no preference
+					}
+					else{
+						if( fullTime == 1)
+							empAvail += "Full-time ";
+						if(partTime == 1)
+							empAvail += "Part-time ";
+						if(internship == 1)
+							empAvail += "Internship";
+					}
+					System.out.println("Job Positions Available: " + empAvail);
+					jobAd.jobAvailability = empAvail;
+				}
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){
 				message = "Error: No Job Ad found";
 				System.out.println("Error: No Job Ad found");
 			}
+			else{
+				System.out.println("getAllJobAd successful");
+				message = "getAllJobAd successful";
+				isSuccessful = true;
+			}
+					
 			
-			System.out.println("getAllJobAd successful");
-			message = "getAllJobAd successful";
-			isSuccessful = true;
-
 		} //END OF TRY
 		catch (SQLException e) {
 			//TODO log SQL exception
@@ -273,9 +486,12 @@ public class ServletJobAd extends HttpServlet {
 	        try{
 	            if (stmt != null)
 	                stmt.close();
+	            if(stmtLoc != null)
+	            	stmtLoc.close();
+	            if(stmtEmp != null)
+	            	stmtEmp.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
 	        	System.out.println("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
@@ -283,7 +499,6 @@ public class ServletJobAd extends HttpServlet {
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
@@ -295,7 +510,6 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("\t<message>" + message + "</message>\n");
 		
 		Iterator<JobAdvertisement> itr = jobAdList.iterator();
-		
 	    while (itr.hasNext()) {//iterate through all list and append to xml
 	    	XMLResponse.append(itr.next().toXMLContent() ); 
 	    }
@@ -303,8 +517,6 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-		
-		
 	}
 	
 	
@@ -1762,6 +1974,105 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
+	}
+	
+private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		mysqlCmd qcmd = new mysqlCmd(); 
+		String feedback="adminDeleteJobAd failed";
+		String sessKey = request.getParameter("sessionKey");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+
+		
+		StringBuffer qBuf = adminAuthQuery(sessKey, qcmd); 
+		qBuf.insert(0, qcmd.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
+					   qcmd.FROM + "tableJobAd tbAd" + qcmd.WHERE + "idAccount" + qcmd.EQ);
+		qBuf.append(qcmd.AND +"idJobAd" + qcmd.EQ + jobAdId);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		
+		try {
+//			stmt = conn.createStatement();
+			
+			//Delete designed job Ad
+			String query = qBuf.toString();
+			System.out.println("Processin Query: " + query);
+			ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+							   .executeQuery(query);
+			
+//			stmt.executeQuery(query);
+			
+//			ResultSet rs = stmt.getResultSet();
+			while (rs.next()){
+				System.out.println("JobAd: ID-" + rs.getInt("idJobAd") +"was deleted by " + 
+						   			"Use: ID-" + rs.getInt("idAccount") +" with sessionKey-" + sessKey +
+						   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+				feedback="The Ad was deleted!";
+				rs.deleteRow();
+				
+			}
+			
+//			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//				System.out.println("Error: Update Query Failed");
+//			}
+//			else{
+//				isSuccessful = true;
+//				feedback = "adminDeleteJobAd worked!";
+//				System.out.println("adminDeleteJobAd worked!");
+//			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + feedback + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+
+	private StringBuffer adminAuthQuery(String sKey, mysqlCmd qcmd){
+		
+		StringBuffer qSessTb =new StringBuffer();
+		StringBuffer qAcctTb =new StringBuffer();
+		
+		qSessTb.append(qcmd.PRNTHS);
+		qAcctTb.append(qcmd.PRNTHS);
+		
+		qSessTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableSession" +  
+						  qcmd.WHERE +"sessionKey" + qcmd.EQ + qcmd.SQUO +sKey + qcmd.SQUO);
+		qAcctTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableAccount " + 
+				  		  qcmd.WHERE +"idAccount" + qcmd.EQ);
+		qAcctTb.insert(qAcctTb.length()-2, qSessTb + qcmd.AND + "type" + qcmd.IN + "('admin','superAdmin')" + 
+										   qcmd.AND + "status" +qcmd.EQ +"'active'");
+		return qAcctTb;
 	}
 	
 	private StringBuffer sessAuthQuery(String sKey, mysqlCmd qcmd){

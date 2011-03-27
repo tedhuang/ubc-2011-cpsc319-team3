@@ -68,7 +68,7 @@
 			<ul id="topnav" class="topnav">
 			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
 			    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
-			    <li><a href="#" class="btn">View Job Ads</a></li>
+			    <li><a href="../viewJobAdHome.jsp" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>		  
 		  <br/>	
@@ -212,41 +212,6 @@
 						</th>
 						
 					</tr>
-					
-					<!-- 
-						<th id="col-Approve">
-							<td>
-								<a title="Approve" onclick="adminApprove()" class="jsBtn">
-	      						 	<img src="../images/icon/view_profile.png"/>
-								</a>									
-							</td>
-						</th>
-						<th id="col-Deny">
-							<td>
-								<a title="Deny" onclick="adminDeny()" class="linkImg">
-	      						 	<img src="../images/icon/ban_icon.png"/>
-								</a>									
-							</td>
-						</th>
-						<th id="col-Delete">
-							<td>
-								<a title="Delete" onclick="adminDelete()" class="linkImg">
-	      						 	<img src="../images/icon/delete_icon.png"/>
-								</a>									
-							</td>
-						</th>
-					 -->
-		<!--  Do not need these fields for admin to see
-				<th id="col-viewEduReq">
-					<div class="columnButton" onclick=""><
-						<div class="headText">Education Requirement</div>
-					</div>
-				</th>
-				<th id="col-viewAvail">
-					<div class="columnButton" onclick="">
-						<div class="headText">Form of Employment</div>
-					</div>
-				</th> -->
 				
 				</thead>
 					<tbody></tbody>

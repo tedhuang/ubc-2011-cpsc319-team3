@@ -143,7 +143,6 @@ function submitChangeProfile(accountType){
 
 
 
-
 function getProfileById(idAccount, outputDiv, heading){
 	var strSessionKey = $("#sessionKey").val();
 	
