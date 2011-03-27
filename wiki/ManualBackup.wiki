@@ -38,6 +38,12 @@ Install JRE or JDK
 
 = Steps for Restoration =
 
+Install and run MySQL
+{{{
+on windows run 
+mysqld --lower_case_table_names=2
+}}}
+
 Restoring MySQL DB
   * use mySQL console and type in
 {{{
