@@ -127,9 +127,9 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 		if(currSession != null){
-			// if login successful, return credential and sucess message
+			// if login successful, go to manage job ad (default) page
 			// Write XML to response if DB has return message
-			action = "home.jsp";
+			action = "manageJobAd.jsp";
 			
 			StringBuffer XMLResponse = new StringBuffer();
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
