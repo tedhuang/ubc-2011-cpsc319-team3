@@ -714,7 +714,7 @@ function getAllJobAd(outputDiv){
  ************************************************************************************************************/
 function guestViewJobAd(outputDiv, mode){
 	
-	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+	//$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
 
 	var index = $("#browseIndex").val();
 		
@@ -761,7 +761,7 @@ function guestViewJobAd(outputDiv, mode){
 	  else{
 		  //TODO: implement error handling
 	  }
-	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	  //$.fn.smartLightBox.closeLightBox(1000,"home-frame");
 	};	  
 }
 

@@ -82,13 +82,15 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 			  }
 		  ).appendTo(viewButton);
 		  
-		 $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
+		// $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
 }
+
+
 
 
 
