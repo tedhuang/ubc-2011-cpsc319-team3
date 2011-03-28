@@ -548,28 +548,8 @@ public class ServletJobAd extends HttpServlet {
 //				jobAd.tags 				= result.getString("tags");
 				
 			/**Get Location values */
-				stmtLoc = conn.createStatement();
-				ArrayList<Location> locationList = new ArrayList<Location>();
-				
-				query = "SELECT * FROM tableLocationJobAd WHERE " +
-						"idJobAd= '" + jobAd.jobAdId +"'";
-				
-				isSuccessful = stmtLoc.execute(query);
-				ResultSet locResult = stmtLoc.getResultSet();
-				
-				while(locResult.next()){
-					Location location = new Location();
-
-					//Get Address, Longitude, Latitude
-					location.address = result.getString("location");
-					location.longitude = result.getDouble("longitude");
-					location.latitude = result.getDouble("latitude");	
-					locationList.add(location);
-				}
-				jobAd.locationList = locationList;
-				
 				jobAdList.add(jobAd);
-			
+//			
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){
@@ -671,9 +651,10 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.educationReq 		= result.getInt("educationRequired");
 				jobAd.tags 				= result.getString("tags");
-				jobAd.numberOfViews 	= result.getInt("numberOfViews");
-				jobAd.isApproved 		= result.getInt("isApproved");
 				jobAd.hasGradFunding	= result.getInt("hasGradFunding");
+				
+			/*	jobAd.numberOfViews 	= result.getInt("numberOfViews");
+				jobAd.isApproved 		= result.getInt("isApproved");*/
 				
 			}
 			else{ //Error case
@@ -682,8 +663,8 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Error: Job Ad not found with ID=" + jobAdId);
 			}
 			
-	/**Get Location values */
-			ArrayList<Location> locationList = new ArrayList<Location>();
+				/**Get Location values */
+		/*	ArrayList<Location> locationList = new ArrayList<Location>();
 			Location location = new Location();
 			
 			query = "SELECT * FROM tableLocationJobAd WHERE " +
@@ -697,7 +678,7 @@ public class ServletJobAd extends HttpServlet {
 				location.latitude = result.getDouble("latitude");	
 				locationList.add(location);
 			}
-			jobAd.locationList = locationList;
+			jobAd.locationList = locationList; */
 			
 			/**Get Employment Availability values */
 
@@ -1773,7 +1754,6 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
  * @return
  ***************************************************************************************************************/
 private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
-//	String query=null;
 	StringBuffer [] queriesBuffer = new StringBuffer[2];//size 2
 	mysqlCmd qcmd 	 			= new mysqlCmd(); 
 	Map<String, Object>paraMap	= new HashMap<String, Object>();//JobAd Table Mapping
@@ -1878,7 +1858,6 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	
 	queriesBuffer[0]=queryBuf;
 	queriesBuffer[1]=locQueryBuf;
-//	query = queryBuf.toString();
 	return queriesBuffer;
 }
 /**********************************************************************************************************************
