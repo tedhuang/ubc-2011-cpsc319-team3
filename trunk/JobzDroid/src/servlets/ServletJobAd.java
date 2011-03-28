@@ -188,7 +188,7 @@ public class ServletJobAd extends HttpServlet {
 //		String sessionKey = request.getParameter("sessionKey");
 //		Session session = dbManager.getSessionByKey(sessionKey);
 
-		int numToGet = 9; //request.getParameter("numToGet");
+		int numToGet = 10; //request.getParameter("numToGet");
 		int index = Integer.parseInt(request.getParameter("startingIndex"));
 		
 		System.out.println("Browse index: " + index);

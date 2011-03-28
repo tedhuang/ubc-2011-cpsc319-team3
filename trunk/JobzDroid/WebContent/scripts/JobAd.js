@@ -757,11 +757,21 @@ function guestViewJobAd(outputDiv, mode){
 		  
 		  buildGuestJobAdTb("jobAd", outputDiv);//uibot
 		  
-			if(index <= 0){
-				$("#prevButton").attr("disabled", true);
-			}else
-				$("#prevButton").attr("disabled", false);
+			var xmlObj = $("jobAd",xmlhttp.responseXML);
 
+			if(xmlObj.length < 10){//if this is the last page of results
+				$("#prevButton").attr("disabled", false);
+				$("#nextButton").attr("disabled", true);
+			}
+			else if(index <= 0){
+				$("#prevButton").attr("disabled", true);
+				$("#nextButton").attr("disabled", false);
+			}
+			else{
+				$("#prevButton").attr("disabled", false);
+				$("#nextButton").attr("disabled", false);
+			}
+			
 		  $("#browseIndex").val(index ); //increase index by 10
 		  $("#feedback").text("Browse Index: " + $("#browseIndex").val() );
 	    }
