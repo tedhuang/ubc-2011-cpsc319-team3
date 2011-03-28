@@ -4,7 +4,8 @@ a:focus {outline: none;}
 .active { background-position: right 12px;}
 #mapPanel {/*width:700px; */height:550px;width: 960px; position: absolute; bottom:0; left:0; z-index:300; background-color: white;display: none;}
 #mapPanel #theMap{/*position: absolute;*/  float: left;}
-#mapPanel ul#locList{/*position: absolute;*/ right:0;list-style:none; width: 350px;}
+#mapPanel #addrBar{width:485px;}
+#mapPanel ul#locList{/*position: absolute;*/ float:left;list-style:none; width: 350px; padding-top:1.3em;}
 #mapPanel ul#locList span{padding-left: 0.5em;}
 #mapPanel ul#locList span.rm{color:red; font: 0.9em/1.3em bold italic small-caps Times New Roman, serif;}
 #mapPanel ul#locList span{color:blue;}

@@ -27,7 +27,6 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="../scripts/jq-ui/jquery-ui-1.8.1.custom.min.js"></script>
 <script type="text/javascript" src="../scripts/poster/posterSmartMap.js"></script>
-<script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
 
 
@@ -62,7 +61,7 @@
 		    <li>
 		    	<a href="#">
 		    		<img class="link-icon" src="../images/icon/acct-icon.png" alt=""/>
-		    		Profile
+		    		My Profile
 				</a>
 			</li>
 		    <li>
@@ -84,28 +83,10 @@
 		</li>
 	
 		<li>
-			<a class="topMenu">
-				<span>Ad Management</span>
+			<a class="jsBtn employeeSearch">
+				<!--  <img src="../images/icon/new-post.png" alt=""/>-->
+				<span>Search Talent</span>
 			</a>
-			<ul class="subMenu">
-				<li><a class="jsBtn">
-					<img src="../images/icon/active.png" alt=""/>
-					Active</a>
-				</li>
-				<li><a class="jsBtn">
-					<img src="../images/icon/draft.png" alt=""/>
-					Draft</a>
-				</li>
-				<li><a class="jsBtn">
-					<img src="../images/icon/pending.png" alt=""/>
-					Pending</a>
-				</li>
-				
-				<li><a class="jsBtn">
-					<img src="../images/icon/inactive.png" alt=""/>
-					Inactive</a>
-				</li>
-			</ul>
 		</li>
 	
 		<li>
@@ -130,13 +111,15 @@
   			<li id="homeTab">
   				<a href="#home-frame"><span>Home</span></a>
 			</li>
-			<li id="profileTab">
+			<li id="profileTab" class="hideOnly iniHidden">
   				<a href="#profileFrame" onclick="getProfileBySessionKey('profileTable', 'profileHeading')"><span>My Profile</span></a>
 			</li>
-			<li id="searchJSTab">
-				<a href="#searchSearcherFrame"><span>Job Searchers</span></a>
+			<li id="searchJSTab" class="hideOnly iniHidden">
+				<span class="close">X</span>
+				<a href="#searchSearcherFrame" ><span>Job Searchers</span></a>
 			</li>
-			<li id="jsProfileTab">
+			<li id="jsProfileTab" class="hideOnly iniHidden">
+				<span class="close">X</span>
 				<a href="#jsDetailFrame"><span>Searcher Details</span></a>
 			</li>
 			<li id="edAdTab" class="hideOnly iniHidden">
@@ -161,6 +144,7 @@
 	   <h2 class="welcome">My Ads</h2>
 		 <div class="headToolBar">
 		 		<a class="jsBtn newadbtn">New AD</a>
+		 		<a class="jsBtn" id="refreshOwnerAd">Refresh</a>
 	          	<ul id="filter">
 	          		<li><a class="jsBtn cAll" onclick="filterTable('', 'ownerAdTable')">View All<span id="numActive"></span></a></li>
 		          	<li><a class="jsBtn cOpen" onclick="filterTable('open', 'ownerAdTable')">Open<span id="numActive"></span></a></li>
@@ -209,8 +193,6 @@
 				</tbody>
 			</table><!--ENDOF TABLE-->
 	          	</div><!--ENDOF DIV RESULT TABLE-->  
-		    <button type="button" onclick="getJobAdByOwner('ownerAdTable')">Load Job Ad by Owner</button>
-				
     </div><!-- ENDOF HOME FRAME -->
 		   
 	<div id="newAdFrame" class="subFrame unremovable"></div><!--ENDOF newAd-frame-->
@@ -230,78 +212,8 @@
 	<div id="adDetailFrame" class="subFrame unremovable">
 	</div><!--end of EDADFRAME-->
 	
-	<div id="searchSearcherFrame" class="subFrame">
-				
-			  <div id="advSearchForm" class="content">
-		       	<label class="heading-text">Search Job Searchers</label><br/><br/>
-			   
-			     <div class="columnBox">
-			     	<div class="formFieldWrapper">
-						<label class="formFieldLabel">Job Searcher's Name: </label><br/>
-						<input id="nameSearch" type="text" name="searchJSName" size="40" />
-					</div>
-					<div class="formFieldWrapper">
-						<label class="formFieldLabel">Location:</label><br />
-						<input id="jsLocSearch" type="text" name="searchJSLoc" size="40" />
-					</div>
-				 </div>	<!--ENDOF columnBox-->
-				 
-			 <div class="columnBox">
-			 	<div class="formFieldWrapper">
-					<label class="formFieldLabel">Minimum Educational Requirement: </label><br />
-					<select id="jsEduReqSearch" name="searchJSEduReq">
-							<option value="">Choose a degree</option>
-							<option value="1">B.Sc.</option>
-							<option value="2">M.Sc.</option>
-							<option value="3">Ph.D.</option>
-					</select>
-				</div>
-				<div class="formFieldWrapper">
-					<label class="formFieldLabel">Can Work Starting:</label><br/>
-					<input id="jsStartTime-field" name="searchJSStartTime" type="text" size="40" />
-				</div>	
-			  </div><!--ENDOF columnBox-->
-			  <br/>
-			  <div class="floatLeftBtn"> 
-				<button id="newJSSearchBtn" type="button" onclick="searchSearcherProfile('resultTable')">Search</button>
-				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
-			  </div><!--  ENDOF floatLeftBtn -->			  
-
+	<div id="searchSearcherFrame" class="subFrame"></div><!--ENDOF DIV SEARCH TAB-->	
 	
-			</div><!--END ADVSEARCHFORM-->
-			
-			<div id="resultTable" class="resultTableDiv">
-				<table>
-					<thead>
-					<tr>
-						<th id="col-jsName">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Name</div>
-							</div>
-						</th>
-						<th id="col-jsEduReq">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Degree</div>
-							</div>
-						</th>
-						<th id="col-jsLocation">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Location</div>
-							</div>
-						</th>
-						<th id="col-jsStartDate">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Starting Date</div>
-							</div>
-						</th>
-					</tr>
-				</thead>
-					<tbody>
-					</tbody>
-				</table><!--ENDOF TABLE-->	
-			  </div><!--ENDOF DIV RESULT TABLE-->
-			 
-		</div><!--ENDOF DIV SEARCH TAB-->	
 		<div id="jsDetailFrame" class="subFrame">
 			<div id="jsDetailTable" class="resultTableDiv noBorder">
 			 	<span id="detailFB"></span>

@@ -17,7 +17,7 @@
 #lightBox #midBox #info img.alert{background: url(../images/icon/alert.png) no-repeat scroll center center;}
 #lightBox #divlb img.good,
 #lightBox #midBox #info img.good{background: url(../images/icon/good.png) no-repeat scroll center center;}
-#lightBox #midBox #btnBox {position:absolute; bottom:0; right:0; display:inline; padding:0 3em 1em 0;}
+#lightBox #midBox #btnBox {/*position:absolute; bottom:0; right:0; display:inline; */padding:1.3em; float:right;}
 #lightBox #midBox #btnBox a{padding-top:0.5em; padding-right:0.5em;}
 #lightBox #midBox #btnBox a.yes{}
 #lightBox #midBox #btnBox a.no{}

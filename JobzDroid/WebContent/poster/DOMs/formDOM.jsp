@@ -147,9 +147,10 @@
 					</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 			   <div id="fields">
+			   	  
 				  <div id="mapPanel">
 				 	<div id="theMap">
-					    <label>Address: </label><input id="address" class="map" type="text" />
+				 		<label>Address: </label><input id="addrBar" class="map" type="text" />
 					    <div id="map_canvas" ></div><br/>
 					    <label>latitude: </label><input id="latitude" class="map"type="text"/><br/>
 					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
@@ -185,6 +186,81 @@
 			 </div>		
 		</div><!--end of TABDETAILFRAME-->   
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
+
+<div id="searchSearcherFrame" class="subFrame">
+ <div id="advSearchForm" class="content">
+		       	<label class="heading-text">Search Job Searchers</label><br/><br/>
+			   
+			     <div class="columnBox">
+			     	<div class="formFieldWrapper">
+						<label class="formFieldLabel">Job Searcher's Name: </label><br/>
+						<input id="nameSearch" type="text" name="searchJSName" size="40" />
+					</div>
+					<div class="formFieldWrapper">
+						<label class="formFieldLabel">Location:</label><br />
+						<input id="jsLocSearch" type="text" name="searchJSLoc" size="40" />
+					</div>
+				 </div>	<!--ENDOF columnBox-->
+				 
+			 <div class="columnBox">
+			 	<div class="formFieldWrapper">
+					<label class="formFieldLabel">Minimum Educational Requirement: </label><br />
+					<select id="jsEduReqSearch" name="searchJSEduReq">
+							<option value="">Choose a degree</option>
+							<option value="1">B.Sc.</option>
+							<option value="2">M.Sc.</option>
+							<option value="3">Ph.D.</option>
+					</select>
+				</div>
+				<div class="formFieldWrapper">
+					<label class="formFieldLabel">Can Work Starting:</label><br/>
+					<input id="jsStartTime-field" name="searchJSStartTime" type="text" size="40" />
+				</div>	
+			  </div><!--ENDOF columnBox-->
+			  <br/>
+			  <div class="floatLeftBtn"> 
+				<button id="newJSSearchBtn" type="button" onclick="searchSearcherProfile('resultTable')">Search</button>
+				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
+			  </div><!--  ENDOF floatLeftBtn -->			  
+
+	
+			</div><!--END ADVSEARCHFORM-->
+			
+			<div id="resultTable" class="resultTableDiv">
+				<table>
+					<thead>
+					<tr>
+						<th id="col-jsName">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Name</div>
+							</div>
+						</th>
+						<th id="col-jsEduReq">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-jsLocation">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+						<th id="col-jsStartDate">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Starting Date</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->	
+			  </div><!--ENDOF DIV RESULT TABLE-->
+	</div><!-- ENDOF SEARCH-SEARCHER FRAME -->
+
+<div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
+
+	
 </div><!-- ENDOF MAIN -->		  
 </body>
 </html>
