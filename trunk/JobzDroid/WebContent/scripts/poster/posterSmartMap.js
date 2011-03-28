@@ -98,17 +98,11 @@
 										$(this).data("latlng"))	;
 						})	
 						.append('<span class="addr">'+addr+'</span>')
-						.append('<span class="jsBtn rm">X</span>')
-						.append('<span class="jsBtn info"> get loc info</span>')
+						.append('<span class="jsBtn rm">Remove</span>')
 						.delegate('span.rm','click',function(){
 							$(this).parent().remove();
 							locList.remove($(this).parent().get(0));
 							rmMarkr.call(marker);
-						})
-						.delegate('span.info','click',function(){
-							
-							var info = $(this).parent().data("lat")+","+$(this).parent().data("lng");
-							$("#feedback").html("").append(info);
 						})
 						.appendTo(list);
 				locList.length>maxAddrNum? null:locList.push(li.get(0));//get(0) need to compare raw object

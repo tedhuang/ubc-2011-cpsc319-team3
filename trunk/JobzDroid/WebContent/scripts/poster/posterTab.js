@@ -342,7 +342,9 @@
          		$(".btn-slide").click(function(){
        			 $("#mapPanel").slideToggle("slow");
        	 			$.fn.smartMap.resize();
-       	 			$(this).toggleClass("active"); return false;
+       	 			$(this).toggleClass("active");
+       	 			$(this).hasClass("active")? $(this).text("Close Map"): $(this).text("Add Locations");
+       	 			return false;
        	    });
          	});
         }
