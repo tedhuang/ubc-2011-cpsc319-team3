@@ -50,6 +50,7 @@ public class ServletProfile extends HttpServlet{
 		getProfileBySessionKey,
 		searchProfile,
 		searchSearcherProfile,
+		viewAllSearchers,
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
 	{
@@ -102,6 +103,10 @@ public class ServletProfile extends HttpServlet{
 				
 			case searchSearcherProfile:
 				searchSearcherProfile(request, response);
+				break;
+				
+			case viewAllSearchers:
+				viewAllSearchers(request, response);
 				break;
 				
 			default:
@@ -329,9 +334,9 @@ public class ServletProfile extends HttpServlet{
 		response.getWriter().println(XMLResponse);
 	}
 	
-/*
+/******************************************************************
  * getProfileSearcherById()
- */
+ ******************************************************************/
 	private void getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		System.out.println("getProfileSearcherById method successfully entered");
 		boolean isSuccessful = false;
@@ -355,8 +360,8 @@ public class ServletProfile extends HttpServlet{
 			String query = "SELECT * " +
 					"FROM tableProfileSearcher " +
 					"INNER JOIN tableAccount USING (idAccount)" +
-					"INNER JOIN tableLocationProfile USING (idAccount) " +
-					"INNER JOIN tableSearcherEmpPref USING (idAccount) " +
+					"LEFT OUTER JOIN tableLocationProfile USING (idAccount) " +
+					"LEFT OUTER tableSearcherEmpPref USING (idAccount) " +
 					"WHERE idAccount="+profileSearcherId;
 			
 			System.out.println("getProfileSearcherById query:"+query);
@@ -1086,16 +1091,12 @@ public class ServletProfile extends HttpServlet{
 
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
 			
-		//tags = Utility.checkInputFormat( tags );
-		//location = Utility.checkInputFormat( location );
-		//education = Utility.checkInputFormat( education );
-			
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 			
 		try {		
 			stmt = conn.createStatement();
-/**BUILD SEARCH QUERY(REQUEST)**/
+			/**BUILD SEARCH QUERY(REQUEST)**/
 			//Add individual queries onto total query
 			String query = buildSearchSearcherQuery(request);
 				
@@ -1200,9 +1201,9 @@ public class ServletProfile extends HttpServlet{
 				System.out.println("Value: " + paraMap.get(colName));
 			}
 		}
-		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
-		String query 			="SELECT * FROM tableProfileSearcher INNER JOIN tableLocationProfile USING (idAccount) WHERE ";
-		String panicQuery		="SELECT idAccount, name, educationLevel, startingDate FROM tableProfileSearcher";
+		//CAUTION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
+		String queryWithLoc		= "SELECT * FROM tableProfileSearcher LEFT OUTER JOIN tableLocationProfile USING (idAccount) WHERE ";
+		String panicQuery		= "SELECT idAccount, name, educationLevel, startingDate FROM tableProfileSearcher";
 		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
 		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
 		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
@@ -1216,7 +1217,7 @@ public class ServletProfile extends HttpServlet{
 		boolean panic = false;
 		
 		StringBuffer queryBuf = new StringBuffer();
-		queryBuf.append(query);
+		queryBuf.append(queryWithLoc);
 		
        for(Map.Entry<String, String> entry : paraMap.entrySet()){
     	   String column = entry.getKey();
@@ -1243,7 +1244,7 @@ public class ServletProfile extends HttpServlet{
 	    		   System.out.println("PANIC ACTION!");
 	    		   queryBuf.setLength(0);
 	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
-	    		   query = queryBuf.toString();
+	    		   queryWithLoc = queryBuf.toString();
 	    		   break;
     		   }
     	   }//ENDOF IF NOT QUICK SEARCH
@@ -1260,12 +1261,101 @@ public class ServletProfile extends HttpServlet{
 	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
 	  			}
 	  			//queryBuf.append(orderByKeyword + "datePosted" + descKeyword);//TODO Can have pages using limited
-	  			query = queryBuf.toString();
+	  			queryWithLoc = queryBuf.toString();
 			}
        
-		return query;
+		return queryWithLoc;
 	}
 	
+	/**
+	 * 
+	 * viewAllASearchers
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	public void viewAllSearchers(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+			
+		try {		
+			stmt = conn.createStatement();
+			/**BUILD SEARCH QUERY(REQUEST)**/
+			//Add individual queries onto total query
+			String query = "SELECT * FROM tableProfileSearcher LEFT OUTER JOIN tableLocationProfile USING (idAccount)";
+				
+			//DEBUG
+			System.out.println(query);
+			stmt.execute(query);
+			ResultSet result = stmt.getResultSet();
+				
+			//Compile the result into the arraylist
+			while( result.next() ) {
+				ProfileSearcher temp = new ProfileSearcher();
+				
+				Location location = new Location();
+				ArrayList<Location> locationList = new ArrayList<Location>();
+					
+				temp.accountID 				= result.getInt("idAccount");
+				temp.name					= result.getString("name");
+				temp.educationLevel			= result.getInt("educationLevel");
+				temp.preferredStartDate		= result.getLong("startingDate");
+
+
+				location.address = result.getString("location");
+				location.longitude = result.getDouble("longitude");
+				location.latitude = result.getDouble("latitude");
+				locationList.add(location);
+				temp.addressList = locationList;
+					
+				jsList.add( temp ); //add to the temporary list
+			}
+				
+			stmt.close();
+				
+			System.out.println("Query for View All Searchers Successfully Finished");
+
+				
+		} catch (SQLException e1) {
+		e1.printStackTrace();
+		}
+			
+			
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+			
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		Iterator<ProfileSearcher> itr = jsList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+			
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
 }
 
 
