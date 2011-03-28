@@ -56,7 +56,7 @@ function postNews(evt){
 					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
 					 $("#lbMsg","#lightBox").html(responseText);
 					 if(boolResult == "true"){
-						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
 						 $.fn.smartLightBox.closeLightBox(2000);
 						 loadPageWithSession('manageNews.jsp');
 					 }
@@ -106,7 +106,7 @@ function sendDeleteNewsRequest(idNews){
 					 var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
 					 $("#lbMsg","#lightBox").html(responseText);
 					 if(boolResult == "true"){
-						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
 						 $.fn.smartLightBox.closeLightBox(2000);
 						 loadPageWithSession('manageNews.jsp');
 					 }

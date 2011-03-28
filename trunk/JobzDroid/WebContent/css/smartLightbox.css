@@ -10,7 +10,7 @@
 #lightBox  h2{font-size:0.8em; }
 #lightBox #divlb h2#lbMsg{padding-left: 3em; font-size:1.5em; color:#FFFFFF;}
 #lightBox #midBox #info h2{color:#FFFFFF;}
-#lightBox #midBox #info img{position:relative;  padding:2em 4em 1em 2em;  float:left; }
+#lightBox #midBox #info img{position:relative;  padding:4em 4em 1em 2em;  float:left; }
 #lightBox #divlb img.load,
 #lightBox #midBox #info img.load{background: url(../images/loadin.gif) no-repeat scroll center center;}
 #lightBox #divlb img.alert,

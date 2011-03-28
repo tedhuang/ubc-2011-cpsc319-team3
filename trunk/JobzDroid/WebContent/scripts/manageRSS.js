@@ -58,10 +58,10 @@ function postRSS(evt){
 					var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;						
 					 if(boolResult == "true"){
-						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 3 seconds...");
-						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
-						 $.fn.smartLightBox.closeLightBox(2500);
-						 setTimeout("loadPageWithSession('manageRSS.jsp')",3000);
+						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 5 seconds...");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
+						 $.fn.smartLightBox.closeLightBox(4500);
+						 setTimeout("loadPageWithSession('manageRSS.jsp')",5500);
 					 }
 					 else{
 						 $("#lbMsg","#lightBox").html(responseText);
@@ -119,10 +119,10 @@ function sendDeleteRSSRequest(type, index){
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					 var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 					 if(boolResult == "true"){
-						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 3 seconds...");
-						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
-						 $.fn.smartLightBox.closeLightBox(2500);
-						 setTimeout("loadPageWithSession('manageRSS.jsp')",3000);
+						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 5 seconds...");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
+						 $.fn.smartLightBox.closeLightBox(4500);
+						 setTimeout("loadPageWithSession('manageRSS.jsp')",5500);
 					 }
 					 else{
 						 $("#lbMsg","#lightBox").html(responseText);

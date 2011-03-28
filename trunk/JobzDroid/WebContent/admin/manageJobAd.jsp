@@ -68,7 +68,7 @@
 			<ul id="topnav" class="topnav">
 			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
 			    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
-			    <li><a href="../guest/viewJobAdHome.jsp" class="btn">View Job Ads</a></li>
+			    <li><a href="../guest/viewJobAdHome.jsp" target="_blank" class="btn">View Job Ads</a></li>
 			</ul>
 		  </div>		  
 		  <br/>	
@@ -134,7 +134,7 @@
   	  <div id="navBar" class="navBar">
 		<ul>
 			<li id="jobAdTab">
-  				<a href="#allJobAdFrame"><h2>All Job Ads</h2></a>
+  				<a href="#home-frame"><h2>All Job Ads</h2></a>
   			</li>
 			<li id="jobAdDetailsTab">
   				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
@@ -148,7 +148,7 @@
 <!-- ==================================================================== -->	
 
   <div id="tabFrame">		
-		<div id="allJobAdFrame" class="subFrame unremovable">
+		<div id="home-frame" class="subFrame unremovable">
 			<h2 class="welcome"><b><font size='4'>List of Job Advertisements</font></b></h2>
 
 		 <div id="headToolBar">
