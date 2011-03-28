@@ -715,10 +715,13 @@ function redisplayProfile(accountType)
 			xmlObj.each(function() {//for All returned xml obj
 			  var profileSearcherXML = $(this);
 			  var tr =$('<tr></tr>');
+			  var degree = {"str": degreeConvertor(profileSearcherXML.attr("educationLevel")), 
+					  		"degreeNum":profileSearcherXML.attr("educationLevel")};
 			  $('<td></td>').attr("id", id='td-name').addClass('jsDetailBtn').text(profileSearcherXML.attr("name")).appendTo(tr);
-			  $('<td></td>').attr("id", id='td-eduReq').text(profileSearcherXML.attr("educationFormatted")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-eduReq').text(degree.str).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-loc').text(profileSearcherXML.children("location").attr("address")).appendTo(tr);
-			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("preferredStartDate")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("startingDateFormatted")).appendTo(tr);
+			  
 			  
 			  $.fn.DynaSmartTab.searchJSTool(tr, profileSearcherXML.attr("accountID"));
 			  tr.appendTo(tbody);
@@ -728,7 +731,14 @@ function redisplayProfile(accountType)
 			 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		}
 	}	
-	
+	function degreeConvertor(input){
+		switch(input){
+		case "1": return "B.Sc"; break;
+		case "2": return "M.Sc"; break;
+		case "3": return "Ph.D"; break;
+		default: return "Unavailable"; break;
+		}
+	}
 /***************************************************************
  * buildSearcherDetailTable(targetXMLTag, outputDiv)
  ****************************************************************/

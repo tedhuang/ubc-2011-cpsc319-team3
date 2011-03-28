@@ -23,7 +23,7 @@
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
 <script type="text/javascript" src='../scripts/guest/guestTab.js'></script> <!-- TODO: make searcherTab -->
-
+<script type="text/javascript" src='../scripts/sortable.js'></script>
 
 <script type="text/javascript">
    
@@ -124,7 +124,7 @@
 	<div id="home-frame" class="subFrame unremovable">
          	<h2 class="welcome">My Job Feeds</h2>
 	       <div id="allJobAdtable" class="resultTableDiv">
-	          <table>
+	          <table class="sortable" id="sortableJobFeeds">
 				<thead>
 					<tr>
 						<th id="col-viewCreationDate">
@@ -153,7 +153,7 @@
 								<div class="headText">Education Requirement</div>
 							</div>
 						</th>
-						<th id="col-ButtonViewDetail">
+						<th id="col-ButtonViewDetail" class="unsortable">
 							<div class="columnButton" >
 								<div class="headText"></div>
 							</div>
@@ -239,7 +239,7 @@
 					</select>
 				</div>
 				<div class="formFieldWrapper">
-					  	 <label class="formFieldLabel">Employment Type:</label><br />
+					  	 <label class="formFieldLabel">Employment Type:</label><br /><br/>
 							<label for="ftChk">
 							  <input type="checkbox" name="searchFT" value="fullTime" id="ftChk"/>
 								Full Time
@@ -262,7 +262,7 @@
 			</div><!--END ADVSEARCHFORM-->
 			
 			<div id="resultTable" class="resultTableDiv">
-				<table>
+				<table class='sortable' id='sortableJobAd'>
 					<thead>
 					<tr>
 						<th id="col-viewDate">

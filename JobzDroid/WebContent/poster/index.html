@@ -28,6 +28,12 @@
 <script type="text/javascript" src="../scripts/jq-ui/jquery-ui-1.8.1.custom.min.js"></script>
 <script type="text/javascript" src="../scripts/poster/posterSmartMap.js"></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
+<script type="text/javascript" src='../scripts/sortable.js'></script>
+<script type="text/javascript">
+$(document).ready(function(){
+		$( "#jsStartTime-field").datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
+	});
+</script>
 
 
 <script type="text/javascript">
@@ -154,7 +160,7 @@
 	          	</ul>
 	          </div>
 	          	<div id="ownerAdTable" class="resultTableDiv">
-	          	<table>
+	          	<table class="sortable" id="sortableMyAds">
 				<thead>
 				<tr>
 					<th id="col-viewDate">
