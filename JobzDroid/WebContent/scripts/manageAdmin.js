@@ -91,7 +91,7 @@ function parseResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
-		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
 		 loadPageWithSession('manageAdmin.jsp');
 	 }
 	 else{

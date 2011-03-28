@@ -75,7 +75,7 @@ function parseBanResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if ban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
-		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
 		 loadPageWithSession('manageUser.jsp');
 	 }
 	 else{
@@ -137,7 +137,7 @@ function parseUnbanResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if unban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
-		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
 		 loadPageWithSession('manageUser.jsp');
 	 }
 	 else

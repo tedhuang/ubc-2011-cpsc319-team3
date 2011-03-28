@@ -9,13 +9,11 @@ $("document").ready(function(){
  ****************************************************************************************************/
 function userLoginRequest(){
 	
-	$("#submitButton").attr("disabled", true);
-//	$("#submitButton").text("Processing...");
-//	$("#loginError").text("");
 	//TODO ADD LOGIN FORM
 	var email = $("#email").val();
 	var password = $("#password").val();
 	if(email.length||password.length){
+		$("#submitButton").attr("disabled", true);
 		$.fn.smartLightBox.openlb('small','Signing in...','load');
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
