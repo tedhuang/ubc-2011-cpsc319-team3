@@ -124,7 +124,6 @@ public class ServletProfile extends HttpServlet{
 		boolean isSuccessful = false;
 		String message = "Failure to create new profile";
 		
-		Object profile = null;
 		ProfileSearcher searcher = new ProfileSearcher();
 		ProfilePoster poster = new ProfilePoster();
 		
@@ -149,7 +148,7 @@ public class ServletProfile extends HttpServlet{
 
 		
 		String query = 		
-			"SELECT * FROM tableAccount WHERE idAccount=" + accountID;
+			"SELECT * FROM tableAccount WHERE idAccount='" + accountID +"';";
 		
 		System.out.println( query );
 		stmt.executeQuery(query);
@@ -160,22 +159,22 @@ public class ServletProfile extends HttpServlet{
 		if ( result.first() ) {
 			accountType = result.getString("type");
 			if( accountType.equalsIgnoreCase("searcher") ) {
-				profile = searcher;
 				searcher.accountID	= result.getInt("idAccount");
 				searcher.email		= result.getString("email");
+				searcher.secondaryEmail = result.getString("secondaryEmail");
 				accountType = "Searcher";
 			}
-			else if ( result.getString("accountType").equalsIgnoreCase("poster") ) {
-				profile = poster;
+			else if ( accountType.equalsIgnoreCase("poster") ) {
 				poster.accountID	= result.getInt("idAccount");
 				poster.email		= result.getString("email");
+				poster.secondaryEmail = result.getString("secondaryEmail");
 				accountType = "Poster";
 			}
 			
 		}
 		
 		query = "SELECT * FROM tableProfile"+ accountType +" INNER JOIN tableAccount " + 
-		"USING (idAccount) WHERE idAccount=" + accountID;
+		"USING (idAccount) WHERE idAccount='" + accountID + "';";
 		
 		isSuccessful = stmt.execute(query);
 		
@@ -207,7 +206,8 @@ public class ServletProfile extends HttpServlet{
 				Location address = new Location();
 				
 				query = "SELECT * FROM tableLocationProfile WHERE " +
-						"idAccount= '" + accountID +"'";
+						"idAccount='" + accountID +"';";
+				stmt.executeQuery(query);
 				result = stmt.getResultSet();
 				
 				if(!result.first()){
@@ -234,7 +234,7 @@ public class ServletProfile extends HttpServlet{
 				/**Get field values */
 					
 					if (result.first()){
-						System.out.println("got Job poster profile");
+						System.out.println("got Job searcher profile");
 						message = "got Job poster profile";
 						
 						searcher.accountID			= result.getInt("idAccount");
@@ -258,7 +258,8 @@ public class ServletProfile extends HttpServlet{
 					Location address = new Location();
 					
 					query = "SELECT * FROM tableLocationProfile WHERE " +
-							"idAccount= '" + accountID +"'";
+							"idAccount='" + accountID +"';";
+					stmt.executeQuery(query);
 					result = stmt.getResultSet();
 					
 					if(!result.first()){
@@ -317,7 +318,7 @@ public class ServletProfile extends HttpServlet{
 		//TODO pass back XML formatted profile data
 		if( accountType.equalsIgnoreCase("searcher") ) {
 			XMLResponse.append(searcher.toXMLContent() );
-			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( currSession.getIdAccount() ));
+			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( accountID ));
 		} else if ( accountType.equalsIgnoreCase("poster") ) {
 			XMLResponse.append(poster.toXMLContent() );
 		}
@@ -360,7 +361,6 @@ public class ServletProfile extends HttpServlet{
 			
 			System.out.println("getProfileSearcherById query:"+query);
 			stmt.executeQuery(query);
-			System.out.println(isSuccessful);
 			ResultSet result = stmt.getResultSet();
 			Location location = new Location("Not Specified");
 			ArrayList<Location> locationList = new ArrayList<Location>();
@@ -394,7 +394,6 @@ public class ServletProfile extends HttpServlet{
 				location.latitude = result.getDouble("latitude");
 				locationList.add(location);
 				profileSearcher.addressList = locationList;
-				
 				//Load Employment Preference vales
 				fullTime = result.getInt("fullTime");
 				partTime = result.getInt("partTime");
@@ -412,9 +411,10 @@ public class ServletProfile extends HttpServlet{
 				}
 				System.out.println("Employment Preference: " + empPref);
 				profileSearcher.employmentPreference = empPref;
+				
+				isSuccessful = true;
 			}
 			else{
-				isSuccessful = false;
 				System.out.println("Error: Profile not found with ID:" +profileSearcherId);
 			}
 		}

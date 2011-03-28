@@ -1,7 +1,6 @@
 /**
  * Javascript for Ban User Page (admin)
  */
-var submittedUser = "";
 
 $("document").ready(function() {
 	$("#filterBan").bind("keyup", function(){
@@ -10,31 +9,16 @@ $("document").ready(function() {
 	$("#filterUnban").bind("keyup", function(){
 		applyFilter("tableUnbanUser", "filterUnban");
 	});
-	$("#submitBan").bind("click", function(){
-		sendBanRequest($("#userNameInputFirstFrame").val());
-	});
-	$("#submitUnban").bind("click", function(){
-		sendUnbanRequest($("#userNameInputSecondFrame").val());
-	});
-	$("#submitDeleteFirstFrame").bind("click", function(){
-		sendDeleteAccountRequest($("#userNameInputFirstFrame").val(), "manageUser.jsp", "statusTextFirstFrame");
-	});
-	$("#submitDeleteSecondFrame").bind("click", function(){
-		sendDeleteAccountRequest($("#userNameInputSecondFrame").val(), "managerUser.jsp", "statusTextSecondFrame");
-	});
 	$('#tabs').DynaSmartTab({});
 	$('#sideMenu').sideNavMenu({});
+	$('#lightBox').smartLightBox({});
 });
-
-function copyEmailToInput(email, inputID){
-	$("#"+inputID).val(email);
-	return false;
-}
 
 function viewProfile(idAccount, currTabIndex){
 	hideFrame(currTabIndex);
 	showProfileTab();
-	getProfileById(idAccount, 'profileTable', 'profileHeading');
+	// inside Profile.js
+	getProfileById(idAccount, 'profileTable', 'profileHeading', 'fileDiv');
 	return false;
 }
 
@@ -44,14 +28,13 @@ function sendBanRequest(strUserName){
 	// ask for reason to ban
     var strReason = prompt("Please enter a reason to ban " + strUserName + " below.\n" +
     		" An email message will be sent to the user with the information you enter.");
-    if ( !strReason || strReason == "" ){
+    if( strReason == null )
+    	return false;
+    else if ( strReason == "" ){
     	alert("Please enter the reason of banning the user.");
         return false;
     }
-	$("button").attr("disabled", true);
-	$(".linkImg").attr("disabled", true);
-	$("#statusTextFirstFrame").removeClass("errorTag");	
-	$("#statusTextFirstFrame").removeClass("successTag");
+	$.fn.smartLightBox.openlb('small','Processing Ban Request...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -69,9 +52,8 @@ function sendBanRequest(strUserName){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
 					var responseText = parseBanResponse(xmlHttpReq.responseXML);
-					$("button").removeAttr("disabled");
-					$(".linkImg").removeAttr("disabled");
-			    	$("#statusTextFirstFrame").text(responseText);
+					 $("#lbMsg","#lightBox").html(responseText);
+					 $.fn.smartLightBox.closeLightBox(2000);
 				}
 			}};
 	}
@@ -85,10 +67,6 @@ function sendBanRequest(strUserName){
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
-		
-	//update status text
-	submittedUser = strUserName;	
-	$("#statusTextFirstFrame").text("Processing...This may take a moment.");
 }
 
 // parses response from server
@@ -97,11 +75,12 @@ function parseBanResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if ban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
-		 $("#statusTextFirstFrame").addClass("successTag");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
 		 loadPageWithSession('manageUser.jsp');
 	 }
-	 else
-		 $("#statusTextFirstFrame").addClass("errorTag");
+	 else{
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+	 }
 	 return strMsg;
 }
 
@@ -111,16 +90,14 @@ function sendUnbanRequest(strUserName){
 	// ask for reason to unban
     var strReason = prompt("Please enter a reason to unban " + strUserName + " below.\n" +
     		" An email message will be sent to the user with the information you enter.");
-    if ( !strReason || strReason == "" ){
+    if( strReason == null )
+    	return false;
+    else if ( strReason == "" ){
     	alert("Please enter the reason of unbanning the user.");
         return false;
-    }
-
-	$("button").attr("disabled", true);
-	$(".linkImg").attr("disabled", true);
-	$("#statusTextSecondFrame").removeClass("errorTag");	
-	$("#statusTextSecondFrame").removeClass("successTag");
-	
+    }    	
+    $.fn.smartLightBox.openlb('small','Processing Unban Request...','load');
+    
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
 		// Firefox, Chrome, Opera, Safari
@@ -137,9 +114,8 @@ function sendUnbanRequest(strUserName){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
 					var responseText = parseUnbanResponse(xmlHttpReq.responseXML);
-					$("#button").removeAttr("disabled");
-					$(".linkImg").removeAttr("disabled");
-			    	$("#statusTextSecondFrame").text(responseText);
+					$("#lbMsg","#lightBox").html(responseText);
+					$.fn.smartLightBox.closeLightBox(2000);
 				}
 			}};
 	}
@@ -152,10 +128,7 @@ function sendUnbanRequest(strUserName){
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.send(request.toString());
-	
-	//update status text
-	$("#statusTextSecondFrame").text("Processing...This may take a moment.");
+	xmlHttpReq.send(request.toString());	
 }
 
 // parses response from server
@@ -164,11 +137,11 @@ function parseUnbanResponse(responseXML){
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if unban sucessful, then refresh page to reflect changes
 	 if(boolResult == "true"){
-		 $("#statusTextSecondFrame").addClass("successTag");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
 		 loadPageWithSession('manageUser.jsp');
 	 }
 	 else
-		 $("#statusTextSecondFrame").addClass("errorTag");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
 	 return strMsg;
 }
 

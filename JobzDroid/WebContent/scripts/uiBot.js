@@ -739,7 +739,6 @@ function redisplayProfile(accountType)
  * buildSearcherDetailTable(targetXMLTag, outputDiv)
  ****************************************************************/
 	function buildSearcherDetailTable(targetXMLTag, outputDiv){
-		outputDiv='jsDetailTable';
 		var tbody  = $("tbody", "#"+outputDiv).html("");
 		var fb =$(".detailFB", "#"+outputDiv);
 		var heading=$('.jsDetailHeading', "#"+outputDiv);
@@ -752,7 +751,7 @@ function redisplayProfile(accountType)
 			var rowText = "<tr><td>Email</td><td>" 						+ profile.attr("email") 						+ "</td></tr>" +
 		  				"<tr><td>Secondary Email</td><td>"				+ profile.attr("secondaryEmail")				+ "</td></tr>" +
 		  				"<tr><td>Phone</td><td>"						+ profile.attr("phone")							+ "</td></tr>" +
-		  				"<tr><td>Education Level</td><td>"				+ profile.attr("educationFormatted") 				+ "</td></tr>" +
+		  				"<tr><td>Education Level</td><td>"				+ profile.attr("educationFormatted") 			+ "</td></tr>" +
 		  				"<tr><td>Preferred Start Date</td><td>"			+ profile.attr("startingDateFormatted")			+ "</td></tr>" +
 		  				"<tr><td>Employment Preference</td><td>"		+ profile.attr("employmentPreference")			+ "</td></tr>" +
 		  				"<tr><td>Location</td><td>"						+ profile.children("location").attr("address")	+ "</td></tr>" +
@@ -762,7 +761,6 @@ function redisplayProfile(accountType)
 		    $(tbody).append(rowText);
 		 	$(tbody).find('tr').find('td:first').addClass("nameCol");
 		 	$(tbody).find('tr').find('td:last').addClass("dataCol");
-		 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 		 	fb.hide();
 		}
 	}
@@ -790,20 +788,26 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 			
 		  $("#"+heading).html( profile.attr("name") + "'s Profile");
 		  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+		  				"<tr><td>Account Type</td><td>"		+ "Job Searcher"					+ "</td></tr>" +
+		  				"<tr><td>Account Name</td><td>"		+ profile.attr("email")				+ "</td></tr>" +
 		  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
+		  				"<tr><td>Phone</td><td>"			+ profile.attr("phone")				+ "</td></tr>" +
 		  				"<tr><td>Degree</td><td>"			+ profile.attr("educationFormatted")+ "</td></tr>" +
-		  				"<tr><td>Employer Preference</td><td>"  + profile.attr("empPref") 			+ "</td></tr>" +
-		  				"<tr><td>Location</td><td>"		        + profile.attr("address")			+ "</td></tr>" +
-		  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDate")		+ "</td></tr>" +
-		  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")	+ "</td></tr>";
+		 //				"<tr><td>Employer Preference</td><td>"  + profile.attr("employmentPreference") 	+ "</td></tr>" +
+		 //				"<tr><td>Location</td><td>"		        + profile.attr("address")				+ "</td></tr>" +
+		  				"<tr><td>Starting Date</td><td>"        + profile.attr("startingDateFormatted")	+ "</td></tr>" +
+		  				"<tr><td>Self Description</td><td>"		+ profile.attr("selfDescription")		+ "</td></tr>";
 		  break;
 		  
 		case "poster":
 			
 			$("#"+heading).html( profile.attr("name") + "'s Profile");
 			  var rowText = "<tr><td>Name</td><td>" 			+ profile.attr("name") 				+ "</td></tr>" +
+			  				"<tr><td>Account Type</td><td>"		+ "Job Poster"						+ "</td></tr>" +
+			  				"<tr><td>Account Name</td><td>"		+ profile.attr("email")				+ "</td></tr>" +
 			  				"<tr><td>Secondary Email</td><td>"	+ profile.attr("secondaryEmail")	+ "</td></tr>" +
-			  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
+			  				"<tr><td>Phone</td><td>"			+ profile.attr("phone")				+ "</td></tr>" +
+		//	  				"<tr><td>Location</td><td>"		    + profile.attr("address")			+ "</td></tr>" +
 			  				"<tr><td>Self Description</td><td>"	+ profile.attr("selfDescription")	+ "</td></tr>";
 			
 		  break;
@@ -814,9 +818,8 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		
 		}
 		 $(tbody).append(rowText);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+		 $(tbody).find('tr').find('td:first').addClass("nameCol");	
 		 $(tbody).find('tr').find('td:last').addClass("dataCol");
-		 $("#detailFB").hide();
 	}
 }
 	

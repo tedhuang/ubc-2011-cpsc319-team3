@@ -519,8 +519,8 @@ public class ServletJobAd extends HttpServlet {
 			stmt = conn.createStatement();
 			
 			String query = 
-				"SELECT jobAdId,ownerID, creationDate,  jobAdTitle, expiryDate, jobAvailability,status , educationReq,  FROM tableJobAd " + 
-				"WHERE idAccount=" + ownerId;
+				"SELECT idJobAd, idAccount, datePosted, title, expiryDate, jobAvailability, status ,educationRequired FROM tableJobAd " + 
+				"WHERE idAccount='" + ownerId +"';";
 			
 			System.out.println("getJobAdByOwner query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -548,6 +548,25 @@ public class ServletJobAd extends HttpServlet {
 //				jobAd.tags 				= result.getString("tags");
 				
 			/**Get Location values */
+				stmtLoc = conn.createStatement();
+				ArrayList<Location> locationList = new ArrayList<Location>();
+				
+				query = "SELECT * FROM tableLocationJobAd WHERE " +
+						"idJobAd= '" + jobAd.jobAdId +"'";
+				
+				isSuccessful = stmtLoc.execute(query);
+				ResultSet locResult = stmtLoc.getResultSet();
+				
+				while(locResult.next()){
+					Location location = new Location();
+
+					//Get Address, Longitude, Latitude
+					location.address = locResult.getString("location");
+					location.longitude = locResult.getDouble("longitude");
+					location.latitude = locResult.getDouble("latitude");	
+					locationList.add(location);
+				}
+				jobAd.locationList = locationList;
 				jobAdList.add(jobAd);
 //			
 			}//END OF WHILE LOOP

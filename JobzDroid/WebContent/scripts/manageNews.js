@@ -13,6 +13,7 @@ $("document").ready(function() {
 	$("#submitButton").bind("click", postNews);
 	$('#tabs').DynaSmartTab({});
 	$('#sideMenu').sideNavMenu({});
+	$('#lightBox').smartLightBox({});
 });
 
 // client side error checking, can add additional checks on other fields if needed
@@ -30,10 +31,10 @@ function validateInput(evt){
 // send post news request
 function postNews(evt){
 	$("#submitButton").attr("disabled", true);
-	$("#statusText").removeClass();	
 	var strNewsTitle = trim($("#newsTitle").val());
 	var strNewsContent = $("#newsContent").val();
 	var strSessionKey = $("#sessionKey").val();
+	$.fn.smartLightBox.openlb('small','Posting News Entry...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -48,22 +49,21 @@ function postNews(evt){
 	if(xmlHttpReq){
 		xmlHttpReq.onreadystatechange = function(){
 			if (xmlHttpReq.readyState == 4){
-				if(xmlHttpReq.status == 200){
+				if(xmlHttpReq.status == 200){					 
+					$("#submitButton").removeAttr("disabled");
 					//parse XML response from server
 					var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
+					 $("#lbMsg","#lightBox").html(responseText);
 					 if(boolResult == "true"){
-						 $("#statusText").addClass("successTag");
-						 $("#submitButton").removeAttr("disabled");
-						 $("#newsTitle").val("");
-						 $("#newsContent").val("");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $.fn.smartLightBox.closeLightBox(2000);
 						 loadPageWithSession('manageNews.jsp');
 					 }
-					 else
-						 $("#statusText").addClass("errorTag");		
-					 
-					$("#submitButton").removeAttr("disabled");
-			    	$("#statusText").text(responseText);
+					 else{
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+						 $.fn.smartLightBox.closeLightBox(2000);
+					 }
 				}
 			}};
 	}
@@ -77,9 +77,6 @@ function postNews(evt){
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
-	
-	//update status text
-	$("#statusText").text("Processing...This may take a moment.");
 }
 
 function sendDeleteNewsRequest(idNews){
@@ -88,7 +85,7 @@ function sendDeleteNewsRequest(idNews){
     if (b == false)
         return false;
     
-	$(".linkImg").attr("disabled", true);	
+    $.fn.smartLightBox.openlb('small','Deleting News Entry...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -106,11 +103,16 @@ function sendDeleteNewsRequest(idNews){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;				
-					 $(".linkImg").removeAttr("disabled");
-					 alert(strMsg);
-					 if(boolResult == "true")
+					 var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
+					 $("#lbMsg","#lightBox").html(responseText);
+					 if(boolResult == "true"){
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $.fn.smartLightBox.closeLightBox(2000);
 						 loadPageWithSession('manageNews.jsp');
+					 }
+					 else{
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+					 }
 				}
 			}};
 	}
