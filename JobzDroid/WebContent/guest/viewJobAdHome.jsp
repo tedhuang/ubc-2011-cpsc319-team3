@@ -31,7 +31,6 @@
 		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
 
-		
     	bindClearError();
 	});
 </script>
