@@ -47,6 +47,16 @@ on linux run
 mysqld --lower_case_table_names=0
 }}}
 
+Allow Remote connection on MySQL
+{{{
+GRANT ALL ON DBNAME.* TO USERNAME@'IP' IDENTIFIED BY 'PASSWORD'
+}}}
+DBNAME is the db you grant access to
+  * can set to *?
+USERNAME is the user name, usually the highest user is 'root'
+IP is the IP of the incoming connector, could be set to '%' for all IP
+PASSWORD is the password for USERNAME@IP
+
 Restoring MySQL DB
   * use mySQL console and type in
 {{{
