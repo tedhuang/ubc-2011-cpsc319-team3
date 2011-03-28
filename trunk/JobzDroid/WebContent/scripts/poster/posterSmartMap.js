@@ -120,7 +120,7 @@
 				markers.remove(this);
 			}
 			function initAutoCplt(){
-				$("#address").autocomplete({
+				$("#addrBar").autocomplete({
 				      source: //use jquery UI auto complete function to get the address
 				    	function(request, response) {
 					        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
@@ -140,8 +140,10 @@
 					        $("#longitude").val(ui.item.longitude);
 					        var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
 //					        placeMarkr(location);
-					        var markr=addMarkr(location);
-					        markr? addToLocList(ui.item.value, "locList", markr):null;
+					        if(notDuplicate(ui.item.latitude, ui.item.longitude)==true){
+						        var markr=addMarkr(location);
+						        markr? addToLocList(ui.item.value, "locList", markr):null;
+					        }
 					      }
 					    });
 			}
@@ -161,6 +163,19 @@
 						  this.setMap(map);
 					  });
 				  }
+				}
+				
+				function notDuplicate(lat, lng){
+					return markers.length==0? true:
+					$.each(markers, function(){
+						if(this.getPosition().lat()==lat && this.getPosition().lng()==lng){
+							return false;
+						}
+						else{
+							return true;
+						}
+						
+					});
 				}
 				
 				$.fn.smartMap.resize=function(){//fix map when the map is resized or position changed
@@ -209,7 +224,7 @@
 					geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {//reverse searching
 						if (status == google.maps.GeocoderStatus.OK) {
 							if (results[0]) {
-						          $('#address').val(results[0].formatted_address);
+						          $('#addrBar').val(results[0].formatted_address);
 						          $('#latitude').val(marker.getPosition().lat());
 						          $('#longitude').val(marker.getPosition().lng());
 						        }
@@ -243,7 +258,7 @@
 									  	  lat  = marker.getPosition().lat(),
 									  	  lng  = marker.getPosition().lng();
 									  
-									  $('#address').val(addr);
+									  $('#addrBar').val(addr);
 							          $('#latitude').val(lat);
 							          $('#longitude').val(lng);
 							          var li = locList[marker.get("id")];
@@ -260,7 +275,7 @@
 						geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
 							if (status == google.maps.GeocoderStatus.OK) {
 								if (results[0]) {
-							          $('#address').val(results[0].formatted_address);
+							          $('#addrBar').val(results[0].formatted_address);
 							          $('#latitude').val(marker.getPosition().lat());
 							          $('#longitude').val(marker.getPosition().lng());
 							          udLocListInfo.call(this.item,

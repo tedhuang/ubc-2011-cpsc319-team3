@@ -70,6 +70,19 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  $.fn.DynaSmartTab.guestTool(tr, jobAd.attr("jobAdId"));
 
+//		  var viewButton = $('<td></td>');
+//		  viewButton.appendTo(tr);
+		  
+//		  $("<button>View</button>").attr("id", id='td-viewButton').click(
+//			function() {
+// 				openTab('adDetailTab'); 
+//    			open_adDetail(jobAd.attr("jobAdId"));
+//				getJobAdById("detail", jobAd.attr("jobAdId"), "adDetailTable");
+//			     //TODO: implement transition loading screen - UI
+//			  }
+//		  ).appendTo(viewButton);
+		  
+		// $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
@@ -707,14 +720,8 @@ function redisplayProfile(accountType)
 			  $('<td></td>').attr("id", id='td-loc').text(profileSearcherXML.children("location").attr("address")).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("preferredStartDate")).appendTo(tr);
 			  
+			  $.fn.DynaSmartTab.searchJSTool(tr, profileSearcherXML.attr("accountID"));
 			  tr.appendTo(tbody);
-			  console.log(profileSearcherXML.attr("accountID"));
-			  tr.delegate("#td-name", 'click', function(){
-				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable', 'fileDiv');
-			  });
-//			  $("#td-name", tr).click(function(){
-//				  getProfileSearcherById("detail", profileSearcherXML.attr("accountID"), 'jsDetailTable');
-//				 });
 			});
 			 
 			 $("tr:odd", tbody).addClass("oddRow");

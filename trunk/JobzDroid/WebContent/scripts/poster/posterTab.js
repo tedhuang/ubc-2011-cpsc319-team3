@@ -67,13 +67,22 @@
      			   bindCloseClick();
      			   return closeBtn;
                }
-     		   function bindFuncToBtn(){
-     			   $('.newadbtn')
+     		   function bindFuncToBtn(){ //BIND buttons or links to functions
+     			   $('.newadbtn')//new ad btn
      			   .attr('title', 'Compose New Ad')	
      			   .bind("click", function(){
      			   		openTab('newAdTab'); 
-     			   		open_newAd_form();
      			   	});
+     			   
+     			   $("#refreshOwnerAd")//refresh and load woner's ads
+     			   .bind("click", function(){
+     					getJobAdByOwner('ownerAdTable');
+     			   });
+     			   
+     			   $(".employeeSearch").click(function(){
+     				   openTab('searchJSTab');
+     				   open_searchJsForm();
+     			   });
      		   }
      		   
      		   function bindCloseClick(){
@@ -185,22 +194,20 @@
                 
 /*****************************************************************************************************************************
  * 										Show TAB FUNCTION
- * -Publicly Accessible
- * @params tabId: the Id of the tab
  * ****************************************************************************************************************************/  
-                function openTab(tabId){
+                function openTab(tabId, param){
                 	   var openingTab = $('#'+tabId);
                 	   var openingFrame = $(openingTab.find('a').attr("href"));
                 	   var curTab = tabs.eq(curTabIdx); 
                        
                    	if(openingTab.length && openingFrame.length){//if found
-                   	  if(curTab.attr("id") != openingTab.attr("id") && openingTab.css("display")=="block"){//not closed
+                   	  if(curTab.attr("id") != openingTab.attr("id") && openingTab.css("display")!="none"){//not closed and not current tab
                    		hideFrame(curTabIdx);
                    		curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                         showTab();
                         return false;
                    	  }
-                   	  else{	
+                   	  else{	//tab not open
    	                    var lastTab = $($('li:last',"#navBar"),obj);
    	                	var lastFrame = $(tabFrames.last());
    	                	
@@ -215,7 +222,12 @@
                     	hideFrame(curTabIdx);
                     	refreshTabs();
                     	curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
-                    	showTab();                   	  }
+                    	showTab();
+                    	switch(tabId){
+                    	case "newAdTab": open_newAd_form(); break;
+                    	case "edAdTab":	open_edAd_form(param);break;
+                    	}
+                    }
                   }return false;
                 }//ENDOF SHOWTAB
                 
@@ -310,14 +322,13 @@
 //         			tRow.find('a.edit').click(function(){ loadEdit(adId);});
          			var status=tRow.find('td.td-status').text();
          			tRow.delegate("a.edit", "click", function(){
-         				openTab('edAdTab');
-                 		open_edAd_form(status);
+         				openTab('edAdTab', status);
          				getJobAdById("edit",adId, "edAdForm" );
          				
          			});
          			tRow.delegate('a.view', "click", function(){
          				openTab('adDetailTab'); 
-            			open_adDetail(adId);
+            			open_adDetail(adId, status);
             			getJobAdById("detail",adId, "adDetailTable");
          				
          			});
@@ -331,6 +342,20 @@
      					});
          			});
          };
+         
+         $.fn.DynaSmartTab.searchJSTool=function(tRow, jsId){
+  			
+  			tRow.hover(function() {
+  		        $(this).addClass("hover");
+  		    }, function(){
+  		    	$(this).removeClass("hover");
+  		    })
+  			.unbind('click')
+  			.click( function(){
+  				openTab('jsProfileTab'); 
+  				getProfileSearcherById("detail", jsId, 'jsDetailTable', 'fileDiv');
+  			});
+         }
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
@@ -345,7 +370,7 @@
        	 			$(this).toggleClass("active");
        	 			$(this).hasClass("active")? $(this).text("Close Map"): $(this).text("Add Locations");
        	 			return false;
-       	    });
+         		});
          	});
         }
         
@@ -357,6 +382,7 @@
         		bindHeadToolBar("edAdTool", status);
         	});
         }
+        
         function bindHeadToolBar(toolBarId, status){
         	var toolBar=$("#"+toolBarId);
         	
@@ -378,11 +404,9 @@
  						$.fn.smartLightBox.closeLightBox(0);
  					});
         		});
-        	
         	}
-        	
         }
-        function open_adDetail(adId){
+        function open_adDetail(adId, status){
        	 $("#adDetailFrame").load("DOMs/formDOM.jsp #adDetailFrame",function(){//TODO move this to server side for security reason
        		$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
        		$("div.headToolBar").unbind('click');
@@ -404,6 +428,11 @@
         	});
        	 });
        }
+        function open_searchJsForm(){
+        	$("#searchSearcherFrame").load("DOMs/formDOM.jsp #searchSearcherFrame",function(){//TODO move this to server side for security reason
+        		$( "#jsStartTime-field" ,"#searchSearcherFrame").datepicker({});//ad expires in max 3 months
+        	});
+        }
         $.fn.DynaSmartTab.close=function(){
         	autoCloseTab();//for close tab after action performed
         };
