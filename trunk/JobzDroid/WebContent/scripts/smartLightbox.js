@@ -14,6 +14,7 @@
         		
 //        		fullLightBox(buildInfoBox("test","alert"),true);
 //        		divLightBox('loginbox','load','loading...');
+        		
    /************************STARTOF FUNCTION GROUP******************************************************************************/
         		function buildInfoBox(text, imgClass){
              		var infoBox= $('<div></div>').attr('id', 'info');
