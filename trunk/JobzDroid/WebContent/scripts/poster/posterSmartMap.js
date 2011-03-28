@@ -82,6 +82,8 @@
 						.addClass("jsBtn")
 						.data({"marker":marker.get("id"),
 								"addr" : addr,
+								"lat"  : marker.getPosition().lat(),
+								"lng"  : marker.getPosition().lng(),
 								"latlng":marker.getPosition().lat()+","+marker.getPosition().lng()})
 						.click(function(){
 							 loc = new google.maps.LatLng($(this).data("lat"), $(this).data("lng"));
