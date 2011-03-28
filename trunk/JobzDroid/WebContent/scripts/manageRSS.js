@@ -13,6 +13,7 @@ $("document").ready(function() {
 	$("#submitButton").bind("click", postRSS);
 	$('#tabs').DynaSmartTab({});
 	$('#sideMenu').sideNavMenu({});
+	$('#lightBox').smartLightBox({});
 });
 
 // client side error checking, can add additional checks on other fields if needed
@@ -30,13 +31,13 @@ function validateInput(evt){
 // send post news request
 function postRSS(evt){
 	$("#submitButton").attr("disabled", true);
-	$("#statusText").removeClass();	
 	var strRSSTitle = trim($("#titleInput").val());
 	var strLink = trim($("#linkInput").val());
 	var strRSSContent = $("#contentInput").val();
 	var strSessionKey = $("#sessionKey").val();
 	var strFeedType = $("#feedType").val(); 
 	var strCategories = trim($("#caterogiesInput").val());
+	$.fn.smartLightBox.openlb('small','Posting RSS Entry...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -52,16 +53,21 @@ function postRSS(evt){
 		xmlHttpReq.onreadystatechange = function(){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
+					$("#submitButton").removeAttr("disabled");
 					//parse XML response from server
 					var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;	
+					var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;						
 					 if(boolResult == "true"){
-						 $("#statusText").addClass("successTag");
+						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 3 seconds...");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $.fn.smartLightBox.closeLightBox(2500);
 						 setTimeout("loadPageWithSession('manageRSS.jsp')",3000);
 					 }
-					 else
-						 $("#statusText").addClass("errorTag");
-				    	$("#statusText").text(responseText + " Page content will refresh in 3 seconds...");
+					 else{
+						 $("#lbMsg","#lightBox").html(responseText);
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+						 $.fn.smartLightBox.closeLightBox(2000);
+					 }
 				}
 			}};
 	}
@@ -77,10 +83,7 @@ function postRSS(evt){
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.send(request.toString());
-	
-	//update status text
-	$("#statusText").text("Processing...This may take a moment.");
+	xmlHttpReq.send(request.toString());	
 }
 
 function deleteNewsRssEntry(index){
@@ -96,8 +99,7 @@ function sendDeleteRSSRequest(type, index){
     var b = confirm("Are you sure to delete the selected feed entry?");
     if (b == false)
         return false;
-    
-	$(".linkImg").attr("disabled", true);	
+    $.fn.smartLightBox.openlb('small','Deleting RSS Entry...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest){
@@ -115,11 +117,17 @@ function sendDeleteRSSRequest(type, index){
 				if(xmlHttpReq.status == 200){
 					//parse XML response from server
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-					 var strMsg = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;				
-					 $(".linkImg").removeAttr("disabled");
+					 var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 					 if(boolResult == "true"){
-						 alert(strMsg + " Page content will refresh in 3 seconds...");
-						 setTimeout("loadPageWithSession('manageRSS.jsp')",3500);
+						 $("#lbMsg","#lightBox").html(responseText + "<br/>Refreshing in 3 seconds...");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $.fn.smartLightBox.closeLightBox(2500);
+						 setTimeout("loadPageWithSession('manageRSS.jsp')",3000);
+					 }
+					 else{
+						 $("#lbMsg","#lightBox").html(responseText);
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+						 $.fn.smartLightBox.closeLightBox(2000);
 					 }
 				}
 			}};

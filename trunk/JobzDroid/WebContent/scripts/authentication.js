@@ -15,7 +15,7 @@ function userLoginRequest(){
 	var email = $("#email").val();
 	var password = $("#password").val();
 	if(email.length||password.length){
-		$.fn.smartLightBox.openlb('small','signing in...','load');
+		$.fn.smartLightBox.openlb('small','Signing in...','load');
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
 		  }
@@ -66,6 +66,7 @@ function adminLoginRequest()
 	var strEmail = document.getElementById("email").value;
 	var strPassword = document.getElementById("password").value;
 	$.fn.smartLightBox.openlb('small','Signing in...','load');
+	
 	if (window.XMLHttpRequest)
 		xmlHttpReq = new XMLHttpRequest();
 	else
@@ -88,7 +89,7 @@ function adminLoginRequest()
 				$("#lbMsg","#lightBox").html("Incorrect account and password combination.");
 				$.fn.smartLightBox.closeLightBox(2000);
 	    		$("#submitButton").text("Log in");
-				$("#loginError").text("Failed admin login attempt.");
+	//			$("#loginError").text("Failed admin login attempt.");
 	    	}
 	    }
 	  };

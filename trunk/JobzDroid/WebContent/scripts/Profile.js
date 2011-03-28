@@ -143,8 +143,9 @@ function submitChangeProfile(accountType){
 
 
 
-function getProfileById(idAccount, outputDiv, heading){
+function getProfileById(idAccount, profileDiv, profileHeading, fileDiv){
 	var strSessionKey = $("#sessionKey").val();
+	$.fn.smartLightBox.openlb('small','Loading Profile Information...','load');
 	
 	request = new Request;
 	request.addAction("getProfileById");
@@ -159,8 +160,9 @@ function getProfileById(idAccount, outputDiv, heading){
 	  
 	xmlhttp.onreadystatechange = function(){
 	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			//you can find this in uiBot.js under scripts folder
-			buildProfileTb("profile", outputDiv, heading);
+		  buildProfileTb("profile", profileDiv, profileHeading);
+		  buildSearcherFileTb("file", fileDiv);
+		  $.fn.smartLightBox.closeLightBox(0);
 	    }
 	  };	
 	  
@@ -259,13 +261,13 @@ function searchSearcherProfile(outputDiv){
  ************************************************************************************************************/
 function getProfileSearcherById(mode, id, profileDiv, fileDiv)
 {
-//	$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
 	request = new Request;
 	request.addAction("getProfileSearcherById");
 	request.addParam("accountId", id);
 	var fb = $(".feedback", "#"+profileDiv);
 	//change the text while sending the request
 	fb.html("<h2>Sending getProfileSearcherById Request</h2>");
+	$.fn.smartLightBox.openlb('small','Loading profile information...','load');
 	
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -289,6 +291,7 @@ function getProfileSearcherById(mode, id, profileDiv, fileDiv)
 		  	buildSearcherDetailTable("profile", profileDiv);
 		  	buildSearcherFileTb("file", fileDiv);
 		  }
+		  $.fn.smartLightBox.closeLightBox(0);
 	    }
 	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");

@@ -8,8 +8,10 @@
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="../scripts/smartLightbox.js" "></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>	
 	<script type="text/javascript" src="../scripts/deleteAccount.js"></script>
@@ -85,7 +87,7 @@
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
-				<h2>Manage Admins</h2>
+				<h2>Manage Admin</h2>
 			</a>
 		</li>
 		<%
@@ -147,7 +149,7 @@
 								<td><%= accountName %></td>
 								<td><%= strDateTimeCreated %></td>
 								<td>
-									<a title="Delete" onclick="sendDeleteAccountRequest('<%= accountName %>', 'manageAdmin.jsp', 'statusTextFirstFrame')" class="linkImg">
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= accountName %>', 'manageAdmin.jsp')" class="linkImg">
 	       						 		<img src="../images/icon/delete_icon.png"/>
 									</a>									
 								</td>
@@ -157,7 +159,6 @@
 				%>
 				</tbody>
 			</table>
-			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of VIEWFRAME-->
 		
@@ -211,8 +212,7 @@
 				  </tr>
 				</tbody>
 			</table>
-			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
-		    <br/>		
+		    <br/>				    
 		</div><!--end of CREATEADMINFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
@@ -229,6 +229,7 @@
 			©2011 JobzDroid
 		</li>
 	</ul>	
+	<div id="lightBox"></div>
 	<form name="sid" method="get" action="">
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>

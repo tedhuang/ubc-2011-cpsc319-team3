@@ -10,6 +10,7 @@ $("document").ready(function() {
 	$("#createAdminButton").bind("click", sendCreateAdminRequest);
 	$('#tabs').DynaSmartTab({});
 	$('#sideMenu').sideNavMenu({});
+	$('#lightBox').smartLightBox({});
 });
 
 //client side error checking for creating admin
@@ -50,9 +51,8 @@ function sendCreateAdminRequest(evt){
 	var strPasswordRepeat = $("#password2").val();
 	var strSessionKey = $("#sessionKey").val();
 
+	$.fn.smartLightBox.openlb('small','Creating New Admin Account...','load');
 	$("#createAdminButton").attr("disabled", true);
-	$("#statusTextSecondFrame").removeClass("errorTag");	
-	$("#statusTextSecondFrame").removeClass("successTag");
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
@@ -64,10 +64,11 @@ function sendCreateAdminRequest(evt){
 		xmlHttpReq.onreadystatechange = function(){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
-					//parse XML response from server
-					var responseText = parseResponse(xmlHttpReq.responseXML, "statusTextSecondFrame");
 					$("#createAdminButton").removeAttr("disabled");
-			    	$("#statusTextSecondFrame").text(responseText);
+					//parse XML response from server
+					var responseText = parseResponse(xmlHttpReq.responseXML);
+					 $("#lbMsg","#lightBox").html(responseText);
+					 $.fn.smartLightBox.closeLightBox(2000);
 				}
 			}};
 	}
@@ -82,21 +83,19 @@ function sendCreateAdminRequest(evt){
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
-		
-	//update status text
-	$("#statusTextSecondFrame").text("Processing...This may take a moment.");
 }
 
 // parses response from server for admin creation
-function parseResponse(responseXML, textOutputId){	
+function parseResponse(responseXML){	
 	 var boolResult = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 	 var strMsg = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 	 // if registration sucessful, then update button text and function
 	 if(boolResult == "true"){
-		 $("#"+textOutputId).addClass("successTag");
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
 		 loadPageWithSession('manageAdmin.jsp');
 	 }
-	 else
-		 $("#"+textOutputId).addClass("errorTag");
+	 else{
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+	 }
 	 return strMsg;
 }

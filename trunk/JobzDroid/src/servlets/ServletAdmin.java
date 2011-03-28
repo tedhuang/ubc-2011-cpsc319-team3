@@ -210,7 +210,7 @@ public class ServletAdmin extends HttpServlet {
 		if(allGood){
 			if(banAccount(email)){
 				result = true;
-				message = "Account " + email + " has been successfully banned.";
+				message = "Ban successful.";
 				// send email to inform banned user
 				emailManager.informBan(email, reason);
 			}
@@ -285,7 +285,7 @@ public class ServletAdmin extends HttpServlet {
 		if(allGood){
 			if(unbanAccount(email)){
 				result = true;
-				message = "Account " + email + " has been successfully unbanned.";
+				message = "Unban successful.";
 				emailManager.informUnban(email, reason);
 			}
 			else
@@ -368,7 +368,7 @@ public class ServletAdmin extends HttpServlet {
 		if(allGood){
 			if(createAdminAccount(accountName, password)){
 				result = true;
-				message = "Admin account " + accountName + " has been successfully created.";
+				message = "Admin creation successful.";
 			}
 			else
 				message = "An error has occured while performing create admin action. Please try again later.";
@@ -399,6 +399,7 @@ public class ServletAdmin extends HttpServlet {
 		boolean result = false;
 		String message = "";
 		String userType = "";
+		String accToDeleteType = "";
 		
 		// check if account name exists
 		boolean emailExists = dbManager.checkEmailExists(accountName);
@@ -420,7 +421,7 @@ public class ServletAdmin extends HttpServlet {
 					message = "Error reading account information.";
 				}
 				else{
-					String accToDeleteType = accToDelete.getType();
+					accToDeleteType = accToDelete.getType();
 					userType = session.getAccountType();
 					// only super admins can delete admin accounts
 					if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
@@ -446,10 +447,11 @@ public class ServletAdmin extends HttpServlet {
 				//TODO delete user's document on file system as well
 				
 				result = true;
-				message = "Account " + accountName + " has been successfully deleted.";
+				message = "Account deletion successful.";
 				// inform the user
-				if( !userType.equals("admin") )
+				if( !accToDeleteType.equals("admin") ){
 					emailManager.informDeletion(accountName, reason);
+				}
 			}
 			else
 				message = "An error has occured while performing delete account action. Please try again later.";
@@ -514,7 +516,7 @@ public class ServletAdmin extends HttpServlet {
 			
 			if(newsManager.addNewsEntry(title, content, currentTime)){
 				result = true;
-				message = "News entry has been successfully posted.";
+				message = "Post news successful.";
 				// add entry to the top of news RSS
 				try {
 					SyndFeed newsFeed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "news.xml");
@@ -525,7 +527,7 @@ public class ServletAdmin extends HttpServlet {
 				} 
 				catch (Exception e) {
 					Utility.logError("Failed to add news entry '" + title + "' to RSS: " + e.getMessage());
-					message = "News entry has been successfully posted, but there was an error updating News RSS.";
+					message = "Post news successful, but failed to update News RSS.";
 				}				
 			}
 			else
@@ -585,7 +587,7 @@ public class ServletAdmin extends HttpServlet {
 			
 			if(newsManager.deleteNewsEntry(idNews)){
 				result = true;
-				message = "News entry has been successfully deleted.";
+				message = "News deletion successful.";
 				// find and remove the first matching news entry in the RSS
 				try {
 					String newsPath = getServletContext().getRealPath("news.xml");
@@ -596,7 +598,7 @@ public class ServletAdmin extends HttpServlet {
 				} 
 				catch (Exception e) {
 					Utility.logError("Failed to remove news (Title: " + newsEntry.getTitle() + ") from RSS: " + e.getMessage());
-					message = "News entry has been successfully deleted, but there was an error updating News RSS: " + e.getMessage();
+					message = "News deletion successful, but there was an error updating News RSS: " + e.getMessage();
 				}				
 			}
 			else
@@ -679,7 +681,7 @@ public class ServletAdmin extends HttpServlet {
 				String filePath = getServletContext().getRealPath(feedFile);
 				RSSManager.writeFeedToFile(feed, filePath);
 				result = true;
-				message = "New RSS entry has been successfully posted.";
+				message = "Post RSS entry successful.";
 			} 
 			catch (Exception e) {
 				Utility.logError("Failed to post RSS entry '" + title + "' to RSS: " + e.getMessage());
@@ -754,7 +756,7 @@ public class ServletAdmin extends HttpServlet {
 				String filePath = getServletContext().getRealPath(feedFile);
 				RSSManager.writeFeedToFile(feed, filePath);
 				result = true;
-				message = "New RSS entry has been successfully deleted.";
+				message = "RSS entry deletion successful.";
 			} 
 			catch (Exception e) {
 				Utility.logError("Failed to remove RSS entry with index '" + entryIndex + "' from RSS: " + e.getMessage());

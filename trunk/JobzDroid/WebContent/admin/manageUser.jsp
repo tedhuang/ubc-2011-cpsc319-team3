@@ -7,9 +7,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
-	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>	
+	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/Profile.js"></script>
@@ -86,7 +88,7 @@
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
-				<h2>Manage Admins</h2>
+				<h2>Manage Admin</h2>
 			</a>
 		</li>
 	 <%
@@ -150,22 +152,17 @@
 							%>
 								<tr title="<%= email %>">
 									<td><%= idAccount %></td>
-									<td><a href="#userNameInputFirstFrame"  onclick="copyEmailToInput('<%= email %>', 'userNameInputFirstFrame')"><%= email %></a></td>
+									<td><a href="#userNameInputFirstFrame"  onclick="viewProfile('<%= idAccount %>', 0)"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
-									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>', 0)" class="linkImg">
-		       						 		<img src="../images/icon/view_profile.png"/>
-										</a>									
-									</td>
 									<td>
 										<a title="Ban" onclick="sendBanRequest('<%= email %>')" class="linkImg">
 		       						 		<img src="../images/icon/ban_icon.png"/>
 										</a>									
 									</td>
 									<td>
-										<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextFirstFrame')" class="linkImg">
+										<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp')" class="linkImg">
 		       						 		<img src="../images/icon/delete_icon.png"/>
 										</a>									
 									</td>
@@ -176,33 +173,6 @@
 				%>
 				</tbody>
 			</table>
-			<table>
-				<tbody>
-				  <tr>
-				    <td class="clean"></td>
-				  </tr>
-				  <tr>
-	    			<td class="label">
-	          		    User name (Email address): 
-	    			</td>
-				    <td style="width: 100px">
-				        <div>
-				            <input type="text" class="textinput" id="userNameInputFirstFrame" size="50" maxlength="100" tabindex="11"/>
-				        </div>
-				    </td>
-				    <td>
-	          		    <button id="submitBan" type="button">Ban User</button>
-	    			</td>
-	    			<td>
-	          		    <button id="submitDeleteFirstFrame" type="button">Delete User</button>
-	    			</td>
-				  </tr>
-				  <tr>
-				    <td class="clean"></td>
-				  </tr>
-				</tbody>
-			</table>
-			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of BANFRAME-->
 		
@@ -242,22 +212,17 @@
 							%>
 								<tr title="<%= email %>">
 									<td><%= idAccount %></td>
-									<td><a href="#userNameInputSecondFrame"  onclick="copyEmailToInput('<%= email %>', 'userNameInputSecondFrame')"><%= email %></a></td>
+									<td><a href="#userNameInputSecondFrame"  onclick="viewProfile('<%= idAccount %>', 1)"><%= email %></a></td>
 									<td><%= secondaryEmail %></td>
 									<td><%= type %></td>
 									<td><%= strDateTimeCreated %></td>
-									<td>
-										<a title="View Profile" onclick="viewProfile('<%= idAccount %>', 1)" class="linkImg">
-		       						 		<img src="../images/icon/view_profile.png"/>
-										</a>									
-									</td>
 									<td>
 										<a title="Unban" onclick="sendUnbanRequest('<%= email %>')" class="linkImg">
 		       						 		<img src="../images/icon/unban_icon.png"/>
 										</a>									
 									</td>
 									<td>
-									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp', 'statusTextSecondFrame')" class="linkImg">
+									<a title="Delete" onclick="sendDeleteAccountRequest('<%= email %>', 'manageUser.jsp')" class="linkImg">
 	       						 		<img src="../images/icon/delete_icon.png"/>
 									</a>									
 									</td>
@@ -268,44 +233,35 @@
 				%>
 				</tbody>
 			</table>
-			<table>
-				<tbody>
-				  <tr>
-				    <td class="clean"></td>
-				  </tr>
-				  <tr>
-	    			<td class="label">
-	          		    User name (Email address): 
-	    			</td>
-				    <td style="width: 100px">
-				        <div>
-				            <input type="text" class="textinput" id="userNameInputSecondFrame" size="50" maxlength="100" tabindex="11"/>
-				        </div>
-				    </td>
-				    <td>
-	          		    <button id="submitUnban" type="button">Unban</button>
-	    			</td>
-	    			<td>
-	          		    <button id="submitDeleteSecondFrame" type="button">Delete User</button>
-	    			</td>
-				  </tr>
-				  <tr>
-				    <td class="clean"></td>
-				  </tr>
-				</tbody>
-			</table>
 			<p id="statusTextSecondFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>		
 		</div><!--end of UNBANFRAME-->
 		
 		<div id="profileFrame" class="subFrame">
 			 <div id="profileTable" class="resultTableDiv noBorder">
-			 	<h2 id="profileHeading" class="welcome">Please select a user first.</h2><span id="profileFB"></span>
+			 	<h2 id="profileHeading" class="welcome">Please select a user.</h2>
+			 	<span id="profileFB" class="errorTag"></span>
 				<table>
 					<tbody>
 					</tbody>
 				</table>
 			 </div>		
+			 <div id="fileDiv" class="resultTableDiv">
+				<table>
+					<thead>
+						<tr>
+							<th id="col-fileName" style="text-align:center">
+								File Name
+							</th>
+							<th id="col-fileSize" style="text-align:center">
+								Size (in MB)
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+			</div><!--ENDOF File TABLE-->
 		</div><!--end of TABPROFILEFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
@@ -319,6 +275,7 @@
 			©2011 JobzDroid
 		</li>
 	</ul>	
+	<div id="lightBox"></div>
 	<form name="sid" method="get" action="">
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>

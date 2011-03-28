@@ -111,7 +111,7 @@
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
-				<h2>Manage Admins</h2>
+				<h2>Manage Admin</h2>
 			</a>
 		</li>
 	 <%
@@ -135,6 +135,7 @@
 		<ul>
 			<li id="jobAdTab">
   				<a href="#allJobAdFrame"><h2>All Job Ads</h2></a>
+  			</li>
 			<li id="jobAdDetailsTab">
   				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
 			</li>

@@ -2,12 +2,14 @@
  * Javascript file for admin pages that contain delete account functions
  */
 //send delete account request to admin servlet
-function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
+function sendDeleteAccountRequest(accountName, pageSource){
 	// ask for reason to delete if deleting a user (not admin)
 	if(pageSource == "manageUser.jsp"){
 	    var strReason = prompt("Please enter a reason to delete " + accountName + " below.\n" +
 	    		" An email message will be sent to the user with the information you enter.");
-	    if ( !strReason || strReason == "" ){
+	    if( strReason == null )
+	    	return false;
+	    else if ( strReason == "" ){
 	    	alert("Please enter the reason of deleting the user.");
 	        return false;
 	    }
@@ -16,10 +18,9 @@ function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
     if (b == false)
         return false;
     var strSessionKey = $("#sessionKey").val();
-	$(".linkImg").attr("disabled", true);
+    
 	$("button").attr("disabled", true);
-	$("#"+statusTextID).removeClass("errorTag");	
-	$("#"+statusTextID).removeClass("successTag");
+	$.fn.smartLightBox.openlb('small','Deleting Account...','load');
 	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
@@ -31,21 +32,21 @@ function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
 		xmlHttpReq.onreadystatechange = function(){
 			if (xmlHttpReq.readyState == 4){
 				if(xmlHttpReq.status == 200){
-					//parse XML response from server
+					$("button").removeAttr("disabled");
 					
+					//parse XML response from server					
 					 var boolResult = (xmlHttpReq.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 					 var responseText = (xmlHttpReq.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-					 // if registration sucessful, then update button text and function
+					 $("#lbMsg","#lightBox").html(responseText);
 					 if(boolResult == "true"){
-						 $("#"+statusTextID).addClass("successTag");
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("info");
+						 $.fn.smartLightBox.closeLightBox(2000);
 						 loadPageWithSession(pageSource);
 					 }
-					 else
-						 $("#"+statusTextID).addClass("errorTag");
-										
-					$(".linkImg").removeAttr("disabled");
-					$("button").removeAttr("disabled");
-			    	$("#"+statusTextID).text(responseText);
+					 else{
+						 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+						 $.fn.smartLightBox.closeLightBox(2000);
+					 }
 				}
 			}};
 	}
@@ -58,8 +59,5 @@ function sendDeleteAccountRequest(accountName, pageSource, statusTextID){
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAdmin", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlHttpReq.send(request.toString());
-		
-	//update status text
-	$("#"+statusTextID).text("Processing...This may take a moment.");
+	xmlHttpReq.send(request.toString());		
 }

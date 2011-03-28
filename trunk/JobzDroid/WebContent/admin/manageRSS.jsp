@@ -9,8 +9,10 @@
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 	<script type="text/javascript" src="../scripts/Utility.js"></script>
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
@@ -91,7 +93,7 @@
 		<li>
 			<a class="jsBtn" onclick="loadPageWithSession('manageAdmin.jsp')">
 				<img src="../images/icon/admin_icon.png"/>
-				<h2>Manage Admins</h2>
+				<h2>Manage Admin</h2>
 			</a>
 		</li>
 	 <%
@@ -269,7 +271,6 @@
 		       </table>				
 			<p align="center"><button id="submitButton" type="button">Submit</button></p>
 			<!--TODO STYLE THE BUTTON-->
-			<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>	
 		  </div><!--end of POST_RSS_FRAME-->
 		</div> <!--ENDOF TABFRAME-->
@@ -283,6 +284,7 @@
 	<%
 	}
 	%>	
+	<div id="lightBox"></div>
 	<form name="sid" method="get" action="">
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>
