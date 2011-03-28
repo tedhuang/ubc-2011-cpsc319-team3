@@ -28,7 +28,7 @@
      		   
    /************************STARTOF FUNCTION GROUP******************************************************************************/
      		   function initHome(){
-     		    	guestViewJobAd("allJobAdtable", "next");
+     		    	guestViewJobAd("allJobAdtable", "first");
      		   }
      		    function refreshTabs(){
      			   //update to the latest tab info, any change involving position-changing, visual-changing need to call it at the end  

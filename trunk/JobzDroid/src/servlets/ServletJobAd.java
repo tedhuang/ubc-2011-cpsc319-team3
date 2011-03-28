@@ -200,7 +200,6 @@ public class ServletJobAd extends HttpServlet {
 
 		try {
 			stmt = conn.createStatement();
-			
 			String query = 
 				 	"SELECT * FROM tableJobAd " +
 					" ORDER BY datePosted DESC "+

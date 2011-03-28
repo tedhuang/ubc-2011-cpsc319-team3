@@ -725,7 +725,17 @@ function guestViewJobAd(outputDiv, mode){
 	//$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
 
 	var index = $("#browseIndex").val();
-		
+	
+	if(mode == "first"){
+		//first index is 0, do nothing
+	}
+	if(mode == "next")
+		index = parseInt(index)+10; //update index
+	
+	 if(mode == "prev")
+		index = parseInt(index)-10;
+	  
+	
 	request = new Request;
 	request.addAction("getSomeJobAd");
 	request.addParam("startingIndex", index);
@@ -751,18 +761,7 @@ function guestViewJobAd(outputDiv, mode){
 				$("#prevButton").attr("disabled", true);
 			}else
 				$("#prevButton").attr("disabled", false);
-			
-		
-			if(mode == "next")
-				index = parseInt(index)+10;
-			else if(mode == "prev"){
-				index = parseInt(index)-10;
-			}
-			else
-				alert("Error in guestViewJobAd: Mode parameter wrong");
-		  
 
-		  
 		  $("#browseIndex").val(index ); //increase index by 10
 		  $("#feedback").text("Browse Index: " + $("#browseIndex").val() );
 	    }
