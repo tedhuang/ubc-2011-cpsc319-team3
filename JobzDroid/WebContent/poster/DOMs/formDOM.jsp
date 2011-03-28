@@ -158,7 +158,7 @@
 				  	<ul id="locList"></ul>
 				 </div>
 				</div><!-- ENDOF MAP -->
-				<span class="jsBtn btn-slide">Show Map</span>
+				<span class="jsBtn btn-slide">Add Location</span>
 			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
