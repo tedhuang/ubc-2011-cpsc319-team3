@@ -39,6 +39,12 @@ public class JobAdvertisement {
 		String startingDateFormatted;
 		String expiryDateFormatted;
 		
+		// escape characters into valid XML
+		jobAdTitle = Utility.processXMLEscapeChars(jobAdTitle);
+		tags = Utility.processXMLEscapeChars(tags);
+		contactInfo = Utility.processXMLEscapeChars(contactInfo);
+		jobAdDescription = Utility.processXMLEscapeChars(jobAdDescription);
+		
 		if(locationList.isEmpty()){
 			Location loc = new Location("Not Specified");
 			locationList.add(loc);
@@ -90,8 +96,8 @@ public class JobAdvertisement {
 		/******************************************************************/
 		
 		" status=\"" 				+ status + "\"" +
-		" numberOfViews=\"" 		+ numberOfViews + "\"" +
-		" jobAdDescription=\"" 		+ jobAdDescription + "\"" +
+		" numberOfViews=\"" 		+ numberOfViews + "\"" + 
+		" jobAdDescription=\"" 		+ jobAdDescription + "\""  +
 		" isApproved=\"" 			+ isApproved + "\" >\n";
 		
 		/************ Add a list of location objects to XML ***********/
