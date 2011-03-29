@@ -68,7 +68,7 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
   
 #topnav a.btn:hover{ background: #9EDB04; color  : #FFFFFF; text-decoration : none; }
 
-.header #topnav li a, #topnav li strong {font-size: 11px;display: block;float: left;padding: 6px;margin: 3px 0 0 8px;overflow: visible;text-decoration: none;}
+.header #topnav li a, #topnav li strong {font-size: 13px;margin: 3px 0 0 8px;overflow: visible;}
 #topnav li a img.link-icon{   display:block;  margin:-2px 0 0 0;  padding-right:8px;  /*height:50px;  width:50px;*/
 							  float:left;  background-position: center left;}
 /**********ENDOF header Bar**********************************************/
@@ -76,12 +76,15 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 /*****************Index Center Box*********************************************/
 .centerbox {	margin: 0 auto;	height: inherit;	width: 980px;	position: relative;}
 
-.centerbox .loginbox{background-image: url("../images/login-box.png");	float: right;  list-style-type: none;  left: 580px;
-						padding: 0;  position: absolute;  top: 20px;height: 339px;	width: 375px;}
-.centerbox .loginbox a{    font-size: 15px;	font-weight: bold;	padding: 0px 10px;	color: #1e2ef0;    display: inline-block;    line-height: 27px;}
+.centerbox .loginbox{background: url("../images/bg/login-box.png") no-repeat;	float: right;  list-style-type: none; padding: 0;  position: absolute;
+					right:3em; top: 1em;height: 339px;	width: 375px;}
+.centerbox .loginbox a{ padding: 0.3em 0 0 1.5em;float: left;font-size: 15px;}
+.centerbox .loginbox #loginDiv{position: absolute; bottom:1em; overflow:hidden;width: 320px;padding-left:1em;}
+.centerbox .loginbox #loginDiv h2{font: bold small-caps 1.2em verdana, Ariel, sans-serif;}
+.centerbox .loginbox label{clear: both;float: left;width:100%;font: bold small-caps 1em verdana, Ariel, sans-serif;color:white;padding:0 0 0 1em;}
+.centerbox .loginbox input{background: url("../images/bg/input-bg.png") no-repeat scroll left top transparent;
+							width: 274px; height:30px;margin: 0 0 0 1.5em;border: 0;}
 
-.centerbox .loginbox #email{	margin: 85px 0 0 144px;	width: 10em;}
-.centerbox .loginbox #password{	margin: 20px 0 0 144px;	width: 10em;}
 /**************************FOOTER***********************************************************/
 .footer_wrapper {	margin: auto;	width: 980px;}
 .footer_wrapper li {	float: right;	list-style-type: none;	font-size: 11px;	margin-left: 15px !important;}

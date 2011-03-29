@@ -34,22 +34,28 @@
 	        <img src="images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
-		    <li><a href="news.jsp" target="_blank" class="btn">News</a></li>
-		    <li><a href="rss.html" target="_blank" class="btn">RSS</a></li>
-		    <li><a href="guest/viewJobAdHome.jsp" target="_blank" class="btn">View Job Ads</a></li>
+			<li><a href="guest/viewJobAdHome.jsp" target="_blank">Browse Job Ads |</a></li>
+		    <li><a href="news.jsp" target="_blank"> News |</a></li>
+		    <li><a href="rss.html" target="_blank" >RSS </a></li>
+		    
 		</ul>
 	  </div><!--ENDOF DIV header-->
 	   
 	  <div class="centerbox">
 	  	<img src="images/home-mid-bg.png"/>
 	    <div id="loginbox" class="loginbox">
+	    	
+	        <div id="loginDiv">
+	        <h2 class="welcome">Login</h2>
+	        <label>Email</label>
 	    	<input id="email" title="Username" value=""  maxlength="2048" />
+	    	<label>Password</label>
 			<input id="password" type="password"  title="Password" value="" /><br/>
-			<button id="submitButton" onclick="userLoginRequest()">Log in</button>
-			<b><span id="loginError" class="errorTag pagefont"></span></b>
 	       <a href="account/forgetpassword.html">Forgot Your Password?</a>
-		   <br/> 
-		   <a href="account/register.html"><img src="images/signup.png"/></a>
+	       <a class="jsBtn" onclick="userLoginRequest()"><img src="images/btn/login.png"/></a>
+	       <a href="account/register.html"><img src="images/signup.png"/></a>
+		 </div> 
+		   
         </div>
 	  </div>
 		
