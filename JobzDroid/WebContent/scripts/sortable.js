@@ -10,15 +10,17 @@ Version 1.5.7
 
 /* You can change these values */
 var image_path = "http://www.joostdevalk.nl/code/sortable-table/";
-var image_up = "arrowup.gif";
-var image_down = "arrowdown.gif";
-var image_none = "arrownone.gif";
+var image_up = "../images/icon/arrow-up.gif";
+var image_down = "../images/icon/arrow-down.gif";
+var image_none = "../images/icon/arrow-none.gif";
 var europeandate = true;
 var alternate_row_colors = true;
 
 /* Don't change anything below this unless you know what you're doing */
-addEvent(window, "load", sortables_init);
-
+//addEvent(window, "load", sortables_init);
+$(document).ready(function(){
+	sortables_init();
+});
 var SORT_COLUMN_INDEX;
 var thead = false;
 
@@ -59,7 +61,7 @@ function ts_makeSortable(t) {
 		var cell = firstRow.cells[i];
 		var txt = ts_getInnerText(cell);
 		if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-			cell.innerHTML = '<a class="sortheader" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
+			cell.innerHTML = '<a class="sortheader" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_none + '" alt="&darr;"/></span></a>';
 		}
 	}
 	if (alternate_row_colors) {
@@ -84,7 +86,7 @@ function ts_makeSortable2(t) {
 		var cell = firstRow.cells[i];
 		var txt = ts_getInnerText(cell);
 		if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-			cell.innerHTML = '<a class="sortheaderJobAd" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
+			cell.innerHTML = '<a class="sortheaderJobAd" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_none + '" alt="&darr;"/></span></a>';
 		}
 	}
 	if (alternate_row_colors) {
@@ -109,7 +111,11 @@ function ts_makeSortable3(t) {
 		var cell = firstRow.cells[i];
 		var txt = ts_getInnerText(cell);
 		if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-			cell.innerHTML = '<a class="sortheaderMyAds" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
+			if(txt.indexOf("Job Title") != -1){
+				cell.innerHTML = '<a class="sortheaderMyAdsJobTitle" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_none + '" alt="&darr;"/></span></a>';				
+			}
+			else
+				cell.innerHTML = '<a class="sortheaderMyAds" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="' + image_none + '" alt="&darr;"/></span></a>';
 		}
 	}
 	if (alternate_row_colors) {
@@ -134,7 +140,7 @@ function ts_makeSortable4(t) {
 		var cell = firstRow.cells[i];
 		var txt = ts_getInnerText(cell);
 		if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-			cell.innerHTML = '<a class="sortheaderJobFeeds" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
+			cell.innerHTML = '<a class="sortheaderJobFeeds" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="' + image_none + '" alt="&darr;"/></span></a>';
 		}
 	}
 	if (alternate_row_colors) {
@@ -214,11 +220,11 @@ function ts_resortTable(lnk, clid) {
 	}
 	newRows.sort(sortfn);
 	if (span.getAttribute("sortdir") == 'down') {
-			ARROW = '&nbsp;&nbsp;<img src="'+ image_path + image_down + '" alt="&darr;"/>';
+			ARROW = '&nbsp;&nbsp;<img src="' + image_down + '" alt="&darr;"/>';
 			newRows.reverse();
 			span.setAttribute('sortdir','up');
 	} else {
-			ARROW = '&nbsp;&nbsp;<img src="'+ image_path + image_up + '" alt="&uarr;"/>';
+			ARROW = '&nbsp;&nbsp;<img src="' + image_up + '" alt="&uarr;"/>';
 			span.setAttribute('sortdir','down');
 	} 
     // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
@@ -238,7 +244,7 @@ function ts_resortTable(lnk, clid) {
 	for (var ci=0;ci<allspans.length;ci++) {
 		if (allspans[ci].className == 'sortarrow') {
 			if (getParent(allspans[ci],"table") == getParent(lnk,"table")) { // in the same table as us?
-				allspans[ci].innerHTML = '&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/>';
+				allspans[ci].innerHTML = '&nbsp;&nbsp;<img src="' + image_none + '" alt="&darr;"/>';
 			}
 		}
 	}		

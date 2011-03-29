@@ -125,7 +125,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .resultTableDiv table{width	: 100%;margin-bottom: 1em;	border-spacing 	: 0;}
 
 .resultTableDiv thead {cursor: default;overflow: hidden;height: 31px;padding: 0px 0px 0px 0px;}
-.resultTableDiv th{   background: url("") repeat-x;  line-height: 25px; height:31px;margin:0; padding:0;}
+.resultTableDiv th{  /* background: url("") repeat-x; */border-right: 1px solid white; background-color:#4E8975;  line-height: 25px; height:31px;margin:0; padding:0; cursor:pointer;}
 
 .resultTableDiv tbody {	color: #333;}
 .resultTableDiv td {border-right: 1px solid white;height: 23px;	overflow: hidden;word-wrap: break-word;
@@ -143,10 +143,11 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .headTextJSGeneral {padding-left: 4.1em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 .headTextJSLoc {padding-left: 7em;	padding-right: 0em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 .headTextJSDate {	padding-left:5em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
-.sortheader {	padding-left: 4.5em;	padding-right: 5em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:purple;}
-.sortheaderJobAd {	padding-left: 2em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:purple;} 
-.sortheaderMyAds {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:purple;} 
-.sortheaderJobFeeds {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:purple;} 
+.sortheader {	padding-left: 4.5em;	padding-right: 5em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;}
+.sortheaderJobAd,
+.sortheaderMyAds {	padding-left: 2em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
+.sortheaderMyAdsJobTitle {	padding-left: 4em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
+.sortheaderJobFeeds {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
 
 
 

@@ -225,9 +225,14 @@
 
 	
 			</div><!--END ADVSEARCHFORM-->
+			<div class="headToolBar">
+	          	<ul id="filter">
+	          		<li><a class="jsBtn cAll" onclick="viewAllSearchers('resultTable')">View All<span id="numActive"></span></a></li>
+	          	</ul>
+	         </div>
 			
 			<div id="resultTable" class="resultTableDiv">
-				<table>
+				<table class="sortable" id="sortableSearcher">
 					<thead>
 					<tr>
 						<th id="col-jsName">
