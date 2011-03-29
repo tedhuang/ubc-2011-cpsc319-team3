@@ -65,13 +65,13 @@ $(document).ready(function(){
 		<ul id="topnav" class="clearfix">
 		    <li><strong id="displayEmail">Welcome: </strong></li><!--TODO ADD Appending Email method-->
 		    <li>
-		    	<a href="#">
+		    	<a class="jsBtn">
 		    		<img class="link-icon" src="../images/icon/acct-icon.png" alt=""/>
 		    		My Profile
 				</a>
 			</li>
 		    <li>
-		    	<a href="#" onclick="userLogoutRequest()">
+		    	<a class="jsBtn" onclick="userLogoutRequest()">
 		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="../images/icon/exit.png" alt=""/>
 		    		Log out
 				</a>
@@ -117,7 +117,7 @@ $(document).ready(function(){
   			<li id="homeTab">
   				<a href="#home-frame"><span>Home</span></a>
 			</li>
-			<li id="profileTab" class="hideOnly iniHidden">
+			<li id="profileTab" class="hideOnly">
   				<a href="#profileFrame" onclick="getProfileBySessionKey('profileTable', 'profileHeading')"><span>My Profile</span></a>
 			</li>
 			<li id="searchJSTab" class="hideOnly iniHidden">

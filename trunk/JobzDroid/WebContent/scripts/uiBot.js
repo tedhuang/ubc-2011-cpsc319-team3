@@ -713,7 +713,35 @@ function redisplayProfile(accountType)
 /*******************************************************************************************************************************
  * 		Customize Default DOM ELEMENTS
  * *****************************************************************************************************************************/
-
+	function customizeInput(inputClass, styleNotSel, styleSel){
+		var element = $("."+inputClass);
+		element.css("display", "none");//hide the default style
+		element.addClass(styleNotSel); //add not selected style to it
+		var inputType = element.attr("type");
+		
+		switch(inputType){
+		
+		case "checkbox":
+			element.change(function(){ //toggle styled effects
+		        if($(this).is(":checked")){
+		            $(this).next("label").addClass(styleSel);
+		        }else{
+		            $(this).next("label").removeClass(styleSel);
+		        }
+		    });
+			break;
+		case "radio":
+			element.change(function(){
+		        if($(this).is(":checked")){
+		            $(element + ":not(:checked)").removeClass(styleSel);
+		            $(this).next("label").addClass(styleSel);
+		        }
+		    }); 
+			break;
+		}
+		
+	}
+	
 	function setupLabel() {
 	    if ($('.label-cb input').length) {
 	        $('.label-cb').each(function(){ 

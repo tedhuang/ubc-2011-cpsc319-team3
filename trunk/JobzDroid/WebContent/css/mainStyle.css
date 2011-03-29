@@ -7,7 +7,6 @@
 html, body { margin: 0; padding: 0; border: 0; outline: 0; font-family: Arial;
 			 font-style: normal;  font-weight: inherit;    font-size: 100%;    vertical-align: baseline;
 }
-body{color:darkGray;}
 a {	text-decoration: none; border:none;}
 a img{border:none;}
 table {	display: table;	border-collapse: separate;	border-spacing: 7px 7px;	border-color: gray; }
@@ -47,13 +46,12 @@ div.padded{	padding: 3px 0px 3px 5px; }
 				padding-bottom	: 0px;	color: #237a0e;	font-size: 22px;}
 .formFieldLabel {	float: left; font-weight: bold;	margin	: 2px 0 0 0;color: #5F5F5F;}
 /************************CUSTOMIZED BUILD-IN DOM ELEMENT******************************************/
-.has-style .label-cb, .label-rb{padding-left: 34px;	height:21px;	vertical-align: middle;}
-.has-style .label-rb    	{ background: url(../images/ele-ui/rbn.png) no-repeat; }
-.has-style .label-cb    	{ background: url(../images/ele-ui/cbn.png) no-repeat; }
-.has-style label.cby      	{ background: url(../images/ele-ui/cby.png) no-repeat; }
-.has-style label.rby      	{ background: url(../images/ele-ui/rby.png) no-repeat; }
-.has-style .label-cb input, 
-.has-style .label-rb input  { 	position: absolute; 	left: -9999px;}
+label.label-cbn, .label-rbn{ padding-left: 2em;	height:21px;}
+.label-rbn  { background: url(../images/ele-ui/rbn.png) no-repeat; }
+.label-cbn  { background: url(../images/ele-ui/cbn.png) no-repeat; }
+label.cby   { background: url(../images/ele-ui/cby.png) no-repeat; }
+label.rby   { background: url(../images/ele-ui/rby.png) no-repeat; }
+.label-cb input, .label-rb input  	{ 	position: absolute; 	left: -9999px;}
 /************************ELEMENTS STYLE*********************************************************/
 .main{	width: 1050px;	height: auto;  margin: 0 auto; overflow: hidden;position: relative;	max-width: 1600px; 	min-width: 600px;}
 /**********************header bar************************************************************/
@@ -69,6 +67,7 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 #topnav a.btn:hover{ background: #9EDB04; color  : #FFFFFF; text-decoration : none; }
 
 .header #topnav li a, #topnav li strong {font-size: 13px;margin: 3px 0 0 8px;overflow: visible;}
+.header #topnav ul.uh li a {margin: 3px 0.8em 0 0;}
 #topnav li a img.link-icon{   display:block;  margin:-2px 0 0 0;  padding-right:8px;  /*height:50px;  width:50px;*/
 							  float:left;  background-position: center left;}
 /**********ENDOF header Bar**********************************************/

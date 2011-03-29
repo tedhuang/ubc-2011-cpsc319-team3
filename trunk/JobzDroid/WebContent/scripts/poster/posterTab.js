@@ -362,16 +362,20 @@
   ************************************************************************************************************************/
          function open_newAd_form(){
         	 $("#newAdFrame").load("DOMs/formDOM.jsp #newAdForm",function(){//TODO move this to server side for security reason
+        		 customizeInput("form-cb", "label-cbn", "label-cby");
+        		 customizeInput("form-rb", "label-rbn", "label-rby");
+        		 
          		$( "#startTime-field","#newAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
          		$( "#expireTime-field" ,"#newAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
          		$("#mapPanel", "#newAdFrame").smartMap({});
-         		$(".btn-slide").click(function(){
+         		$(".btn-map").click(function(){
        			 $("#mapPanel").slideToggle("slow");
        	 			$.fn.smartMap.resize();
        	 			$(this).toggleClass("active");
-       	 			$(this).hasClass("active")? $(this).text("Close Map"): $(this).text("Add Locations");
+       	 			$(this).hasClass("active")? $(this).attr("title", "Close Map"): $(this).attr("title","Add Locations");
        	 			return false;
          		});
+         		
          	});
         }
         
