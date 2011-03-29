@@ -63,7 +63,7 @@
 					
 			<div id="jobAvailField" class="field"> 
 				<label>Employment Type:</label>
-				<label class="group">
+				<label class="group label-cb" >
 					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
 					Full Time
 					<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
@@ -109,8 +109,11 @@
 					</div>
 				<div class="field"> 
 					<label>Is Graduate Funding Available:</label>
-						<input type="radio" name="gf-field" value="1" id="gf-field" class="mustNotNull"/> Yes
-						<input type="radio" name="gf-field" value="0" id="gf-field" class="mustNotNull"/> No
+						<input type="radio" name="gf-field" value="1" id="gf-field1" class="mustNotNull form-rb"/> 
+						<label class="label-rbn" for="gf-field1">Yes</label>
+						<input type="radio" name="gf-field" value="0" id="gf-field2" class="mustNotNull form-rb"/>
+						<label class="label-rbn" for="gf-field2">No</label>
+					
 				</div>
 			</div><!--ENDOF typeInForm-->
 				
@@ -136,15 +139,17 @@
 					
 					<div class="field"> 
 						<label>Available Positions:</label>
-						<label class="group">
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
-							Full Time
-							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
-		    				Part Time
-		    				 <input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
-		   		 			Internship
-						</label>
+							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
+							<label class="label-cbn" for="ft-field">Full Time</label>
+							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
+		    				<label class="label-cbn" for="pt-field">Part Time</label>
+		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
+		   		 			<label class="label-cbn" for="is-field">Internship</label>
 					</div>
+				<div class="field"> 
+					<label class="mapLabel">Add Locations:</label>
+					<span class="jsBtn btn-map" title="Add Location"></span>
+				</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 			   <div id="fields">
 			   	  
@@ -159,10 +164,9 @@
 				  	<ul id="locList"></ul>
 				 </div>
 				</div><!-- ENDOF MAP -->
-				<span class="jsBtn btn-slide">Add Location</span>
 			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
-						<label for="desc-field" >Job Description:</label> 
+						<label for="desc-field" >Job Description:</label>
 						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
 				   </div>
 				</div>

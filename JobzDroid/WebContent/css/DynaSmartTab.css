@@ -36,14 +36,24 @@
 #tabFrame div.subFrame .newFormContainer,
 #tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0; bottom: 0;	background-color: white;}
 .edFormContainer .fillInForm,
-.newFormContainer .fillInForm{	float: left;	margin-right: 20px;	width: auto;	background-color: whiteSmoke;
+.newFormContainer .fillInForm{	float: left;	margin:2em;	width: auto;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
 .edFormContainer .descForm{	margin-top: 20px;	width: 480px;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
 .fillInForm div.field {	margin-bottom: 7px;	/*position: relative;	clear: both;	padding: 0;*/}
 .fillInForm div.field label {	width: 100%;font-size: 12px;font-weight: bold; margin-top: 6px; line-height: 18px; float: left; clear: both;}
+.fillInForm div.field label.label-cbn, .fillInForm div.field label.label-rbn{width: 6em; clear:none;}
+.fillInForm div.field label.label-rbn  { background: url(../images/ele-ui/rbn.png) no-repeat; }
+.fillInForm div.field label.label-cbn  { background: url(../images/ele-ui/cbn.png) no-repeat; }
+.fillInForm div.field label.label-cby  { background: url(../images/ele-ui/cby.png) no-repeat; }
+.fillInForm div.field label.label-rby  { background: url(../images/ele-ui/rby.png) no-repeat; }
+.fillInForm div.field label.mapLabel  {width:auto; clear:left; }
+.fillInForm div.field span.btn-map {position: absolute;right: 25em;width: 72px;height: 72px;
+									background: url(../images/btn/Maps.png) no-repeat;top: 28.5em;z-index: 301;}
+.label-cb input, .label-rb input  	{ 	position: absolute; 	left: -9999px;}
 .fillInForm div.field label.group input{ margin: 0 0 0 2em;}
-.fillInForm div.field input.textBox{	border-color: #CCC;	width: 340px;}
+.fillInForm div.field input.textBox{border-color: #CCC;	background: url("../images/bg/input-bg.png") no-repeat scroll left top transparent;
+							width: 274px; height:30px;border: 0;}
 .fillInForm div.field input.textBoxL{	width: 340px;	height: 20px;}	
 .fillInForm div.field input.hidden{	display:none;}
 .descForm div.field textarea.textBoxXL,
