@@ -353,9 +353,10 @@
   			.unbind('click')
   			.click( function(){
   				openTab('jsProfileTab'); 
+  				open_jsdDetail(jsId);
   				getProfileSearcherById("detail", jsId, 'jsDetailTable', 'fileDiv');
   			});
-         }
+         };
  /************************************************************************************************************************
   * 
   ************************************************************************************************************************/
@@ -428,6 +429,11 @@
         	});
        	 });
        }
+        function open_jsdDetail(jsId){
+          	 $("#jsDetailFrame").load("DOMs/formDOM.jsp #jsDetailFrame",function(){//TODO move this to server side for security reason
+//          		$.fn.smartLightBox.openDivlb("jsDetailFrame", 'load','loading data...');
+          	 });
+          }
         function open_searchJsForm(){
         	$("#searchSearcherFrame").load("DOMs/formDOM.jsp #searchSearcherFrame",function(){//TODO move this to server side for security reason
         		$( "#jsStartTime-field" ,"#searchSearcherFrame").datepicker({});//ad expires in max 3 months

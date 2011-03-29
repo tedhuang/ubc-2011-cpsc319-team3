@@ -260,6 +260,32 @@
 
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
+<div id="jsDetailFrame" class="subFrame">
+		<div id="jsDetailTable" class="resultTableDiv noBorder">
+		 	<span id="detailFB"></span>
+		 	<h2 class="jsDetailHeading" class="welcome"></h2>
+			<table>
+				<tbody>
+				</tbody>
+			</table>
+		 </div>		
+		 <div id="fileDiv" class="resultTableDiv">
+			<table>
+				<thead>
+				<tr>
+					<th id="col-fileName" style="text-align:center">
+						File Name
+					</th>
+					<th id="col-fileSize" style="text-align:center">
+						Size (in MB)
+					</th>
+				</tr>
+			</thead>
+				<tbody>
+				</tbody>
+			</table><!--ENDOF TABLE-->
+		</div><!--ENDOF File TABLE--> 
+	</div><!--end of js-DETAILFRAME--> 
 	
 </div><!-- ENDOF MAIN -->		  
 </body>
