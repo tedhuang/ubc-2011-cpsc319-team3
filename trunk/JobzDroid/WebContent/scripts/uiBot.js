@@ -438,6 +438,32 @@ function buildSearcherFileTb(targetXMLTag, outputDiv){
 	}
 }
 
+/******************************************************
+ * 			build file list for POSTER
+ ******************************************************/
+function buildSearcherFileViewingTb(targetXMLTag, outputDiv){
+	var tbody  = $("tbody", "#"+outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	var sKey = $("#sessionKey").val();
+	if(xmlObj.length==0){//if no results
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var file = $(this);
+		  var filename = file.attr("fileName");
+		  var idOwner = file.attr("idOwner");
+		  var tr = $('<tr></tr>');
+		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
+		  var filenameCell = $('<td></td>');
+		  filenameAnchor.appendTo(filenameCell);
+		  filenameCell.appendTo(tr);
+		  $('<td></td>').text(file.attr("size")).appendTo(tr);
+		  
+		  tr.appendTo(tbody);		  
+		});
+		 $("tr:odd", tbody).addClass("oddRow");
+	}
+}
 
 /********************************************************************************************************************
  * 						Build a table for profile editing

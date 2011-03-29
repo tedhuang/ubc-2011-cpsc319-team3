@@ -161,7 +161,7 @@ function getProfileById(idAccount, profileDiv, profileHeading, fileDiv){
 	xmlhttp.onreadystatechange = function(){
 	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 		  buildProfileTb("profile", profileDiv, profileHeading);
-		  buildSearcherFileTb("file", fileDiv);
+		  buildSearcherFileViewingTb("file", fileDiv);
 		  $.fn.smartLightBox.closeLightBox(0);
 	    }
 	  };	
@@ -328,7 +328,7 @@ function getProfileSearcherById(mode, id, profileDiv, fileDiv)
 		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
 		  if(mode=="detail"){
 		  	buildSearcherDetailTable("profile", profileDiv);
-		  	buildSearcherFileTb("file", fileDiv);
+		  	buildSearcherFileViewingTb("file", fileDiv);
 		  }
 		  $.fn.smartLightBox.closeLightBox(0);
 	    }
