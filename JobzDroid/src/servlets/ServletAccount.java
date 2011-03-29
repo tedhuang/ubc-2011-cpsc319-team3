@@ -480,42 +480,107 @@ public class ServletAccount extends HttpServlet {
 		String email = request.getParameter("email");
 		String pw = request.getParameter("password");
 		System.out.println("user="+ email+ "Password="+ pw);
-		Session currSession = dbManager.startSession(email, pw);
-		String action = "";
 		
-		//Following IF/ELSE STMT IS THE FIRST XML WILL BE RETURN TO CLIENT WITH THE SESSION INFO
-		if(currSession != null){
-			// if login successful, return credential and sucess message
-			// Write XML to response if DB has return message
+		String action = "";
+		String message = "";
+
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		String accountStatus = "active";
+		
+		try {
+			stmt = conn.createStatement();
 			
-			if( currSession.getAccountType().equals("poster")) {
-				action = "./poster/";
+			rs = stmt.executeQuery( "SELECT * FROM tableAccount "+
+						  "WHERE email='"+ email + "' " +
+						  "AND password = md5('" + pw + "');");
+			
+			if( rs.first() ) {
+				accountStatus = rs.getString("status");
 			}
-			if( currSession.getAccountType().equals("searcher")) {
-				action = "./searcher/";
-			}
-			
-			StringBuffer XMLResponse = new StringBuffer();
-			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-			XMLResponse.append("<response>\n");
-			XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
-			XMLResponse.append("\t<action>" + action + "</action>\n");
-			XMLResponse.append("</response>\n");
-			response.setContentType("application/xml");
-			response.getWriter().println(XMLResponse);
-			
 		}
-		else{
-			System.out.println("sessionKey is null");
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		
+	    if( accountStatus.equals("active")) {
+
+		    Session currSession = dbManager.startSession(email, pw);
+			//Following IF/ELSE STMT IS THE FIRST XML WILL BE RETURN TO CLIENT WITH THE SESSION INFO
+			if(currSession != null){
+				// if login successful, return credential and sucess message
+				// Write XML to response if DB has return message
+				
+				if( currSession.getAccountType().equals("poster")) {
+					action = "./poster/";
+				}
+				if( currSession.getAccountType().equals("searcher")) {
+					action = "./searcher/";
+				}
+				
+				message = "User logged in";
+				
+				StringBuffer XMLResponse = new StringBuffer();
+				XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+				XMLResponse.append("<response>\n");
+				XMLResponse.append("\t<sessionKey>" + currSession.getKey() + "</sessionKey>\n");
+				XMLResponse.append("\t<action>" + action + "</action>\n");
+				XMLResponse.append("\t<message>" + message + "</message>\n");
+				XMLResponse.append("</response>\n");
+				response.setContentType("application/xml");
+				response.getWriter().println(XMLResponse);
+				
+			}
+			else{
+				message = "Login failed: Account name and password do not match.";
+				
+				System.out.println("sessionKey is null");
+				StringBuffer XMLResponse = new StringBuffer();	
+				XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+				XMLResponse.append("<response>\n");
+				XMLResponse.append("\t<sessionKey>" + null + "</sessionKey>\n");
+				XMLResponse.append("\t<action>" + action + "</action>\n");
+				XMLResponse.append("\t<message>" + message + "</message>\n");
+				XMLResponse.append("</response>\n");
+				response.setContentType("application/xml");
+				response.getWriter().println(XMLResponse);
+			}
+	    }
+	    else {
+	    	message = "Login failed: User account status is " + accountStatus + ".";
+	    	
+			System.out.println(message);
 			StringBuffer XMLResponse = new StringBuffer();	
 			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 			XMLResponse.append("<response>\n");
 			XMLResponse.append("\t<sessionKey>" + null + "</sessionKey>\n");
 			XMLResponse.append("\t<action>" + action + "</action>\n");
+			XMLResponse.append("\t<message>" + message + "</message>\n");
 			XMLResponse.append("</response>\n");
 			response.setContentType("application/xml");
 			response.getWriter().println(XMLResponse);
-		}
+	    }
+	    
 		
 	}
 /***************************/

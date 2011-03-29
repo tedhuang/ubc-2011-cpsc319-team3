@@ -21,6 +21,11 @@ Request.prototype.toString = function(){
 	return this.str;
 };
 
+function linebreakToBR(text){
+	text = text.replace(/\n\r?/g, '<br />');
+	return text;
+}
+
 // removes table rows that do not start with the given filter's value
 function applyFilter(tableID, filterID){
 	$("#" + tableID + " tbody tr").show();

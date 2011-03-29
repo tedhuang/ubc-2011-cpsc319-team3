@@ -496,7 +496,8 @@ public class DBManager {
 			System.out.println("check email:" + email + " password" + pw);
 			rs = stmt.executeQuery( "SELECT * FROM tableAccount "+
 					   						  "WHERE email='"+ email + "' " +
-					   						  "AND password = md5('" + pw + "')" );
+					   						  "AND password = md5('" + pw + "')" +
+			  								  "AND status = 'active';");
 			
 			System.out.println( Utility.md5(pw) );
 			if(rs.first()){
@@ -727,7 +728,9 @@ public class DBManager {
 			stmt = conn.createStatement();
 			String queryCode =
 //				"SELECT * FROM tableSession INNER JOIN tableAccount USING (idAccount)";
-				"SELECT * FROM tableSession INNER JOIN tableAccount USING (idAccount) WHERE sessionKey='" + key +"'";
+				"SELECT * FROM tableSession LEFT OUTER JOIN tableAccount USING (idAccount) " + 
+				"WHERE sessionKey='" + key +"' " +
+				"AND status='active';";
 			
 			
 			rs = stmt.executeQuery( queryCode );

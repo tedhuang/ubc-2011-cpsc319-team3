@@ -9,6 +9,9 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	var heading=$('.heading', "#"+outputDiv);
 	
 	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
+	console.log( xmlhttp.responseXML );
+	console.log( jobAd.attr("jobAdDescription") );
+	
 	if(jobAd.length==0){//if no results
 		fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
 	}
@@ -18,7 +21,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 			gradFunding = "Yes";
 		else
 			gradFunding = "No";
-
+		
 		var tbody  = $( "tbody", "#"+outputDiv).html("");
 		heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
 		var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
@@ -196,10 +199,14 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
 		$("#"+outputDiv).hide();
-		$("<h2 class='info'></h2>").html("You Have Not Yet Posted Anything").insertBefore("#"+outputDiv);
+//		$(".headToolBar", "#home-frame").hide();
+		$("<h2 class='info'></h2>").html("You Have Not Yet Posted Anything").appendTo("#home-frame").fadeOut(8000, function(){
+			$(this).remove();
+		});
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
+		$("#"+outputDiv, "#headBar").show();
 		  var jobAd = $(this);
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').addClass('td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
@@ -214,6 +221,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 		  
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
+
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
 }

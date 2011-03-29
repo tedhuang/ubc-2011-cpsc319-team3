@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
@@ -406,11 +407,30 @@ public class ServletDocument extends HttpServlet {
 		return fileData;
 	}
 	
+	//Create a progress listener
+	public ProgressListener getProgressListener() {
+		ProgressListener progressListener = new ProgressListener(){
+			   private long megaBytes = -1;
+			   public void update(long pBytesRead, long pContentLength, int pItems) {
+			       long mBytes = pBytesRead / 1000000;
+			       if (megaBytes == mBytes) {
+			           return;
+			       }
+			       megaBytes = mBytes;
+			       System.out.println("We are currently reading item " + pItems);
+			       if (pContentLength == -1) {
+			           System.out.println("So far, " + pBytesRead + " bytes have been read.");
+			       }
+			       else {
+			           System.out.println("So far, " + pBytesRead + " of " + pContentLength
+			                              + " bytes have been read.");
+			       }
+			   }
+		};
+		return progressListener;
+	}
+	
 }
-
-
-
-
 
 
 
