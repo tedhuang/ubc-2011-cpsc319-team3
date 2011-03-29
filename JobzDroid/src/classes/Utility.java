@@ -37,6 +37,22 @@ public class Utility {
 		return matcher.matches();
 	}
 	
+	/**
+	 * Escapes the following characters into valid XML: &, < , >, ', " 
+	 * @param text Input text.
+	 * @return Processed text.
+	 */
+	public static String processXMLEscapeChars(String text){
+		if(text != null){
+			text = text.replaceAll("&", "&amp;");
+			text = text.replaceAll("<", "&lt;");
+			text = text.replaceAll(">", "&gt;");
+			text = text.replaceAll("\"", "&quot;");
+			text = text.replaceAll("'", "&apos;");
+		}
+		return text;
+	}
+	
 	/***
 	 * Converts string line breaks into HTML line break tags, and two or more white spaces into a sequence of NBSP.
 	 * @param input Input string.

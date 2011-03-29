@@ -1809,6 +1809,11 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 					long aDate=Utility.dateConvertor(request.getParameter(paraName));
 					paraMap.put(colName, aDate);
 				}
+				// preserve line breaks and sequences of white spaces to properly display in HTML
+				else if(colName.equals("description") || colName.equals("contactInfo") || colName.equals("title") || colName.equals("tags")){
+					String strFormatted=Utility.processLineBreaksWhiteSpaces(request.getParameter(paraName));
+					paraMap.put(colName, strFormatted);
+				}
 				else{
 					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );//will fail if no value is actually passed
 				}
