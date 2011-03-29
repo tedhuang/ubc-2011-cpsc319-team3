@@ -111,6 +111,7 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
+		alert("buildBrowseJobAdTb : xmlObj.length = 0 !");
 //		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
 //		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
 	}
@@ -123,7 +124,7 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  //$('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
 		  var isApprovedFormatted;
