@@ -111,7 +111,6 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
-		alert("buildBrowseJobAdTb : xmlObj.length = 0 !");
 //		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
 //		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
 	}
