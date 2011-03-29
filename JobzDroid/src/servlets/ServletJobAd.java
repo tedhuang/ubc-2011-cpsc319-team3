@@ -394,7 +394,7 @@ public class ServletJobAd extends HttpServlet {
 //					Location location = new Location();
 //
 //					//Get Address, Longitude, Latitude
-//					location.address = result.getString("location");
+//					location.address = result.getString("addr1");
 //					location.longitude = result.getDouble("longitude");
 //					location.latitude = result.getDouble("latitude");	
 //					locationList.add(location);
@@ -561,7 +561,9 @@ public class ServletJobAd extends HttpServlet {
 					Location location = new Location();
 
 					//Get Address, Longitude, Latitude
-					location.address = locResult.getString("location");
+					//TODO FIX LOCATION COLUMN NAME
+			//		location.address = locResult.getString("location");
+					location.address = locResult.getString("addr1");
 					location.longitude = locResult.getDouble("longitude");
 					location.latitude = locResult.getDouble("latitude");	
 					locationList.add(location);
