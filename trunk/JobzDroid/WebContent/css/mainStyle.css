@@ -82,7 +82,7 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 .centerbox .loginbox #loginDiv h2{font: bold small-caps 1.2em verdana, Ariel, sans-serif;}
 .centerbox .loginbox label{clear: both;float: left;width:100%;font: bold small-caps 1em verdana, Ariel, sans-serif;color:white;padding:0 0 0 1em;}
 .centerbox .loginbox input{background: url("../images/bg/input-bg.png") no-repeat scroll left top transparent;
-							width: 274px; height:30px;margin: 0 0 0 1.5em;border: 0;}
+												width: 274px; height:30px;margin: 0 0 0 1.5em;border: 0;}
 
 /**************************FOOTER***********************************************************/
 .footer_wrapper {	margin: auto;	width: 980px;}
@@ -94,13 +94,9 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 /*****************************User Registering Page***********************************************/
 #regpage{	margin: 50px auto;	height: inherit;width: 520px;	position: relative;	padding-bottom: 1em;	margin-bottom: 3em;	min-height: 550px;}
 .regbox{	margin: 0 auto;	border: 1px solid #7D7D7D; }
-
 .regbox table td.clean {	padding: 0 5px;}
-
-.regbox table td {	padding: 3px 0px 3px 5px;	vertical-align: middle;	font-size: 11px;}
-
-.regbox table td.label,
-.regbox table div.label {white-space: nowrap;text-align: right;	font-weight: normal;}
+.regbox table td {font-size: 14px; padding: 3px 0 3px 5px;}
+.regbox table td.label,.regbox table div.label {/*white-space: nowrap;*/text-align: right;	font-weight: normal;}
 
 /**************************Registered Users Pages*********************************************/
 
