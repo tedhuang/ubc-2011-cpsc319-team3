@@ -437,6 +437,8 @@
         function open_searchJsForm(){
         	$("#searchSearcherFrame").load("DOMs/formDOM.jsp #searchSearcherFrame",function(){//TODO move this to server side for security reason
         		$( "#jsStartTime-field" ,"#searchSearcherFrame").datepicker({});//ad expires in max 3 months
+//        		$.getScript('../scripts/sortable.js');
+        		sortables_init();
         	});
         }
         $.fn.DynaSmartTab.close=function(){

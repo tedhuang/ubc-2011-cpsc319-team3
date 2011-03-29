@@ -361,7 +361,6 @@ public class ServletProfile extends HttpServlet{
 					"FROM tableProfileSearcher " +
 					"INNER JOIN tableAccount USING (idAccount)" +
 					"LEFT OUTER JOIN tableLocationProfile USING (idAccount) " +
-//					"LEFT OUTER tableSearcherEmpPref USING (idAccount) " +
 					"WHERE idAccount="+profileSearcherId;
 			
 			System.out.println("getProfileSearcherById query:"+query);
