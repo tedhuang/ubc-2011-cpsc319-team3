@@ -351,7 +351,8 @@ public class ServletJobAd extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			
-			String query = "SELECT * FROM tableJobAd";
+			String query = "SELECT * FROM tableJobAd" +
+							" ORDER BY datePosted DESC";
 			
 			System.out.println("getAllJobAd query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -383,7 +384,7 @@ public class ServletJobAd extends HttpServlet {
 //				ArrayList<Location> locationList = new ArrayList<Location>();
 //				
 //				query = "SELECT * FROM tableLocationJobAd WHERE " +
-//						"idJobAd= '" + jobAd.jobAdId +"';";
+//						"idJobAd= '" + jobAd.jobAdId +"'";
 //				
 //				System.out.println(query);
 //				isSuccessful = stmtLoc.execute(query);
@@ -393,52 +394,52 @@ public class ServletJobAd extends HttpServlet {
 //					Location location = new Location();
 //
 //					//Get Address, Longitude, Latitude
-//					location.address = locResult.getString("location");
-//					location.longitude = locResult.getDouble("longitude");
-//					location.latitude = locResult.getDouble("latitude");	
+//					location.address = result.getString("location");
+//					location.longitude = result.getDouble("longitude");
+//					location.latitude = result.getDouble("latitude");	
 //					locationList.add(location);
 //				}
 //				jobAd.locationList = locationList;
-				
+//				
 				jobAdList.add(jobAd);
-				
-			/**Get Employment Availability values */
-//				stmtEmp = conn.createStatement();
-//				String empAvail = "";
-//				int fullTime = 0;
-//				int partTime = 0;
-//				int internship = 0;
 //				
-//				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
-//				"idJobAd= '" + result.getInt("idJobAd") + "'";
-//				System.out.println(query);
+//			/**Get Employment Availability values */
+////				stmtEmp = conn.createStatement();
+////				String empAvail = "";
+////				int fullTime = 0;
+////				int partTime = 0;
+////				int internship = 0;
+////				
+////				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+////				"idJobAd= '" + result.getInt("idJobAd") + "'";
+////				System.out.println(query);
+////				
+////				isSuccessful = stmtEmp.execute(query);
+////				ResultSet empResult = stmtEmp.getResultSet();
+////				
+////				if(!empResult.first()){
+////						System.out.println("No Employment Type Found");
+////				}
+////				else{
+////					fullTime = empResult.getInt("fullTime");
+////					partTime = empResult.getInt("partTime");
+////					internship = empResult.getInt("internship");	
+////
+////					if( (fullTime+partTime+internship) == 0 ){
+////						empAvail = "Not Specified"; //no preference
+////					}
+////					else{
+////						if( fullTime == 1)
+////							empAvail += "Full-time ";
+////						if(partTime == 1)
+////							empAvail += "Part-time ";
+////						if(internship == 1)
+////							empAvail += "Internship";
+////					}
+////					System.out.println("Job Positions Available: " + empAvail);
+////					jobAd.jobAvailability = empAvail;
+////				}
 //				
-//				isSuccessful = stmtEmp.execute(query);
-//				ResultSet empResult = stmtEmp.getResultSet();
-//				
-//				if(!empResult.first()){
-//						System.out.println("No Employment Type Found");
-//				}
-//				else{
-//					fullTime = empResult.getInt("fullTime");
-//					partTime = empResult.getInt("partTime");
-//					internship = empResult.getInt("internship");	
-//
-//					if( (fullTime+partTime+internship) == 0 ){
-//						empAvail = "Not Specified"; //no preference
-//					}
-//					else{
-//						if( fullTime == 1)
-//							empAvail += "Full-time ";
-//						if(partTime == 1)
-//							empAvail += "Part-time ";
-//						if(internship == 1)
-//							empAvail += "Internship";
-//					}
-//					System.out.println("Job Positions Available: " + empAvail);
-//					jobAd.jobAvailability = empAvail;
-//				}
-				
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){
@@ -773,7 +774,7 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-		System.out.println(XMLResponse);
+		
 	}
 
 	/*
@@ -1806,10 +1807,6 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 					long aDate=Utility.dateConvertor(request.getParameter(paraName));
 					paraMap.put(colName, aDate);
 				}
-			//	else if(colName.equals("description")){
-				//	String descFormatted=Utility.processLineBreaksWhiteSpaces(request.getParameter(paraName));
-				//	paraMap.put(colName, descFormatted);
-			//	}
 				else{
 					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );//will fail if no value is actually passed
 				}
