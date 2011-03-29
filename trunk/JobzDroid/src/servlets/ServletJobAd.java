@@ -378,27 +378,27 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.tags 				= result.getString("tags");
 				
-			/**Get Location values */
-				stmtLoc = conn.createStatement();
-				ArrayList<Location> locationList = new ArrayList<Location>();
-				
-				query = "SELECT * FROM tableLocationJobAd WHERE " +
-						"idJobAd= '" + jobAd.jobAdId +"'";
-				
-				System.out.println(query);
-				isSuccessful = stmtLoc.execute(query);
-				ResultSet locResult = stmtLoc.getResultSet();
-				
-				while(locResult.next()){
-					Location location = new Location();
-
-					//Get Address, Longitude, Latitude
-					location.address = result.getString("location");
-					location.longitude = result.getDouble("longitude");
-					location.latitude = result.getDouble("latitude");	
-					locationList.add(location);
-				}
-				jobAd.locationList = locationList;
+//			/**Get Location values */
+//				stmtLoc = conn.createStatement();
+//				ArrayList<Location> locationList = new ArrayList<Location>();
+//				
+//				query = "SELECT * FROM tableLocationJobAd WHERE " +
+//						"idJobAd= '" + jobAd.jobAdId +"';";
+//				
+//				System.out.println(query);
+//				isSuccessful = stmtLoc.execute(query);
+//				ResultSet locResult = stmtLoc.getResultSet();
+//				
+//				while(locResult.next()){
+//					Location location = new Location();
+//
+//					//Get Address, Longitude, Latitude
+//					location.address = locResult.getString("location");
+//					location.longitude = locResult.getDouble("longitude");
+//					location.latitude = locResult.getDouble("latitude");	
+//					locationList.add(location);
+//				}
+//				jobAd.locationList = locationList;
 				
 				jobAdList.add(jobAd);
 				
