@@ -44,7 +44,8 @@ function userLoginRequest(){
 			    	}
 			    else{
 						$("#lbImg", "#lightBox").removeClass("load").addClass("alert");
-						$("#lbMsg","#lightBox").html("Invalid email or password, please try again");
+						var message = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+						$("#lbMsg","#lightBox").html(message);
 						$.fn.smartLightBox.closeLightBox(2000);
 			    	}
 		    }

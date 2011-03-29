@@ -773,7 +773,7 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-		
+		System.out.println(XMLResponse);
 	}
 
 	/*
@@ -1806,6 +1806,10 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 					long aDate=Utility.dateConvertor(request.getParameter(paraName));
 					paraMap.put(colName, aDate);
 				}
+			//	else if(colName.equals("description")){
+				//	String descFormatted=Utility.processLineBreaksWhiteSpaces(request.getParameter(paraName));
+				//	paraMap.put(colName, descFormatted);
+			//	}
 				else{
 					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );//will fail if no value is actually passed
 				}

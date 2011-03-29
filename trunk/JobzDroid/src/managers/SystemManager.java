@@ -40,7 +40,7 @@ public class SystemManager {
 	
 	// DB connection variables
 	public static String dbDriver 	= "com.mysql.jdbc.Driver";
-	public static String dbURL 		= "jdbc:mysql://70.79.38.90:3306/dbjobzdroid"; //jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
+	public static String dbURL 		= "jdbc:mysql://192.168.10.137:3306/dbjobzdroid"; //jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
 	public static String dbUser 	= "root";//"blitzcriegteam";
 	public static String dbPassword	= "cs319CS#!(";//"cs319team3";
 	
