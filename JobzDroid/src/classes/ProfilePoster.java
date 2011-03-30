@@ -33,6 +33,10 @@ public class ProfilePoster {
 			secondaryEmail = "N/A";
 		}
 		
+		// escape chars for XML
+		name = Utility.processXMLEscapeChars(name);
+		selfDescription = Utility.processXMLEscapeChars(selfDescription);
+		
 		String result =  "\t\t<profile" +
 			" accountID=\"" + accountID + "\"" +
 			" accountType=\"" + accountType + "\"" +
@@ -45,7 +49,9 @@ public class ProfilePoster {
 		result = result + ">\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
-			result = result.concat("\t\t\t<location address=\""  + addressList.get(i).address + "\"" +
+			String addr = addressList.get(i).address;
+			addr = Utility.processXMLEscapeChars(addr);
+			result = result.concat("\t\t\t<location address=\""  + addr + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
 										 " longitude=\"" + addressList.get(i).longitude + "\" ></location>\n" );
 		}

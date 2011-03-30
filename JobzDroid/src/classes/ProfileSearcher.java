@@ -45,6 +45,10 @@ public class ProfileSearcher {
 			secondaryEmail = "N/A";
 		}
 		
+		// escape characters into valid XML
+		name = Utility.processXMLEscapeChars(name);
+		selfDescription = Utility.processXMLEscapeChars(selfDescription);
+		
 		educationFormatted = Utility.degreeConvertor( educationLevel );
 		
 		
@@ -66,7 +70,9 @@ public class ProfileSearcher {
 		result = result + ">\n";
 		
 		for( int i = 0 ; i < addressList.size() ; i++ ){
-			result = result.concat("\t\t\t<location address=\"" 	 + addressList.get(i).address + "\"" +
+			String addr = addressList.get(i).address;
+			addr = Utility.processXMLEscapeChars(addr);
+			result = result.concat("\t\t\t<location address=\""  + addr + "\"" +
 										 " latitude=\""  + addressList.get(i).latitude + "\"" +
 										 " longitude=\"" + addressList.get(i).longitude + "\" ></location>\n" );
 		}

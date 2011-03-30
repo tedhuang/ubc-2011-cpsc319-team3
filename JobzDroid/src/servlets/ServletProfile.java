@@ -688,11 +688,11 @@ public class ServletProfile extends HttpServlet{
 		String longitude		= request.getParameter("longitude");
 		
 		
-		//Check new inputs
+		//Check new inputs and process linebreaks/spaces
 		name = Utility.checkInputFormat( name );
-
 		phone = Utility.checkInputFormat( phone );
 		selfDescription = Utility.checkInputFormat( selfDescription );
+		selfDescription = Utility.processLineBreaksWhiteSpaces(selfDescription);
 		
 		//Initialize return statements
 		boolean isSuccessful = false;
