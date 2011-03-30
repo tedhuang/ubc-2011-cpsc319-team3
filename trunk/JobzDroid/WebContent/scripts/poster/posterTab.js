@@ -459,7 +459,11 @@
 	        	$("input[name='adId-field']", "#"+edFormContainer).val(xmlData.attr("jobAdId"));
 				$("input[name='company-field']", "#"+edFormContainer).val(xmlData.attr("contactInfo"));
 				$("input[name='tag-field']", "#"+edFormContainer).val(xmlData.attr("tags"));
-				$("textarea[name='desc-field']", "#"+edFormContainer).val(xmlData.attr("jobAdDescription"));//Type-in Forms
+				
+				// replace &nbsp; with space and <br /> with \n for description in textarea
+				var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
+				processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
+				$("textarea[name='desc-field']", "#"+edFormContainer).val(processedDesc);//Type-in Forms
 				
 				$("#edu-field option","#"+edFormContainer).each(function(){
 					if($(this).text()==xmlData.attr("eduReqFormatted")){

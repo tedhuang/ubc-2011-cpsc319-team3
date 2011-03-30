@@ -9,8 +9,6 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	var heading=$('.heading', "#"+outputDiv);
 	
 	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
-	console.log( xmlhttp.responseXML );
-	console.log( jobAd.attr("jobAdDescription") );
 	
 	if(jobAd.length==0){//if no results
 		fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
@@ -23,7 +21,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 			gradFunding = "No";
 		
 		var tbody  = $( "tbody", "#"+outputDiv).html("");
-		heading.html(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
+		heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
 		var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
 	  				"<tr><td>Location</td><td>"						+ jobAd.find("location").attr("address")		+ "</td></tr>" +
 	  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
@@ -38,6 +36,8 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	    $(tbody).append(rowText);
 	 	$(tbody).find('tr').find('td:first').addClass("nameCol");
 	 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+	 	
+	 	//TODO FIX LIGHT BOX FOR SEARCHER JOB AD DETAILS
 	 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 	 	fb.hide();
 	}
@@ -67,7 +67,7 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
@@ -120,7 +120,7 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  //$('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
@@ -210,7 +210,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 		  var jobAd = $(this);
 		  var tr = $('<tr></tr>');
 		  $('<td></td>').addClass('td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').addClass('td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').addClass('td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').addClass('td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
 		  $('<td></td>').addClass('td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
@@ -285,7 +285,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  var tr =$('<tr></tr>');
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').addClass('jsBtn').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-status').html(jobAd.attr("contactInfo")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("contactInfo")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
@@ -779,9 +779,9 @@ function redisplayProfile(accountType)
 			  var tr =$('<tr></tr>');
 			  var degree = {"str": degreeConvertor(profileSearcherXML.attr("educationLevel")), 
 					  		"degreeNum":profileSearcherXML.attr("educationLevel")};
-			  $('<td></td>').attr("id", id='td-name').addClass('jsDetailBtn').text(profileSearcherXML.attr("name")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-name').addClass('jsDetailBtn').html(profileSearcherXML.attr("name")).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-eduReq').text(degree.str).appendTo(tr);
-			  $('<td></td>').attr("id", id='td-loc').text(profileSearcherXML.children("location").attr("address")).appendTo(tr);
+			  $('<td></td>').attr("id", id='td-loc').html(profileSearcherXML.children("location").attr("address")).appendTo(tr);
 			  $('<td></td>').attr("id", id='td-startDate').text(profileSearcherXML.attr("startingDateFormatted")).appendTo(tr);
 			  
 			  

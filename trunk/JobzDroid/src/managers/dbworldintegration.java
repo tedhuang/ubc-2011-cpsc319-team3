@@ -435,14 +435,17 @@ public class dbworldintegration {
 			String jobDescription = message;
 			String jobContactInfo = webPage;
 			
-			if(subject != null)
-				jobAdvertisementTitle = Utility.checkInputFormat(subject);
-			
-			if(message != null)
-				jobDescription = Utility.checkInputFormat(message);
-			
-			if(webPage != null)
-				jobContactInfo = Utility.checkInputFormat(webPage);
+			if(subject != null){
+				jobAdvertisementTitle = Utility.checkInputFormat(jobAdvertisementTitle);
+			}
+			if(message != null){
+				jobDescription = Utility.checkInputFormat(jobDescription);
+				jobDescription = Utility.processLineBreaksWhiteSpaces(jobDescription);
+			}
+			if(webPage != null){
+				jobContactInfo = Utility.checkInputFormat(jobContactInfo);
+				jobDescription = Utility.processLineBreaksWhiteSpaces(jobDescription);
+			}
 		
 			//Add new entry with specified parameters into database
 			String query = 
