@@ -68,7 +68,7 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  $.fn.DynaSmartTab.guestTool(tr, jobAd.attr("jobAdId"));
@@ -123,7 +123,7 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  //$('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  //$('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
 		  var isApprovedFormatted;
@@ -213,7 +213,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').addClass('td-title').html(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').addClass('td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
-		  $('<td></td>').addClass('td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').addClass('td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').addClass('td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
 		  $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
@@ -288,7 +288,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-status').html(jobAd.attr("contactInfo")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-loc').text(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  
 		  tr.appendTo(tbody);
 		  $("#td-title", tr).click(function(){
