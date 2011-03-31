@@ -161,7 +161,7 @@
 					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
 					    <button id="rmPtr">Clear Map</button>
 				  	</div>
-				  	<ul id="locList"></ul>
+				  	<ul id="locList"><li><span>You Can Save Up To 3 Job Locations</span></li></ul>
 				 </div>
 				</div><!-- ENDOF MAP -->
 			   <div id="desc-div" class="fillInForm">

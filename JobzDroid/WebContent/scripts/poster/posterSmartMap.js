@@ -19,6 +19,7 @@
 			var markers=[];
 			var dfltLat=setting.dftLat;
 			var dfltLng=setting.dftLng;
+			var addrMap={addr:"", city:"",province:"",country:"",zip:""};
 			
 			var infoWindow = new google.maps.InfoWindow({});
 			
@@ -92,27 +93,42 @@
 						.bind('udMarkrId', function(event, markerId){
 							$(this).data("marker", markerId);
 						})
-						.bind('update', function(event, addr, latlng){
-							$(this).find('span.addr').text(addr);
-							$(this).data({"addr":addr});
-							$(this).data({"latlng":latlng});
-							console.log($(this).data("addr")+" - " +//TODO RM
-										$(this).data("latlng"))	;
-						})	
-						.append('<span class="addr">'+addr+'</span>')
+						.bind('update', function(event, fulladdr, lat, lng, addrMap){
+							
+							if(hasDupAddr.call(this,addr)){
+							  console.log("Duplicated Address!");
+							  $(this).fadeOut(2000).remove();
+							  locList.remove($(this).parent().get(0));
+							  rmMarkr.call(marker);
+							 }
+							else{ //update the loc info
+								$(this).find('span.addr').text(fulladdr);
+								$(this).data({
+											  "latlng"  :lat+","+lng,
+											  "addr"    :fulladdr,
+											  "city"    :addrMap.city,
+											  "province":addrMap.province,
+											  "country" :addrMap.country,
+											  "zip"		:addrMap.zip,
+											  "lat"     : lat,
+											  "lng"     : lng
+											  });
+//								    console.log($(this).data("province"));
+							}
+						})
+						.append('<span class="title">Location '+ (locList.length+1) +'</span>')
 						.append('<span class="jsBtn rm">Remove</span>')
 						.delegate('span.rm','click',function(){
 							$(this).parent().remove();
 							locList.remove($(this).parent().get(0));
 							rmMarkr.call(marker);
 						})
+						.append('<span class="addr">'+addr+'</span>')
 						.appendTo(list);
-				locList.length>maxAddrNum? null:locList.push(li.get(0));//get(0) need to compare raw object
-				console.log(li.data("latlng"));
+				locList.length>maxAddrNum? null:locList.push(li.get(0));//get(0) needed to compare raw object
 				addDragListener.call(marker);
 
 			}
-			
 			function rmMarkr(){ //remove marker from the map
 				if(this){
 					this.setMap(null);
@@ -139,8 +155,7 @@
 					        $("#latitude").val(ui.item.latitude);
 					        $("#longitude").val(ui.item.longitude);
 					        var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
-//					        placeMarkr(location);
-					        if(notDuplicate(ui.item.latitude, ui.item.longitude)==true){
+					        if(chkDuplicateLoc(location)){
 						        var markr=addMarkr(location);
 						        markr? addToLocList(ui.item.value, "locList", markr):null;
 					        }
@@ -165,19 +180,152 @@
 				  }
 				}
 				
-				function notDuplicate(lat, lng){
-					return markers.length==0? true:
-					$.each(markers, function(){
-						if(this.getPosition().lat()==lat && this.getPosition().lng()==lng){
-							return false;
+				function chkDragDuLoc(latlng){//check for duplicated addr
+					var duLoc;
+					var markr =this;
+					markers.length==0? duLoc = true :
+						$.each(markers, function(){
+							if(this.get("id") != markr.get("id")){
+								if(this.getPosition().equals(latlng)){ //if not compared to itself and duplicated location
+								duLoc = false;
+								return false;
+							}
+							else{
+								duLoc = true;
+								return true;
+							}
 						}
 						else{
+							duLoc = true;
 							return true;
 						}
-						
 					});
+					return duLoc;
+				}
+				function chkDuplicateLoc(latlng){//check for duplicated addr
+					var duLoc;
+					markers.length==0? duLoc = true :
+						$.each(markers, function(){
+							if(this.getPosition().equals(latlng)){ //if not compared to itself and duplicated location
+								duLoc = false;
+								return false;
+							}
+							else{
+								duLoc = true;
+								return true;
+							}
+					});
+					return duLoc;
+				}
+				function hasDupAddr(addr){//check for duplicated addr
+					var duAddr;
+					var thisAddr=this;
+					locList.length==0? duAddr = false :
+						$.each(locList, function(){
+						if(this!= thisAddr){
+							if($(this).data("addr")==addr){ //if not compared to itself and duplicated location
+								duAddr = true;
+								return false;
+							}
+							else{
+								duAddr = false;
+								return true;
+							}
+						}
+						else{
+							duAddr=false;
+						}
+					});
+					return duAddr;
 				}
 				
+				function dragingGeoCoding(markr, pos) { 
+					var markr=this;
+					geocoder.geocode(
+				   { 
+					    latLng: pos 
+				   }, 
+				  function(results, status) { 
+					  var city = "N/A";
+					  
+				    if (status == google.maps.GeocoderStatus.OK && results.length > 0) { 
+				    	
+				    	  addr = results[0].formatted_address,
+					  	  lat  = markr.getPosition().lat(),
+					  	  lng  = markr.getPosition().lng();
+					 
+						  $('#addrBar').val(addr);
+				          $('#latitude').val(lat);
+				          $('#longitude').val(lng);
+					      var li = locList[markr.get("id")];
+					      $(li).trigger("update", [addr, lat, lng]);
+				          
+				    } 
+				    else if( status == google.maps.GeocoderStatus.ZERO_RESULTS){ 
+				    	  addr = "UNKNOWN",
+					  	  lat  = dfltLat,
+					  	  lng  = dfltLng;
+					 
+						  $('#addrBar').val(addr);
+				          $('#latitude').val(lat);
+				          $('#longitude').val(lng);
+				          var li = locList[markr.get("id")];
+				          $(li).trigger("update", [addr, lat, lng]);
+				    } 
+				  }); 
+				}
+				
+				function dragendGeoCoding(pos) { 
+					var markr=this;
+					  geocoder.geocode({ 
+					    latLng: pos 
+					  }, function(results, status) { 
+						  var city = "N/A";
+						  
+					    if (status == google.maps.GeocoderStatus.OK && results.length > 0) { //extract elements from the resultset
+					    	$.each(results[0]['address_components'], function(index){
+					    		$.each(results[0]['address_components'][index]['types'], function(i){
+					    			
+					    			if(results[0]['address_components'][index]['types'][i]=="locality"){
+					    				addrMap.city=results[0]['address_components'][index]['short_name'];
+					    			} //city
+					    				
+					    			else if(results[0]['address_components'][index]['types'][i]=="administrative_area_level_1"){
+					    				addrMap.province=results[0]['address_components'][index]['short_name'];
+					    			} //province or state
+					    				
+					    			else if(results[0]['address_components'][index]['types'][i]=="country"){
+					    				addrMap.country=results[0]['address_components'][index]['short_name'];
+					    			}
+					    			else if(results[0]['address_components'][index]['types'][i]=="postal_code"){
+					    				addrMap.zip=results[0]['address_components'][index]['short_name'];
+					    			}
+					    		});
+					    	});
+					    	  var fulladdr = results[0].formatted_address,
+					    	  	  lat  = markr.getPosition().lat(),
+						  	      lng  = markr.getPosition().lng();
+						 
+							  $('#addrBar').val(fulladdr);
+					          $('#latitude').val(lat);
+					          $('#longitude').val(lng);
+					          var li = locList[markr.get("id")];
+					          $(li).trigger("update", [fulladdr, lat, lng, addrMap]);
+					          
+					    } 
+					    else if( status == google.maps.GeocoderStatus.ZERO_RESULTS){ 
+					    	  addr = "UNKNOWN",
+						  	  lat  = dfltLat,
+						  	  lng  = dfltLng;
+						 
+							  $('#addrBar').val(addr);
+					          $('#latitude').val(lat);
+					          $('#longitude').val(lng);
+					          var li = locList[markr.get("id")];
+					          $(li).trigger("update", [addr, lat, lng]);
+					    } 
+					  }); 
+				}
 				$.fn.smartMap.resize=function(){//fix map when the map is resized or position changed
 					google.maps.event.trigger(map, 'resize');
 				};
@@ -240,54 +388,39 @@
 	/**************ENDOF Get User Location FUNCTION GROUP***************************************************/
 				
 	/**************MARKER LISTENER FUNCTIONS****************************************************************/				
-				function addDragListener(){
+				function addDragEndListener(){
 					var marker = this;
 					var addr, lat, lng;
 					
-//					$.each(locList, function(){
-//						marker.getPosition().lat()==$(this).data("lat")&&
-//			         	marker.getPosition().lng()==$(this).data("lng")?
-//			         	li=$(this):null;
-//					});
-					google.maps.event.addListener(marker, 'drag', function() {
-						
-						geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
-							if (status == google.maps.GeocoderStatus.OK) {
-								if (results[0]) {
-									   	  addr = results[0].formatted_address,
-									  	  lat  = marker.getPosition().lat(),
-									  	  lng  = marker.getPosition().lng();
-									  
-									  $('#addrBar').val(addr);
-							          $('#latitude').val(lat);
-							          $('#longitude').val(lng);
-							          var li = locList[marker.get("id")];
-							          $(li).trigger("update", [addr, lat+","+lng]);
-							      }
-							}
-						});
-				    });
+					google.maps.event.addListener(marker, 'dragend', function() {
+						if(!hasDupAddr(addr)){
+							
+						}
+						else{
+							console.log("You already have that location");
+						}
+					});
+				}
+				function addDragListener(){
+					var marker = this;
+					var addr, lat, lng;
+					var results;
+					
+					google.maps.event.addListener(marker, 'dragend', function() {
+						dragendGeoCoding.call(marker, marker.getPosition());
+//						if(!hasDupAddr(addr)){
+//							
+//						}
+//						else{
+//							console.log("You already have that location");
+//						}
+					});
+					if(locList[marker.get("id")]){
+						console.log($(locList[marker.get("id")]).data("addr"));
+					}
 					
 				}//ENDOF ADDDRAGLISTENER
-				function dragChangeListener(){
-					var marker = this.markr;
-					google.maps.event.addListener(marker, 'drag', function() {
-						geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
-							if (status == google.maps.GeocoderStatus.OK) {
-								if (results[0]) {
-							          $('#addrBar').val(results[0].formatted_address);
-							          $('#latitude').val(marker.getPosition().lat());
-							          $('#longitude').val(marker.getPosition().lng());
-							          udLocListInfo.call(this.item,
-							        		  			results[0].formatted_address, 
-							        		  			marker.getPosition().lat(),
-							        		  			marker.getPosition().lng() );
-							          
-							        }
-							      }
-							    });
-							});
-				}//ENDOF DRAGCHANGELISTENER
+				
 				function addMakrClkLstnr(){
 					google.maps.event.addListener(mark, 'click', function() {
 						infoWindow.open(map,mark);
