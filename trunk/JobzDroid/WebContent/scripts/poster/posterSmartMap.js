@@ -81,11 +81,12 @@
 				
 				var li=	$("<li></li>")
 						.addClass("jsBtn")
-						.data({"marker":marker.get("id"),
-								"addr" : addr,
-								"lat"  : marker.getPosition().lat(),
-								"lng"  : marker.getPosition().lng(),
-								"latlng":marker.getPosition().lat()+","+marker.getPosition().lng()})
+						.data({"marker":marker.get("id")
+//								"addr" : addr,
+//								"lat"  : marker.getPosition().lat(),
+//								"lng"  : marker.getPosition().lng(),
+//								"latlng":marker.getPosition().lat()+","+marker.getPosition().lng()
+								})
 						.click(function(){
 							 loc = new google.maps.LatLng($(this).data("lat"), $(this).data("lng"));
 					         map.panTo(loc);
@@ -116,16 +117,21 @@
 //								    console.log($(this).data("province"));
 							}
 						})
-						.append('<span class="title">Location '+ (locList.length+1) +'</span>')
 						.append('<span class="jsBtn rm">Remove</span>')
 						.delegate('span.rm','click',function(){
-							$(this).parent().remove();
+							var lis=$(this).parent().siblings().get();
 							locList.remove($(this).parent().get(0));
+							$(this).parent().remove();
+							$.each(lis, function(){
+								$(this).find("span.title").text("Location "+($.inArray($(this).get(0), locList)+1));
+							});
 							rmMarkr.call(marker);
 						})
 						.append('<span class="addr">'+addr+'</span>')
-						.appendTo(list);
+						.appendTo(list); //ENDOF ADD <li>
+				
 				locList.length>maxAddrNum? null:locList.push(li.get(0));//get(0) needed to compare raw object
+				li.prepend('<span class="title">Location '+ ($.inArray(li.get(0), locList)+1) +'</span>');
 				addDragListener.call(marker);
 
 			}
@@ -141,11 +147,39 @@
 				    	function(request, response) {
 					        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
 					          response($.map(results, function(item) {
+					        	  
+					        	  $.each(item['address_components'], function(index){
+							    		$.each(item['address_components'][index]['types'], function(i){
+							    			
+							    			if(item['address_components'][index]['types'][i]=="locality"){
+//							    				addrMap.city=item['address_components'][index]['short_name'];
+							    				theCity=item['address_components'][index]['short_name'];
+							    			} //city
+							    				
+							    			else if(item['address_components'][index]['types'][i]=="administrative_area_level_1"){
+//							    				addrMap.province=item['address_components'][index]['short_name'];
+							    				theProvince=item['address_components'][index]['short_name'];
+							    			} //province or state
+							    				
+							    			else if(item['address_components'][index]['types'][i]=="country"){
+//							    				addrMap.country=item['address_components'][index]['short_name'];
+							    				theCountry=item['address_components'][index]['short_name'];
+							    			}
+							    			else if(item['address_components'][index]['types'][i]=="postal_code"){
+//							    				addrMap.zip=item['address_components'][index]['short_name'];
+							    				theZip=item['address_components'][index]['short_name'];
+							    			}
+							    		});
+							    	});
 					            return {
 					              label:  	  item.formatted_address,
 					              value: 	  item.formatted_address,
 					              latitude:   item.geometry.location.lat(),
-					              longitude:  item.geometry.location.lng()
+					              longitude:  item.geometry.location.lng(),
+					              city:		  theCity,
+					              province:   theProvince,
+					              country:    theCountry,
+					              zip:        theZip
 					            };
 					          }));
 					        });
@@ -158,6 +192,13 @@
 					        if(chkDuplicateLoc(location)){
 						        var markr=addMarkr(location);
 						        markr? addToLocList(ui.item.value, "locList", markr):null;
+						        addrMap.city=ui.item.city;
+						        addrMap.province=ui.item.province;
+						        addrMap.country=ui.item.country;
+						        addrMap.zip=ui.item.zip;
+//						        geoCodeLocation.call(markr, markr.getPosition());
+						        var li = locList[markr.get("id")];
+							    $(li).trigger("update", [ui.item.value, ui.item.latitude, ui.item.longitude, addrMap]);
 					        }
 					      }
 					    });
@@ -275,7 +316,7 @@
 				  }); 
 				}
 				
-				function dragendGeoCoding(pos) { 
+				function geoCodeLocation(pos) { 
 					var markr=this;
 					  geocoder.geocode({ 
 					    latLng: pos 
@@ -301,7 +342,7 @@
 					    				addrMap.zip=results[0]['address_components'][index]['short_name'];
 					    			}
 					    		});
-					    	});
+					    	});//ENDOF MAKING ADDRESS DICT
 					    	  var fulladdr = results[0].formatted_address,
 					    	  	  lat  = markr.getPosition().lat(),
 						  	      lng  = markr.getPosition().lng();
@@ -407,7 +448,7 @@
 					var results;
 					
 					google.maps.event.addListener(marker, 'dragend', function() {
-						dragendGeoCoding.call(marker, marker.getPosition());
+						geoCodeLocation.call(marker, marker.getPosition());
 //						if(!hasDupAddr(addr)){
 //							
 //						}
