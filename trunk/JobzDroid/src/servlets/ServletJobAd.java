@@ -176,7 +176,9 @@ public class ServletJobAd extends HttpServlet {
 	
 	
 	
-	
+	/*
+	 * Method to browse job ad used by job searchers and guests
+	 */
 	private void getSomeJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		System.out.println("ServletJobAd: Inside getSomeJobAd");
 
@@ -202,6 +204,7 @@ public class ServletJobAd extends HttpServlet {
 			stmt = conn.createStatement();
 			String query = 
 				 	"SELECT * FROM tableJobAd " +
+				 	"WHERE status = 'open' " +
 					" ORDER BY datePosted DESC "+
 				 	"LIMIT " + index +  ", " + numToGet;
 			
