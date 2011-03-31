@@ -7,6 +7,7 @@
 <link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
 <link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
@@ -32,7 +33,9 @@
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
   		$('#sideMenu').sideNavMenu({});
 		$('#tabs').DynaSmartTab({});
-
+		
+		$('#lightBox').smartLightBox({});		
+		
        	$("#desc-field").bind("keyup", function(){
        		limitChars('desc-field', 1000, 'desc-info');
        	});
@@ -343,6 +346,7 @@
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->
 </div><!--ENDOF MAIN-->
+	<div id="lightBox"></div>
 	<form name="sid" method="get" action="">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
