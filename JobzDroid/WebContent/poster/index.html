@@ -29,18 +29,11 @@
 <script type="text/javascript" src="../scripts/jq-ui/jquery-ui-1.8.1.custom.min.js"></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
 <script type="text/javascript" src='../scripts/sortable.js'></script>
-<script type="text/javascript">
-$(document).ready(function(){
-		$( "#jsStartTime-field").datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
-	});
-</script>
-
 
 <script type="text/javascript">
    
     $(document).ready(function(){
-    	// Smart Tab 
-		//ADD/RM "sliding:false" to parameter to toggle hiding effect
+		//ADD or RM "sliding:false" to parameter to toggle hiding effect
   		$('#lightBox').smartLightBox({});
 		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
@@ -48,12 +41,6 @@ $(document).ready(function(){
     	bindClearError();
 	});
 </script>
-<script type="text/javascript" >
-	$(function() {
-		$( "#startTime-field" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
-		$( "#expireTime-field" ).datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
-		});
-	</script>
 </head><body>
 	
 <div class="main">

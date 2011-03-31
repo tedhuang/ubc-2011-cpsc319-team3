@@ -348,7 +348,7 @@ function extendJobAdExpiry(intJobAdId, longNewExpiry){
 	  
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.open("POST","../../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -414,6 +414,102 @@ function submitJobAdForApproval(intJobAdId){
 	  };
 }
 
+///*******************************************************************************************************************************
+// * 						POSTJOBAD
+// * 
+// * - IN CHARGE OF SUBMITTING AD OR SAVING DRAFT 
+// *******************************************************************************************************************************/
+//function postJobAd(mode, formDiv, heading){
+//	var noNullData=false;
+//	var theForm =$("#"+formDiv);
+//	var theheading =$("."+heading);
+//	var sessionKey = $("#sessionKey").val();
+//	var infoText;
+//	request = new Request;
+//	if(mode=="submit" ){
+//		request.addAction("createJobAdvertisement");
+//		noNullData = checkMandatory(theForm);
+//		infoText="Submitting Your Request...";
+//	}
+//	else if(mode=="draft"){
+//		request.addAction("saveJobAdDraft");
+//		noNullData = true;
+//		infoText="Saving Draft...";
+//	}
+//	else if(mode=="edit"){
+//		request.addAction("editJobAd");
+//		noNullData = checkMandatory(theForm);
+//		infoText="Updating...";
+//	}
+//	else if(mode=="updateDraft"){
+//		request.addAction("updateDraft");
+//		noNullData = checkMandatory(theForm);
+//		infoText="Updating...";
+//	}
+//	if(noNullData){
+//		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
+//		request.addSessionKey( sessionKey );
+//		var searchFields = $(":input:not('.map')", theForm).serializeArray();
+//		
+//		jQuery.each(searchFields, function(i, field){
+//	          if(field.name=="expireTime-field" || field.name=="startTime-field"){
+//	        	request.addParam(field.name, field.value);//TODO ???
+//	          }
+//	          else{
+//				request.addParam(field.name, field.value); //add parameter to the request
+//	          }
+//		   });
+//		//get location info
+//		var locList = $("li", $("#locList", theForm)).get();
+//		var i = 1;
+//		$.each(locList, function(){ // get location from the list
+//			request.addParam("addr"+i, $(this).data("addr"));
+//			request.addParam("latlng"+i, $(this).data("latlng"));
+//			i++;
+//		});
+//		
+//		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+//			xmlhttp=new XMLHttpRequest();
+//		}
+//		else{// code for IE6, IE5
+//			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+//		}
+//		
+//		if(mode=="submit"){
+//			theheading.html("<h2 class='info'>Sending Request...</h2>");
+//		}
+//		else if(mode=="draft"){
+//			theheading.html("<h2 class='info'>Saving Draft...</h2>");
+//		}
+//		else if(mode=="edit"){
+//			theheading.html("<h2 class='info'>Updating Your Ad...</h2>");
+//		}
+//		xmlhttp.open("POST","../ServletJobAd" ,true);
+//		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//		xmlhttp.send(request.toString());
+//		
+//		xmlhttp.onreadystatechange=function(){
+//		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+//			  
+////			  var message = xmlhttp.responseXML.getElementById("message");xmlhttp.responseXML.getElementById("message") +
+//		  	$("#lbImg", theForm).removeClass("load").addClass("good");
+//			$("#lbMsg",theForm).html("Action Successful!");
+//			$.fn.smartLightBox.closeLightBox(2000, formDiv);  
+//			setTimeout ( $.fn.DynaSmartTab.close, 2000 );
+//				
+////		    theheading.html("<h2 class='good'>Action Performed Successfully!</h2>");
+//		    }
+//		  else if(xmlhttp.status!=200){
+//			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+//				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+//				$.fn.smartLightBox.closeLightBox(2000, formDiv);
+////			  theheading.html("<h2 class='error'>opps something is wrong!</h2>");
+//		  }
+//		};
+//		
+//	}//IF MANDATORIES FILLED
+//}
+
 /*******************************************************************************************************************************
  * 						POSTJOBAD
  * 
@@ -426,7 +522,7 @@ function postJobAd(mode, formDiv, heading){
 	var sessionKey = $("#sessionKey").val();
 	var infoText;
 	request = new Request;
-	if(mode=="submit" ){
+	if(mode=="create" ){
 		request.addAction("createJobAdvertisement");
 		noNullData = checkMandatory(theForm);
 		infoText="Submitting Your Request...";
@@ -436,37 +532,27 @@ function postJobAd(mode, formDiv, heading){
 		noNullData = true;
 		infoText="Saving Draft...";
 	}
-	else if(mode=="edit"){
-		request.addAction("editJobAd");
-		noNullData = checkMandatory(theForm);
-		infoText="Updating...";
-	}
-	else if(mode=="updateDraft"){
-		request.addAction("updateDraft");
-		noNullData = checkMandatory(theForm);
-		infoText="Updating...";
-	}
+	
 	if(noNullData){
 		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
 		var searchFields = $(":input:not('.map')", theForm).serializeArray();
 		
 		jQuery.each(searchFields, function(i, field){
-	          if(field.name=="expireTime-field" || field.name=="startTime-field"){
-	        	request.addParam(field.name, field.value);//TODO ???
-	          }
-	          else{
 				request.addParam(field.name, field.value); //add parameter to the request
-	          }
 		   });
 		//get location info
 		var locList = $("li", $("#locList", theForm)).get();
-		var i = 1;
-		$.each(locList, function(){ // get location from the list
-			request.addParam("addr"+i, $(this).data("addr"));
-			request.addParam("latlng"+i, $(this).data("latlng"));
-			i++;
+//		var i = 1;
+		var location;
+		$.each(locList, function(index){ // get location from the list
+			request.addParam("addr"+index, $(this).data("addr"));
+			request.addParam("latlng"+index, $(this).data("latlng"));
+			location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
+//			i++;
 		});
+		location=location.subString(0, location.length-1); //remove last "-"
+		request.addParam("loc-field", location);
 		
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
