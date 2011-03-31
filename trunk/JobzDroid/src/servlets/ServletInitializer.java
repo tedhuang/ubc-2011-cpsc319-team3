@@ -25,11 +25,6 @@ public class ServletInitializer extends HttpServlet {
        
     public ServletInitializer() {
         super();
-        systemManager = SystemManager.getInstance();
-        dbworldintegration = new dbworldintegration();
-        dbWorldTimer = new Timer();
-        timer = new Timer();
-        DbDict =	new DBColName(); 
     }
 
 	/**
@@ -39,7 +34,14 @@ public class ServletInitializer extends HttpServlet {
 		super.init(config);
 		// load configuration file
 		String configPath = getServletContext().getRealPath("/WEB-INF/config.ini");
-		systemManager.loadConfigFile(configPath);
+		SystemManager.loadConfigFile(configPath);
+
+        systemManager = SystemManager.getInstance();
+        dbworldintegration = new dbworldintegration();
+        dbWorldTimer = new Timer();
+        timer = new Timer();
+        DbDict =	new DBColName(); 
+		
 		// schedule automated tasks
 	    class AutomatedTasks extends TimerTask {
 	        public void run() {

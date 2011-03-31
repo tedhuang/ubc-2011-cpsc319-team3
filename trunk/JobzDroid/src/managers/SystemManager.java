@@ -33,21 +33,21 @@ public class SystemManager {
 	
 	// default string patterns
 	public static String emailPattern 		= "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
-	public static String pwPattern 			= "^[_A-Za-z0-9-\\.]{5,15}$";
+	public static String pwPattern 			= "^[_A-Za-z0-9-\\.\\s]{5,15}$";
 	public static String namePattern 		= "^[_A-Za-z0-9-\\.]+$";
 	public static String phonePattern 		= "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$";
 	public static String fileNamePattern 	= "^[_A-Za-z0-9-\\.]+\\.+[A-Za-z0-9]+$";
 	
 	// DB connection variables
 	public static String dbDriver 	= "com.mysql.jdbc.Driver";
-//	public static String dbURL 	    = "jdbc:mysql://70.79.38.90:3306/dbjobzdroid"; //jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
-//	public static String dbUser 	= "root";//"blitzcriegteam";
-//	public static String dbPassword	= "cs319CS#!(";//"cs319team3";
+	public static String dbURL 	    = "jdbc:mysql://70.79.38.90:3306/dbjobzdroid";
+	public static String dbUser 	= "root";
+	public static String dbPassword	= "cs319CS#!(";
 	
 	
-	public static String dbURL 		= "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
-	public static String dbUser 	= "blitzcriegteam";
-	public static String dbPassword	= "cs319team3";
+//	public static String dbURL 		= "jdbc:mysql://www.db4free.net:3306/dbjobzdriod";
+//	public static String dbUser 	= "blitzcriegteam";
+//	public static String dbPassword	= "cs319team3";
 	
 	public static int maxDBConnectionPoolSize = 0;									// 0 means no limit
 	
@@ -65,7 +65,7 @@ public class SystemManager {
 	public static String[] validFileExtensions
 						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" }; //TODO check SRS for file extensions
 	public static String documentDirectory		= "/JobzDroid/Documents/"; //TODO maybe change to default user path
-	public final static long bytesInMB			=  1000 * 1000;
+	public static long bytesInMB				=  1000 * 1000;
 	public static long fileStorageSizeLimit		= 5 * bytesInMB; // limit is 5 Mb, base unit is byte
 	
 	/***********************************************************************************************************************/
@@ -86,7 +86,7 @@ public class SystemManager {
 	 * Loads system variables from configuration file
 	 * @param filename Path of the configuration file.
 	 */
-	public void loadConfigFile(String filename){
+	public static void loadConfigFile(String filename){
 		Properties config = new Properties();		
 		// load file
 		try {
@@ -110,18 +110,24 @@ public class SystemManager {
 		systemEmailAddress 	= config.getProperty("systemEmailAddress");
 		systemEmailPw 		= config.getProperty("systemEmailPw");
 		systemEmailSMTPHost = config.getProperty("systemEmailSMTPHost");
-		systemEmailPort 	= config.getProperty("systemEmailPort");
+		systemEmailPort 	= config.getProperty("systemEmailPort");	
 		dbWorldEmailAddress = config.getProperty("dbWorldEmailAddress");
 		dbWorldEmailPw		= config.getProperty("dbWorldEmailPw");
+		
+		documentDirectory 	= config.getProperty("documentDirectory");
+		validFileExtensions = config.getProperty("validFileExtensions").split(";");
 		try{
-			sessionRenewPeriodAfterExpiry 	= Long.parseLong(config.getProperty("sessionRenewPeriodAfterExpiry").trim()) * 60 * 1000;	// unit: minutes -> millisecond
-			expiryTimeSession 				= Long.parseLong(config.getProperty("expiryTimeSession").trim()) * 60 * 1000;
-			expiryTimeEmailVerification 	= Long.parseLong(config.getProperty("expiryTimeEmailVerification").trim()) * 60 * 1000;
-			expiryTimeForgetPasswordReset 	= Long.parseLong(config.getProperty("expiryTimeForgetPasswordReset").trim()) * 60 * 1000;
-			expiryTimePendingAccount 		= Long.parseLong(config.getProperty("expiryTimePendingAccount").trim()) * 60 * 1000;
-			timeIntervalAutomatedTasks 		= Long.parseLong(config.getProperty("timeIntervalAutomatedTasks").trim()) * 60 * 1000;
+			sessionRenewPeriodAfterExpiry 		= Long.parseLong(config.getProperty("sessionRenewPeriodAfterExpiry").trim()) * 60 * 1000;	// unit: minutes -> millisecond
+			expiryTimeSession 					= Long.parseLong(config.getProperty("expiryTimeSession").trim()) * 60 * 1000;
+			expiryTimeEmailVerification 		= Long.parseLong(config.getProperty("expiryTimeEmailVerification").trim()) * 60 * 1000;
+			expiryTimeForgetPasswordReset 		= Long.parseLong(config.getProperty("expiryTimeForgetPasswordReset").trim()) * 60 * 1000;
+			expiryTimePendingAccount 			= Long.parseLong(config.getProperty("expiryTimePendingAccount").trim()) * 60 * 1000;
+			timeIntervalAutomatedTasks 			= Long.parseLong(config.getProperty("timeIntervalAutomatedTasks").trim()) * 60 * 1000;
+			timeIntervalAutomatedDBWorldTasks 	= Long.parseLong(config.getProperty("timeIntervalAutomatedDBWorldTasks").trim()) * 60 * 1000;
 			timeBeforeRemovingExpiredInactiveJobAds =
 				Long.parseLong(config.getProperty("timeBeforeRemovingExpiredInactiveJobAds").trim()) * 24 * 3600 * 1000;			// unit: day -> millisecond
+			expiryTimeJobAdDefault 					=
+				Long.parseLong(config.getProperty("expiryTimeJobAdDefault").trim()) * 24 * 3600 * 1000;
 						
 			if (Integer.parseInt(config.getProperty("autoRemoveExpiredInactiveJobAds").trim()) == 0)								// 0 = false, true otherwise
 				autoRemoveExpiredInactiveJobAds = false;
@@ -134,6 +140,9 @@ public class SystemManager {
 				enableJobAdApproval = true;	
 			
 			maxDBConnectionPoolSize = Integer.parseInt(config.getProperty("maxDBConnectionPoolSize").trim());
+			
+			bytesInMB 			 = Long.parseLong(config.getProperty("timeIntervalAutomatedDBWorldTasks").trim());
+			fileStorageSizeLimit = Long.parseLong(config.getProperty("fileStorageSizeLimit").trim());
 		}
 		catch(NumberFormatException e){
 			// log error

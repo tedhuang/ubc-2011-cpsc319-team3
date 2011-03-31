@@ -179,12 +179,7 @@ public class Utility {
 		try{
 			corrected = toBeChecked.replace("\'", "\\\'");
 			corrected = toBeChecked.replace("\"", "\\\"");
-			corrected = toBeChecked.replace(";", "");
-			corrected = toBeChecked.replace("{", "");
-			corrected = toBeChecked.replace("}", "");
-			corrected = toBeChecked.replace("<", "");
-			corrected = toBeChecked.replace(">", "");
-			corrected = toBeChecked.replace("^", "");
+			corrected = toBeChecked.replace(";", "\\;");
 			corrected = toBeChecked.replace("'", "\\'");
 		}
 		catch(NullPointerException e){
@@ -201,11 +196,6 @@ public class Utility {
 			corrected = toBeChecked.replace("\'", "\\\'");
 			corrected = toBeChecked.replace("\"", "\\\"");
 			corrected = toBeChecked.replace(";", "");
-			corrected = toBeChecked.replace("{", "");
-			corrected = toBeChecked.replace("}", "");
-			corrected = toBeChecked.replace("<", "");
-			corrected = toBeChecked.replace(">", "");
-			corrected = toBeChecked.replace("^", "");
 			corrected = toBeChecked.replace("'", "\\'");
 		}
 		return corrected;
