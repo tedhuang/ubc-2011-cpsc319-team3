@@ -1660,8 +1660,8 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 		//Checks the user's privilege
 		int acctId=-1;
 		
-		StringBuffer qBuf =sessAuthQuery(sKey,qcmd);
-		String query=qBuf.substring(1, qBuf.length()-2);//Remove bracket
+		StringBuffer qBuf =sessAuthQuery(sKey,qcmd); // authenticate user
+		String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
 		System.out.println(query);
 
 //			String address 				 = request.getParameter("address");
@@ -1806,7 +1806,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 				
 				//Put the parameters' names and values into the MAP
 				if(colName.equals("dateStarting")||colName.equals("expiryDate")){
-					long aDate=Utility.dateConvertor(request.getParameter(paraName));
+					long aDate=Utility.dateConvertor(request.getParameter(paraName)); //TODO Double Check convertor
 					paraMap.put(colName, aDate);
 				}
 				// preserve line breaks and sequences of white spaces to properly display in HTML

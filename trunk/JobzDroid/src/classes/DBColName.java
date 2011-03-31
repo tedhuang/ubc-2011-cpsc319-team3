@@ -15,6 +15,7 @@ public class DBColName{
 				"idJobAd",
 				"idAccount",
 				"title",
+				"location",
 				"description", 
 				"expiryDate",
 				"dateStarting",
@@ -75,8 +76,8 @@ public class DBColName{
 		  			"is-field",//pos:11
 		  			"tag-field",
 		  			"adId-field",
-		  			"gf-field"
-//		  			"loc-field"//pos:15
+		  			"gf-field",
+		  			"loc-field"//pos:15
 			
 	};
 	private Map<String, String>adEditFieldsMap=new HashMap<String, String>();
@@ -123,22 +124,22 @@ public class DBColName{
  **********************************************************************************/
 	private final String[]tbAdLocColArray={
 			"idJobAd",
+			"addr0",
 			"addr1",
-			"addr2",
-			"addr3", 
+			"addr2", 
+			"latlng0",
 			"latlng1",
 			"latlng2",
-			"latlng3",
 	};
 	private Map<String, String>tbAdLocColMap=new HashMap<String, String>();
 	private final String[]tbAdLocInput={
 			"idJobAd",
+			"addr0",
 			"addr1",
-			"addr2",
-			"addr3", 
+			"addr2", 
+			"latlng0",
 			"latlng1",
 			"latlng2",
-			"latlng3",
 	};
 	private Map<String, String>tbAdLocFieldMap=new HashMap<String, String>();
 	
@@ -268,6 +269,8 @@ public class DBColName{
 		colDictEditJobAd.put(adEditFieldsMap.get("expireTime-field"),	tbJobAdColMap.get("expiryDate"));
 		colDictEditJobAd.put(adEditFieldsMap.get("adId-field"),			tbJobAdColMap.get("idJobAd"));
 		colDictEditJobAd.put(adEditFieldsMap.get("gf-field"),			tbJobAdColMap.get("hasGradFunding"));
+		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"),			tbJobAdColMap.get("location"));
+		
 		
 		//Location?
 //		colDictEditJobAd.put(adEditFieldsMap.get("loc-field"), 		"address");
@@ -302,12 +305,12 @@ public class DBColName{
 			tbAdLocFieldMap.put(tbAdLocInput[i], tbAdLocInput[i]);
 		}
 		colDictAdLoc.put(tbAdLocFieldMap.get("idJobAd"), 			tbAdLocColMap.get("idJobAd"));
-		colDictAdLoc.put(tbAdLocFieldMap.get("addr1"),				tbAdLocColMap.get("addr1"));
-		colDictAdLoc.put(tbAdLocFieldMap.get("addr2"), 				tbAdLocColMap.get("addr2"));//TODO CHANGE DB COL
-		colDictAdLoc.put(tbAdLocFieldMap.get("addr3"),				tbAdLocColMap.get("addr3"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr0"),				tbAdLocColMap.get("addr0"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr1"), 				tbAdLocColMap.get("addr1"));//TODO CHANGE DB COL
+		colDictAdLoc.put(tbAdLocFieldMap.get("addr2"),				tbAdLocColMap.get("addr2"));
+		colDictAdLoc.put(tbAdLocFieldMap.get("latlng0"), 			tbAdLocColMap.get("latlng0"));
 		colDictAdLoc.put(tbAdLocFieldMap.get("latlng1"), 			tbAdLocColMap.get("latlng1"));
 		colDictAdLoc.put(tbAdLocFieldMap.get("latlng2"), 			tbAdLocColMap.get("latlng2"));
-		colDictAdLoc.put(tbAdLocFieldMap.get("latlng3"), 			tbAdLocColMap.get("latlng3"));
 		
 		colDictAdLoc = Collections.unmodifiableMap(colDictAdLoc);
 	}

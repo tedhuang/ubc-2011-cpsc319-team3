@@ -122,7 +122,7 @@
 							var lis=$(this).parent().siblings().get();
 							locList.remove($(this).parent().get(0));
 							$(this).parent().remove();
-							$.each(lis, function(){
+							$.each(lis, function(){//update the location number
 								$(this).find("span.title").text("Location "+($.inArray($(this).get(0), locList)+1));
 							});
 							rmMarkr.call(marker);
