@@ -654,6 +654,7 @@ function getJobAdById(mode, id, outputDiv)
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
+	$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -670,6 +671,7 @@ function getJobAdById(mode, id, outputDiv)
 		  else if(mode=="edit"){
 			  $.fn.DynaSmartTab.loadEdData("jobAd", outputDiv, mode);
 		  }
+		  $.fn.smartLightBox.closeLightBox(500);
 	    }
 	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");

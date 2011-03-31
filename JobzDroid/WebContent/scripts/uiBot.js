@@ -36,9 +36,6 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	    $(tbody).append(rowText);
 	 	$(tbody).find('tr').find('td:first').addClass("nameCol");
 	 	$(tbody).find('tr').find('td:last').addClass("dataCol");
-	 	
-	 	//TODO FIX LIGHT BOX FOR SEARCHER JOB AD DETAILS
-	 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 	 	fb.hide();
 	}
 }
