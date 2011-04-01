@@ -39,8 +39,14 @@ public class SystemManager {
 	public static String fileNamePattern 	= "^[_A-Za-z0-9-\\.]+\\.+[A-Za-z0-9]+$";
 	
 	// DB connection variables
+//	public static String dbDriver 	= "com.mysql.jdbc.Driver";
+//	public static String dbURL 	    = "jdbc:mysql://70.79.38.90:3306/dbjobzdroid";
+//	public static String dbUser 	= "root";
+//	public static String dbPassword	= "cs319CS#!(";
+
+	//THIS ONE USE LOCALHOST
 	public static String dbDriver 	= "com.mysql.jdbc.Driver";
-	public static String dbURL 	    = "jdbc:mysql://70.79.38.90:3306/dbjobzdroid";
+	public static String dbURL 	    = "jdbc:mysql://localhost:3306/dbjobzdroid";
 	public static String dbUser 	= "root";
 	public static String dbPassword	= "cs319CS#!(";
 	
