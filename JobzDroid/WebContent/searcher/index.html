@@ -117,10 +117,11 @@
 			<li id="Tab2">
   				<a href="#profileFrame" onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");' ><h2>My Profile</h2></a>
 			</li>
-			<li id="adDetailTab" class="hideOnly iniHidden">
-				<span class="close">x</span>
-  				<a href="#adDetailFrame"><span>View Detail</span></a>
+  			<li id="Tab3">
+  				<a href="#favouriteFrame" onclick='listFavouriteJobAd("favTable");'><h2>Favourites</h2></a>
 			</li>
+						
+			
 		</ul>
 	</div><!--ENDOF NAVBAR-->
 	
@@ -350,7 +351,50 @@
 				<table><tbody></tbody></table>
 			</div>
 		</div><!--end of EDADFRAME-->
-		
+
+		<div id="favouriteFrame" class="subFrame">
+			<div id="favTable" class="resultTableDiv">
+			<h2 id=feedbackFavourites></h2>
+				<table class='sortable' id='sortableJobAd'>
+					<thead>
+					<tr>
+						<th id="col-viewDate">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Date</div>
+							</div>
+						</th>
+						<th id="col-viewTitle">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Job Title</div>
+							</div>
+						</th>
+						<th id="col-viewCompany">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Contact Info</div>
+							</div>
+						</th>
+						<th id="col-viewEduReq">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Degree</div>
+							</div>
+						</th>
+						<th id="col-viewAvail">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Availability</div>
+							</div>
+						</th>
+						<th id="col-viewLoc">
+							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
+								<div class="headText">Location</div>
+							</div>
+						</th>
+					</tr>
+				</thead>
+					<tbody>
+					</tbody>
+				</table><!--ENDOF TABLE-->
+			 </div><!--ENDOF DIV RESULT TABLE-->
+		</div>
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->  

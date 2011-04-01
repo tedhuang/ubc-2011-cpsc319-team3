@@ -57,6 +57,9 @@ public class ServletJobAd extends HttpServlet {
 		getSomeJobAd,
 		getSuggestions,
 		
+		saveFavouriteJobAd,
+		listFavouriteJobAd,
+		
 		adminApprove,
 		adminDeny,
 		adminDeleteJobAd,
@@ -151,7 +154,17 @@ public class ServletJobAd extends HttpServlet {
 				break;	
 			case getSuggestions:
 				getSuggestions(request, response);
+				break;				
+		/*****************FAVOURITE AD ACTIONS***********************/		
+				
+			case saveFavouriteJobAd:
+				saveFavouriteJobAd(request, response);
 				break;
+				
+			case listFavouriteJobAd:
+				listFavouriteJobAd(request, response);
+				break;
+				
 		/*****************ADMIN ACTIONS***********************/				
 			case adminApprove:
 				adminApprove(request, response);
@@ -571,6 +584,7 @@ public class ServletJobAd extends HttpServlet {
 //				jobAd.tags 				= result.getString("tags");
 				
 				jobAdList.add(jobAd);
+//			
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){
@@ -1641,7 +1655,7 @@ public class ServletJobAd extends HttpServlet {
 	}
 /****************************************************************************************************************
  * 
- * @param request
+ * @param request	
  * @param response
  * @throws IOException
  */
@@ -2430,6 +2444,204 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 			response.getWriter().println(XMLResponse);
 			
 		}
+/****
+ * saveFavouriteJobAd()
+ * 
+ * 
+ ****/
+	public void saveFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
+		
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		
+		String msg = "";
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = -1;
+		int jobAdId = -1;
+		long dateAdded = -1;
+		String query = "";
+		
+		String jobAdIdInString = request.getParameter("jobAdId");
+		try{
+			jobAdId = Integer.parseInt(jobAdIdInString);
+		}
+		catch(NumberFormatException e){
+			response.sendRedirect("error.html");
+		}
+		
+		earlyExit: {
+			if ( userSession == null ) {
+				System.out.println("Session is null, Failed to authenticate user session");
+				msg = "Have You Logged in? Please Try Re-login";
+				break earlyExit;
+			}
+			else {
+				System.out.println("checking usertype");
+				System.out.println("usertype = " + userSession.getAccountType());
+				accountId= userSession.getIdAccount();	
+				if( userSession.checkPrivilege("searcher")) {
+					System.out.print("User has the correct priviliege\n");
+				}
+				else {
+					System.out.print( "User does not have the right privilege\n");
+					break earlyExit;
+				}
+			}
+		}
+		
+		dateAdded = Utility.getCurrentTime();
+		
+		query = "INSERT IGNORE INTO tablefavouritejobad(idAccount, idJobAd, dateAdded) VALUES " +
+			"('"  + accountId + "','" + jobAdId + "','" + dateAdded + "')";		
+		
+		Connection conn = dbManager.getConnection();
+		PreparedStatement preparedStmt = null;
+		Statement stmt2 = null;
+		int isSucessful = -1;
+		ResultSet rs = null;
+		
+		try {			
+			System.out.println("Processing " + query);
+			preparedStmt = conn.prepareStatement(query);
+			isSucessful = preparedStmt.executeUpdate();
+			
+			query="SELECT * FROM tablefavouritejobad ORDER BY dateAdded LIMIT 1";
+			stmt2 = conn.createStatement();
+			stmt2.execute(query);
+			msg = "Action Performed Successfully";
+			System.out.println(msg);
+			if(isSucessful != -1){
+				rs = stmt2.getResultSet();
+				if (rs.next()){
+					accountId = rs.getInt("idAccount");
+					System.out.println("Retrieved: Account ID:" + accountId);
+					jobAdId = rs.getInt("idJobAd"); 
+					System.out.println("Retrieved: Job Ad ID:" + jobAdId);
+				}
+				else
+					System.out.println("Error: Inserted row not found after creation");
+				
+				if(accountId !=-1 && jobAdId != -1){
+						System.out.println("accountId and jobAdId are valid values");
+				}
+				else{
+					System.out.println("accountId or jobAdId not valid");
+				}
+			}
+			else{
+				System.out.println("preparedStmt not sucessful");
+			}
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+	    finally {
+	        try{
+	            if (preparedStmt != null)
+	                preparedStmt.close();
+	            if (stmt2 != null)
+	            	stmt2.close();
+	        }
+	        catch (Exception e) {
+	        	System.out.println("Cannot close Prepared Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+		
+	}	
+
+/*********************************************************************************************
+ *
+ * listFavouriteJobAd()
+ * 
+ * @param request
+ * @param response
+ * @throws IOException
+ ***********************************************************************************************/
+	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
+		ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
+		
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = userSession.getIdAccount();
+		
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {		
+			stmt = conn.createStatement();
+			//Add individual queries onto total query
+			String query = "SELECT * FROM tablefavouritejobad INNER JOIN tablejobad " +
+					"USING(idJobAd) WHERE tablefavouritejobad.idAccount =" +
+					accountId;
+					
+			
+			//DEBUG
+			System.out.println(query);
+			
+			stmt.execute(query);
+			ResultSet result = stmt.getResultSet();
+			
+			//Compile the result into the arraylist
+			while( result.next() ) {
+				JobAdvertisement temp = new JobAdvertisement();
+				
+				temp.jobAdId 				= result.getInt("idJobAd");
+				temp.jobAdTitle				= result.getString("title");
+				temp.creationDate		 	= result.getLong("datePosted");
+				temp.contactInfo 			= result.getString("contactInfo");
+				temp.educationReq	 		= result.getInt("educationRequired");
+				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
+
+				favJobAdList.add( temp ); //add to the temporary list
+			}
+			
+			stmt.close();
+			
+			System.out.println("Query Successfully Finished");
+			
+		} 
+		catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		Iterator<JobAdvertisement> itr = favJobAdList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
 	
 	
 	

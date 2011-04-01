@@ -852,5 +852,102 @@ function delJobAd(tbRow, jobAdId){
 			  console.log("delete was unsuccessful");
 		  }
 		  //TODO Lightbox error
-	  };	  
+	  };
+}  
+/************************************************************************************************************
+ * 				saveFavouriteJobAd
+ * @param outputDiv
+ ************************************************************************************************************/	
+
+function saveFavouriteJobAd(sessKey, jobId){
+	
+	request = new Request;
+	request.addAction("saveFavouriteJobAd");
+	request.addParam("sessionKey", sessKey);
+	request.addParam("jobAdId", jobId);
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+
+	
 }
+
+/************************************************************************************************************
+ * 				Prepare & Setup Favourite Job Ad List
+ * @param outputDiv
+ ************************************************************************************************************/
+function listFavouriteJobAd(outputDiv){
+	outputDiv="#"+outputDiv;
+	request = new Request;
+	request.addAction("listFavouriteJobAd");
+	
+	var strSessionKey = $("#sessionKey").val();
+	request.addParam("sessionKey", strSessionKey);
+
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function(){
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){  
+		  buildFavouriteListTb("jobAd", outputDiv);	  
+	    }
+	  else{
+		  //TODO: implement error handling
+	  }
+	};
+}
+
+/************************************************************************************************************
+ * 				Build Favourite Job Ad List 
+ * @param 
+ ************************************************************************************************************/	
+function buildFavouriteListTb(targetXMLTag, outputDiv){
+	
+	var tbody  = $("tbody", outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+		$("#feedbackFavourites").html("<h2 class='error'>You have not saved any favourite Job Advertisements </h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var jobAdXML = $(this);
+		  var tr =$('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-pDate').text(jobAdXML.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').addClass('jsBtn').text(jobAdXML.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(jobAdXML.attr("contactInfo")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-eduReq').text(jobAdXML.attr("eduReqFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAdXML.attr("jobAvail")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').html(jobAdXML.children("location").attr("address")).appendTo(tr);
+		  
+		  
+		 // $.fn.DynaSmartTab.searchJSTool(tr, profileSearcherXML.attr("accountID"));
+		  tr.appendTo(tbody);
+		});
+		 
+		 $("tr:odd", tbody).addClass("oddRow");
+		 //$("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}	
+
+
