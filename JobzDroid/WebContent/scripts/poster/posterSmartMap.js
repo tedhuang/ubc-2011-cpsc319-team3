@@ -114,7 +114,7 @@
 											  "lat"     : lat,
 											  "lng"     : lng
 											  });
-//								    console.log($(this).data("province"));
+								    console.log($(this).data("province"));
 							}
 						})
 						.append('<span class="jsBtn rm">Remove</span>')

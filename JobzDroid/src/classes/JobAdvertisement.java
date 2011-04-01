@@ -1,6 +1,10 @@
 package classes;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class JobAdvertisement {
 
@@ -19,7 +23,11 @@ public class JobAdvertisement {
 	public int		isApproved; // 0 = false, 1 = true
 	public int	 	hasGradFunding; // 0 = false, 1 = true
 	public String	jobAvailability;
-
+	public String   location;
+	
+	public Map<String, Object> valueMap= new HashMap<String, Object>();
+	private ArrayList<String>fieldNames=new ArrayList<String>();
+	
 	public ArrayList<Location> locationList;
 		
 	public JobAdvertisement(){
@@ -29,8 +37,11 @@ public class JobAdvertisement {
 		hasGradFunding = 0;
 		status = "inactive";
 		locationList = new ArrayList<Location>();
+		location="See Detail";
+		initValueMap();
 	}
-
+	
+	
 	
 	public String toXMLContent(){
 		
@@ -114,9 +125,84 @@ public class JobAdvertisement {
 		System.out.println("JobAdvertisement Object XML:\n" + result);
 		
 		return result;
-
 		
 	}
- 	
 	
+	public String xmlParser(){
+		
+		StringBuffer xmlBuf=new StringBuffer();
+		String SLASH = "\\";
+		String QUO = "\"";
+		String TAB = "\\t";
+		String NL  ="\\n";
+		String EQ  ="=";
+		String SP  = " ";
+		xmlBuf.append("\t<jobAd" +SP);
+		
+		for(Map.Entry<String, Object> entry : valueMap.entrySet()){
+			String fld= entry.getKey();
+			Object value = entry.getValue();
+			if(value!=null){
+				if(fld.equals("jobAdTitle")||fld.equals("tags")||fld.equals("contactInfo")||fld.equals("jobAdDescription")){
+					xmlBuf.append(fld+ EQ + QUO + Utility.processXMLEscapeChars((String) value) +QUO+SP);
+				}
+				else if(fld.equals("educationReq")){
+					int req = Integer.parseInt(value.toString());
+					xmlBuf.append(fld + EQ + QUO + Utility.degreeConvertor(req) +QUO+SP);
+				}
+				else if(fld.equals("creationDate")||fld.equals("expiryDate")||fld.equals("startingDate")){
+					Long time = Long.valueOf(value.toString());
+					if(time!=0){
+						xmlBuf.append(fld+ EQ + QUO + Utility.dateConvertor(time) +QUO+SP);
+					}
+				}
+				else{
+					xmlBuf.append(fld+ EQ + QUO + value +QUO+SP);
+				}
+				
+			}
+			else{
+				xmlBuf.append(fld + EQ + QUO + "N/A" +QUO+SP);
+			}
+			//String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
+		}
+		xmlBuf.append(" >\n");
+		
+		
+//		/************ Add a list of location objects to XML ***********/
+//		for( int i = 0 ; i < locationList.size() ; i++ ){
+//			String addr = locationList.get(i).address;
+//			addr = Utility.processXMLEscapeChars(addr);
+//			result=result.concat("\t\t<location address=\""  + addr + "\"" +
+//										 " latitude=\""  + locationList.get(i).latitude + "\"" +
+//										 " longitude=\"" + locationList.get(i).longitude + "\" ></location>\n" );
+//		}
+		
+		xmlBuf.append("\t</jobAd>\n");
+		
+		System.out.println("JobAdvertisement Object XML:\n" + xmlBuf.toString());
+		
+		return xmlBuf.toString();
+		
+	}
+	private void initValueMap(){
+		try {
+            Class cls = Class.forName("JobAdvertisement");
+            Field fieldList[] = cls.getDeclaredFields();
+            for (Field field:fieldList){
+            	fieldNames.add(field.getName());
+            }
+          }
+          catch (Throwable e) {
+             System.err.println(e);
+          }
+       for(String str: fieldNames){
+    	   valueMap.put(str, null);
+       }
+	}
+	public void resetValueMap(){
+		for(Map.Entry<String, Object> entry : valueMap.entrySet()){
+			entry.setValue(null);
+		}
+	}
 }

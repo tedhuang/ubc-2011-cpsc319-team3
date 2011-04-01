@@ -511,6 +511,7 @@ public class ServletJobAd extends HttpServlet {
 	
 		String message = "getJobAdByOwner failed";
 		boolean isSuccessful = false;
+		Map<String, String>jobAdDBDict=DbDict.getClsDict("jobAd");
 		
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 		
@@ -527,26 +528,40 @@ public class ServletJobAd extends HttpServlet {
 			stmt = conn.createStatement();
 			
 			String query = 
-				"SELECT idJobAd, idAccount, datePosted, title, expiryDate, jobAvailability, status ,educationRequired FROM tableJobAd " + 
+				"SELECT idJobAd, idAccount, datePosted, title, location, " +
+					"expiryDate, jobAvailability, status ,educationRequired FROM tableJobAd " + 
 				"WHERE idAccount='" + ownerId +"';";
 			
 			System.out.println("getJobAdByOwner query:" + query);
 			isSuccessful = stmt.execute(query);
 			
 			ResultSet result = stmt.getResultSet();
-			
+			ResultSetMetaData rsmd=null;
+//		    int numColumns = rsmd.getColumnCount();
+		    
 			while(result.next()){
 				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+				jobAd.resetValueMap(); //make sure no data leftover
+				rsmd = result.getMetaData();
+				int numColumns = rsmd.getColumnCount();
+				for(int i=1; i<=numColumns; i++){
+					String colName = rsmd.getColumnName(i);
+					jobAd.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
+					
+				}
+				
 				
 				//Fill in the fields of the jobAd object
-				jobAd.jobAdId 			= result.getInt("idJobAd");
-				jobAd.ownerID 			= result.getInt("idAccount");
-				jobAd.creationDate 		= result.getLong("datePosted");
-				jobAd.jobAdTitle		= result.getString("title");
-				jobAd.expiryDate		= result.getLong("expiryDate");
-				jobAd.jobAvailability	= result.getString("jobAvailability");
-				jobAd.status 			= result.getString("status");
-				jobAd.educationReq 		= result.getInt("educationRequired");
+//				jobAd.jobAdId 			= result.getInt("idJobAd");
+//				jobAd.ownerID 			= result.getInt("idAccount");
+//				jobAd.creationDate 		= result.getLong("datePosted");
+//				jobAd.jobAdTitle		= result.getString("title");
+//				jobAd.expiryDate		= result.getLong("expiryDate");
+//				jobAd.jobAvailability	= result.getString("jobAvailability");
+//				jobAd.status 			= result.getString("status");
+//				jobAd.educationReq 		= result.getInt("educationRequired");
+				
+				
 //				jobAd.isApproved 		= result.getInt("isApproved");
 //				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 
@@ -555,30 +570,7 @@ public class ServletJobAd extends HttpServlet {
 //				jobAd.contactInfo 		= result.getString("contactInfo");
 //				jobAd.tags 				= result.getString("tags");
 				
-			/**Get Location values */
-				stmtLoc = conn.createStatement();
-				ArrayList<Location> locationList = new ArrayList<Location>();
-				
-				query = "SELECT * FROM tableLocationJobAd WHERE " +
-						"idJobAd= '" + jobAd.jobAdId +"'";
-				
-				isSuccessful = stmtLoc.execute(query);
-				ResultSet locResult = stmtLoc.getResultSet();
-				
-				while(locResult.next()){
-					Location location = new Location();
-
-					//Get Address, Longitude, Latitude
-					//TODO FIX LOCATION COLUMN NAME
-			//		location.address = locResult.getString("location");
-					location.address = locResult.getString("addr1");
-					location.longitude = locResult.getDouble("longitude");
-					location.latitude = locResult.getDouble("latitude");	
-					locationList.add(location);
-				}
-				jobAd.locationList = locationList;
 				jobAdList.add(jobAd);
-//			
 			}//END OF WHILE LOOP
 			
 			if(jobAdList.isEmpty()){
@@ -624,7 +616,7 @@ public class ServletJobAd extends HttpServlet {
 		Iterator<JobAdvertisement> itr = jobAdList.iterator();
 		
 	    while (itr.hasNext()) {//iterate through all list and append to xml
-	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    	XMLResponse.append(itr.next().xmlParser() ); 
 	    }
 		
 		XMLResponse.append("</response>\n");
@@ -1802,7 +1794,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 			//debug
 			System.out.println("Request: "  + paraName + " Value: " +request.getParameter(paraName));
 			
-			if(paraName.matches("(?i).*addr.*") || paraName.matches("(?i).*latlng.*")){//Distinguish the location
+			if(paraName.matches("(?i).*addr.*") || paraName.matches("(?i).*latlng.*")){//Distinguish for the location query 
 				String colName = jobLocMap.get(paraName);
 				locMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );
 				//Debug
@@ -1835,7 +1827,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	  	
 	  }//ENDOF WHILE paramNames.hasMoreElements()
 	paraMap.put("idAccount", IdAcct);//set the owner id
-	paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the modified time
+	paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the creation timeStamp
 	
 	/*
 	 * Entering Query making
@@ -1895,7 +1887,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	return queriesBuffer;
 }
 /**********************************************************************************************************************
- * 								build Post Query
+ * 								build Post Query (@deprecated) Replaced by buildPostAdQuery
  * This function will build query for SUBMIT AD AND SAVE DARFT
  * @param request
  * @param IdAcct
@@ -2372,7 +2364,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 						
 						ResultSet suggRs = suggQuery.executeQuery();
 						
-						//now get the info from job ad
+						//now get the suggestions from job ad based on user's info
 						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
 						while(suggRs.next()){
 							suggQuery.setInt(1, suggRs.getInt("educationLevel"));//be sure to consistent with the array

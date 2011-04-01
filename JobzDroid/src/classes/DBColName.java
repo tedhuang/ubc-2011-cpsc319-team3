@@ -19,6 +19,7 @@ public class DBColName{
 				"description", 
 				"expiryDate",
 				"dateStarting",
+				"datePosted",
 				"status",
 				"contactInfo",
 				"educationRequired",
@@ -156,7 +157,28 @@ public class DBColName{
 	};
 	private Map<String, String>searchSearcherProfileFieldsMap=new HashMap<String, String>();
 	
-	
+/***************************************************************************************************************************
+ * 	Class Field-DBColName Translation
+ ***************************************************************************************************************************/
+	private final String[]adAdClsFields={
+			  		"jobAdId",
+			 		"ownerID",
+			 		"educationReq",
+			 		"numberOfViews",
+			 		"jobAdTitle",
+			 		"tags",
+			 		"contactInfo",
+			 		"expiryDate",
+			 		"startingDate",
+			 		"creationDate",
+			 		"status",
+			 		"jobAdDescription",
+			 		"isApproved", 
+			 	 	"hasGradFunding", 
+			 		"jobAvailability",
+			    	"location"
+	};
+	private Map<String, String>jobAdClsFldMap=new HashMap<String, String>();
 /***********************************************************************************
  * Constructor INIT all Dictionary
  **********************************************************************************/
@@ -167,6 +189,8 @@ public class DBColName{
 		makeSearchProfileDict();
 		makeSearchSearcherProfileDict();
 		makeAdLocDict();
+		
+		makeJobAdClsDict();
 	}
 	
 	private void initColMap(){
@@ -215,6 +239,13 @@ public class DBColName{
 		return null;
 	}
 	
+	public Map <String, String> getClsDict(String clsName){
+		if(clsName.equals("jobAd")){
+			return colDictJobAdCls;
+		}
+		
+		return null;
+	}
 	
 /*
  * PROFILE SEARCH MAPPING
@@ -315,4 +346,29 @@ public class DBColName{
 		colDictAdLoc = Collections.unmodifiableMap(colDictAdLoc);
 	}
 	
+	private static Map <String, String> colDictJobAdCls=new HashMap<String, String>();
+	private void makeJobAdClsDict(){
+		for(int i=0; i<adAdClsFields.length; i++){
+			jobAdClsFldMap.put(adAdClsFields[i], adAdClsFields[i]);
+		}
+		
+		colDictJobAdCls.put(tbJobAdColMap.get("idJobAd"),				jobAdClsFldMap.get("jobAdId"));
+		colDictJobAdCls.put(tbJobAdColMap.get("idAccount"),				jobAdClsFldMap.get("ownerID"));
+		colDictJobAdCls.put(tbJobAdColMap.get("location"),				jobAdClsFldMap.get("location"));
+		colDictJobAdCls.put(tbJobAdColMap.get("title"),					jobAdClsFldMap.get("jobAdTitle") );
+		colDictJobAdCls.put(tbJobAdColMap.get("description"),			jobAdClsFldMap.get("jobAdDescription") );
+		colDictJobAdCls.put(tbJobAdColMap.get("dateStarting"),			jobAdClsFldMap.get("startingDate"));
+		colDictJobAdCls.put(tbJobAdColMap.get("contactInfo"),			jobAdClsFldMap.get("contactInfo"));//TODO CHANGE DB COL
+		colDictJobAdCls.put(tbJobAdColMap.get("educationRequired"),		jobAdClsFldMap.get("educationReq")	);
+		colDictJobAdCls.put( tbJobAdColMap.get("jobAvailability"),		jobAdClsFldMap.get("jobAvailability"));
+		colDictJobAdCls.put( tbJobAdColMap.get("tags"),					jobAdClsFldMap.get("tag-field"));
+		colDictJobAdCls.put(tbJobAdColMap.get("expiryDate"),			jobAdClsFldMap.get("expiryDate"));
+		colDictJobAdCls.put(tbJobAdColMap.get("hasGradFunding"),		jobAdClsFldMap.get("hasGradFunding"));
+		colDictJobAdCls.put(tbJobAdColMap.get("status"),				jobAdClsFldMap.get("status"));
+		colDictJobAdCls.put(tbJobAdColMap.get("tags"),					jobAdClsFldMap.get("tags"));
+		colDictJobAdCls.put(tbJobAdColMap.get("isApproved"),			jobAdClsFldMap.get("isApproved"));
+		colDictJobAdCls.put(tbJobAdColMap.get("datePosted"),			jobAdClsFldMap.get("creationDate"));
+		
+		colDictJobAdCls = Collections.unmodifiableMap(colDictJobAdCls);
+	}
 }

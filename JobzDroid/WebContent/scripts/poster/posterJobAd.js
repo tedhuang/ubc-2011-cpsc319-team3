@@ -543,15 +543,14 @@ function postJobAd(mode, formDiv, heading){
 		   });
 		//get location info
 		var locList = $("li", $("#locList", theForm)).get();
-//		var i = 1;
-		var location;
+		var location="";
 		$.each(locList, function(index){ // get location from the list
 			request.addParam("addr"+index, $(this).data("addr"));
 			request.addParam("latlng"+index, $(this).data("latlng"));
+			console.log($(this).data("city"));
 			location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
-//			i++;
 		});
-		location=location.subString(0, location.length-1); //remove last "-"
+		location=location.substring(0,location.length-1); //remove last "-"
 		request.addParam("loc-field", location);
 		
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari

@@ -59,4 +59,10 @@
 .descForm div.field textarea.textBoxXL,
 .fillInForm div.field textarea.textBoxXL{	border-color: #CCC;	width: 880px;	height:300px;  resize: none; }
 
+#suggBox ul#suggList{list-style: none outside none;padding-top: 1.3em; position: absolute; right: 0;width: 350px;}
+#suggBox ul#suggList li{padding-top: 1em;}
+#suggBox ul#suggList span{padding-left: 0.5em;color:blue;}
+#suggBox ul#suggList span.qkView{display:block;}
+#suggBox ul#suggList span.title{color: blue;}
+#suggBox ul#suggList span.rm{color:red; font: 0.9em/1.3em bold italic small-caps Times New Roman, serif; clear:right;}
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/
