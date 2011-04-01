@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="SHORTCUT ICON" href="http://localhost:8080/JobzDroid/images/title-icon.png"/>
-<title>AjaxSmart Tab - JobzDroid</title>
+<title>Job Searcher Home - JobzDroid</title>
 
 <link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
 <link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
@@ -13,7 +13,7 @@
 
 <script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
-<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+<script type="text/javascript" src="../scripts/searcher/searcherTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherJobAd.js"></script>
 <script type="text/javascript" src="../scripts/Profile.js"></script>
@@ -118,7 +118,10 @@
 			<li id="Tab2">
   				<a href="#profileFrame" onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");' ><h2>My Profile</h2></a>
 			</li>
-			
+			<li id="adDetailTab" class="hideOnly iniHidden">
+				<span class="close">X</span>
+  				<a href="#adDetailFrame"><span>View Detail</span></a>
+			</li>
 		</ul>
 	</div><!--ENDOF NAVBAR-->
 	
@@ -338,6 +341,12 @@
 		</div><!--ENDOF File TABLE--> 
 		</div><!--end of TABPROFILEFRAME listUserFiles("file", "fileTable");  -->
 		
+		<div id="adDetailFrame" class="subFrame unremovable">
+			<div id="adDetailTable" class="resultTableDiv noBorder ">
+				<h2 id="adDetailHeading" class="welcome heading"></h2>
+				<table><tbody></tbody></table>
+			</div>
+		</div><!--end of EDADFRAME-->
 		
 		
 	  </div><!--ENDOF TABFRAME-->

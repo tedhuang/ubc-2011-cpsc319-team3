@@ -671,7 +671,7 @@ function getJobAdById(mode, id, outputDiv)
 		  else if(mode=="edit"){
 			  $.fn.DynaSmartTab.loadEdData("jobAd", outputDiv, mode);
 		  }
-		  $.fn.smartLightBox.closeLightBox(500);
+		  $.fn.smartLightBox.closeLightBox(0);
 	    }
 	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
