@@ -134,7 +134,7 @@
 <!-- ==================================================================== -->	
 
 	<div id="adDetailFrame" class="subFrame unremovable">
-		<div id="adDetailTable" class="resultTableDiv noBorder ">
+		<div id="adDetailTable" class="resultTableDiv noBorder fullTab">
 			<h2 id="adDetailHeading" class="welcome heading"></h2>
 			<table><tbody></tbody></table>
 		</div>

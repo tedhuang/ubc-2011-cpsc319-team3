@@ -55,7 +55,7 @@ public class JobAdvertisement {
 		tags = Utility.processXMLEscapeChars(tags);
 		contactInfo = Utility.processXMLEscapeChars(contactInfo);
 		jobAdDescription = Utility.processXMLEscapeChars(jobAdDescription);
-		
+		String gfStr=Utility.GFConvertor(hasGradFunding);
 		if(locationList.isEmpty()){
 			Location loc = new Location("Not Specified");
 			locationList.add(loc);
@@ -97,7 +97,7 @@ public class JobAdvertisement {
 		" startingDate=\"" 			+ startingDate + "\"" +
 		" creationDate=\"" 			+ creationDate + "\"" +
 		" educationReq=\"" 			+ educationReq + "\"" +
-		" hasGradFunding=\"" 		+ hasGradFunding + "\"" +
+		" hasGradFunding=\"" 		+ gfStr + "\"" +
 		
 		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 		" creationDateFormatted=\"" + creationDateFormatted + "\"" +
