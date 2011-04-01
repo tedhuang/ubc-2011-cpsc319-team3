@@ -55,6 +55,7 @@ public class ServletJobAd extends HttpServlet {
 		deleteJobAd,
 		getAllJobAd,
 		getSomeJobAd,
+		getSuggestions,
 		
 		adminApprove,
 		adminDeny,
@@ -148,6 +149,9 @@ public class ServletJobAd extends HttpServlet {
 			case getSomeJobAd:
 				getSomeJobAd(request, response);
 				break;	
+			case getSuggestions:
+				getSuggestions(request, response);
+				break;
 		/*****************ADMIN ACTIONS***********************/				
 			case adminApprove:
 				adminApprove(request, response);
@@ -1663,7 +1667,7 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 		//Checks the user's privilege
 		int acctId=-1;
 		
-		StringBuffer qBuf =sessAuthQuery(sKey,qcmd); // authenticate user
+		StringBuffer qBuf =sessPosterAuthQuery(sKey,qcmd); // authenticate user
 		String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
 		System.out.println(query);
 
@@ -2039,7 +2043,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 		
-		StringBuffer qBuf = sessAuthQuery(sessKey, qcmd); 
+		StringBuffer qBuf = sessPosterAuthQuery(sessKey, qcmd); 
 		qBuf.insert(0, qcmd.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
 					   qcmd.FROM + "tableJobAd tbAd" + qcmd.WHERE + "idAccount" + qcmd.EQ);
 		qBuf.append(qcmd.AND +"idJobAd" + qcmd.EQ + jobAdId);
@@ -2212,7 +2216,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		return qAcctTb;
 	}
 	
-	private StringBuffer sessAuthQuery(String sKey, mysqlCmd qcmd){
+	private StringBuffer sessPosterAuthQuery(String sKey, mysqlCmd qcmd){
 		
 		StringBuffer qSessTb =new StringBuffer();
 		StringBuffer qAcctTb =new StringBuffer();
@@ -2225,6 +2229,26 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		qAcctTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableAccount " + 
 				  		  qcmd.WHERE +"idAccount" + qcmd.EQ);
 		qAcctTb.insert(qAcctTb.length()-2, qSessTb + qcmd.AND + "type" + qcmd.EQ + "'poster'" + 
+										   qcmd.AND + "status" +qcmd.EQ +"'active'");
+		return qAcctTb;
+	}
+	private StringBuffer sessSearcherAuthQuery(String sKey, mysqlCmd qcmd, String[]getArr){
+		
+		StringBuffer qSessTb =new StringBuffer();
+		StringBuffer qAcctTb =new StringBuffer();
+		StringBuffer infoToGet =new StringBuffer();
+		for(String str:getArr){
+			infoToGet.append(str+qcmd.COMA);
+		}
+		infoToGet.delete(infoToGet.length()-qcmd.COMA.length(), infoToGet.length());
+		qSessTb.append(qcmd.PRNTHS);
+		qAcctTb.append(qcmd.PRNTHS); //append brackets
+		
+		qSessTb.insert(1, qcmd.SELECT + "idAccount" + qcmd.FROM + "tableSession" +  
+						  qcmd.WHERE +"sessionKey" + qcmd.EQ + qcmd.SQUO +sKey + qcmd.SQUO);
+		qAcctTb.insert(1, qcmd.SELECT + infoToGet + qcmd.FROM + "tableAccount " + 
+				  		  qcmd.WHERE +"idAccount" + qcmd.EQ);
+		qAcctTb.insert(qAcctTb.length()-2, qSessTb + qcmd.AND + "type" + qcmd.EQ + "'searcher'" + 
 										   qcmd.AND + "status" +qcmd.EQ +"'active'");
 		return qAcctTb;
 	}
@@ -2257,81 +2281,162 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 //		String RPRNTHS			= ") ";
 		String SQUO				= "'";
 		String EQ				= "=";
+		String GRTR				= ">";
+		String SMLR				= "<";
 		StringBuffer wordRegExBuffer = new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
 		StringBuffer SQ				 =  new StringBuffer("'' ");//CAUTION: SPACE IMPORTANT, insert-pos:1
 //		StringBuffer 
 		private mysqlCmd(){
 		}
 	}
-/**************************************************************************************
- * 			DBColConvertor Function (***DEPRECATED TO BE REMOVED***)
- *  Convert input form's name into corresponding DB columns
- * @param input
- * @return
- **************************************************************************************/
-	private String DBColConvertor(String input){
-		switch (EnumCriteria.valueOf(input)){
-		
-		case searchTitle:
-			return "title";
+	 private StringBuffer[] buildSuggestionQuery(mysqlCmd qcmd, String[]userInfo, String[]adInfo){
 			
-		case searchEduReq:
-			return "educationRequired";
+		 	StringBuffer[] suggQueryArr=new StringBuffer[2];
+			StringBuffer qProfileTb = new StringBuffer();
+			StringBuffer qJobAdTb   = new StringBuffer();
+			StringBuffer uInfoBuf   = new StringBuffer();
+			StringBuffer adInfoBuf  = new StringBuffer();
+			for(String str:userInfo){
+				uInfoBuf.append(str+qcmd.COMA);
+			}
+			for(String str:adInfo){
+				adInfoBuf.append(str+qcmd.COMA);
+			}
+			//remove extra coma
+			uInfoBuf.delete( uInfoBuf.length()-qcmd.COMA.length(), uInfoBuf.length());
+			adInfoBuf.delete(adInfoBuf.length()-qcmd.COMA.length(), adInfoBuf.length());
 			
-		case searchCompany:
-			return "company";
-		
-		case searchJobAdId:
-			return "idJobAd";
+			qProfileTb.append(qcmd.SELECT + uInfoBuf + qcmd.FROM + "tableProfileSearcher " + 
+			  		  qcmd.WHERE +"idAccount" + qcmd.EQ + "?");
+			suggQueryArr[0]=qProfileTb;
 			
-		case searchPT:
-			return "jobAvailability";
-			
-		case searchFT:
-			return "jobAvailability";
-			
-		case searchIS:
-			return "jobAvailability";
-		
-		case quickSearch:
-			return "quickSearch";
-		
-		default:
-		return "undefine";
-		
+			//prepare for the search on table job ad
+			qJobAdTb.append(qcmd.SELECT + adInfoBuf + qcmd.FROM + "tableJobAd" +  
+							  qcmd.WHERE );
+			for(String str:userInfo){
+				if(str.equals("educationLevel")){
+					qJobAdTb.append("educationRequired"+qcmd.EQ +"?" +qcmd.OR);
+				}
+			}
+			qJobAdTb.delete(qJobAdTb.length()-qcmd.OR.length(), qJobAdTb.length()); //rm extra "OR"
+			suggQueryArr[1]=qJobAdTb;
+			return suggQueryArr;
 		}
-	}
-	/************************************************************************************
-	 * 	This is the input forms' name, be sure to be matched
-	 ************************************************************************************/
-	private enum EnumCriteria	{
-		
-		searchTitle,
-		searchCompany,
-		searchEduReq,
-		searchJobAdId,
-		searchJobLoc,
-		searchFT,
-		searchPT,
-		searchIS,
-		quickSearch,
-		
-		undefine
-		
-	}
-	private enum EnumJobTableCol{
-		
-		title,
-	//	company, 
-		educationRequired,
-	//	location,
-		jobAvailability,
-		tags,
-		idJobAd,
-		
-		undefine
-	}
-	
+	 
+	 private void getSuggestions(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		 	ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+			mysqlCmd qcmd = new mysqlCmd();
+			String[]authInfo={"idAccount"};
+			String[]uInfo={"educationLevel"};
+			String[]adInfo={"*"};//The order of the col must consistent with the prepared stmt
+			//Debug
+			System.out.println("Entered get Suggestions");
+			//initialize return statements
+			boolean isSuccessful = false;
+			String msg = "";
+			
+			System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+			
+			String sKey=request.getParameter("sessionKey");
+			System.out.println("sessionKey=" +sKey );
+			//Checks the user's privilege
+			int acctId=-1;
+			
+			StringBuffer qBuf =sessSearcherAuthQuery(sKey,qcmd, authInfo); // authenticate user
+			String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
+			System.out.println(query);
+				
+				Connection conn = dbManager.getConnection();	
+				Statement stmt = null;
+				
+				try {
+					
+					System.out.println("Processing " + query);
+					stmt = conn.createStatement();
+					ResultSet authRs = stmt.executeQuery(query);
+					if(authRs.next()){ //authenticating
+						acctId=authRs.getInt("idAccount");
+					}
+					if(acctId==-1){
+						stmt.close();
+						conn.close();
+					}
+					else{
+						stmt=conn.createStatement(); //create a new statement
+						StringBuffer[]suggQueryBuf=buildSuggestionQuery(qcmd, uInfo, adInfo);
+						
+						//first get the user info
+						PreparedStatement suggQuery = conn.prepareStatement(suggQueryBuf[0].toString());
+						suggQuery.setInt(1, acctId);
+						
+						ResultSet suggRs = suggQuery.executeQuery();
+						
+						//now get the info from job ad
+						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
+						while(suggRs.next()){
+							suggQuery.setInt(1, suggRs.getInt("educationLevel"));//be sure to consistent with the array
+						}
+						
+					   stmt=conn.createStatement(); //create a new statement maybe not needed
+					   //DEBUG
+					   System.out.println("suggestion querying on job ad table: " + suggQuery.toString());
+					
+					   suggRs = suggQuery.executeQuery();
+					   
+					   while(suggRs.next()){
+						   JobAdvertisement temp = new JobAdvertisement();
+							
+							temp.jobAdId 				= suggRs.getInt("idJobAd");
+							temp.jobAdTitle				= suggRs.getString("title");
+							temp.creationDate		 	= suggRs.getLong("datePosted");
+							temp.contactInfo 			= suggRs.getString("contactInfo");
+							temp.educationReq	 		= suggRs.getInt("educationRequired");
+							temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
+//							temp.tags 					= result.getString("tags");
+							
+							jobAdList.add( temp ); //add to the temporary list
+					   }
+					   
+					  }//ENDOF INSERT INTO LOCATION TABLE 
+				}
+				catch (SQLException e) {
+					//TODO log SQL exception
+					Utility.logError("SQL exception : " + e.getMessage());
+				}
+				// close DB objects
+			    finally {
+			        try{
+			            if (stmt != null)
+			                stmt.close();
+			        }
+			        catch (Exception e) {
+			        	//TODO log "Cannot close Statement"
+			        	System.out.println("Cannot close Statement : " + e.getMessage());
+			        }
+			        try {
+			            if (conn  != null)
+			                conn.close();
+			        }
+			        catch (SQLException e) {
+			        	//TODO log Cannot close Connection
+			        	System.out.println("Cannot close Connection : " + e.getMessage());
+			        }
+			    }
+			
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+//			XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+			Iterator<JobAdvertisement> itr = jobAdList.iterator();
+		    while (itr.hasNext()) {//iterate through all list and append to xml
+		    	XMLResponse.append(itr.next().toXMLContent() ); 
+		    }
+			XMLResponse.append("\t<message>" + msg + "</message>\n");
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+			
+		}
 	
 	
 	
