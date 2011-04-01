@@ -2247,7 +2247,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	}
 	
 	
-	 final class mysqlCmd{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
+	 public final class mysqlCmd{//THIS STRUCTURE REDUCES THE POTENTIAL ERROR BY SPACE INSIDE THE QUERY 
 		String SELECT			="SELECT ";		//CAUTION: SPACE IMPORTANT
 		String INSERT			="INSERT ";		//CAUTION: SPACE IMPORTANT
 		String UPDATE			="UPDATE ";		//CAUTION: SPACE IMPORTANT
