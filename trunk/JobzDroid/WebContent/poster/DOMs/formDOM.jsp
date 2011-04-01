@@ -88,7 +88,7 @@
 			  <div id="head-bar">
 					<h2 class="welcome">Create New Ad</h2>
 						<a class="jsBtn" onclick="postJobAd('draft', 'newAdForm','newAdfb')">Save to Draft |</a>
-			    		<a class="jsBtn" onclick="postJobAd('submit','newAdForm','newAdfb')">Post it |</a>
+			    		<a class="jsBtn" onclick="postJobAd('create','newAdForm','newAdfb')">Post it |</a>
 						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
 						<span class="feedback">Feed Back Area</span>
 			  </div><!--ENDOF headBar-->
@@ -161,7 +161,8 @@
 					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
 					    <button id="rmPtr">Clear Map</button>
 				  	</div>
-				  	<ul id="locList"><li><span>You Can Save Up To 3 Job Locations</span></li></ul>
+				  	<span>You Can Save Up To 3 Job Locations</span>
+				  	<ul id="locList"></ul>
 				 </div>
 				</div><!-- ENDOF MAP -->
 			   <div id="desc-div" class="fillInForm">

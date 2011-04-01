@@ -269,11 +269,27 @@ function getSuggestionForSearcher(outputDiv){
 	xmlhttp.onreadystatechange=function(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		  
-//		  buildOwnerAdTb("jobAd", outputDiv);//uibot
+		  buildSuggList("jobAd", outputDiv);
 	    }
 	  else{
 		  
 	  }
 //	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
 	};	  
+}
+
+function buildSuggList(xmlTag, outputDiv){
+	var list = $("#"+outputDiv);
+	var xmlObj = $(xmlTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+//		$("#feedback").html("<h2 class='error'>No Results Found. Profile.</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj\
+			$('<li></li>')
+			.append('<span class="title">'+$(this).attr("jobAdTitle")+'</span>')
+			.append('<span class="qkView">'+$(this).attr("eduReqFormatted")+'</span>')
+			.appendTo(list);
+		 });
+	}
 }

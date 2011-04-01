@@ -38,9 +38,9 @@
        	$("#desc-field").bind("keyup", function(){
        		limitChars('desc-field', 1000, 'desc-info');
        	});
-       	
-       	// ************** THIS CALL SCREWS UP SEARCHER JOB AD LIST ************************* FIX HARRY
-   //    	getSuggestionForSearcher("null");
+
+       	//guestViewJobAd('allJobAdtable', 'next');
+       	getSuggestionForSearcher("suggList");
 		});
 	
 </script>
@@ -208,7 +208,11 @@
 					<tbody>
 					</tbody>
 				</table><!--ENDOF TABLE-->
-			  </div><!--ENDOF DIV RESULT TABLE-->     			
+			  </div><!--ENDOF DIV RESULT TABLE-->
+			<div id="suggBox">
+				<h2 class="welcome">May We Suggest...</h2>
+				<ul id="suggList"></ul>
+			</div>       			
         </div><!--ENDOF Home Tab-->
 		
   		<div id="searchJob-frame" class="subFrame unremovable">
