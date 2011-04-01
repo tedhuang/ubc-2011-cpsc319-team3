@@ -297,7 +297,7 @@ public class Utility {
 		}
 	}
 	
-	public static String jobTypeTranslator(boolean intoDB, String input){
+	public static String jobTypeTranslator(boolean intoDB, String input){//FIX change this
 	  if(input!=null){
 		  
 		StringBuffer strBuf =new StringBuffer();
@@ -322,5 +322,16 @@ public class Utility {
 			}
 	  }
 		return "unknown";
-	 }	
+	 }
+public static String GFConvertor(int numForm){
+		
+		switch (numForm){
+			case 1:
+				return "Yes";
+			case 0:
+				return "No";
+			default:
+				return "Not Specified";
+		}
+	}	
 }//ENDOF UTILITY CLASS

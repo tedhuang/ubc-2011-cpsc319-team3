@@ -35,153 +35,11 @@ function buildDetailTable(targetXMLTag, outputDiv){
 	  
 	    $(tbody).append(rowText);
 	 	$(tbody).find('tr').find('td:first').addClass("nameCol");
-	 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+	 	$(tbody).find('tr').find('td:last').addClass("dataCol");//HEADUP: CSS changed
 	 	
 	 	//TODO FIX LIGHT BOX FOR SEARCHER JOB AD DETAILS
 	 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 	 	fb.hide();
-	}
-}
-
-
-
-/************************************************************************************************
- * 					BUILD TABLE CONTAINING LIMITED NUMBER JOB ADS - used by Guests and Searchers
- * INSERT RETURNED DATA INTO THE TABLE
- * @param xmlObj: THE xmlObject name returned from the server
- * @param outputDiv: The DIV where the table is held
-**************************************************************************************************/
-function buildGuestJobAdTb(targetXMLTag, outputDiv){
-	
-	//TODO: finish implementing
-	
-	var tbody  = $("tbody", "#"+outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
-//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
-//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
-	}
-	else{
-		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
-		  var tr = $('<tr></tr>');
-		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  $.fn.DynaSmartTab.guestTool(tr, jobAd.attr("jobAdId"));
-
-//		  var viewButton = $('<td></td>');
-//		  viewButton.appendTo(tr);
-		  
-//		  $("<button>View</button>").attr("id", id='td-viewButton').click(
-//			function() {
-// 				openTab('adDetailTab'); 
-//    			open_adDetail(jobAd.attr("jobAdId"));
-//				getJobAdById("detail", jobAd.attr("jobAdId"), "adDetailTable");
-//			     //TODO: implement transition loading screen - UI
-//			  }
-//		  ).appendTo(viewButton);
-		  
-		// $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
-		  tr.appendTo(tbody);
-		});
-		 $("tr:odd", tbody).addClass("oddRow");
-		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
-	}
-}
-
-
-
-
-
-
-/************************************************************************************************
- * 					BUILD TABLE CONTAINING ALL JOB ADS - used by Admin(manageJobAd.jsp) and Searcher
- * INSERT RETURNED DATA INTO THE TABLE
- * @param xmlObj: THE xmlObject name returned from the server
- * @param outputDiv: The DIV where the table is held
-**************************************************************************************************/
-function buildBrowseJobAdTb(targetXMLTag, outputDiv){
-	
-	//TODO: finish implementing
-	
-	var tbody  = $("tbody", "#"+outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
-//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
-//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
-	}
-	else{
-		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
-		  var tr = $('<tr></tr>');
-		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  //$('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
-		  
-		  var isApprovedFormatted;
-		  if(jobAd.attr("isApproved") == 0)
-				isApprovedFormatted = "Not Approved";
-		  else
-				isApprovedFormatted = "Approved";
-		  $('<td></td>').attr("id", id='td-approval').text(isApprovedFormatted).appendTo(tr);
-		  
-		  
-		  //ADD ADMIN FUNCTIONS:
-		  var approveButton = $('<td></td>');
-		  var denyButton = $('<td></td>');
-		  var deleteButton = $('<td></td>');
-		  
-		  approveButton.appendTo(tr);
-		  denyButton.appendTo(tr);
-		  deleteButton.appendTo(tr);
-		  
-		  $("<button>Approve</button>").attr("id", id='td-approveButton').click(
-			function() {
-			  if(jobAd.attr("isApproved") == 1)
-				  alert("This Job Ad has already been approved");
-			  else{			  
-			      alert("Approving Job Ad - TODO: Add transition loading screen..");
-				  adminApprove(jobAd.attr("jobAdId"));
-			      //TODO: implement transition loading screen - UI
-			  }
-		  }).appendTo(approveButton);
-		  
-		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
-					function() {
-					  if(jobAd.attr("isApproved") == 0)
-						  alert("This Job Ad has not yet been approved");
-					  else{			  
-					      alert("Denying Job Ad - TODO: Add transition loading screen..");
-					      adminDeny(jobAd.attr("jobAdId"));
-					      //TODO: implement transition loading screen - UI
-					  }
-		  }).appendTo(denyButton);
-		  
-		  $("<button>Delete</button>").attr("id", id='td-deleteButton').click(
-					function() {
-						  alert("This Job Ad will be permanently deleted! (TODO: Add Checks)");
-						  adminDeleteJobAd(jobAd.attr("jobAdId"));
-					      //TODO: implement transition loading screen - UI
-					  }
-		  ).appendTo(deleteButton);
-		  
-		  
-		  
-		  //TODO: get the tabs working with approve/deny/delete
-		  //$.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
-		  tr.appendTo(tbody);
-		  
-		});
-		 $("tr:odd", tbody).addClass("oddRow");
-		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}
 }
 
@@ -209,11 +67,12 @@ function buildOwnerAdTb(targetXMLTag, outputDiv){
 		$("#"+outputDiv, "#headBar").show();
 		  var jobAd = $(this);
 		  var tr = $('<tr></tr>');
-		  $('<td></td>').addClass('td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  
+		  $('<td></td>').addClass('td-date').text(jobAd.attr("creationDate")).appendTo(tr);
 		  $('<td></td>').addClass('td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  $('<td></td>').addClass('td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
-		  $('<td></td>').addClass('td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("educationReq")).appendTo(tr);
+		  $('<td></td>').addClass('td-jobAvail').text(jobAd.attr("jobAvailability")).appendTo(tr);
+		  $('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
 		  $('<td></td>').addClass('td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
 		  $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
@@ -391,7 +250,7 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");//HEADUP: CSS changed
 		 $("#detailFB").hide();
 		 
 		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
@@ -552,7 +411,7 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol");//HEADUP: CSS changed
 		 $("#detailFB").hide();
 		 
 		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
@@ -826,7 +685,7 @@ function redisplayProfile(accountType)
 		  
 		    $(tbody).append(rowText);
 		 	$(tbody).find('tr').find('td:first').addClass("nameCol");
-		 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+		 	$(tbody).find('tr').find('td:last').addClass("dataCol");//HEADUP: CSS changed
 		 	fb.hide();
 		}
 	}
@@ -885,7 +744,7 @@ function buildProfileTb(targetXMLTag, outputDiv, heading){
 		}
 		 $(tbody).append(rowText);
 		 $(tbody).find('tr').find('td:first').addClass("nameCol");	
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $(tbody).find('tr').find('td:last').addClass("dataCol"); //HEADUP: CSS changed
 	}
 }
 	

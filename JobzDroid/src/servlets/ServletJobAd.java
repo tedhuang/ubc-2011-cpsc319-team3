@@ -1887,7 +1887,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	return queriesBuffer;
 }
 /**********************************************************************************************************************
- * 								build Post Query (@deprecated) Replaced by buildPostAdQuery
+ * 								build Post Query (@deprecated but still needed) Replaced by buildPostAdQuery
  * This function will build query for SUBMIT AD AND SAVE DARFT
  * @param request
  * @param IdAcct
