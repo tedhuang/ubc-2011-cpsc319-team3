@@ -141,7 +141,7 @@ public class SystemManager {
 			
 			maxDBConnectionPoolSize = Integer.parseInt(config.getProperty("maxDBConnectionPoolSize").trim());
 			
-			bytesInMB 			 = Long.parseLong(config.getProperty("timeIntervalAutomatedDBWorldTasks").trim());
+			bytesInMB 			 = Long.parseLong(config.getProperty("bytesInMB").trim());
 			fileStorageSizeLimit = Long.parseLong(config.getProperty("fileStorageSizeLimit").trim());
 		}
 		catch(NumberFormatException e){

@@ -11,19 +11,18 @@
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
+<script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/smartLightbox.js"></script>
+<script type="text/javascript" src="../scripts/uiBot.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
-<script type="text/javascript" src="../scripts/searcher/searcherTab.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherJobAd.js"></script>
+<script type="text/javascript" src="../scripts/searcher/searcherTab.js"></script>
 <script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherProfile.js"></script>
-<script type="text/javascript" src="../scripts/Utility.js"></script>
-<script type="text/javascript" src="../scripts/uiBot.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
-<script type="text/javascript" src='../scripts/guest/guestTab.js'></script> <!-- TODO: make searcherTab -->
 <script type="text/javascript" src='../scripts/sortable.js'></script>
 
 <script type="text/javascript">
@@ -39,9 +38,9 @@
        	$("#desc-field").bind("keyup", function(){
        		limitChars('desc-field', 1000, 'desc-info');
        	});
-
-       	guestViewJobAd('allJobAdtable', 'next');
-       	getSuggestionForSearcher("null");
+       	
+       	// ************** THIS CALL SCREWS UP SEARCHER JOB AD LIST ************************* FIX HARRY
+   //    	getSuggestionForSearcher("null");
 		});
 	
 </script>
@@ -110,7 +109,7 @@
   	  <div id="navBar" class="navBar">
 		<ul>
   			<li id="homeTab">
-  				<a href="#home-frame" onclick="guestViewJobAd('allJobAdtable', 'prev')"><h2>Home</h2></a>
+  				<a href="#home-frame"><h2>Home</h2></a>
 			</li>
   			<li id="Tab1">
   				<a href="#searchJob-frame"><h2>Jobs</h2></a>
@@ -119,7 +118,7 @@
   				<a href="#profileFrame" onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");' ><h2>My Profile</h2></a>
 			</li>
 			<li id="adDetailTab" class="hideOnly iniHidden">
-				<span class="close">X</span>
+				<span class="close">x</span>
   				<a href="#adDetailFrame"><span>View Detail</span></a>
 			</li>
 		</ul>
@@ -166,8 +165,8 @@
 				</table><!--ENDOF TABLE-->
 			</div>
 			
-            <button type="button" id='prevButton' onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 10</button>
-			<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 10</button>		
+            <button type="button" id='prevButton' onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 20</button>
+			<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 20</button>		
 			 
 			 
 			 <div id="rssTable" class="resultTableDiv tableClear">
@@ -359,7 +358,7 @@
 	<form name="sid" method="get" action="">
 		<input  id="sessionKey" name="sessionKey"/>
 	</form>
-	<input id="browseIndex" type="hidden" value="0"/>
+	<input id="browseIndex"  value="0"/>
 	<iframe id="hiddenUploadFrame" name="hiddenUploadFrame" style="display:none"></iframe>
 	 
 </body>

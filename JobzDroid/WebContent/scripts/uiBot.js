@@ -51,7 +51,6 @@ function buildDetailTable(targetXMLTag, outputDiv){
 function buildGuestJobAdTb(targetXMLTag, outputDiv){
 	
 	//TODO: finish implementing
-	
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
