@@ -80,7 +80,7 @@
 
 		 <div id="headToolBar">
           </div>
-	       <div id="allJobAdtable" class="resultTableDiv noBorder">
+	       <div id="allJobAdtable" class="resultTableDiv noBorder fullTab">
 	          <table>
 				<thead>
 					<tr>
