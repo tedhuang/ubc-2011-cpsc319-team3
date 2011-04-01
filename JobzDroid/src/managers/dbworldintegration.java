@@ -449,10 +449,10 @@ public class dbworldintegration {
 		
 			//Add new entry with specified parameters into database
 			String query = 
-				("INSERT INTO tableJobAd(title, description, contactInfo, expiryDate, dateStarting, datePosted) "
+				("INSERT INTO tableJobAd(title, description, contactInfo, expiryDate, dateStarting, datePosted, status) "
 						+ "VALUES " + "('" + jobAdvertisementTitle  + "','" 
 						+ jobDescription + "','" + jobContactInfo + "','" 
-						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "')"); 
+						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "','open')"); 
 		
 			// If successful, 1 row should be inserted
 			System.out.println("New Job Ad query: " + query);
