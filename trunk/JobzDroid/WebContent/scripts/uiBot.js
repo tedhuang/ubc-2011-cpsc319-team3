@@ -260,6 +260,18 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
+		  var strSessionKey = $("#sessionKey").val();
+//		  var favouriteAnchor =  "<a class='button' href='#' " +
+//		  		"onclick='saveFavouriteJobAd("+ strSessionKey +", "+ jobAd.attr('jobAdId')+">" +
+//		  		"<span>Save</span></a>";
+		  $('<a></a>')
+		  .addClass('jsBtn')
+		  .click(function(){
+			  saveFavouriteJobAd(strSessionKey, jobAd.attr('jobAdId'));
+		  })
+		  .text("Save")
+		  .appendTo(tr);
+//		  tr.append(favouriteAnchor);
 		  
 		  tr.appendTo(tbody);
 		  $("#td-title", tr).click(function(){
@@ -272,6 +284,29 @@ function buildAdListTb(targetXMLTag, outputDiv){
 	}
 }
 
+function saveFavouriteJobAd(sessKey, jobId){
+	
+	request = new Request;
+	request.addAction("saveFavouriteJobAd");
+	request.addParam("sessionKey", sessKey);
+	request.addParam("jobAdId", jobId);
+
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+}
 
 /********************************************************************************************************************
  * 						Build a table for searcher profile editing
@@ -742,7 +777,7 @@ function redisplayProfile(accountType)
 		var tbody  = $("tbody", outputDiv).html("");
 		var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 		if(xmlObj.length==0){//if no results
-			$("#feedback").html("<h2 class='error'>No Results Found. Profile.</h2>");
+			$("#feedback").html("<h2 class='error'>No Results Found.</h2>");
 		}
 		else{
 			xmlObj.each(function() {//for All returned xml obj
