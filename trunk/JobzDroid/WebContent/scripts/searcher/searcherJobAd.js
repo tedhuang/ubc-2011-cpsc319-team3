@@ -36,13 +36,14 @@ function searchJobAdvertisement(outputDiv){
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
+	//		$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
 			xmlhttp.onreadystatechange=function()
 			  {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			    {
 					//parse XML response from server
 					buildAdListTb("jobAd", outputDiv);
-		
+	//				$.fn.smartLightBox.closeLightBox(0);
 			    }
 			  };
 	   }//ENDOF CHECK-ALL-NULL
@@ -77,6 +78,7 @@ function quickSearchJobAd(outputDiv){
 			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(request.toString());
 			
+		//	$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
 			xmlhttp.onreadystatechange=function()
 			  {
 			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -84,7 +86,7 @@ function quickSearchJobAd(outputDiv){
 				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
 					//parse XML response from server
 					buildAdListTb("jobAd", outputDiv);
-		
+		//			$.fn.smartLightBox.closeLightBox(0);
 			    }
 			  };
 	   }//ENDOF CHECK-ALL-NULL
@@ -117,6 +119,8 @@ function getJobAdById(mode, id, outputDiv)
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	
+//	$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
@@ -132,6 +136,7 @@ function getJobAdById(mode, id, outputDiv)
 	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
 	  }
+//	  $.fn.smartLightBox.closeLightBox(0);
 	  };
 }
 
@@ -183,16 +188,15 @@ function guestViewJobAd(outputDiv, mode){
 	//$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
 
 	var index = $("#browseIndex").val();
+	if(index < 0)
+		index = 0;
 	
-	if(mode == "first"){
-		//first index is 0, do nothing
-	}
-	if(mode == "next")
-		index = parseInt(index)+10; //update index
-	
-	 if(mode == "prev")
-		index = parseInt(index)-10;
-	  
+	if(mode == "first")
+		index = 0;
+	else if(mode == "next")
+		index = parseInt(index)+20; //update index
+	else if(mode == "prev")
+		index = parseInt(index)-20;	  
 	
 	request = new Request;
 	request.addAction("getSomeJobAd");
@@ -204,40 +208,39 @@ function guestViewJobAd(outputDiv, mode){
 	else{// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	
+	xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			  buildGuestJobAdTb("jobAd", outputDiv);//uibot
+			  
+				var xmlObj = $("jobAd",xmlhttp.responseXML);
+
+				if(xmlObj.length < 20 && index >= 20){//if this is the last page of results
+					$("#prevButton").attr("disabled", false);
+					$("#nextButton").attr("disabled", true);
+				}
+				else if(xmlObj.length < 20 && index < 20){ // if result size < 20 on first page
+					$("#prevButton").attr("disabled", true);
+					$("#nextButton").attr("disabled", true);
+				}
+				else if(index < 20){ // if first page
+					$("#prevButton").attr("disabled", true);
+					$("#nextButton").attr("disabled", false);
+				}
+				else{ // middle pages
+					$("#prevButton").attr("disabled", false);
+					$("#nextButton").attr("disabled", false);
+				}
+				
+			  $("#browseIndex").val(index ); //increase index by 20
+		    }
+		  //$.fn.smartLightBox.closeLightBox(1000,"home-frame");
+		};	  
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	
-	xmlhttp.onreadystatechange=function(){
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  
-		  buildGuestJobAdTb("jobAd", outputDiv);//uibot
-		  
-			var xmlObj = $("jobAd",xmlhttp.responseXML);
 
-			if(xmlObj.length < 10){//if this is the last page of results
-				$("#prevButton").attr("disabled", false);
-				$("#nextButton").attr("disabled", true);
-			}
-			else if(index <= 0){
-				$("#prevButton").attr("disabled", true);
-				$("#nextButton").attr("disabled", false);
-			}
-			else{
-				$("#prevButton").attr("disabled", false);
-				$("#nextButton").attr("disabled", false);
-			}
-			
-		  $("#browseIndex").val(index ); //increase index by 10
-		  $("#feedback").text("Browse Index: " + $("#browseIndex").val() );
-	    }
-	  else{
-		  //TODO: implement error handling
-	  }
-	  //$.fn.smartLightBox.closeLightBox(1000,"home-frame");
-	};	  
 }
 
 

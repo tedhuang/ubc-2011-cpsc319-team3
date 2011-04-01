@@ -64,7 +64,7 @@
   				<a href="#allJobAdFrame"><span>View Job Ads</span></a>
   			</li>
 			<li id="adDetailTab" class="hideOnly iniHidden">
-				<span class="close">X</span>
+				<span class="close">x</span>
   				<a href="#adDetailFrame"><span>View Detail</span></a>
 			</li>
 		</ul>
@@ -119,13 +119,12 @@
 				
 				</thead>
 					<tbody></tbody>
-				</table><!--ENDOF TABLE-->
-				
-			</div>
-			<button type="button" id='prevButton'onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 10</button>
-			
-			<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 10</button>			
-		
+				</table><!--ENDOF TABLE-->			
+			</div>						
+			<p style='text-align:center'>
+				<button type="button" id='prevButton'onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 20</button>
+				<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 20</button>
+			</p>
 			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>
 		</div><!--end of ALL JOB AD FRAME-->

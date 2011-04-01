@@ -194,7 +194,8 @@ public class ServletJobAd extends HttpServlet {
 //		String sessionKey = request.getParameter("sessionKey");
 //		Session session = dbManager.getSessionByKey(sessionKey);
 
-		int numToGet = 10; //request.getParameter("numToGet");
+		
+		int numToGet = 20;
 		int index = Integer.parseInt(request.getParameter("startingIndex"));
 		
 		System.out.println("Browse index: " + index);
@@ -209,8 +210,8 @@ public class ServletJobAd extends HttpServlet {
 			String query = 
 				 	"SELECT * FROM tableJobAd " +
 				 	"WHERE status = 'open' " +
-					" ORDER BY datePosted DESC "+
-				 	"LIMIT " + index +  ", " + numToGet;
+					"ORDER BY datePosted DESC "+
+				 	"LIMIT " + index +  ", " + numToGet + ";";
 			
 			System.out.println(query);
 			isSuccessful = stmt.execute(query);
