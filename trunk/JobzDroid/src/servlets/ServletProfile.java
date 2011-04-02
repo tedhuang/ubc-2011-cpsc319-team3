@@ -1402,7 +1402,8 @@ public class ServletProfile extends HttpServlet{
 				stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(selQuery);
 				while(rs.next()){
-					responseMsg.append("Hello, " + rs.getString("name") +". &#xD;");
+					//CDATA
+					responseMsg.append("Hello, " + rs.getString("name") +".");
 				}
 				File[]userFile =ServletDocument.getUserFiles(acctId);
 				responseMsg.append("You have " + userFile.length + "Files");

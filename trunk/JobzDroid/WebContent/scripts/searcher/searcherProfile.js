@@ -250,28 +250,35 @@ function profileSummary(outputDiv){
 	request = new Request;
 	request.addAction("smrSearcherProfile");
 	request.addSessionKey(strSessionKey);
-
-	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  xmlhttp = new XMLHttpRequest();
-	else
-	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-	
-	xmlhttp.onreadystatechange = function()
-	  {
-	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-	    {
-		   var result = $("profileSmr",xmlhttp.responseXML);
-		  $("#"+outputDiv).html('<h2 class="welcome">'+ result.text() +'</h2>');
+	var xhr = createXHR(); //Now created xhr used a function
+	function processResult(){
+		if (xhr.readyState == 4) {
+			try {
+				  if (xhr.status == 200) {
+					  var result = $("profileSmr",xhr.responseXML);
+					  console.log(result.text());
+					  $("#"+outputDiv).html('<h2 class="welcome">'+ result.text() +'</h2>');
+				  }
+                else{ 
+                	 console.log("Status error");
+                	 console.log("server down...");
+                }
+			} 
+			catch (e){
+			}
 	    }
-	  else if(xmlhttp.status!=200){
-		  console.log("server down...");
-	  }
-	  };	
+//		  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	}//eof processResult
+	if(xhr){
+		try {
+			  xhr.open("POST", "../ServletProfile", true);
+			  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			  xhr.onreadystatechange = processResult; //bind to callBack to have threaded ajax calls
+			  xhr.send(request.toString());
+		} catch (e) {
+			             //Handle error
+		  }
+	}	  
 }
 

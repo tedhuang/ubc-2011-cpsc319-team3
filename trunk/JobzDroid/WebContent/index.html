@@ -46,19 +46,18 @@
 	    <div id="loginbox" class="loginbox">
 	    	
 	        <div id="loginDiv">
-	        <h2 class="welcome">Login</h2>
+	         <div>
+	          <h2 class="welcome">Login</h2> 
+	          <a href="account/register.html"><img src="images/signup.png"/></a>
+	         </div> 
 	        <label>Email</label>
 	    	<input id="email" title="Username" value=""  maxlength="2048" />
 	    	<label>Password</label>
-			<input id="password" type="password"  title="Password" value="" /><br/>
+			<input id="password" type="password"  title="Password" value="" />
 	       <a href="account/forgetpassword.html">Forgot Your Password?</a>
-	       <a class="jsBtn" onclick="userLoginRequest()" style="padding-left: 3em" 
-	       onmouseover="document.loginBtn.src='./images/btn/loginhover.png'"; 
-	       onmouseout= "document.loginBtn.src='./images/btn/login.png'";>
-	       		<img src="images/btn/login.png" NAME="loginBtn"/>
+	       <a class="jsBtn" onclick="userLoginRequest()">
+	       		<img src="images/btn/login.png" name="loginBtn"/>
 	       </a>
-	       <br/><br/><br/>
-	       <a href="account/register.html"><img src="images/signup.png"/></a>
 		 </div> 
 		   
         </div>
