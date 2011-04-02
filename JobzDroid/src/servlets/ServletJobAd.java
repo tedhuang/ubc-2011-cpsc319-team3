@@ -2647,7 +2647,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 	}
-	
+
 /*********************************************************************************************
  *
  * deleteFavouriteJobAd()
@@ -2711,6 +2711,301 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		
 	}
 	
+
+	private void addNewTag(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		//Debug
+		System.out.println("Entered PostJobAdvertisement");
+		//initialize return statements
+		boolean isSuccessful = false;
+		String msg = "";
+		
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		
+		//Checks the user's privilege
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int acctId;
+		
+		earlyExit: {
+			System.out.println("Entered user sessionKey");
+				
+			if ( userSession == null ) {
+				//TODO session invalid, handle error
+				System.out.println("session is null, Failed to authenticate user session");
+				msg = "Have You Logged in? Please Try Re-login";
+				break earlyExit;
+			}
+			else {
+				//TODO implmement this
+				System.out.println("checking usertype");
+				System.out.println("usertype = " + userSession.getAccountType());
+				acctId= userSession.getIdAccount();
+				
+//				if( userSession.getAccountType().equals("poster") ||
+//						userSession.getAccountType().equals("admin")) {
+				if( userSession.checkPrivilege("poster", "admin", "superAdmin")) {
+					System.out.print("User has the correct priviliege\n");
+				}
+				else {
+					System.out.print( "User does not have the right privilege\n");
+					break earlyExit;
+				}
+			}
+			
+			System.out.print("User Access Granted for key: \n" + userSession.getKey() +"\n" );
+			
+			String query = buildPostQuery(request, acctId);
+
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {
+				
+				System.out.println("Processing " + query);
+				stmt = conn.createStatement();
+				
+				int success = stmt.executeUpdate(query);
+				if (success != 1){
+					System.out.println("New JobAd Creation failed");
+					Utility.logError("New JobAd insert in DB failed");
+				}
+				
+				msg = "Action Performed Successfully";
+				//Get jobAdId By Using select the last inserted ID
+				PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+				ResultSet rs = getLastInsertId.executeQuery();
+				int jobAdId = -1;
+				if (rs.next())
+				{
+					jobAdId = rs.getInt("last_insert_id()"); 
+					System.out.println("Retrived: Job Ad ID: " + jobAdId);
+				}
+				else{
+					System.out.println("Error: Job Ad ID not found after creation");
+				}
+			   if(jobAdId != -1){
+			   	//Insert location values into location table
+
+				if (success == 1){
+					System.out.println("New JobAd Creation success (DB)");
+					isSuccessful = true;
+
+//					message = "Create Job Advertisement Successful";
+				}
+				else{
+					System.out.println("Insert location for new job ad failed");
+					Utility.logError("Insert location for new job ad failed");
+				}
+
+				//Debug print
+//				System.out.println("Location Query: "+ query);
+				
+//				if( stmt.executeUpdate(query) != 1 ){ //Error Check
+//					System.out.println("Error: Location Update Failed");
+//				}
+			  }//ENDOF INSERT INTO LOCATION TABLE 
+			}
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		        }
+		        catch (Exception e) {
+		        	//TODO log "Cannot close Statement"
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	//TODO log Cannot close Connection
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+		}//earlyExit:
+		
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+//		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + msg + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+	
+
+		private void getTagList(HttpServletRequest request, HttpServletResponse response) throws IOException{
+			System.out.println("ServletJobAd: Inside getAllJobAd");
+
+			String message = "getAllJobAd failed";
+			boolean isSuccessful = false;
+			
+			ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+			
+//			String sessionKey = request.getParameter("sessionKey");
+//			Session session = dbManager.getSessionByKey(sessionKey);
+
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			Statement stmtLoc = null;
+			Statement stmtEmp = null;
+
+			try {
+				stmt = conn.createStatement();
+				
+				String query = "SELECT * FROM tableJobAd" +
+								" ORDER BY datePosted DESC";
+				
+				System.out.println("getAllJobAd query:" + query);
+				isSuccessful = stmt.execute(query);
+				
+				ResultSet result = stmt.getResultSet();
+				
+				while(result.next()){
+d.tags 				= result.getString("tags");
+
+				}//END OF WHILE LOOP
+				
+				if(jobAdList.isEmpty()){
+					message = "Error: No Job Ad found";
+					System.out.println("Error: No Job Ad found");
+				}
+				else{
+					System.out.println("getAllJobAd successful");
+					message = "getAllJobAd successful";
+					isSuccessful = true;
+				}
+						
+				
+			} //END OF TRY
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		            if(stmtLoc != null)
+		            	stmtLoc.close();
+		            if(stmtEmp != null)
+		            	stmtEmp.close();
+		        }
+		        catch (Exception e) {
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+		    
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+			XMLResponse.append("\t<message>" + message + "</message>\n");
+			
+			Iterator<JobAdvertisement> itr = jobAdList.iterator();
+		    while (itr.hasNext()) {//iterate through all list and append to xml
+		    	XMLResponse.append(itr.next().toXMLContent() ); 
+		    }
+			
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+			
+		}
+	
+		
+		private boolean addTagsToJobAd( int idJobAd, String[] tags ) {
+			
+//			System.out.println("ServletJobAd: Inside getAllJobAd");
+
+
+			boolean isSuccessful = false;
+			
+			LinkedList<Integer> tagIDs = new LinkedList<Integer>();
+			
+//			String sessionKey = request.getParameter("sessionKey");
+//			Session session = dbManager.getSessionByKey(sessionKey);
+
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			Statement stmtLoc = null;
+			Statement stmtEmp = null;
+			
+			LinkedList<String> inputTagsList = new LinkedList<String>();
+			
+			for( String oneTag: tags) {
+				inputTagsList.add(oneTag);
+			}
+
+			Iterator inputTagIterator = inputTagsList.iterator();
+			
+			while ( inputTagIterator.hasNext() ) {
+				inputTagIterator.next();
+			}
+			
+			String partialQuery = new String();
+			try {
+				stmt = conn.createStatement();
+				
+				String query = "SELECT * FROM tableTags" +
+								" Where BY datePosted DESC";
+				
+				System.out.println("getAllJobAd query:" + query);
+				isSuccessful = stmt.execute(query);
+				
+				ResultSet result = stmt.getResultSet();
+			
+						
+				
+			} //END OF TRY
+			catch (SQLException e) {
+				//TODO log SQL exception
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+			// close DB objects
+		    finally {
+		        try{
+		            if (stmt != null)
+		                stmt.close();
+		            if(stmtLoc != null)
+		            	stmtLoc.close();
+		            if(stmtEmp != null)
+		            	stmtEmp.close();
+		        }
+		        catch (Exception e) {
+		        	System.out.println("Cannot close Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+		    
+			
+			return false;
+		
+		}
+
 }//ENDOF SERVLETJobAD
 
 
