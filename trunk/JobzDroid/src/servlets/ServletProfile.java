@@ -3,6 +3,7 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -51,6 +52,10 @@ public class ServletProfile extends HttpServlet{
 		searchProfile,
 		searchSearcherProfile,
 		viewAllSearchers,
+		saveCandidate,
+		listCandidate,
+		deleteCandidate,
+		
 		UNKNOWN;
 	private static EnumAction getAct(String Str)//why static?
 	{
@@ -107,6 +112,18 @@ public class ServletProfile extends HttpServlet{
 				
 			case viewAllSearchers:
 				viewAllSearchers(request, response);
+				break;
+				
+			case saveCandidate:
+				saveCandidate(request,response);
+				break;
+				
+			case listCandidate:
+				listCandidate(request,response);
+				break;
+				
+			case deleteCandidate:
+				deleteCandidate(request,response);
 				break;
 				
 			default:
@@ -1355,7 +1372,273 @@ public class ServletProfile extends HttpServlet{
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 	}
+
+/*************************************************************************************
+* saveCandidate()
+* 
+*  
+* 
+*************************************************************************************/
+	public void saveCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
+			
+		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+			
+		String msg = "";
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = -1;
+		int searcherId = -1;
+		long dateAdded = -1;
+		String query = "";
+			
+		String searcherIdInString = request.getParameter("searcherId");
+		try{
+			searcherId = Integer.parseInt(searcherIdInString);
+		}
+			catch(NumberFormatException e){
+				response.sendRedirect("error.html");
+			}
+			
+			earlyExit: {
+				if ( userSession == null ) {
+					System.out.println("Session is null, Failed to authenticate user session");
+					msg = "Have You Logged in? Please Try Re-login";
+					break earlyExit;
+				}
+				else {
+					System.out.println("checking usertype");
+					System.out.println("usertype = " + userSession.getAccountType());
+					accountId= userSession.getIdAccount();	
+					if( userSession.checkPrivilege("poster")) {
+						System.out.print("User has the correct priviliege\n");
+					}
+					else {
+						System.out.print( "User does not have the right privilege\n");
+						break earlyExit;
+					}
+				}
+			}
+			
+			dateAdded = Utility.getCurrentTime();
+			
+			query = "INSERT IGNORE INTO tablecandidate(idAccount, idSearcher, dateAdded) VALUES " +
+				"('"  + accountId + "','" + searcherId + "','" + dateAdded + "')";		
+			
+			Connection conn = dbManager.getConnection();
+			PreparedStatement preparedStmt = null;
+			Statement stmt2 = null;
+			int isSucessful = -1;
+			ResultSet rs = null;
+			
+			try {			
+				System.out.println("Processing " + query);
+				preparedStmt = conn.prepareStatement(query);
+				isSucessful = preparedStmt.executeUpdate();
+				
+				query="SELECT * FROM tablefavouritejobad ORDER BY dateAdded LIMIT 1";
+				stmt2 = conn.createStatement();
+				stmt2.execute(query);
+				msg = "Action Performed Successfully";
+				System.out.println(msg);
+				if(isSucessful != -1){
+					rs = stmt2.getResultSet();
+					if (rs.next()){
+						accountId = rs.getInt("idAccount");
+						System.out.println("Retrieved: Account ID:" + accountId);
+						searcherId = rs.getInt("idJobAd"); 
+						System.out.println("Retrieved: Job Ad ID:" + searcherId);
+					}
+					else
+						System.out.println("Error: Inserted row not found after creation");
+					
+					if(accountId !=-1 && searcherId != -1){
+							System.out.println("accountId and jobAdId are valid values");
+					}
+					else{
+						System.out.println("accountId or jobAdId not valid");
+					}
+				}
+				else{
+					System.out.println("preparedStmt not sucessful");
+				}
+			}
+			catch (SQLException e) {
+				Utility.logError("SQL exception : " + e.getMessage());
+			}
+		    finally {
+		        try{
+		            if (preparedStmt != null)
+		                preparedStmt.close();
+		            if (stmt2 != null)
+		            	stmt2.close();
+		        }
+		        catch (Exception e) {
+		        	System.out.println("Cannot close Prepared Statement : " + e.getMessage());
+		        }
+		        try {
+		            if (conn  != null)
+		                conn.close();
+		        }
+		        catch (SQLException e) {
+		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        }
+		    }
+			
+		}	
+
+	/*********************************************************************************************
+	 *
+	 * listCandidate()
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 ***********************************************************************************************/
+		public void listCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
+			ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
+			
+			Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+			int accountId = userSession.getIdAccount();
+			
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {		
+				stmt = conn.createStatement();
+				//Add individual queries onto total query
+				String query = "SELECT * FROM tablecandidate INNER JOIN tableAccount " +
+						"USING(idAccount) " +
+						"INNER JOIN tableProfileSearcher USING (idAccount)" +
+						"WHERE tablecandidate.idAccount =" +
+						accountId;
+						
+				
+				//DEBUG
+				System.out.println(query);
+				
+				stmt.execute(query);
+				ResultSet result = stmt.getResultSet();
+				
+				//Compile the result into the arraylist
+				while( result.next() ) {
+					JobAdvertisement temp = new JobAdvertisement();
+					
+					temp.jobAdId 				= result.getInt("idJobAd");
+					temp.jobAdTitle				= result.getString("title");
+					temp.creationDate		 	= result.getLong("datePosted");
+					temp.contactInfo 			= result.getString("contactInfo");
+					temp.educationReq	 		= result.getInt("educationRequired");
+					temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
+
+					favJobAdList.add( temp ); //add to the temporary list
+				}
+				
+				stmt.close();
+				
+				System.out.println("Query Successfully Finished");
+				
+			} 
+			catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			
+			// close DB objects
+			finally {
+				try{
+					if (stmt != null)
+						stmt.close();
+				}
+				catch (Exception e) {
+					//TODO log "Cannot close Statement"
+					System.out.println("Cannot close Statement : " + e.getMessage());
+				}
+				try {
+					if (conn  != null)
+						conn.close();
+				}
+				catch (SQLException e) {
+					//TODO log Cannot close Connection
+					System.out.println("Cannot close Connection : " + e.getMessage());
+				}
+			}
+			
+			StringBuffer XMLResponse = new StringBuffer();	
+			XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+			XMLResponse.append("<response>\n");
+			Iterator<JobAdvertisement> itr = favJobAdList.iterator();
+		    while (itr.hasNext()) {//iterate through all list and append to xml
+		    	XMLResponse.append(itr.next().toXMLContent() ); 
+		    }
+			
+			XMLResponse.append("</response>\n");
+			response.setContentType("application/xml");
+			response.getWriter().println(XMLResponse);
+		}
+		
+	/*********************************************************************************************
+	 *
+	 * deleteCandidate()
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 ***********************************************************************************************/	
+		public void deleteCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
+			
+			Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+			int accountId = userSession.getIdAccount();
+			
+			String searcherIdInString = request.getParameter("idSearcher");
+			System.out.println("TESTING"+searcherIdInString);
+			int searcherId = Integer.parseInt(searcherIdInString);
+			
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {		
+				stmt = conn.createStatement();
+				//Add individual queries onto total query
+				String query = "DELETE FROM tablecandidate " +
+						"WHERE tablecandidate.idAccount =" + accountId + 
+						" AND tablecandidate.idSearcher =" + searcherId;
+						
+				
+				//DEBUG
+				System.out.println(query);
+				
+				stmt.execute(query);
+				
+				System.out.println("Query Successfully Finished");
+				
+			} 
+			catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			
+			// close DB objects
+			finally {
+				try{
+					if (stmt != null)
+						stmt.close();
+				}
+				catch (Exception e) {
+					//TODO log "Cannot close Statement"
+					System.out.println("Cannot close Statement : " + e.getMessage());
+				}
+				try {
+					if (conn  != null)
+						conn.close();
+				}
+				catch (SQLException e) {
+					//TODO log Cannot close Connection
+					System.out.println("Cannot close Connection : " + e.getMessage());
+				}
+			}
+			
+			
+		}
 }
+
 
 
 
