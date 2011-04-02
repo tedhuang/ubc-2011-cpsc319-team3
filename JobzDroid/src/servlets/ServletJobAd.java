@@ -59,6 +59,7 @@ public class ServletJobAd extends HttpServlet {
 		
 		saveFavouriteJobAd,
 		listFavouriteJobAd,
+		deleteFavouriteJobAd,
 		
 		adminApprove,
 		adminDeny,
@@ -163,6 +164,10 @@ public class ServletJobAd extends HttpServlet {
 				
 			case listFavouriteJobAd:
 				listFavouriteJobAd(request, response);
+				break;
+				
+			case deleteFavouriteJobAd:
+				deleteFavouriteJobAd(request, response);
 				break;
 				
 		/*****************ADMIN ACTIONS***********************/				
@@ -2643,7 +2648,68 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		response.getWriter().println(XMLResponse);
 	}
 	
-	
+/*********************************************************************************************
+ *
+ * deleteFavouriteJobAd()
+ * 
+ * @param request
+ * @param response
+ * @throws IOException
+ ***********************************************************************************************/	
+	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
+		
+		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = userSession.getIdAccount();
+		
+		String jobAdIdInString = request.getParameter("jobAdId");
+		System.out.println("jobIDINSTRING"+jobAdIdInString);
+		int jobAdId = Integer.parseInt(jobAdIdInString);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {		
+			stmt = conn.createStatement();
+			//Add individual queries onto total query
+			String query = "DELETE FROM tablefavouritejobad " +
+					"WHERE tablefavouritejobad.idAccount =" + accountId + 
+					" AND tablefavouritejobad.idJobAd =" + jobAdId;
+					
+			
+			//DEBUG
+			System.out.println(query);
+			
+			stmt.execute(query);
+			
+			System.out.println("Query Successfully Finished");
+			
+		} 
+		catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		// close DB objects
+		finally {
+			try{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (Exception e) {
+				//TODO log "Cannot close Statement"
+				System.out.println("Cannot close Statement : " + e.getMessage());
+			}
+			try {
+				if (conn  != null)
+					conn.close();
+			}
+			catch (SQLException e) {
+				//TODO log Cannot close Connection
+				System.out.println("Cannot close Connection : " + e.getMessage());
+			}
+		}
+		
+		
+	}
 	
 }//ENDOF SERVLETJobAD
 
