@@ -2,6 +2,7 @@ package managers;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -397,6 +398,662 @@ public class AccountManager {
 	    }
 	}
 	
+	/***
+	 * Creates a new account with the given email, password, account type and person/company name
+	 * with a uniquely generated verification number used for email verification.
+	 * New accounts open with "Pending" status.
+	 * @param email Primary email
+	 * @param password User password
+	 * @param accountType Account type
+	 * @param name Person/Company name 
+	 * @param uuid randomly generated unique verification number for email
+	 * @param latitude 
+	 * @param longitude 
+	 * @param address 
+	 * @param expiryTimeEmailVerification Time before the registration verification expires
+	 * @return boolean indicating whether account was successfully created
+	 */
+	public boolean createAccount(String email, String secondaryEmail, String password, String accountType, 
+								  String name, String phone, UUID uuid, String description, int eduLevel, 
+								  String startingDate, String address, String longitude, String latitude,
+								  String empPrefFT, String empPrefPT, String empPrefIn) {
+		System.out.println("Creating Account..");
+		
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		email = Utility.checkInputFormat(email);
+		password = Utility.checkInputFormat(password);
+		accountType = Utility.checkInputFormat(accountType);
+		name = Utility.checkInputFormat(name);
+		address = Utility.checkInputFormat(address);
+		
+		if(secondaryEmail != null)
+			secondaryEmail = Utility.checkInputFormat(secondaryEmail);
+		
+		if(description != null){
+			description = Utility.checkInputFormat(description);
+			description = Utility.processLineBreaksWhiteSpaces(description);
+		}
+		if(phone != null)
+			phone = Utility.checkInputFormat(phone);
+		if(address != null)
+			address = Utility.checkInputFormat(address);
+		
+		try {
+			long currentTime = Utility.getCurrentTime();
+			int idAccount = -1;
+			long startingDateLong = -1;
+			// update account table, and set account status to pending
+            String query = "INSERT INTO tableAccount(email, secondaryEmail, password, type, status, dateTimeCreated)" +
+            		" VALUES(?,?,md5(?),?,'pending',?);";
+            pst = conn.prepareStatement(query);
+            pst.setString(1, email);
+            if(secondaryEmail == null)
+            	pst.setNull(2, java.sql.Types.VARCHAR);
+            else
+            	pst.setString(2, secondaryEmail);
+            pst.setString(3, password);
+            pst.setString(4, accountType);
+            pst.setLong(5, currentTime);
+            
+            System.out.println(query);
+			int rowsInserted = pst.executeUpdate();
+			// if successful, 1 row should be inserted
+			if (rowsInserted != 1)
+				return false;
+			
+			// get account id of the account just created
+			Account acc = getAccountFromEmail(email);
+			if(acc != null)
+				idAccount = acc.getIdAccount();
+			if(idAccount == -1)
+				return false;
+						
+			// add entry to email verification table
+			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;			
+			query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime) VALUES " + 
+	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";	
+			pst = conn.prepareStatement(query);
+			
+			// if successful, 1 row should be inserted
+            System.out.println(query);
+			rowsInserted = pst.executeUpdate(query);
+			if (rowsInserted != 1)
+				return false;
+
+			
+			// add entry to user profile table
+			if(accountType.equals("searcher")){
+				// update profile table
+				if(startingDate != null){
+					startingDateLong = Utility.dateStringToLong(startingDate);
+					if(startingDateLong == -1)
+						return false;
+				}
+				query = "INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) VALUES " + 
+		  		"(?,?,?,?,?,?);";
+	            pst = conn.prepareStatement(query);
+	            pst.setInt(1, idAccount);
+	            pst.setString(2, name);
+	            if(phone == null)
+	            	pst.setNull(3, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(3, phone);
+	            if(description == null)
+	            	pst.setNull(4, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(4, description);
+	            
+	            pst.setInt(5, eduLevel);
+	            
+	            if(startingDate == null)
+	            	pst.setNull(6, java.sql.Types.BIGINT);
+	            else
+	            	pst.setLong(6, startingDateLong);
+	            
+	            System.out.println(query);
+				rowsInserted = pst.executeUpdate();
+				
+				if (rowsInserted != 1)
+					return false;
+				
+				// update employment Preference table
+				if(empPrefFT.equals("true") )
+					empPrefFT = "1"; 
+				else
+					empPrefFT = "0";
+				
+				if(empPrefPT.equals("true") )
+					empPrefPT = "1"; 
+				else
+					empPrefPT = "0";
+				
+				if(empPrefIn.equals("true") )
+					empPrefIn = "1"; 
+				else
+					empPrefIn = "0";
+
+				query = 
+					"INSERT INTO tableSearcherEmpPref(idAccount, partTime, fullTime, internship) " + 
+					"VALUES ('"
+						+ idAccount + "','"
+						+ empPrefPT + "','"
+						+ empPrefFT + "','"
+						+ empPrefIn + 
+					"');";
+	            System.out.println(query);
+	            
+				if( pst.executeUpdate(query) != 1 ){ //Error Check
+					System.out.println("Error: Update Query Failed");
+					return false;
+				}
+
+			}
+			else if(accountType.equals("poster")){
+				query = "INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) VALUES " + 
+		  		"(?,?,?,?);";
+	            pst = conn.prepareStatement(query);
+	            pst.setInt(1, idAccount);
+	            pst.setString(2, name);
+	            
+	            if(phone == null)
+	            	pst.setNull(3, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(3, phone);
+	            
+	            if(description == null)
+	            	pst.setNull(4, java.sql.Types.VARCHAR);
+	            else
+	            	pst.setString(4, description);
+	            
+	            System.out.println(query);
+				rowsInserted = pst.executeUpdate();
+				if (rowsInserted != 1)
+					return false;
+			}
+			
+			
+			
+			//add entry to location table
+			System.out.println("address: " + address);
+			if( address != null){
+				if( !insertAddress(idAccount, address, longitude, latitude) )
+					return false;
+			}
+			else 
+				return true;
+
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;		
+	}
+	
+	/**
+	 * Adds a password reset request entry into the DB.
+	 * An entry contains a password request id, the primary email of the account, and expiry time of the request.
+	 * @param email User's primary email address.
+	 * @param uuid Unique password reset request id.
+	 * @param expiryTimeForgetPasswordRequest Time before request expires.
+	 * @return boolean indicating whether adding the password reset request was successful.
+	 */
+	public boolean addForgetPasswordRequest(String email, UUID uuid, long expiryTimeForgetPasswordRequest){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		email = Utility.checkInputFormat(email);
+		String query = "";
+		int rowsInserted;
+		int idAccount = -1;
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			Account acc = getAccountFromEmail(email);
+			if(acc != null)
+				idAccount = acc.getIdAccount();
+			if(idAccount == -1)
+				return false;
+			// add entry to password reset table
+			long expiryTime = currentTime + expiryTimeForgetPasswordRequest;			
+			query = "INSERT INTO tablePasswordReset(idPasswordReset, idAccount, expiryTime) VALUES " + 
+	  		"('" + uuid + "','" + idAccount + "','" + expiryTime + "');";			
+			// if successful, 1 row should be inserted
+			System.out.println(query);
+			rowsInserted = stmt.executeUpdate(query);
+			if (rowsInserted != 1)
+				return false;
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;	
+	}
+	
+	/***
+	 * Updates account status from pending to active if the given verification number is valid.
+	 * The verification number is created and linked to an account upon account creation, and deleted after it is used to activate the account.
+	 * @param verificationNumber A UUID linked to an account id in tableEmailVerification
+	 * @return boolean indicating whether the account activation was successful
+	 */
+	public boolean activateAccount(String verificationNumber){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		verificationNumber = Utility.checkInputFormat(verificationNumber);
+		String query = "";
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			long expiryTime;
+			int idAccount, rowsUpdated;
+					
+			// check if verification number is valid	
+			query = "SELECT idAccount, expiryTime FROM tableEmailVerification WHERE idEmailVerification='" + 
+	  		verificationNumber + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();
+			// if valid, then check expiry time of verification number
+			if(rs.first()){
+				expiryTime = rs.getLong("expiryTime");
+				// if not expired, then activate account
+				if( currentTime < expiryTime){
+					idAccount = rs.getInt("idAccount");
+					query = "UPDATE tableAccount SET status='active' WHERE idAccount='" + idAccount + "';";
+					// if successful, 1 row should be updated
+					System.out.println(query);
+					rowsUpdated = stmt.executeUpdate(query);
+					if (rowsUpdated != 1)
+						return false;
+					else {
+						// finally, delete row containing the verification number from tableEmailVerification
+						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						System.out.println(query);
+						rowsUpdated = stmt.executeUpdate(query);
+						if(rowsUpdated != 1)
+							Utility.logError("Failed to delete row containing the verification number upon successful account activation.");
+						return true;
+					}
+				}
+			}
+			else
+				return false;
+			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;	
+	}
+	
+	/***
+	 * Identifies the user with the session key, and then adds an entry inside email verification table with the verification number
+	 * and the pending email.
+	 * @param sessionKey Session key of the user requesting for email change.
+	 * @param newEmail New email address to change to.
+	 * @return boolean indicating whether adding the email change was successful
+	 */
+	public boolean addEmailChangeRequest(String sessionKey, String newEmail, UUID uuid){
+		System.out.println("Inside ServletAccount: addEmailChangeRequest");
+		Connection conn = dbManager.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		newEmail = Utility.checkInputFormat(newEmail);
+		long currentTime = Utility.getCurrentTime();
+		
+		try {
+			// get accout id from sessionKey
+			int idAccount;
+			Session session = getSessionByKey(sessionKey);
+			if(session != null)
+				idAccount = session.getIdAccount();
+			else
+				return false;
+			// add entry to email verification table
+			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;	
+            String query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime, emailPending)" +
+    		" VALUES(?,?,?,?);";
+            
+            
+            pst = conn.prepareStatement(query);
+		    pst.setString(1, uuid.toString());
+		    pst.setInt(2, idAccount);
+		    pst.setLong(3, expiryTime);
+		    pst.setString(4, newEmail);
+			// if successful, 1 row should be inserted
+		    
+		    System.out.println(query + "values: uuid=" + uuid.toString() + " idAccount=" + idAccount + " expiryTime=" + expiryTime + " newEmail=" + newEmail);
+		    
+			int rowsInserted = pst.executeUpdate();
+			
+			if (rowsInserted != 1){
+				System.out.println("addEmailChangeRequest failed");
+				return false;
+			}
+			System.out.println("addEmailChangeRequest success");
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (pst != null)
+	                pst.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;		
+	}
+	
+	/***
+	 * Updates account primary email if the given verification number is valid.
+	 * The new email address is stored in tableEmailVerification when user requests for the email change.
+	 * The verification number is created and linked to user's account when user requests to change primary email, and deleted after it is used to change the email.
+	 * @param verificationNumber A UUID in tableEmailVerification which is linked to an account ID that requested for a primary email change
+	 * @return boolean indicating whether changing the primary email was successful
+	 */
+	public boolean verifyChangePrimaryEmail(String verificationNumber){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		verificationNumber = Utility.checkInputFormat(verificationNumber);
+		String query = "";
+		try {
+			stmt = conn.createStatement();
+			long currentTime = Utility.getCurrentTime();
+			long expiryTime;
+			int idAccount, rowsUpdated;
+			String emailPending;
+			
+			// check if verification number is valid	
+			query = "SELECT idAccount, expiryTime, emailPending FROM tableEmailVerification WHERE idEmailVerification='" + 
+	  		verificationNumber + "';";
+			stmt.executeQuery(query);
+			rs = stmt.getResultSet();			
+			
+			// if valid, then check expiry time of verification number
+			if(rs.first()){
+				expiryTime = rs.getLong("expiryTime");
+				// if not expired, then update primary email
+				if( currentTime < expiryTime){
+					idAccount = rs.getInt("idAccount");
+					emailPending = rs.getString("emailPending");
+					query = "UPDATE tableAccount SET email='" + emailPending + "' WHERE idAccount='" + idAccount + "';";
+					// if successful, 1 row should be updated
+					System.out.println(query);
+					rowsUpdated = stmt.executeUpdate(query);					
+					if (rowsUpdated != 1)
+						return false;
+					else {
+						// finally, delete row containing the verification number from tableEmailVerification
+						query = "DELETE FROM tableEmailVerification WHERE idEmailVerification='" + verificationNumber + "';";
+						System.out.println(query);
+						rowsUpdated = stmt.executeUpdate(query);
+						if(rowsUpdated != 1){
+							Utility.logError("Failed to delete row containing the verification number " +
+									verificationNumber + "in tableEmailVerification upon successfully changing primary email.");
+						}
+						return true;
+					}					
+				}				
+			}
+			else
+				return false;			
+			return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		return false;
+	}
+	
+	/***
+	 * Resets password and deletes associated entry from tablePasswordReset
+	 * @param idPasswordReset Unique password reset ID
+	 * @param idAccount Account id
+	 * @param newPassword The new password.
+	 * @return boolean indicating whether the password reset was successful.
+	 */
+	public boolean resetPassword(String idPasswordReset, int idAccount, String newPassword){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int rowsUpdated;
+		idPasswordReset = Utility.checkInputFormat(idPasswordReset);
+		newPassword = Utility.checkInputFormat(newPassword);
+		try {
+			stmt = conn.createStatement();
+			query = "DELETE FROM tablePasswordReset WHERE idPasswordReset='" + idPasswordReset + "';";
+			System.out.println(query);
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated != 1){
+				Utility.logError("Failed to delete entry from tablePasswordReset while resetting password for account" +
+						"ID:" + idAccount +".");
+				}
+			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
+			System.out.println(query);
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated == 1)
+				return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	    return false;
+	}	
+	
+	/***
+	 * Resets password and deletes associated entry from tablePasswordReset
+	 * @param idAccount Account id
+	 * @param newPassword The new password.
+	 * @return boolean indicating whether the password change was successful.
+	 */
+	public boolean changePassword(int idAccount, String newPassword){
+		Connection conn = dbManager.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "";
+		int rowsUpdated;
+		newPassword = Utility.checkInputFormat(newPassword);
+		try {
+			stmt = conn.createStatement();
+			query = "UPDATE tableAccount SET password=md5('" + newPassword + "') WHERE idAccount='" + idAccount + "';";
+			System.out.println(query);
+			rowsUpdated = stmt.executeUpdate(query);
+			if(rowsUpdated == 1)
+				return true;
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		// free DB objects
+	    finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close Statement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+	    return false;
+	}
+	
+	private boolean insertAddress(int idAccount, String address, String longitude, String latitude) {		
+		boolean isSuccessful = false;
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+
+		try{
+			stmt = conn.createStatement();
+			
+			String query = 
+				"INSERT INTO tableLocationProfile(idAccount, location, latitude, longitude) " + 
+				"VALUES ('"
+					+ idAccount + "','"
+					+ address + "','"
+					+ longitude + "','"
+					+ latitude + 
+				"')";
+			
+			// if successful, 1 row should be inserted
+			System.out.println("New location insert query: " + query);
+			int rowsInserted = stmt.executeUpdate(query);
+			
+			if (rowsInserted == 1){
+				System.out.println("Insert Profile address success");
+				isSuccessful = true;				
+			}
+
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception: " + e.getMessage());
+		}
+		
+		// free DB objects
+	    finally {
+	        try {
+	            if (stmt != null)
+	            	stmt.close();
+	        }
+	        catch (Exception e){
+	        	Utility.logError("Cannot close ResultSet: " + e.getMessage());
+	        }
+	        try{
+	            if (conn != null)
+	            	conn.close();
+	        }
+	        catch (Exception e) {
+	        	Utility.logError("Cannot close PreparedStatement: " + e.getMessage());
+	        }
+	        dbManager.freeConnection(conn);
+	    }
+		
+		return isSuccessful;
+	}
+	
 	/***************************************************************************************************************************************
 	 * 									SessionKey Generator FUNCTIONS
 	 * should return a new unique session key for the account
@@ -776,9 +1433,7 @@ public class AccountManager {
 				if( !parentDir.delete() ) {
 					success = false;
 				}
-			}
-
-			
+			}			
 			return success;
 		}
 }
