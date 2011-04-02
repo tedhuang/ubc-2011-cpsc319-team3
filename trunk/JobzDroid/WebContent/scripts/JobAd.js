@@ -168,8 +168,7 @@ function changeJobAdStatus(intJobAdId, strNewStatus){
  */
 function adminDeleteJobAd(intJobAdId){
 	
-	var sessionKey = document.getElementById("sessionKey").value;
-	//var intJobAdId = document.getElementById("jobAdId").value;
+	var sessionKey = $("#sessionKey").val();
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -178,6 +177,7 @@ function adminDeleteJobAd(intJobAdId){
 	request = new Request;
 	request.addAction("adminDeleteJobAd");
 	request.addParam("jobAdId", intJobAdId);
+	request.addParam("sessionKey", sessionKey);
 	
 	//Response Handling:
 	if (window.XMLHttpRequest)
@@ -207,7 +207,7 @@ function adminDeleteJobAd(intJobAdId){
 	  };
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -231,6 +231,8 @@ function adminApprove(intJobAdId){
 	request = new Request;
 	request.addAction("adminApprove");
 	request.addParam("jobAdId", intJobAdId);
+	request.addParam("sessionKey", sessionKey);
+
 	
 	//Response Handling:
 	if (window.XMLHttpRequest)
@@ -243,7 +245,7 @@ function adminApprove(intJobAdId){
 	  }
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -271,8 +273,7 @@ function adminApprove(intJobAdId){
 
 function adminDeny(intJobAdId){
 	
-	var sessionKey = document.getElementById("sessionKey").value;
-	//var intJobAdId = document.getElementById("jobAdId").value;
+	var sessionKey =  $("#sessionKey").val();
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -281,6 +282,7 @@ function adminDeny(intJobAdId){
 	request = new Request;
 	request.addAction("adminDeny");
 	request.addParam("jobAdId", intJobAdId);
+	request.addParam("sessionKey", sessionKey);
 	
 	//Response Handling:
 	if (window.XMLHttpRequest)
@@ -293,7 +295,7 @@ function adminDeny(intJobAdId){
 	  }
 	  
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -308,7 +310,7 @@ function adminDeny(intJobAdId){
 		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
 		   document.getElementById("feedback").innerHTML=responseText;
-		   if (result){
+		   if (result = true){
 			   //TODO: add UI transition handling
 			   alert("Job Ad Denied Successfully (TODO: add UI tranisition)");
 		   }
