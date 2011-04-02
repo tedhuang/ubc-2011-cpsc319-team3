@@ -174,3 +174,6 @@ ul#edAdTool, ul#ownerDtlViewTool{list-style: none; float:left;list-style-image: 
 .columnBoxThinRight{position: relative;	float: right; right:-30px;	top: -285px;width: 135px;}
 .columnBoxThinLeft{	position: relative;	width:135px;}
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
+
+/***********************************************************************************/
+.rmFavJob{ background-image: url('../images/icon/delete_icon.png');  background-position:left; width: 19px; height:19px; }
