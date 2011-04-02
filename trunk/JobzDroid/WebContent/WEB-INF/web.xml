@@ -10,16 +10,6 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <description></description>
-    <display-name>ServletHTTPS</display-name>
-    <servlet-name>ServletHTTPS</servlet-name>
-    <servlet-class>servlets.ServletHTTPS</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ServletHTTPS</servlet-name>
-    <url-pattern>/ServletHTTPS</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <description>Handles all account related requests</description>
     <display-name>ServletAccount</display-name>
     <servlet-name>ServletAccount</servlet-name>
