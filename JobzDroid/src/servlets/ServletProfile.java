@@ -1,5 +1,6 @@
 package servlets;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import classes.DBColName;
+import classes.DbQuery;
 import classes.JobAdvertisement;
 import classes.Location;
 import classes.ProfilePoster;
@@ -36,6 +38,8 @@ public class ServletProfile extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private DBManager dbManager;
 	private DBColName DbDict =	ServletInitializer.retDbColName();
+	private DbQuery DBQ =new DbQuery();
+	
 
 	public ServletProfile() {
         super();
@@ -52,6 +56,8 @@ public class ServletProfile extends HttpServlet{
 		searchProfile,
 		searchSearcherProfile,
 		viewAllSearchers,
+		smrSearcherProfile,
+		
 		saveCandidate,
 		listCandidate,
 		deleteCandidate,
@@ -113,19 +119,9 @@ public class ServletProfile extends HttpServlet{
 			case viewAllSearchers:
 				viewAllSearchers(request, response);
 				break;
-				
-			case saveCandidate:
-				saveCandidate(request,response);
+			case smrSearcherProfile:
+				searcherProfileSummary(request, response);
 				break;
-				
-			case listCandidate:
-				listCandidate(request,response);
-				break;
-				
-			case deleteCandidate:
-				deleteCandidate(request,response);
-				break;
-				
 			default:
 				System.out.print("Dont you try to hack =D");
 				break;
@@ -1373,6 +1369,81 @@ public class ServletProfile extends HttpServlet{
 		response.getWriter().println(XMLResponse);
 	}
 
+	public void searcherProfileSummary(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		String sKey = request.getParameter("sessionKey");
+		String[]colToGet={"name"};//TODO MORE COLUMNS
+		Map<String,Object>condMap=new HashMap<String, Object>();
+		StringBuffer responseMsg =new StringBuffer();
+		
+		StringBuffer qBuf = DBQ.sessAuthQuery(sKey, new String[]{"idAccount"}, "searcher");
+		String authQuery =qBuf.substring(1, qBuf.length()-2) //Remove bracket	
+						       .toString();
+		int acctId =-1;
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {
+			stmt=conn.createStatement();
+			ResultSet authRs = stmt.executeQuery(authQuery);
+			if(authRs.next()){ //authenticating
+				acctId=authRs.getInt("idAccount");
+			}
+			if(acctId!=-1){
+				condMap.put("idAccount=", acctId); //TODO put more
+				String selQuery = DBQ.buidlSelQuery("tableProfileSearcher", colToGet, condMap)[0]
+				                  .append(DBQ.buidlSelQuery("tableProfileSearcher", colToGet, condMap)[1])
+				                  .toString();
+				
+				System.out.println("Summarizing Searcher Profile----->Processing " + selQuery);
+				stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(selQuery);
+				while(rs.next()){
+					responseMsg.append("Hello, " + rs.getString("name") +". &#xD;");
+				}
+				File[]userFile =ServletDocument.getUserFiles(acctId);
+				responseMsg.append("You have " + userFile.length + "Files");
+			}
+			else{
+				System.out.println("Account Doesnot exist or session key expires");
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	
+	StringBuffer XMLResponse = new StringBuffer();	
+	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+	XMLResponse.append("<response>\n");
+	XMLResponse.append("\t<profileSmr>" + responseMsg.toString() + "</profileSmr>\n");
+	XMLResponse.append("</response>\n");
+	response.setContentType("application/xml");
+	response.getWriter().println(XMLResponse);
+		
+		
+	}
+
 /*************************************************************************************
 * saveCandidate()
 * 
@@ -1638,8 +1709,6 @@ public class ServletProfile extends HttpServlet{
 			
 		}
 }
-
-
 
 
 /**

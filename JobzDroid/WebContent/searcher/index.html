@@ -18,13 +18,12 @@
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherJobAd.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherTab.js"></script>
-<script type="text/javascript" src="../scripts/Profile.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherProfile.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
 <script type="text/javascript" src='../scripts/sortable.js'></script>
-<script type="text/javascript" src="../scripts/JobAd.js"></script>
+
 <script type="text/javascript">
    
     $(document).ready(function(){
@@ -40,7 +39,8 @@
        	});
 
        	//guestViewJobAd('allJobAdtable', 'next');
-       	getSuggestionForSearcher("suggList");
+       	//getSuggestionForSearcher("suggList");
+       	profileSummary("welcomeHeading");
 		});
 	
 </script>
@@ -120,42 +120,41 @@
   			<li id="Tab3">
   				<a href="#favouriteFrame" onclick='listFavouriteJobAd("favTable");'><h2>Favourites</h2></a>
 			</li>
-						
-			
 		</ul>
 	</div><!--ENDOF NAVBAR-->
 	
 	
   <div id="tabFrame">
 	<div id="home-frame" class="subFrame unremovable">
-         	<h2 class="welcome">My Job Feeds</h2>
+		<div id="welcomeHeading"></div>
+         	<!--  <h2 class="welcome">My Job Feeds</h2>
 	       <div id="allJobAdtable" class="resultTableDiv noBorder">
 	          <table class="sortable" id="sortableJobFeeds">
 				<thead >
 					<tr>
 						<th id="col-viewCreationDate">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="columnButton" onclick="">
 								<div class="headText">Date Posted</div>
 							</div>
 						</th>
 						<th id="col-viewStartingDate">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="columnButton" onclick="">
 								<div class="headText">Job Start Date</div>
 							</div>
 						</th>
 						
 						<th id="col-viewTitle">
-							<div  class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div  class="columnButton" onclick="">
 								<div class="headText">Job Title</div>
 							</div>
 						</th>			
 						<th id="col-viewLoc">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="columnButton" onclick="">
 								<div class="headText">Job Location</div>
 							</div>
 						</th>
 						<th id="col-viewEdu">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="columnButton" onclick="">
 								<div class="headText">Education Requirement</div>
 							</div>
 						</th>
@@ -163,12 +162,12 @@
 					</tr>
 				</thead>
 					<tbody></tbody>
-				</table><!--ENDOF TABLE-->
+				</table><!--ENDOF TABLE
 			</div>
 			
             <button type="button" id='prevButton' onclick="guestViewJobAd('allJobAdtable', 'prev')">Previous 20</button>
 			<button type="button" id='nextButton' onclick="guestViewJobAd('allJobAdtable', 'next')">Next 20</button>		
-			 
+			 -->
 			 
 			 <div id="rssTable" class="resultTableDiv tableClear">
 				<table>

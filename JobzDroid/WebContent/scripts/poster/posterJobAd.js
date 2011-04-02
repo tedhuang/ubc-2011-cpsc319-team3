@@ -573,6 +573,7 @@ function postJobAd(mode, formDiv, heading){
 		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xmlhttp.send(request.toString());
 		
+		console.log(request.toString());
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			  
