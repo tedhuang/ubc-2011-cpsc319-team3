@@ -6,16 +6,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import servlets.ServletJobAd.mysqlCmd;
+
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import classes.Account;
+import classes.DbQuery;
 import classes.NewsEntry;
 import classes.Session;
 import classes.Utility;
@@ -35,6 +39,7 @@ public class ServletAdmin extends HttpServlet {
 	private DBManager dbManager;
 	private NewsManager newsManager;
 	private EmailManager emailManager;
+	private DbQuery DBQ =new DbQuery();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -50,6 +55,9 @@ public class ServletAdmin extends HttpServlet {
 	private enum EnumAction	{
 		requestForAdminLogin,
 		ban,
+		adminApprove,
+		adminDeny,
+		adminDeleteJobAd,
 		unban,
 		createAdmin,
 		deleteAccount,
@@ -86,6 +94,15 @@ public class ServletAdmin extends HttpServlet {
 		switch( EnumAction.valueOf(action) ){
 			case requestForAdminLogin:
 				adminLoginReqTaker(request, response);
+				break;
+			case adminApprove:
+				adminApprove(request, response);
+				break;
+			case adminDeny:
+				adminDeny(request, response);
+				break;
+			case adminDeleteJobAd:
+				adminDeleteJobAd(request, response);
 				break;
 			case ban:
 				banHandler(request, response);
@@ -153,6 +170,257 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 	}
+	
+	
+	/*
+	 * Sets the status of the job ad to open and changes the isApproved value to true
+	 */
+	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		/**
+		 * TODO: Implement check session key
+		 */
+		
+		
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminApprove failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"UPDATE tableJobAd " + 
+				"SET isApproved='" + 1 +"', " +
+					"status='" + "open" + "' " +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				System.out.println("adminApprove worked!");
+				message = "adminApprove worked!";
+
+				// get new job ad info and update job ad RSS feed
+				query = "SELECT * FROM tableJobAd WHERE idJobAd = '" + jobAdId +"';";
+				stmt.executeQuery(query);
+				ResultSet rs = stmt.getResultSet();
+				if(rs.first()){
+					String title = rs.getString("title");
+					String desc = rs.getString("description");
+					long datePosted = rs.getLong("datePosted");
+					String tags = rs.getString("tags");
+					String[] feedCategory = null;					
+					if(tags != null){
+						feedCategory = tags.split(",");
+						// remove spaces before and after each category
+						for(int i = 0; i < feedCategory.length; i++)
+							feedCategory[i] = feedCategory[i].trim();
+					}
+					try {
+						SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
+						//TODO add link
+						SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(datePosted),
+								desc, null, feedCategory);
+						RSSManager.addEntryToFeed(feed, entry, 0);
+						
+						String jobAdRSSPath = getServletContext().getRealPath("jobAd.xml");
+						RSSManager.writeFeedToFile(feed, jobAdRSSPath);
+					} 
+					catch (Exception e) {
+						Utility.logError("Failed to post RSS entry '" + title + "' to Job Ad RSS: " + e.getMessage());
+					}
+				}
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	
+	
+	
+	
+	
+	/*
+	 * Sets the status of the job ad to draft and changes the isApproved value to false
+	 */
+	private void adminDeny(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		/**
+		 * TODO: Implement check session key
+		 */
+		
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		String message = "adminRevertApproval failed";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+				"UPDATE tableJobAd " + 
+				"SET isApproved='" + 0 +"', " +
+					"status='" + "inactive" + "' " +
+				"WHERE idJobAd='" + jobAdId + "'";
+			
+			//Debug print
+			System.out.println("Update Query: " + query);
+			
+			if( stmt.executeUpdate(query) != 1 ){ //Error Check
+				System.out.println("Error: Update Query Failed");
+			}
+			else{
+				isSuccessful = true;
+				message = "adminDeny worked!";
+				System.out.println("adminDeny worked!");
+			}
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+		
+	}
+	
+	
+	
+private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+
+		String feedback="adminDeleteJobAd failed";
+		String sessKey = request.getParameter("sessionKey");
+		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
+
+		StringBuffer qBuf = DBQ.sessAuthQuery(sessKey, new String[]{"idAccount"}, "admin");
+		
+		qBuf.insert(0, DBQ.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
+				DBQ.FROM + "tableJobAd tbAd" + DBQ.WHERE + "idAccount" + DBQ.EQ);
+		qBuf.append(DBQ.AND +"idJobAd" + DBQ.EQ + jobAdId);
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		boolean isSuccessful = false;
+		
+		try {			
+			//Delete designed job Ad
+			String query = qBuf.toString();
+			System.out.println("Processin Query: " + query);
+			ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+							   .executeQuery(query);
+			
+			while (rs.next()){
+				System.out.println("JobAd: ID-" + rs.getInt("idJobAd") +"was deleted by " + 
+						   			"Use: ID-" + rs.getInt("idAccount") +" with sessionKey-" + sessKey +
+						   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+				feedback="The Ad was deleted!";
+				rs.deleteRow();
+			}
+		}
+		catch (SQLException e) {
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + feedback + "</message>\n");
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
+	
+	
 	
 	/***
 	 * Handles account ban requests.
