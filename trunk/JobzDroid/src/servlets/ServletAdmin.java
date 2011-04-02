@@ -24,6 +24,7 @@ import classes.NewsEntry;
 import classes.Session;
 import classes.Utility;
 
+import managers.AccountManager;
 import managers.DBManager;
 import managers.EmailManager;
 import managers.NewsManager;
@@ -39,6 +40,7 @@ public class ServletAdmin extends HttpServlet {
 	private DBManager dbManager;
 	private NewsManager newsManager;
 	private EmailManager emailManager;
+	private AccountManager accManager;
 	private DbQuery DBQ =new DbQuery();
        
     /**
@@ -49,6 +51,7 @@ public class ServletAdmin extends HttpServlet {
 		newsManager = NewsManager.getInstance();
 		dbManager = DBManager.getInstance();
 		emailManager = new EmailManager();
+		accManager = new AccountManager();
     }
     
     // Enumerates the action parameter
@@ -136,11 +139,11 @@ public class ServletAdmin extends HttpServlet {
 		String pw = request.getParameter("password");
 		Session currSession = null;
 		String action = "";
-		Account acc = dbManager.getAccountFromEmail(email);
+		Account acc = accManager.getAccountFromEmail(email);
 		if( acc != null ){
 			String accType = acc.getType();
 			if( accType.equals("admin") || accType.equals("superAdmin"))
-				currSession = dbManager.startSession(email, pw);
+				currSession = accManager.startSession(email, pw);
 		}
 		
 		if(currSession != null){
@@ -242,7 +245,6 @@ public class ServletAdmin extends HttpServlet {
 			}
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
@@ -252,16 +254,14 @@ public class ServletAdmin extends HttpServlet {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 	    
@@ -273,12 +273,7 @@ public class ServletAdmin extends HttpServlet {
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-	}
-	
-	
-	
-	
-	
+	}	
 	
 	/*
 	 * Sets the status of the job ad to draft and changes the isApproved value to false
@@ -318,7 +313,6 @@ public class ServletAdmin extends HttpServlet {
 			}
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
@@ -328,16 +322,14 @@ public class ServletAdmin extends HttpServlet {
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 	    
@@ -398,14 +390,14 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 	    
@@ -437,14 +429,14 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 
 		// check if email exists
-		boolean emailExists = dbManager.checkEmailExists(email);
+		boolean emailExists = accManager.checkEmailExists(email);
 		if(!emailExists){
 			allGood = false;
 			message = "Account does not exist.";
 		}
 		else {
 			// read account information
-			Account accountToBan = dbManager.getAccountFromEmail(email);
+			Account accountToBan = accManager.getAccountFromEmail(email);
 			if(accountToBan == null){
 				allGood = false;
 				message = "Error reading account information.";
@@ -458,7 +450,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 				}
 				else{
 					// check session key
-					Session session = dbManager.getSessionByKey(sessionKey);
+					Session session = accManager.getSessionByKey(sessionKey);
 					if(session == null){			
 						allGood = false;
 						message = "Unauthorized ban action.";
@@ -512,14 +504,14 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 
 		// check if email exists
-		boolean emailExists = dbManager.checkEmailExists(email);
+		boolean emailExists = accManager.checkEmailExists(email);
 		if(!emailExists){
 			allGood = false;
 			message = "Account " + email + " does not exist.";
 		}
 		else {
 			// read account information
-			Account accountToUnban = dbManager.getAccountFromEmail(email);
+			Account accountToUnban = accManager.getAccountFromEmail(email);
 			if(accountToUnban == null){
 				allGood = false;
 				message = "Error reading account information.";
@@ -533,7 +525,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 				}
 				else{
 					// check session key
-					Session session = dbManager.getSessionByKey(sessionKey);
+					Session session = accManager.getSessionByKey(sessionKey);
 					if(session == null){			
 						allGood = false;
 						message = "Unauthorized unban action.";
@@ -597,7 +589,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 			message = "Invalid account name.";
 			allGood = false;
 		}
-		else if(dbManager.checkEmailExists(accountName)){
+		else if(accManager.checkEmailExists(accountName)){
 			allGood = false;
 			message = "This account already exists.";
 		}
@@ -618,7 +610,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 			allGood = false;
 		}
 		else {
-			Session session = dbManager.getSessionByKey(sessionKey);
+			Session session = accManager.getSessionByKey(sessionKey);
 			if(session == null){			
 					allGood = false;
 					message = "Unauthorized create admin action.";
@@ -668,28 +660,30 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 		String userType = "";
 		String accToDeleteType = "";
+		int accToDeleteID = -1;
 		
 		// check if account name exists
-		boolean emailExists = dbManager.checkEmailExists(accountName);
+		boolean emailExists = accManager.checkEmailExists(accountName);
 		if(!emailExists){
 			allGood = false;
 			message = "This account does not exist.";
 		}
 		else {
 			// if check if user is authorized
-			Session session = dbManager.getSessionByKey(sessionKey);
+			Session session = accManager.getSessionByKey(sessionKey);
 			if(session == null){			
 					allGood = false;
 					message = "Unauthorized delete account action.";
 			}
 			else{
-				Account accToDelete = dbManager.getAccountFromEmail(accountName);
+				Account accToDelete = accManager.getAccountFromEmail(accountName);
 				if( accToDelete == null ){
 					allGood = false;
 					message = "Error reading account information.";
 				}
 				else{
 					accToDeleteType = accToDelete.getType();
+					accToDeleteID = accToDelete.getIdAccount();
 					userType = session.getAccountType();
 					// only super admins can delete admin accounts
 					if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
@@ -711,9 +705,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		}
 		
 		if(allGood){
-			if(dbManager.deleteAccount(accountName)){
-				//TODO delete user's document on file system as well
-				
+			if( accManager.wipeUserDocuments(accToDeleteID) && accManager.deleteAccount(accountName)){				
 				result = true;
 				message = "Account deletion successful.";
 				// inform the user
@@ -750,7 +742,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 
 		// session check
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
 			message = "Unauthorized post news action.";
@@ -826,7 +818,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 
 		// session check
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
 			message = "Unauthorized delete news action.";
@@ -903,7 +895,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String[] categoriesArray = {};
 
 		// session check
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
 			message = "Unauthorized post RSS action.";
@@ -982,7 +974,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		String message = "";
 
 		// session check
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		if(session == null){
 			allGood = false;
 			message = "Unauthorized post RSS action.";

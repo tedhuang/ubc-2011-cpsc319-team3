@@ -1,6 +1,6 @@
 package servlets;
 
-import managers.DBManager;
+import managers.AccountManager;
 import managers.SystemManager;
 
 import java.io.File;
@@ -33,14 +33,13 @@ import classes.Utility;
 public class ServletDocument extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private DBManager dbManager;
-       
+	private AccountManager accManager;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ServletDocument() {
         super();
-        dbManager = DBManager.getInstance();
+        accManager = new AccountManager();
     }
 
 	private enum EnumAction	{
@@ -52,16 +51,14 @@ public class ServletDocument extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		processRequest(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		processRequest(request, response);
-		
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		processRequest(request, response);		
 	}
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -113,8 +110,7 @@ public class ServletDocument extends HttpServlet {
 				System.out.println("Parsing Request");
 				items = upload.parseRequest(request);
 			} catch (FileUploadException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Parsing error: " + e.getMessage());
 			}
 		}
 		
@@ -160,7 +156,7 @@ public class ServletDocument extends HttpServlet {
 		        boolean isInMemory = item.isInMemory();
 		        long sizeInBytes = item.getSize();
 		        
-		        Session currSession = dbManager.getSessionByKey( sessionKey );
+		        Session currSession = accManager.getSessionByKey( sessionKey );
 		        
 		        if ( currSession == null ) {
 		        	message = "ServletDocument: expired or invalid session";
@@ -224,8 +220,7 @@ public class ServletDocument extends HttpServlet {
 					item.write(uploadedFile);
 					//TODO set file permission?
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Utility.logError("Write user file error: " + e.getMessage());
 				}
 		    }
 		    
@@ -254,7 +249,7 @@ public class ServletDocument extends HttpServlet {
 		String sessionKey = request.getParameter("sessionKey");
 		String fileName = request.getParameter("fileName");
 		
-		Session currSession = dbManager.getSessionByKey(sessionKey);
+		Session currSession = accManager.getSessionByKey(sessionKey);
 		
 		boolean success = false;
 		earlyExit: {
@@ -428,80 +423,5 @@ public class ServletDocument extends HttpServlet {
 			   }
 		};
 		return progressListener;
-	}
-	
+	}	
 }
-
-
-
-///***
-// * TODO
-// */
-//private void listUserDocuments( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
-//	String message = "ServletDocument: listUserDocuments() did not work as intended";
-//	String action = "";
-//	
-//	String sessionKey = request.getParameter("sessionKey");		
-//	Session currSession = dbManager.getSessionByKey(sessionKey);
-//
-//	
-//	// check privilege and determine what to use for doc owner ID
-//	int idOwner = -1;
-//	
-//	if (currSession == null)
-//		response.sendRedirect("index.html");
-//	else {
-//		if ( currSession.checkPrivilege("searcher") ) {
-//			idOwner = currSession.getIdAccount();
-//		}
-//		else if( currSession.checkPrivilege("poster", "admin", "superAdmin")) {
-//			try{
-//				idOwner = Integer.parseInt(request.getParameter("idOwner"));
-//			}
-//			catch(Exception e){
-//				response.sendRedirect("error.html");
-//			}
-//		}
-//	}
-//	
-//	if(idOwner == -1)
-//		response.sendRedirect("index.html");
-//	
-//	String fileData = "";
-//	
-//	boolean success = false;
-//	earlyExit: {
-//		
-//		File[] userfiles = getUserFiles( idOwner );
-//		
-//		for( File eachFile: userfiles ) {
-//			BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
-//			fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );
-//			
-//			fileData = fileData.concat("\t<file " +
-//					"fileName=\"" + eachFile.getName() + "\" " +
-//					"size=\"" + (  fileSizeMB  ) + "\" " +
-//					"idOwner=\"" + (  idOwner  ) + "\" " +
-//					">" + "</file>\n");
-//			success = true;
-//		}
-//		
-//		message = "ServletDocument: filename gotten";
-//	}//earlyExit:
-//	System.out.println(message);
-//	
-//	StringBuffer XMLResponse = new StringBuffer();	
-//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-//	XMLResponse.append("<response>\n");
-//	XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
-//	XMLResponse.append("\t<message>" + message + "</message>\n");
-//	XMLResponse.append("\t<action>" + action + "</action>\n");
-//	if(success = true) {
-//		XMLResponse.append(fileData);
-//	}
-//	XMLResponse.append("</response>\n");
-//	response.setContentType("application/xml");
-//	response.getWriter().println(XMLResponse);
-//	System.out.println(XMLResponse);
-//}

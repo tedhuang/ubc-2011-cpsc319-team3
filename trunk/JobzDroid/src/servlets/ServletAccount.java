@@ -18,6 +18,7 @@ import classes.Account;
 import classes.Session;
 import classes.Utility;
 
+import managers.AccountManager;
 import managers.DBManager;
 import managers.EmailManager;
 import managers.SystemManager;
@@ -30,6 +31,7 @@ public class ServletAccount extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private EmailManager emailManager;	
 	private DBManager dbManager;
+	private AccountManager accManager;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -38,6 +40,7 @@ public class ServletAccount extends HttpServlet {
         super();
 		dbManager = DBManager.getInstance();
 		emailManager = new EmailManager();
+		accManager = new AccountManager();
     }
     
     // Enumerates the action parameter
@@ -228,7 +231,7 @@ public class ServletAccount extends HttpServlet {
 		if(allGood){
 			// check if email is unique
 			email = Utility.checkInputFormat(email);
-			boolean isUnique = !dbManager.checkEmailExists(email);
+			boolean isUnique = !accManager.checkEmailExists(email);
 			if(isUnique){
 				accountCreated = createAccount(email, secondaryEmail, password, accountType, name, phone, uuid,
 						description, eduLevel, startingDate, address, longitude, latitude, empPrefFT, empPrefPT, empPrefIn);
@@ -244,7 +247,7 @@ public class ServletAccount extends HttpServlet {
 				}
 				else{
 					// delete the account if there was any error during registration
-					dbManager.deleteAccount(email);
+					accManager.deleteAccount(email);
 					message = "Failed to create account. Please try again later.";
 				}
 				
@@ -346,7 +349,7 @@ public class ServletAccount extends HttpServlet {
 		String message = "Change secondary e-mail failed";
 		
 		String sessionKey 		= request.getParameter("sessionKey");
-		Session currSession 	= dbManager.getSessionByKey( sessionKey );
+		Session currSession 	= accManager.getSessionByKey( sessionKey );
 		int accountID 			= currSession.getIdAccount();
 		String secEmail 		= request.getParameter("secEmail");
 		Connection conn 		= dbManager.getConnection();	
@@ -419,7 +422,7 @@ public class ServletAccount extends HttpServlet {
 		String message = "";
 		
 		// check if email is unique
-		boolean isUnique = !dbManager.checkEmailExists(newEmail);
+		boolean isUnique = !accManager.checkEmailExists(newEmail);
 		
 		if(isUnique){
 			boolean requestAdded = addEmailChangeRequest(sessionKey, newEmail, uuid);			
@@ -525,7 +528,7 @@ public class ServletAccount extends HttpServlet {
 		
 	    if( accountStatus.equals("active")) {
 
-		    Session currSession = dbManager.startSession(email, pw);
+		    Session currSession = accManager.startSession(email, pw);
 			//Following IF/ELSE STMT IS THE FIRST XML WILL BE RETURN TO CLIENT WITH THE SESSION INFO
 			if(currSession != null){
 				// if login successful, return credential and sucess message
@@ -586,7 +589,7 @@ public class ServletAccount extends HttpServlet {
 /***************************/
 	private void logoutReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
 		
-		if(dbManager.userLogout(req.getParameter("sessionKey").toString())){
+		if(accManager.userLogout(req.getParameter("sessionKey").toString())){
 			System.out.println("Logout Successfully");
 		}
 		else{
@@ -605,7 +608,7 @@ public class ServletAccount extends HttpServlet {
 		String email = request.getParameter("email");
 		boolean result = false;
 		String message = "";
-		boolean emailExists = dbManager.checkEmailExists(email);
+		boolean emailExists = accManager.checkEmailExists(email);
 		if(emailExists){
 			UUID uuid = UUID.randomUUID();
 			boolean requestAdded = addForgetPasswordRequest(email, uuid, SystemManager.expiryTimeForgetPasswordReset);
@@ -660,7 +663,7 @@ public class ServletAccount extends HttpServlet {
 		else if( !password.equals(passwordRepeat) )
 			message = "Passwords do not match.";
 		else{
-			int idAccount = dbManager.getIdAccountFromIdPasswordReset(idPasswordReset);
+			int idAccount = accManager.getIdAccountFromIdPasswordReset(idPasswordReset);
 			if (idAccount == -1)
 				message = "Invalid or expired request.";
 			else{
@@ -701,12 +704,12 @@ public class ServletAccount extends HttpServlet {
 		oldPassword = Utility.checkInputFormat(oldPassword);
 		newPassword = Utility.checkInputFormat(newPassword);
 		
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		if( session == null )
 			message = "Invalid request.";
 		else{
 			idAccount = session.getIdAccount();
-			Account userAcc = dbManager.getAccountFromId(idAccount);
+			Account userAcc = accManager.getAccountFromId(idAccount);
 			if( userAcc == null )
 				message = "Invalid request.";
 			// check old password
@@ -807,7 +810,7 @@ public class ServletAccount extends HttpServlet {
 				return false;
 			
 			// get account id of the account just created
-			Account acc = dbManager.getAccountFromEmail(email);
+			Account acc = accManager.getAccountFromEmail(email);
 			if(acc != null)
 				idAccount = acc.getIdAccount();
 			if(idAccount == -1)
@@ -973,7 +976,7 @@ public class ServletAccount extends HttpServlet {
 		try {
 			stmt = conn.createStatement();
 			long currentTime = Utility.getCurrentTime();
-			Account acc = dbManager.getAccountFromEmail(email);
+			Account acc = accManager.getAccountFromEmail(email);
 			if(acc != null)
 				idAccount = acc.getIdAccount();
 			if(idAccount == -1)
@@ -1109,7 +1112,7 @@ public class ServletAccount extends HttpServlet {
 		try {
 			// get accout id from sessionKey
 			int idAccount;
-			Session session = dbManager.getSessionByKey(sessionKey);
+			Session session = accManager.getSessionByKey(sessionKey);
 			if(session != null)
 				idAccount = session.getIdAccount();
 			else
@@ -1129,7 +1132,7 @@ public class ServletAccount extends HttpServlet {
 		    
 		    System.out.println(query + "values: uuid=" + uuid.toString() + " idAccount=" + idAccount + " expiryTime=" + expiryTime + " newEmail=" + newEmail);
 		    
-			int rowsInserted = pst.executeUpdate(); //TODO: fix the exception generated by changing e-mail request
+			int rowsInserted = pst.executeUpdate();
 			
 			if (rowsInserted != 1){
 				System.out.println("addEmailChangeRequest failed");
