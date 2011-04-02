@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager"%>
+    pageEncoding="ISO-8859-1" import="java.sql.*, managers.AccountManager"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -13,9 +13,9 @@
 </head>
 <body>
 	<%	
-	DBManager dbManager = DBManager.getInstance();
+	AccountManager accManager = new AccountManager();
 	String idPasswordReset = request.getParameter("id");
-	int idAccount = dbManager.getIdAccountFromIdPasswordReset(idPasswordReset);
+	int idAccount = accManager.getIdAccountFromIdPasswordReset(idPasswordReset);
 	// if password reset id is invalid or expired, then forward to error page.
 	if (idAccount == -1){
 		response.sendRedirect("error.html");	

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, managers.RSSManager, managers.SystemManager, classes.Session,
+    pageEncoding="ISO-8859-1" import="java.sql.*, managers.AccountManager, managers.RSSManager, managers.SystemManager, classes.Session,
      classes.Utility, java.util.List, com.sun.syndication.feed.synd.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -22,9 +22,9 @@
 </head>
 <body>
 	<%	// check session key
-	DBManager dbManager = DBManager.getInstance();
+	AccountManager accManager = new AccountManager();
 	String sessionKey = request.getParameter("sessionKey");
-	Session s = dbManager.getSessionByKey(sessionKey);
+	Session s = accManager.getSessionByKey(sessionKey);
 	// if invalid or non-admin session, then redirect to index page.
 	if (s == null){
 		response.sendRedirect("../index.html");	
