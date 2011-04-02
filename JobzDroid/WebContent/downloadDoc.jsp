@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, managers.DocumentManager, classes.Session, classes.Document
+    pageEncoding="ISO-8859-1" import="java.sql.*, managers.DBManager, managers.AccountManager, classes.Session
     , java.io.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -16,11 +16,12 @@
 	int idDoc = -1; 
 	// check session key and document id to determine if the user has permission
 	DBManager dbManager = DBManager.getInstance();
+	AccountManager acctManager = new AccountManager();
 	String strIdOwner = request.getParameter("idOwner");
 	String filename = request.getParameter("filename");
 	
 	String sessionKey = request.getParameter("sessionKey");
-	Session s = dbManager.getSessionByKey(sessionKey);
+	Session s = acctManager.getSessionByKey(sessionKey);
 	
 	// if invalid document owner id, then redirect to error page
 	int idOwner = -1;
