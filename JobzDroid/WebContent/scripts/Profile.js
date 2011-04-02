@@ -338,6 +338,139 @@ function getProfileSearcherById(mode, id, profileDiv, fileDiv)
 	  };
 }
 
+/************************************************************************************************************
+ * 				saveCandidate
+ * @param outputDiv
+ ************************************************************************************************************/	
+
+function saveCandidate(sessKey, searcherId){
+	
+	request = new Request;
+	request.addAction("saveCandidate");
+	request.addParam("sessionKey", sessKey);
+	request.addParam("searcherId", searcherId);
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+
+	
+}
+
+/************************************************************************************************************
+ * 				Prepare & Setup Favourite Job Ad List
+ * @param outputDiv
+ ************************************************************************************************************/
+function listCandidate(outputDiv){
+	outputDiv="#"+outputDiv;
+	request = new Request;
+	request.addAction("listCandidate");
+	
+	var strSessionKey = $("#sessionKey").val();
+	request.addParam("sessionKey", strSessionKey);
+
+	
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	}
+	else{// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function(){
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){  
+		  buildCandidateListTb("profile", outputDiv);	  
+	    }
+	  else{
+		  //TODO: implement error handling
+	  }
+	};
+}
+
+/************************************************************************************************************
+ * 				Build Favourite Job Ad List 
+ * @param 
+ ************************************************************************************************************/	
+function buildCandidateListTb(targetXMLTag, outputDiv){
+	
+	var strSessionKey = $("#sessionKey").val();
+	
+	var tbody  = $("tbody", outputDiv).html("");
+	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+		$("#feedbackFavourites").html("<h2 class='error'>You have not saved any favourite Job Searchercontacts </h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+		  var profileXML = $(this);
+		  var tr =$('<tr></tr>');
+		  $('<td></td>').attr("id", id='td-pDate').text(profileXML.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-title').addClass('jsBtn').text(profileXML.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(profileXML.attr("contactInfo")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-eduReq').text(profileXML.attr("eduReqFormatted")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-jobAvail').text(profileXML.attr("jobAvail")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-loc').html(profileXML.children("location").attr("address")).appendTo(tr);
+		  
+		  $('<div></div>')
+		  .addClass('jsBtn rmFavJob')
+		  .click(function(){
+			  delete Candidate(strSessionKey, profileXML.attr('searcherId'));
+		  })
+		  .appendTo(tr);
+		  
+		 // $.fn.DynaSmartTab.searchJSTool(tr, profileSearcherXML.attr("accountID"));
+		  tr.appendTo(tbody);
+		});
+		 
+		 $("tr:odd", tbody).addClass("oddRow");
+		 //$("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+	}
+}	
+
+/************************************************************************************************************
+ * 				saveFavouriteJobAd
+ * @param outputDiv
+ ************************************************************************************************************/	
+
+function deleteCandidate(sessKey, searcherId){
+	
+	request = new Request;
+	request.addAction("deleteCandidate");
+	request.addParam("sessionKey", sessKey);
+	request.addParam("jobAdId", searcherId);
+	
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+
+	
+}
+
 /**************
  * 
  *DEPRECATED:
