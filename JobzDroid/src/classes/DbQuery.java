@@ -71,6 +71,27 @@ public class DbQuery{
 		return qAcctTb;
 	}
 	
+public StringBuffer sessAdminAuthQuery(String sKey, String[]getArr){
+		
+		StringBuffer qSessTb =new StringBuffer();
+		StringBuffer qAcctTb =new StringBuffer();
+		StringBuffer infoToGet =new StringBuffer();
+		for(String str:getArr){
+			infoToGet.append(str+ COMA);
+		}
+		infoToGet.delete(infoToGet.length()-COMA.length(), infoToGet.length());
+		qSessTb.append(PRNTHS);
+		qAcctTb.append(PRNTHS); //append brackets 
+		
+		qSessTb.insert(1, SELECT + "idAccount" + FROM + "tableSession" + 
+						  WHERE +"sessionKey" + EQ + SQUO +sKey + SQUO);
+		qAcctTb.insert(1, SELECT + infoToGet + FROM + "tableAccount " + 
+				  		  WHERE +"idAccount" + EQ);
+		qAcctTb.insert(qAcctTb.length()-2, qSessTb + AND + "type" + IN + "('superAdmin', 'admin')" +
+										   AND + "status" +EQ +"'active'");
+		return qAcctTb;
+	}
+	
 	public  StringBuffer [] buidlSelQuery( String tableName, String[]colToGet, Map<String, Object>conditionMap ){
 		StringBuffer[]outputQueries =new StringBuffer[2];
 		StringBuffer stmt1 =new StringBuffer();

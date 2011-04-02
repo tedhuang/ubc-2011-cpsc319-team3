@@ -176,68 +176,75 @@ public class ServletAdmin extends HttpServlet {
 	/*
 	 * Sets the status of the job ad to open and changes the isApproved value to true
 	 */
-	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		/**
-		 * TODO: Implement check session key
-		 */
+	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{	
 		
-		
+		String feedback="adminDeny failed";
+		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
-		
+
+		StringBuffer qBuf = DBQ.sessAdminAuthQuery(sessKey, new String[]{"idAccount"});
+				
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		
 		boolean isSuccessful = false;
-		String message = "adminApprove failed";
 		
-		try {
-			stmt = conn.createStatement();
-			
-			String query = 
-				"UPDATE tableJobAd " + 
-				"SET isApproved='" + 1 +"', " +
-					"status='" + "open" + "' " +
-				"WHERE idJobAd='" + jobAdId + "'";
-			
-			//Debug print
-			System.out.println("Update Query: " + query);
-			
-			if( stmt.executeUpdate(query) != 1 ){ //Error Check
-				System.out.println("Error: Update Query Failed");
-			}
-			else{
-				isSuccessful = true;
-				System.out.println("adminApprove worked!");
-				message = "adminApprove worked!";
+		try {			
+			String query = qBuf.toString();
+			System.out.println("Processin Query: " + query);
+			ResultSet rs = conn.createStatement().executeQuery(query);
+			while (rs.next()){
+				qBuf.setLength(0);
+				qBuf.append(DBQ.SELECT + "*" + 
+							DBQ.FROM + "tableJobAd tbAd" + 
+							DBQ.WHERE + "idJobAd" + DBQ.EQ + jobAdId);
+				query=qBuf.toString();
+				
+				ResultSet adRs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+					.executeQuery(query);
+				
+				
+				if(adRs.next()){
+					System.out.println("JobAd: ID-" + adRs.getInt("idJobAd") +"was denied by " + 
+			   			"Use: ID-" + adRs.getInt("idAccount") +" with sessionKey-" + sessKey +
+			   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+					adRs.updateString("status", "open");
+					adRs.updateInt("isApproved", 1);
+					adRs.updateRow();
+					
+					feedback="The Ad was approved!";
+					isSuccessful = true;
+					
+					System.out.println("adminApprove worked!");
 
-				// get new job ad info and update job ad RSS feed
-				query = "SELECT * FROM tableJobAd WHERE idJobAd = '" + jobAdId +"';";
-				stmt.executeQuery(query);
-				ResultSet rs = stmt.getResultSet();
-				if(rs.first()){
-					String title = rs.getString("title");
-					String desc = rs.getString("description");
-					long datePosted = rs.getLong("datePosted");
-					String tags = rs.getString("tags");
-					String[] feedCategory = null;					
-					if(tags != null){
-						feedCategory = tags.split(",");
-						// remove spaces before and after each category
-						for(int i = 0; i < feedCategory.length; i++)
-							feedCategory[i] = feedCategory[i].trim();
-					}
-					try {
-						SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
-						//TODO add link
-						SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(datePosted),
-								desc, null, feedCategory);
-						RSSManager.addEntryToFeed(feed, entry, 0);
-						
-						String jobAdRSSPath = getServletContext().getRealPath("jobAd.xml");
-						RSSManager.writeFeedToFile(feed, jobAdRSSPath);
-					} 
-					catch (Exception e) {
-						Utility.logError("Failed to post RSS entry '" + title + "' to Job Ad RSS: " + e.getMessage());
+				// Update job ad RSS feed
+					query = "SELECT * FROM tableJobAd WHERE idJobAd = '" + jobAdId +"';";
+					ResultSet newRs = conn.createStatement().executeQuery(query);
+					if(rs.first()){
+						String title = newRs.getString("title");
+						String desc = newRs.getString("description");
+						long datePosted = newRs.getLong("datePosted");
+						String tags = newRs.getString("tags");
+						String[] feedCategory = null;					
+						if(tags != null){
+							feedCategory = tags.split(",");
+							// remove spaces before and after each category
+							for(int i = 0; i < feedCategory.length; i++)
+								feedCategory[i] = feedCategory[i].trim();
+						}
+						try {
+							SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
+							//TODO add link
+							SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(datePosted),
+									desc, null, feedCategory);
+							RSSManager.addEntryToFeed(feed, entry, 0);
+							
+							String jobAdRSSPath = getServletContext().getRealPath("jobAd.xml");
+							RSSManager.writeFeedToFile(feed, jobAdRSSPath);
+						} 
+						catch (Exception e) {
+							Utility.logError("Failed to post RSS entry '" + title + "' to Job Ad RSS: " + e.getMessage());
+						}
 					}
 				}
 			}
@@ -267,47 +274,52 @@ public class ServletAdmin extends HttpServlet {
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("\t<message>" + feedback + "</message>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
 	}	
 	
+	
+	
 	/*
 	 * Sets the status of the job ad to draft and changes the isApproved value to false
 	 */
 	private void adminDeny(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		/**
-		 * TODO: Implement check session key
-		 */
 		
+		String feedback="adminDeny failed";
+		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
-		
+
+		StringBuffer qBuf = DBQ.sessAdminAuthQuery(sessKey, new String[]{"idAccount"});
+				
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		
 		boolean isSuccessful = false;
-		String message = "adminRevertApproval failed";
 		
-		try {
-			stmt = conn.createStatement();
-			
-			String query = 
-				"UPDATE tableJobAd " + 
-				"SET isApproved='" + 0 +"', " +
-					"status='" + "inactive" + "' " +
-				"WHERE idJobAd='" + jobAdId + "'";
-			
-			//Debug print
-			System.out.println("Update Query: " + query);
-			
-			if( stmt.executeUpdate(query) != 1 ){ //Error Check
-				System.out.println("Error: Update Query Failed");
-			}
-			else{
-				isSuccessful = true;
-				message = "adminDeny worked!";
-				System.out.println("adminDeny worked!");
+		try {			
+			String query = qBuf.toString();
+			System.out.println("Processin Query: " + query);
+			ResultSet rs = conn.createStatement().executeQuery(query);
+			while (rs.next()){
+				qBuf.setLength(0);
+				qBuf.append(DBQ.SELECT + "*" + 
+							DBQ.FROM + "tableJobAd tbAd" + 
+							DBQ.WHERE + "idJobAd" + DBQ.EQ + jobAdId);
+				query=qBuf.toString();
+				
+				ResultSet adRs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+				   .executeQuery(query);
+				if(adRs.next()){
+					System.out.println("JobAd: ID-" + adRs.getInt("idJobAd") +"was denied by " + 
+			   			"Use: ID-" + adRs.getInt("idAccount") +" with sessionKey-" + sessKey +
+			   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+					adRs.updateString("status", "draft");
+					adRs.updateInt("isApproved", 0);
+					adRs.updateRow();
+					feedback="The Ad was denied!";
+				}
 			}
 		}
 		catch (SQLException e) {
@@ -335,7 +347,7 @@ public class ServletAdmin extends HttpServlet {
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
+		XMLResponse.append("\t<message>" + feedback + "</message>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
@@ -344,38 +356,39 @@ public class ServletAdmin extends HttpServlet {
 	}
 	
 	
-	
+/*
+ * Method used by the admin or super admin to permanently delete job ads
+ */
 private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
-
 		String feedback="adminDeleteJobAd failed";
 		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 
-		StringBuffer qBuf = DBQ.sessAuthQuery(sessKey, new String[]{"idAccount"}, "admin");
-		
-		qBuf.insert(0, DBQ.SELECT + "tbAd.idJobAd, tbAd.idAccount" + 
-				DBQ.FROM + "tableJobAd tbAd" + DBQ.WHERE + "idAccount" + DBQ.EQ);
-		qBuf.append(DBQ.AND +"idJobAd" + DBQ.EQ + jobAdId);
-		
+		StringBuffer qBuf = DBQ.sessAdminAuthQuery(sessKey, new String[]{"idAccount"});
+				
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 		
 		boolean isSuccessful = false;
 		
 		try {			
-			//Delete designed job Ad
 			String query = qBuf.toString();
 			System.out.println("Processin Query: " + query);
-			ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
-							   .executeQuery(query);
-			
+			ResultSet rs = conn.createStatement().executeQuery(query);
 			while (rs.next()){
-				System.out.println("JobAd: ID-" + rs.getInt("idJobAd") +"was deleted by " + 
-						   			"Use: ID-" + rs.getInt("idAccount") +" with sessionKey-" + sessKey +
-						   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
-				feedback="The Ad was deleted!";
-				rs.deleteRow();
+				qBuf.setLength(0);
+				qBuf.append(DBQ.SELECT + "*" + 
+							DBQ.FROM + "tableJobAd tbAd" + 
+							DBQ.WHERE + "idJobAd" + DBQ.EQ + jobAdId);
+				query=qBuf.toString();
+				
+				ResultSet adRs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)
+				   .executeQuery(query);
+				if(adRs.next()){
+					adRs.deleteRow(); //Deletes the Job Ad Entry from the database					
+					feedback="The Ad was deleted!";
+				}
 			}
 		}
 		catch (SQLException e) {
