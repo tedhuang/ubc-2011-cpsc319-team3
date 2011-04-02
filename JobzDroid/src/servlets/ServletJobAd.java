@@ -19,6 +19,7 @@ import classes.Location;
 import classes.Session;
 import classes.Utility;
 
+import managers.AccountManager;
 import managers.DBManager;
 import managers.RSSManager;
 import managers.SystemManager;
@@ -31,6 +32,7 @@ public class ServletJobAd extends HttpServlet {
        
 	private DBManager dbManager;
 	private DBColName DbDict =	ServletInitializer.retDbColName();
+	private AccountManager accManager;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -38,7 +40,7 @@ public class ServletJobAd extends HttpServlet {
     public ServletJobAd() {
         super();
         dbManager = DBManager.getInstance();
-        // TODO Auto-generated constructor stub
+        accManager = new AccountManager();
     }
     
     // Enumerates the action parameter
@@ -418,7 +420,7 @@ public class ServletJobAd extends HttpServlet {
 		
 		//Extract ownerID from session key
 		String sessionKey = request.getParameter("sessionKey");
-		Session session = dbManager.getSessionByKey(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		int ownerId = session.getIdAccount();
 
 		Connection conn = dbManager.getConnection();	
@@ -1019,7 +1021,7 @@ public class ServletJobAd extends HttpServlet {
 		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
 		
 		//Checks the user's privilege
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int acctId;
 		
 		earlyExit: {
@@ -1853,7 +1855,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
 		
 		String msg = "";
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int accountId = -1;
 		int jobAdId = -1;
 		long dateAdded = -1;
@@ -1965,7 +1967,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
 		ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 		
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int accountId = userSession.getIdAccount();
 		
 		
@@ -2052,7 +2054,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  ***********************************************************************************************/	
 	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
 		
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int accountId = userSession.getIdAccount();
 		
 		String jobAdIdInString = request.getParameter("jobAdId");
@@ -2117,14 +2119,13 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
 		
 		//Checks the user's privilege
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int acctId;
 		
 		earlyExit: {
 			System.out.println("Entered user sessionKey");
 				
 			if ( userSession == null ) {
-				//TODO session invalid, handle error
 				System.out.println("session is null, Failed to authenticate user session");
 				msg = "Have You Logged in? Please Try Re-login";
 				break earlyExit;

@@ -31,6 +31,7 @@ import classes.Utility;
 
 import servlets.ServletDocument;
 
+import managers.AccountManager;
 import managers.DBManager;
 import managers.EmailManager;
 
@@ -39,11 +40,12 @@ public class ServletProfile extends HttpServlet{
 	private DBManager dbManager;
 	private DBColName DbDict =	ServletInitializer.retDbColName();
 	private DbQuery DBQ =new DbQuery();
-	
+	private AccountManager accManager;	
 
 	public ServletProfile() {
         super();
 		dbManager = DBManager.getInstance();
+		accManager = new AccountManager();
     }
 	
 	private enum EnumAction
@@ -136,7 +138,7 @@ public class ServletProfile extends HttpServlet{
 		String sessionKey = request.getParameter("sessionKey");
 		
 		int accountID = Integer.parseInt(request.getParameter("idAccount"));
-		Session currSession = dbManager.getSessionByKey(sessionKey );
+		Session currSession = accManager.getSessionByKey(sessionKey );
 		
 		//Initialize Return statments
 		boolean isSuccessful = false;
@@ -474,7 +476,7 @@ public class ServletProfile extends HttpServlet{
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
 		String sessionKey = request.getParameter("sessionKey");
-		Session currSession = dbManager.getSessionByKey( sessionKey );
+		Session currSession = accManager.getSessionByKey( sessionKey );
 		
 		//Initialize Return statements
 		boolean isSuccessful = false;
@@ -687,7 +689,7 @@ public class ServletProfile extends HttpServlet{
 								throws ServletException, IOException{
 		
 		String sessionKey 		= request.getParameter("sessionKey");
-		Session currSession 	= dbManager.getSessionByKey( sessionKey );
+		Session currSession 	= accManager.getSessionByKey( sessionKey );
 		
 		int accountID 			= currSession.getIdAccount();
 		String accountType 		= currSession.getAccountType();
@@ -1455,7 +1457,7 @@ public class ServletProfile extends HttpServlet{
 		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
 			
 		String msg = "";
-		Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 		int accountId = -1;
 		int searcherId = -1;
 		long dateAdded = -1;
@@ -1567,7 +1569,7 @@ public class ServletProfile extends HttpServlet{
 		public void listCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
 			ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 			
-			Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+			Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 			int accountId = userSession.getIdAccount();
 			
 			
@@ -1656,7 +1658,7 @@ public class ServletProfile extends HttpServlet{
 	 ***********************************************************************************************/	
 		public void deleteCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
 			
-			Session userSession = dbManager.getSessionByKey(request.getParameter("sessionKey"));
+			Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 			int accountId = userSession.getIdAccount();
 			
 			String searcherIdInString = request.getParameter("idSearcher");

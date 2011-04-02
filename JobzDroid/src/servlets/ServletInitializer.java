@@ -21,7 +21,7 @@ public class ServletInitializer extends HttpServlet {
 	Timer timer;
 	Timer dbWorldTimer;
 	dbworldintegration dbworldintegration;
-    protected static DBColName DbDict =	new DBColName(); //shared DbDict, can only init for once
+    protected static DBColName DbDict; //shared DbDict, can only init for once
        
     public ServletInitializer() {
         super();
@@ -35,11 +35,12 @@ public class ServletInitializer extends HttpServlet {
 		// load configuration file
 		String configPath = getServletContext().getRealPath("/WEB-INF/config.ini");
 		SystemManager.loadConfigFile(configPath);
- 
+
         systemManager = SystemManager.getInstance();
         dbworldintegration = new dbworldintegration();
         dbWorldTimer = new Timer();
         timer = new Timer();
+        DbDict =	new DBColName(); 
 		
 		// schedule automated tasks
 	    class AutomatedTasks extends TimerTask {
