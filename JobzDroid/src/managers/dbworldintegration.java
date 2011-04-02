@@ -42,17 +42,6 @@ import servlets.ServletInitializer;
 import sun.net.www.URLConnection;
 
 
-//ToDo:
-//(1.)	Program runs every time server is running. <--Not done
-//(2.)	Check inbox every time period (1hr?) <--Not Done
-//(3a.)	Check message subject heading-is this from DBWorld? <-- Done
-//(3b.) Check thru headers-is this of Job Annoucement? <-- Done
-//(4.)	If so, create Job Ad with message and update to database. <-- Done
-//(5.)	Delete the email <-- Done
-//(6.)	Check next email  <-- Done
-
-//(7.) Test if every sequence works <-- Not Done-need to test (1.) and (2.)
-
 public class dbworldintegration {
 	private DBManager dbManager;	
 	private String user;
@@ -80,6 +69,8 @@ public class dbworldintegration {
  * 
  * @param: username - The email account to connect to 
  * @param: password - The password of the email account
+ * @param: jobAdRSSPath - The RSS path that will link any created Job Ad to RSS feed. Passed as a parameter 
+ * when calling the function to create Job Ad.
  * 
  */
 	public void emailParse(String username,String password, String jobAdRSSPath) {
@@ -125,18 +116,16 @@ public class dbworldintegration {
 				
 	            Enumeration allHeaders = msg[i].getAllHeaders();
 	            int num = 0;
+	            
+	            //Print out all email headers in email msg for debugging and diagnostics
 	            while (allHeaders.hasMoreElements()) {
 	                Header h = (Header) allHeaders.nextElement();
-	                if(h.getValue().contains("conference/announcement"))
-	                	System.out.println("conference!");
 	                System.out.println(num+ h.getName() + ": " + h.getValue());
 	                num++;
 	            }
+	            
 				// if email is from DBWorld mailing list, and isJobAnn:email posting is a job announcement, 
 				// then take information from email and create new JobzDroid Job Ad. with it.
-				
-				// testCode: set conditional statement to always true so that all email are read (including
-				// test messages)
 				if(getReplyTo.contentEquals("dbworld_owner@yahoo.com"))
 				{	
 					boolean isJobAnn= false;
@@ -175,8 +164,6 @@ public class dbworldintegration {
 							millisExpiryDate = cal.getTimeInMillis();
 						}
 						
-						/**String location = getLocation(headers); //location header**/
-						
 						Enumeration wpHeaders = msg[i].getAllHeaders(); //web-page header (to store as contact info.)
 						String webPage = getWebPage(wpHeaders); 
 												
@@ -187,6 +174,10 @@ public class dbworldintegration {
 							IOUtils.copy(stream, writer);
 							message = writer.toString();
 						}
+						
+						//Status of the newly created Job Advertisement.
+						//By default, all Job Advertisements from DBWorld are set to "open".
+						String status = "open";
 						
 						//Test code-print message headers and body if success
 						System.out.println("From:" + from);
@@ -199,15 +190,9 @@ public class dbworldintegration {
 						System.out.println();
 						System.out.println("-----------------------------------------------------");
 						
-						/**
-						//Test Code: ask user if they want to create Job Ad with current email message.
-						System.out.println("Do you want to create a Job Ad. with this message? Enter 'Y' - " + subject);
-						String prompt = reader.readLine();
-						if("Y".equalsIgnoreCase(prompt)){
-						**/
-							createJobAdvertisementWithEmail(stmt, subject, message, webPage, 
-							millisStartDate, millisExpiryDate, millisSentDate, jobAdRSSPath);
-						//}
+						//create Job Advertisement with current email msg
+						createJobAdvertisementWithEmail(stmt, subject, message, webPage, 
+						millisStartDate, millisExpiryDate, millisSentDate, jobAdRSSPath, status);
 						
 					}/**end of inner if() block **/						
 					else
@@ -219,18 +204,8 @@ public class dbworldintegration {
 					
 				
 				//Delete the read email message after. 
-				/**
-				//Test code-prompt user if they want to delete current email message.
-				System.out.println("Do you want to delete the message? Enter 'Y' -- " + msg[i].getSubject());
-				String line = reader.readLine();
-				if("Y".equalsIgnoreCase(line)){
-				**/
-					msg[i].setFlag(Flags.Flag.DELETED, true);
-					System.out.println("Message Deleted\n");
-				/**}
-				else
-					System.out.println("Message kept-proceeding to next message\n");
-				**/
+				msg[i].setFlag(Flags.Flag.DELETED, true);
+				System.out.println("Message Deleted\n");
 					
 				//If end of email list, notify user.
 				if(i==0)
@@ -425,10 +400,12 @@ public class dbworldintegration {
  * @param: millisStartDate - Starting date in millisecs. of event given in email message (denoted as X-DBWorld-Start-Date as heading name)
  * @param: millisExpiryDate - Expiry date in millisecs. of event given in email message (denoted as X-DBWorld-Deadline as heading name)
  * @param: millisSentDate - Date the email was sent in milliseconds. Also used to compute JobAdID	
+ * @param: jobAdRSSPath - RSS path to link Job Advertisement to JobzDroid Job Ad RSS feed
+ * @param: status - Status that the user wishes to give to the newly created Job Advertisement
  * 
  */
 	protected void createJobAdvertisementWithEmail(Statement stmt, String subject, String message, String webPage, 
-			long millisStartDate, long millisExpiryDate, long millisSentDate, String jobAdRSSPath){
+			long millisStartDate, long millisExpiryDate, long millisSentDate, String jobAdRSSPath, String status){
 		try{
 			int jobAdId = -1;
 			String jobAdvertisementTitle = subject;
@@ -452,17 +429,17 @@ public class dbworldintegration {
 				("INSERT INTO tableJobAd(title, description, contactInfo, expiryDate, dateStarting, datePosted, status) "
 						+ "VALUES " + "('" + jobAdvertisementTitle  + "','" 
 						+ jobDescription + "','" + jobContactInfo + "','" 
-						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "','open')"); 
+						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "','" + status + "')"); 
 		
-			// If successful, 1 row should be inserted
 			System.out.println("New Job Ad query: " + query);
 
+			// If successful, 1 row should be inserted
 			int rowsInserted = stmt.executeUpdate(query);
-			
 			if(rowsInserted != 1){
 				System.out.println("New JobAd Creation failed");
 				Utility.logError("New JobAd insert in DB failed");
 			}
+			
 			// update job ad RSS
 			else{
 				try {						
