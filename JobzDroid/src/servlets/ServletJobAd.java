@@ -2266,6 +2266,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 				ResultSet result = stmt.getResultSet();
 				
 				while(result.next()){
+//                jobAd.tags 				= result.getString("tags");
 					//d.tags = result.getString("tags");
 
 				}//END OF WHILE LOOP

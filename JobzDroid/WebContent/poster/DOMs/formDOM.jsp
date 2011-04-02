@@ -73,6 +73,20 @@
 				</label>
 			</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
+			   <div id="fields">
+			   	  
+				  <div id="mapPanel">
+				 	<div id="theMap">
+				 		<label>Address: </label><input id="addrBar" class="map" type="text" />
+					    <div id="map_canvas" ></div><br/>
+					    <label>latitude: </label><input id="latitude" class="map"type="text"/><br/>
+					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
+					    <button id="rmPtr">Clear Map</button>
+				  	</div>
+				  	<span>You Can Save Up To 3 Job Locations</span>
+				  	<ul id="locList"></ul>
+				 </div>
+				</div><!-- ENDOF MAP -->
 			   <div id="desc-div" class="descForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label> 
@@ -181,7 +195,7 @@
 						<li><a class="jsBtn del" >Delete </a></li>
 					</ul>
 			</div>
-			 <div id="adDetailTable" class="resultTableDiv noBorder">
+			 <div id="adDetailTable" class="resultTableDiv noBorder fullTab">
 			 	<span class="feedback"></span>
 			 	<h2 id="adDetailHeading" class="welcome heading"></h2>
 				<table>
@@ -271,7 +285,7 @@
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
 <div id="jsDetailFrame" class="subFrame">
-		<div id="jsDetailTable" class="resultTableDiv noBorder">
+		<div id="jsDetailTable" class="resultTableDiv noBorder fullTab">
 		 	<span id="detailFB"></span>
 		 	<h2 class="jsDetailHeading" class="welcome"></h2>
 			<table>

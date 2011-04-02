@@ -255,32 +255,39 @@ function getSuggestionForSearcher(outputDiv){
 	request = new Request;
 	request.addAction("getSuggestions");
 	request.addParam("sessionKey", strSessionKey);
-	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	}
-	else{// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
 	
-	xmlhttp.onreadystatechange=function(){
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  
-		  buildSuggList("jobAd", outputDiv);
+	var xhr = createXHR(); //Now created xhr used a function
+	function processResult(){
+		if (xhr.readyState == 4) {
+			try {
+				  if (xhr.status == 200) {
+					  buildSuggList("jobAd", outputDiv, xhr.responseXML);
+				  }
+                else{ 
+                	 console.log("Status error");
+                }
+			} 
+			catch (e){
+			}
 	    }
-	  else{
-		  
-	  }
-//	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
-	};	  
-}
+//		  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	}//eof processResult
+	
+	if(xhr){
+		try {
+			  xhr.open("POST", "../ServletJobAd", true);
+			  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			  xhr.onreadystatechange = processResult; //bind to callBack to have threaded ajax calls
+			  xhr.send(request.toString());
+		} catch (e) {
+			             //Handle error
+		  }
+	}	  
+}//eof getSugg
 
-function buildSuggList(xmlTag, outputDiv){
+function buildSuggList(xmlTag, outputDiv, xhrResponse){
 	var list = $("#"+outputDiv);
-	var xmlObj = $(xmlTag,xmlhttp.responseXML);
+	var xmlObj = $(xmlTag,xhrResponse);
 	if(xmlObj.length==0){//if no results
 //		$("#feedback").html("<h2 class='error'>No Results Found. Profile.</h2>");
 	}

@@ -15,27 +15,29 @@ public class DbQuery{
 	public final String IN 				= " IN ";		//CAUTION: SPACE IMPORTANT
 	public final String OR				= " OR "; 		//CAUTION: SPACE IMPORTANT
 	public final String ON				= " ON ";		//CAUTION: SPACE IMPORTANT
-	public final String AND 				= " AND ";		//CAUTION: SPACE IMPORTANT
+	public final String AND 			= " AND ";		//CAUTION: SPACE IMPORTANT
 	public final String SET				= " SET ";		//CAUTION: SPACE IMPORTANT
-	public final String LIKE				= " LIKE "; 	//CAUTION: SPACE IMPORTANT
+	public final String LIKE			= " LIKE "; 	//CAUTION: SPACE IMPORTANT
 	public final String REGEXP		 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
 	public final String WHERE			= " WHERE ";	//CAUTION: SPACE IMPORTANT
 	public final String ORDERBY			= " ORDER BY "; //CAUTION: SPACE IMPORTANT
 	public final String LIMIT			= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
-	public final String DESC				= " DESC "; 		//CAUTION: SPACE IMPORTANT
-	public final String INTO				= " INTO "; 		//CAUTION: SPACE IMPORTANT
-	public final String FROM				= " FROM "; 		//CAUTION: SPACE IMPORTANT
+	public final String DESC			= " DESC "; 		//CAUTION: SPACE IMPORTANT
+	public final String INTO			= " INTO "; 		//CAUTION: SPACE IMPORTANT
+	public final String FROM			= " FROM "; 		//CAUTION: SPACE IMPORTANT
 	public final String VALUES			= " VALUES "; 	//CAUTION: SPACE IMPORTANT
 	
-	public final String COMA				= ", ";		//CAUTION: SPACE IMPORTANT
+	public final String COMA			= ", ";		//CAUTION: SPACE IMPORTANT
 	public final String PRNTHS			= "() ";	//CAUTION: SPACE IMPORTANT, insert-pos:1
 //	public final String RPRNTHS			= ") ";
-	public final String SQUO				= "'";
+	public final String SQUO			= "'";
 	public final String EQ				= "=";
-	public final String GRTR				= ">";
-	public final String SMLR				= "<";
-	public final StringBuffer wordRegExBuffer = new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
+	public final String GRTR			= ">";
+	public final String SMLR			= "<";
+	public final StringBuffer wordRegExBuffer 	 =  new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
 	public final StringBuffer SQ				 =  new StringBuffer("'' ");//CAUTION: SPACE IMPORTANT, insert-pos:1
+	public final StringBuffer CDATA              =  new StringBuffer("<![CDATA[]]>"); //insert-pos:9
+	public final StringBuffer BRKT               =  new StringBuffer("()"); //insert-pos:1
 	
 	public DbQuery(){
 		
