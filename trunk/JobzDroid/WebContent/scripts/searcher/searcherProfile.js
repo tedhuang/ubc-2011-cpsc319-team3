@@ -244,4 +244,34 @@ function deleteSearcherFile(filename) {
 	  };
 }
 
+function profileSummary(outputDiv){
+	var strSessionKey = $("#sessionKey").val();
+	
+	request = new Request;
+	request.addAction("smrSearcherProfile");
+	request.addSessionKey(strSessionKey);
+
+	var xmlHttpReq;
+	if (window.XMLHttpRequest)
+	  xmlhttp = new XMLHttpRequest();
+	else
+	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	
+	//send the parameters to the servlet with POST
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange = function()
+	  {
+	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+	    {
+		   var result = $("profileSmr",xmlhttp.responseXML);
+		  $("#"+outputDiv).html('<h2 class="welcome">'+ result.text() +'</h2>');
+	    }
+	  else if(xmlhttp.status!=200){
+		  console.log("server down...");
+	  }
+	  };	
+}
 
