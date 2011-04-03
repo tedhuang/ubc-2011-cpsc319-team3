@@ -69,6 +69,11 @@ public class ServletDocument extends HttpServlet {
 		}
 		else {
 			String action = request.getParameter("action");
+			
+			String sessionKey = request.getParameter("sessionKey");
+			sessionKey = Utility.checkInputFormat(sessionKey);
+			Session session = accManager.getSessionByKey(sessionKey);
+			
 			// throw error if action is invalid
 			try{
 				EnumAction.valueOf(action);
@@ -80,7 +85,8 @@ public class ServletDocument extends HttpServlet {
 			switch( EnumAction.valueOf(action) ){
 				// account registration
 				case deleteDocument:
-					deleteDocument(request, response);
+					if(session.checkPrivilege( response, "searcher", "poster" ) )
+						deleteDocument(request, response, session);
 					break;
 			}
 		}
@@ -137,7 +143,7 @@ public class ServletDocument extends HttpServlet {
 //			    }
 			    // fetch the hidden sessionkey
 			    if(name.equals("sessionKey")) {
-			    	sessionKey = value;
+			    	sessionKey = Utility.checkInputFormat(value);
 			    }
 			    
 			    InputStream uploadedStream = item.getInputStream();
@@ -156,16 +162,10 @@ public class ServletDocument extends HttpServlet {
 		        boolean isInMemory = item.isInMemory();
 		        long sizeInBytes = item.getSize();
 		        
-		        Session currSession = accManager.getSessionByKey( sessionKey );
+		        Session session = accManager.getSessionByKey( sessionKey );
 		        
-		        if ( currSession == null ) {
-		        	message = "ServletDocument: expired or invalid session";
-		        	break earlyExit;
-		        }
-		        
-		        if ( currSession.checkPrivilege("searcher")  == false) {
-		        	message = "ServletDocument: invalid user type, user does not have the privilege";
-		        	break earlyExit;
+		        if( session.checkPrivilege(response, "searcher") == false ) {
+		        	return;
 		        }
 		        
 		        // early exit if the filename is valid
@@ -184,14 +184,14 @@ public class ServletDocument extends HttpServlet {
 		        }
 		        
 		        //check user directory exists
-		        File userDirectory = getUserDirectory( currSession.getIdAccount() );
+		        File userDirectory = getUserDirectory( session.getIdAccount() );
 		        if ( userDirectory == null ) {
 		        	message = "ServletDocument: System cannot create new user directory";
 		        	break earlyExit;
 		        }
 		        
 		        //check file directory size
-		        long userDirectorySize = getUserDirectorySize( currSession.getIdAccount() );
+		        long userDirectorySize = getUserDirectorySize( session.getIdAccount() );
 		        
 		        if( userDirectorySize != -1 ) {
 		        	// check the user directory size
@@ -242,43 +242,33 @@ public class ServletDocument extends HttpServlet {
 	}
 	
 	
-	private void deleteDocument(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void deleteDocument(HttpServletRequest request, HttpServletResponse response, Session session) throws ServletException, IOException {
 
 		String message = "ServletDocument: deleteDocument() did not work as intended";
 		
-		String sessionKey = request.getParameter("sessionKey");
 		String fileName = request.getParameter("fileName");
 		
-		Session currSession = accManager.getSessionByKey(sessionKey);
-		
 		boolean success = false;
-		earlyExit: {
+
+		
+		File userDirectory = getUserDirectory( session.getIdAccount() );
+		File fileToBeDeleted = new File( userDirectory, fileName );
+		
+		if( fileToBeDeleted.exists() ) {
+			success = fileToBeDeleted.delete();
 			
-			if( currSession == null ) {
-				message = "ServletDocument: session invalid or expired";
-				break earlyExit;
-			}
-			
-			File userDirectory = getUserDirectory( currSession.getIdAccount() );
-			File fileToBeDeleted = new File( userDirectory, fileName );
-			
-			if( fileToBeDeleted.exists() ) {
-				success = fileToBeDeleted.delete();
-				
-				if( success ) {
-					message = "ServletDocument: deleted " + fileName + " from system";
-				}
-				else {
-					message = "ServletDocument: failed to delete " + fileName + " from system";
-				}
-				
+			if( success ) {
+				message = "ServletDocument: deleted " + fileName + " from system";
 			}
 			else {
-				message = "ServletDocument: " + fileName + " does not exist on system";
+				message = "ServletDocument: failed to delete " + fileName + " from system";
 			}
 			
+		}
+		else {
+			message = "ServletDocument: " + fileName + " does not exist on system";
+		}
 
-		}//earlyExit:
 		System.out.println(message);
 		
 		StringBuffer XMLResponse = new StringBuffer();	

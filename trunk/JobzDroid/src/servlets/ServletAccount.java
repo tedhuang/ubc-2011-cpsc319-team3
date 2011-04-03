@@ -73,6 +73,7 @@ public class ServletAccount extends HttpServlet {
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String action = request.getParameter("action");
+		
 		// throw error if action is invalid
 		try{
 			EnumAction.valueOf(action);
@@ -80,6 +81,10 @@ public class ServletAccount extends HttpServlet {
 		catch(Exception e){
 			throw new ServletException("Invalid account servlet action.");
 		}
+		
+		String sessionKey = request.getParameter("sessionKey");
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
 		
 		switch( EnumAction.valueOf(action) ){
 			// account registration
@@ -92,7 +97,8 @@ public class ServletAccount extends HttpServlet {
 				break;
 			// request for a primary email change
 			case requestEmailChange:
-				requestEmailChangeHandler(request, response);
+				if(session.checkPrivilege( response, "searcher", "poster") )
+					requestEmailChangeHandler(request, response, session);
 				break;
 			//request for a secondary email change
 			case requestSecondaryEmailChange:
@@ -121,9 +127,11 @@ public class ServletAccount extends HttpServlet {
 				logoutReqTaker(request, response);
 				break;
 			case requestPasswordChange:
-				requestChangePasswordHandler(request,response);
+				if(session.checkPrivilege( response, "searcher", "poster", "admin", "superAdmin") )
+						requestChangePasswordHandler(request,response, session);
 				break;
 		}
+		
 	}
 	
 	/***
@@ -352,11 +360,11 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Handles primary email change requests.
 	 */
-	private void requestEmailChangeHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void requestEmailChangeHandler(HttpServletRequest request, HttpServletResponse response, Session session) throws ServletException, IOException{
 		
-		String sessionKey = request.getParameter("sessionKey");
+
 		String newEmail = request.getParameter("newEmail");		
-		System.out.println("Inside ServletAccount: requestEmailChangeHandler - New Email: " + newEmail + ", Session Key: " + sessionKey);
+		System.out.println("Inside ServletAccount: requestEmailChangeHandler - New Email: " + newEmail + ", Session Key: " + session.getKey());
 		
 		UUID uuid = UUID.randomUUID();; // verification number
 		boolean result = false;
@@ -366,7 +374,7 @@ public class ServletAccount extends HttpServlet {
 		boolean isUnique = !accManager.checkEmailExists(newEmail);
 		
 		if(isUnique){
-			boolean requestAdded = accManager.addEmailChangeRequest(sessionKey, newEmail, uuid);			
+			boolean requestAdded = accManager.addEmailChangeRequest(session.getIdAccount(), newEmail, uuid);			
 			if(requestAdded){
 				//send verification email to new email
 				emailManager.sendPrimaryEmailChangeVerificationEmail(newEmail, uuid);
@@ -631,7 +639,7 @@ public class ServletAccount extends HttpServlet {
 	/***
 	 * Handles user change password requests.
 	 */
-	private void requestChangePasswordHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	private void requestChangePasswordHandler(HttpServletRequest request, HttpServletResponse response, Session session) throws ServletException, IOException{
 		// get request parameters
 		String sessionKey = request.getParameter("sessionKey");
 		String oldPassword = request.getParameter("oldPassword");
@@ -644,33 +652,29 @@ public class ServletAccount extends HttpServlet {
 		sessionKey = Utility.checkInputFormat(sessionKey);
 		oldPassword = Utility.checkInputFormat(oldPassword);
 		newPassword = Utility.checkInputFormat(newPassword);
-		
-		Session session = accManager.getSessionByKey(sessionKey);
-		if( session == null )
+
+		idAccount = session.getIdAccount();
+		Account userAcc = accManager.getAccountFromId(idAccount);
+		if( userAcc == null )
 			message = "Invalid request.";
+		// check old password
+		else if( !Utility.md5(oldPassword).equals(userAcc.getPasswordMd5()) )
+			message = "Incorrect old password.";
+		// validate new password	
+		else if( !Utility.validate(newPassword, SystemManager.pwPattern) )
+			message = "Invalid new password format.";
+		else if( !newPassword.equals(newPasswordRepeat) )
+			message = "New passwords do not match.";
 		else{
-			idAccount = session.getIdAccount();
-			Account userAcc = accManager.getAccountFromId(idAccount);
-			if( userAcc == null )
-				message = "Invalid request.";
-			// check old password
-			else if( !Utility.md5(oldPassword).equals(userAcc.getPasswordMd5()) )
-				message = "Incorrect old password.";
-			// validate new password	
-			else if( !Utility.validate(newPassword, SystemManager.pwPattern) )
-				message = "Invalid new password format.";
-			else if( !newPassword.equals(newPasswordRepeat) )
-				message = "New passwords do not match.";
-			else{
-				boolean updateSuccessful = accManager.changePassword(idAccount, newPassword);
-				if(updateSuccessful){
-					message = "Password change successful!";
-					result = true;
-				}
-				else
-					message = "An error has been encountered during the request.";
+			boolean updateSuccessful = accManager.changePassword(idAccount, newPassword);
+			if(updateSuccessful){
+				message = "Password change successful!";
+				result = true;
 			}
+			else
+				message = "An error has been encountered during the request.";
 		}
+
 		// Write XML containing message and result to response
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
