@@ -14,6 +14,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import classes.DBColName;
+import classes.DbQuery;
 import classes.JobAdvertisement;
 import classes.Location;
 import classes.Session;
@@ -31,9 +32,10 @@ public class ServletJobAd extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private DBManager dbManager;
+	private DbQuery DBQ =new DbQuery();
 	private DBColName DbDict =	ServletInitializer.retDbColName();
 	private AccountManager accManager;
-	
+	private Map<String, String>jobAdDBDict=DbDict.getClsDict("jobAd");
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -56,7 +58,7 @@ public class ServletJobAd extends HttpServlet {
 		getJobAdById,
 		deleteJobAd,
 		getSomeJobAd,
-		getJobAdSuggestions,
+		getSuggestions,
 		
 		saveFavouriteJobAd,
 		listFavouriteJobAd,
@@ -78,6 +80,7 @@ public class ServletJobAd extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		requestProcess(request,response);
 	}
 
@@ -124,8 +127,7 @@ public class ServletJobAd extends HttpServlet {
 				break;
 
 			case deleteJobAd:
-				if(session.checkPrivilege( response, "poster") )
-					deleteJobAd(request, response);
+				deleteJobAd(request, response);
 				break;
 				
 //			case deactivateJobAd:
@@ -137,8 +139,7 @@ public class ServletJobAd extends HttpServlet {
 				searchJobAd(request, response);
 				break;
 			case getJobAdByOwner:
-				if(session.checkPrivilege( response, "poster") )
-					getJobAdByOwner(request, response, session);
+				getJobAdByOwner(request, response);
 				break;
 				
 			case getJobAdById:
@@ -152,9 +153,8 @@ public class ServletJobAd extends HttpServlet {
 			case getSomeJobAd:
 				getSomeJobAd(request, response);
 				break;	
-			case getJobAdSuggestions:
-				if(session.checkPrivilege( response, "poster") )
-					getJobAdSuggestions(request, response, session);
+			case getSuggestions:
+				getSuggestions(request, response);
 				break;				
 		/*****************FAVOURITE AD ACTIONS***********************/		
 				
@@ -164,13 +164,11 @@ public class ServletJobAd extends HttpServlet {
 				break;
 				
 			case listFavouriteJobAd:
-				if(session.checkPrivilege( response, "searcher") )
-					listFavouriteJobAd(request, response, session );
+				listFavouriteJobAd(request, response);
 				break;
 				
 			case deleteFavouriteJobAd:
-				if(session.checkPrivilege( response, "searcher") )
-					deleteFavouriteJobAd(request, response, session);
+				deleteFavouriteJobAd(request, response);
 				break;
 				
 
@@ -300,15 +298,16 @@ public class ServletJobAd extends HttpServlet {
 		
 	
 
-	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException {
+	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		String message = "getJobAdByOwner failed";
 		boolean isSuccessful = false;
-		Map<String, String>jobAdDBDict=DbDict.getClsDict("jobAd");
 		
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 		
 		//Extract ownerID from session key
+		String sessionKey = request.getParameter("sessionKey");
+		Session session = accManager.getSessionByKey(sessionKey);
 		int ownerId = session.getIdAccount();
 
 		Connection conn = dbManager.getConnection();	
@@ -1533,113 +1532,160 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		private mysqlCmd(){
 		}
 	}
-	 private StringBuffer[] buildSuggestionQuery(mysqlCmd qcmd, String[]userInfo, String[]adInfo){
+	 private StringBuffer[] buildSuggestionQuery(boolean initSugg, String[]userInfo, String[]adInfo){
 			
-		 	StringBuffer[] suggQueryArr=new StringBuffer[2];
-			StringBuffer qProfileTb = new StringBuffer();
-			StringBuffer qJobAdTb   = new StringBuffer();
+		 	Map<String, String> colMatchMap = DbDict.getDict("getSuggestions");
+		 	StringBuffer[] suggQueryArr=new StringBuffer[3];
+		 	StringBuffer mostMatched = new StringBuffer(); //for most match ed suggestions
+		 	StringBuffer wildSugg   = new StringBuffer();
+		 	
+			StringBuffer qProfileTb = new StringBuffer(); 
 			StringBuffer uInfoBuf   = new StringBuffer();
 			StringBuffer adInfoBuf  = new StringBuffer();
 			for(String str:userInfo){
-				uInfoBuf.append(str+qcmd.COMA);
+				uInfoBuf.append(str+DBQ.COMA);
 			}
 			for(String str:adInfo){
-				adInfoBuf.append(str+qcmd.COMA);
+				adInfoBuf.append(str+DBQ.COMA);
 			}
 			//remove extra coma
-			uInfoBuf.delete( uInfoBuf.length()-qcmd.COMA.length(), uInfoBuf.length());
-			adInfoBuf.delete(adInfoBuf.length()-qcmd.COMA.length(), adInfoBuf.length());
+			uInfoBuf.delete( uInfoBuf.length()-DBQ.COMA.length(), uInfoBuf.length());
+			adInfoBuf.delete(adInfoBuf.length()-DBQ.COMA.length(), adInfoBuf.length());
 			
-			qProfileTb.append(qcmd.SELECT + uInfoBuf + qcmd.FROM + "tableProfileSearcher " + 
-			  		  qcmd.WHERE +"idAccount" + qcmd.EQ + "?");
+			qProfileTb.append(DBQ.SELECT + uInfoBuf + DBQ.FROM + "tableProfileSearcher " + 
+								DBQ.WHERE +"idAccount" + DBQ.EQ + "?");
 			suggQueryArr[0]=qProfileTb;
 			
-			//prepare for the search on table job ad
-			qJobAdTb.append(qcmd.SELECT + adInfoBuf + qcmd.FROM + "tableJobAd" +  
-							  qcmd.WHERE );
+			//query for most matched suggestions
+			mostMatched.append(DBQ.SELECT + adInfoBuf + DBQ.FROM + "tableJobAd" + DBQ.WHERE );
 			for(String str:userInfo){
-				if(str.equals("educationLevel")){
-					qJobAdTb.append("educationRequired"+qcmd.EQ +"?" +qcmd.OR);
+				if(str.equals("startingDate")){
+					mostMatched.append(colMatchMap.get(str)+DBQ.GRTR +"?" +DBQ.AND);
+				}
+				else if(str.equals("location")){
+					mostMatched.append(colMatchMap.get(str) + DBQ.LIKE + "?" +
+										DBQ.AND + colMatchMap.get(str) + DBQ.LIKE + "?" +DBQ.AND); //location 
+				}
+				else{
+					mostMatched.append(colMatchMap.get(str)+DBQ.EQ +"?" +DBQ.AND);
 				}
 			}
-			qJobAdTb.delete(qJobAdTb.length()-qcmd.OR.length(), qJobAdTb.length()); //rm extra "OR"
-			suggQueryArr[1]=qJobAdTb;
+			mostMatched.delete(mostMatched.length()-DBQ.AND.length(), mostMatched.length()); //rm extra "AND"
+			mostMatched.append(DBQ.ORDERBY + "datePosted" + DBQ.DESC);
+			if(initSugg){
+				mostMatched.append(DBQ.LIMIT + 0 + DBQ.COMA + 5);
+			}
+			
+			suggQueryArr[1]=mostMatched;
+			
+			//prepare for the search on table job ad
+			wildSugg.append(DBQ.SELECT + adInfoBuf + DBQ.FROM + "tableJobAd" +  
+							DBQ.WHERE );
+			for(String str:userInfo){
+				
+				wildSugg.append(colMatchMap.get(str)+DBQ.EQ +"?" +DBQ.OR);
+			}
+			wildSugg.delete(wildSugg.length()-DBQ.OR.length(), wildSugg.length()); //rm extra "OR"
+			suggQueryArr[2]=wildSugg;
 			return suggQueryArr;
 		}
 	 
-	 private void getJobAdSuggestions(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException{
+	 private void getSuggestions(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		 	ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 			mysqlCmd qcmd = new mysqlCmd();
 			String[]authInfo={"idAccount"};
-			String[]uInfo={"educationLevel"};
-			String[]adInfo={"*"};//The order of the col must consistent with the prepared stmt
+			String[]uInfo={"educationLevel", "startingDate", "location"};
+			String[]adInfo={"idJobAd","title","datePosted","location","contactInfo","educationRequired"};
 			//Debug
 			System.out.println("Entered get Suggestions");
 			//initialize return statements
 			boolean isSuccessful = false;
 			String msg = "";
-
+			
+			System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+			
+			String sKey=request.getParameter("sessionKey");
+			System.out.println("sessionKey=" +sKey );
+			String moreSugg=request.getParameter("mode");
+			
 			//Checks the user's privilege
 			int acctId=-1;
-			
-			String sKey = session.getKey();
 			
 			StringBuffer qBuf =sessSearcherAuthQuery(sKey,qcmd, authInfo); // authenticate user
 			String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
 			System.out.println(query);
 				
-			Connection conn = dbManager.getConnection();	
-			Statement stmt = null;
-			
-			try {
+				Connection conn = dbManager.getConnection();	
+				Statement stmt = null;
 				
-				System.out.println("Processing " + query);
-				stmt = conn.createStatement();
-				ResultSet authRs = stmt.executeQuery(query);
-				if(authRs.next()){ //authenticating
-					acctId=authRs.getInt("idAccount");
-				}
-				if(acctId==-1){
-					stmt.close();
-					conn.close();
-				}
-				else{
-					stmt=conn.createStatement(); //create a new statement
-					StringBuffer[]suggQueryBuf=buildSuggestionQuery(qcmd, uInfo, adInfo);
+				try {
 					
-					//first get the user info
-					PreparedStatement suggQuery = conn.prepareStatement(suggQueryBuf[0].toString());
-					suggQuery.setInt(1, acctId);
-					
-					ResultSet suggRs = suggQuery.executeQuery();
-					
-					//now get the suggestions from job ad based on user's info
-					suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
-					while(suggRs.next()){
-						suggQuery.setInt(1, suggRs.getInt("educationLevel"));//be sure to consistent with the array
+					System.out.println("Processing " + query);
+					stmt = conn.createStatement();
+					ResultSet authRs = stmt.executeQuery(query);
+					if(authRs.next()){ //authenticating
+						acctId=authRs.getInt("idAccount");
 					}
+					if(acctId==-1){
+						stmt.close();
+						conn.close();
+					}
+					else{
+						stmt=conn.createStatement(); //create a new statement
+						StringBuffer[]suggQueryBuf = null;
+						if(moreSugg.equals("true")){ // if it's a init load only 5 results pop up
+							suggQueryBuf=buildSuggestionQuery(true, uInfo, adInfo); // extract prepared query buffers
+						}
+						else{
+							suggQueryBuf=buildSuggestionQuery(false, uInfo, adInfo); // extract prepared query buffers
+						}
+						//first get the user info
+						PreparedStatement suggQuery = conn.prepareStatement(suggQueryBuf[0].toString());
+						suggQuery.setInt(1, acctId);
+						
+						ResultSet suggRs = suggQuery.executeQuery();
+						
+						//now get the suggestions that MOST MATCHED user's info
+						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
+						while(suggRs.next()){
+							//THE ORDER NEEDS TO BE CONSISTENT WITH THE USERINFO ARRAY
+							String[]locInfo=Utility.locationParser(suggRs.getString("location"));
+							suggQuery.setInt(1, suggRs.getInt("educationLevel"));
+							suggQuery.setLong(2, suggRs.getLong("startingDate"));
+							suggQuery.setString(3, "%"+locInfo[0]+"%");
+							suggQuery.setString(4, "%"+locInfo[1]+"%");
+						}
+						
+					   stmt=conn.createStatement(); //create a new statement maybe not needed
+					   //DEBUG
+					   System.out.println("suggestion querying on job ad table: " + suggQuery.toString());
 					
-				   stmt=conn.createStatement(); //create a new statement maybe not needed
-				   //DEBUG
-				   System.out.println("suggestion querying on job ad table: " + suggQuery.toString());
-				
-				   suggRs = suggQuery.executeQuery();
-				   
-				   while(suggRs.next()){
-					   JobAdvertisement temp = new JobAdvertisement();
-						
-						temp.jobAdId 				= suggRs.getInt("idJobAd");
-						temp.jobAdTitle				= suggRs.getString("title");
-						temp.creationDate		 	= suggRs.getLong("datePosted");
-						temp.contactInfo 			= suggRs.getString("contactInfo");
-						temp.educationReq	 		= suggRs.getInt("educationRequired");
-						temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
+					   suggRs = suggQuery.executeQuery();
+					   ResultSetMetaData rsmd=null;
+					   
+					   while(suggRs.next()){
+						   JobAdvertisement temp = new JobAdvertisement();
+						   
+						   rsmd = suggRs.getMetaData();
+							int numColumns = rsmd.getColumnCount();
+							for(int i=1; i<=numColumns; i++){
+								String colName = rsmd.getColumnName(i);
+								temp.valueMap.put(jobAdDBDict.get(colName), suggRs.getObject(colName));
+								
+							}
+//							temp.jobAdId 				= suggRs.getInt("idJobAd");
+//							temp.jobAdTitle				= suggRs.getString("title");
+//							temp.creationDate		 	= suggRs.getLong("datePosted");
+//							temp.location				= suggRs.getString("location");
+//							temp.contactInfo 			= suggRs.getString("contactInfo");
+//							temp.educationReq	 		= suggRs.getInt("educationRequired");
+//							temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
 //							temp.tags 					= result.getString("tags");
-						
-						jobAdList.add( temp ); //add to the temporary list
-				   }
-				   
-				  }//ENDOF INSERT INTO LOCATION TABLE 
+							
+							jobAdList.add( temp ); //add to the temporary list
+					   }
+					   
+					  }//ENDOF INSERT INTO LOCATION TABLE 
 				}
 				catch (SQLException e) {
 					//TODO log SQL exception
@@ -1671,7 +1717,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 //			XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
 			Iterator<JobAdvertisement> itr = jobAdList.iterator();
 		    while (itr.hasNext()) {//iterate through all list and append to xml
-		    	XMLResponse.append(itr.next().toXMLContent() ); 
+		    	XMLResponse.append(itr.next().xmlParser() ); 
 		    }
 			XMLResponse.append("\t<message>" + msg + "</message>\n");
 			XMLResponse.append("</response>\n");
@@ -1778,10 +1824,12 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  * @param response
  * @throws IOException
  ***********************************************************************************************/
-	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
+	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
 		ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 		
-		int accountId = session.getIdAccount();
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = userSession.getIdAccount();
+		
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -1864,9 +1912,10 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  * @param response
  * @throws IOException
  ***********************************************************************************************/	
-	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response, Session session)throws IOException{
+	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
 		
-		int accountId = session.getIdAccount();
+		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
+		int accountId = userSession.getIdAccount();
 		
 		String jobAdIdInString = request.getParameter("jobAdId");
 		System.out.println("jobIDINSTRING"+jobAdIdInString);

@@ -1432,15 +1432,18 @@ public class ServletProfile extends HttpServlet{
 				stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(selQuery);
 				while(rs.next()){
-					responseMsg.append("Hello, " + rs.getString("name") +". &lt;br /&gt;");
+					//CDATA
+					responseMsg.append("Hello, " + rs.getString("name") + DBQ.BR);
 				}
 				File[]userFile =ServletDocument.getUserFiles(acctId);
-				responseMsg.append("You have " + userFile.length + " files.");
+				responseMsg.append("You have post " + userFile.length + " Resume Files");
 			}
 			else{
+				System.out.println("Account Doesnot exist or session key expires");
 			}
 		}
 		catch (SQLException e) {
+			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects

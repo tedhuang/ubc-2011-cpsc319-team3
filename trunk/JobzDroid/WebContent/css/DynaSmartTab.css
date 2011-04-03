@@ -63,6 +63,6 @@
 #suggBox ul#suggList li{padding-top: 1em;}
 #suggBox ul#suggList span{color:blue;}
 #suggBox ul#suggList span.qkView{display:block;}
-#suggBox ul#suggList span.title{color: blue;}
-#suggBox ul#suggList span.rm{color:red; font: 0.9em/1.3em bold italic small-caps Times New Roman, serif; clear:right;}
+#suggBox ul#suggList span.title{color: green; font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;}
+#suggBox ul#suggList span.rm{color:red; font: font: bold italic small-caps 0.9em/1.3em verdana, Ariel, sans-serif; clear:right;}
 /*****ENDOF DynaSmartTab PLUGIN CSS**********************************************************************************/

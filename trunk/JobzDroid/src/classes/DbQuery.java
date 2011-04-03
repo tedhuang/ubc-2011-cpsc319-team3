@@ -34,6 +34,8 @@ public class DbQuery{
 	public final String EQ				= "=";
 	public final String GRTR			= ">";
 	public final String SMLR			= "<";
+	public final String BR				= "&lt;br /&gt;";
+	
 	public final StringBuffer wordRegExBuffer 	 =  new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
 	public final StringBuffer SQ				 =  new StringBuffer("'' ");//CAUTION: SPACE IMPORTANT, insert-pos:1
 	public final StringBuffer CDATA              =  new StringBuffer("<![CDATA[]]>"); //insert-pos:9

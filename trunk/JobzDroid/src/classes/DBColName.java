@@ -187,6 +187,8 @@ public class DBColName{
 		makeAdLocDict();
 		
 		makeJobAdClsDict();
+		
+		makeSuggDict();
 	}
 	
 	private void initColMap(){
@@ -228,8 +230,10 @@ public class DBColName{
 		}
 		
 		else if(action.equals("searchSearcherProfile")){
-			System.out.println("SSP2");
 			return colDictSearchSearcherProfile;
+		}
+		else if(action.equals("getSuggestions")){
+			return searcherSuggMap;
 		}
 		
 		return null;
@@ -242,7 +246,6 @@ public class DBColName{
 		
 		return null;
 	}
-	
 /*
  * PROFILE SEARCH MAPPING
  */
@@ -366,5 +369,15 @@ public class DBColName{
 		colDictJobAdCls.put(tbJobAdColMap.get("datePosted"),			jobAdClsFldMap.get("creationDate"));
 		
 		colDictJobAdCls = Collections.unmodifiableMap(colDictJobAdCls);
+	}
+	
+	private static Map <String, String> searcherSuggMap=new HashMap<String, String>();
+	private void makeSuggDict(){
+		
+		searcherSuggMap.put(tbProfileSearcherColMap.get("educationLevel"),		tbJobAdColMap.get("educationRequired"));
+		searcherSuggMap.put(tbProfileSearcherColMap.get("location"),			tbJobAdColMap.get("location"));
+		searcherSuggMap.put(tbProfileSearcherColMap.get("startingDate"),		tbJobAdColMap.get("dateStarting") );
+		
+		searcherSuggMap = Collections.unmodifiableMap(searcherSuggMap);
 	}
 }

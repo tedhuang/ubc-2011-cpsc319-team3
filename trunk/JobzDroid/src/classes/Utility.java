@@ -343,4 +343,8 @@ public static String GFConvertor(int numForm){
 				return "Not Specified";
 		}
 	}	
+public static String[] locationParser(String location){
+	return location.split(",");
+	
+}
 }//ENDOF UTILITY CLASS
