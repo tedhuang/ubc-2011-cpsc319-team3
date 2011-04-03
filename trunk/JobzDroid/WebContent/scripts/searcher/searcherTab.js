@@ -247,10 +247,14 @@
          		    })
          			.unbind('click')
          			.click( function(){
-         				openTab('adDetailTab'); 
-         				getJobAdById("detail", adId, "adDetailTable");
+         				$.fn.DynaSmartTab.viewDetail(adId);
          			});
 
+         };
+         
+         $.fn.DynaSmartTab.viewDetail=function(adId){
+        	 	openTab('adDetailTab'); 
+				getJobAdById(adId, "adDetailTable");
          };
  /************************************************************************************************************************
   * 

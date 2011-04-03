@@ -396,11 +396,18 @@
         	case "edAdTool":
         		
         		toolBar.delegate('a.ed_saveDraft', "click", function(){
-        			status=="draft"?
-        			postJobAd("updateDraft",'edAdForm','edAdfb'):postJobAd('draft', 'edAdForm','edAdfb');
+        			if(status=="draft"){
+        				updateJobAd("draftAd",'edAdForm','edAdfb');
+        			}
+        			else if(status=="open"){
+        				updateJobAd('openAd', 'edAdForm','edAdfb');
+        			}
+        			else if(status=="pending"){
+        				
+        			}
         		});
         		toolBar.delegate('a.ed_update', "click", function(){
-        			postJobAd('edit', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT
+        			updateJobAd('openAd', 'edAdForm','edAdfb');//TODO CHANGE UPDATE DRAFT
         		});
         		toolBar.delegate('a.ed_reset', "click", function(){
         			$.fn.smartLightBox.diaBox("you unsaved data will be reset continue?", "alert");
@@ -451,30 +458,34 @@
 //     function loadEdData(targetXMLTag, edFormContainer, mode){
         $.fn.DynaSmartTab.loadEdData=function(targetXMLTag, edFormContainer, mode){
     	 var xmlData= $(targetXMLTag,xmlhttp.responseXML);
-        	
+         var edFormContainer = domObjById(edFormContainer);
+    	 var inputOldValue = $("#oldAdValues");
+         
 	        	switch(mode){
 	        	
 	        	case "edit":
-	        	$("input[name='title-field']", "#"+edFormContainer).val(xmlData.attr("jobAdTitle"));
-	        	$("input[name='adId-field']", "#"+edFormContainer).val(xmlData.attr("jobAdId"));
-				$("input[name='company-field']", "#"+edFormContainer).val(xmlData.attr("contactInfo"));
-				$("input[name='tag-field']", "#"+edFormContainer).val(xmlData.attr("tags"));
+	        	$("#edTabTitle").append(xmlData.attr("jobAdTitle"));
+	        	$("input[name='title-field']", 		edFormContainer).val(xmlData.attr("jobAdTitle"));
+	        	$("input[name='adId-field']", 		edFormContainer).val(xmlData.attr("jobAdId"));
+				$("input[name='company-field']", 	edFormContainer).val(xmlData.attr("contactInfo"));
+				$("input[name='tag-field']", 		edFormContainer).val(xmlData.attr("tags"));
 				
 				// replace &nbsp; with space and <br /> with \n for description in textarea
 				var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
 				processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
-				$("textarea[name='desc-field']", "#"+edFormContainer).val(processedDesc);//Type-in Forms
 				
-				$("#edu-field option","#"+edFormContainer).each(function(){
+				$("textarea[name='desc-field']", 	edFormContainer).val(processedDesc);//Type-in Forms
+				
+				$("#edu-field option",edFormContainer).each(function(){
 					if($(this).text()==xmlData.attr("eduReqFormatted")){
 						$(this).attr("selected", "selected");
 						return false;
 					}
 				});
-				$("input[name='startTime-field']", "#"+edFormContainer).val(xmlData.attr("startingDateFormatted"));
-				$("input[name='expireTime-field']", "#"+edFormContainer).val(xmlData.attr("expiryDateFormatted"));
+				$("input[name='startTime-field']",  edFormContainer).val(xmlData.attr("startingDateFormatted"));
+				$("input[name='expireTime-field']", edFormContainer).val(xmlData.attr("expiryDateFormatted"));
 				
-				$($(":input","#jobAvailField"), "#"+edFormContainer).each(function(){
+				$($(":input","#jobAvailField"), edFormContainer).each(function(){
 					console.log($(this).val().toLowerCase());
 					console.log(xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase());
 					if($(this).val().toLowerCase()==xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase()){
@@ -482,7 +493,14 @@
 						return false;
 					}
 				});
-				$.fn.smartLightBox.closeLightBox(0, $("#"+edFormContainer).parent(".subFrame").attr('id'));
+				
+				var inputFields = $(":input:not('.map')", edFormContainer).serializeArray();
+				jQuery.each(inputFields, function(i, field){
+						var fldName=field.name;
+						inputOldValue.data(field.name, field.value); //add data to cache
+				   });
+				//TODO MAP
+				$.fn.smartLightBox.closeLightBox(0, $(edFormContainer).parent(".subFrame").attr('id'));
 				break;
           }//ENDOF SWITCH
       };

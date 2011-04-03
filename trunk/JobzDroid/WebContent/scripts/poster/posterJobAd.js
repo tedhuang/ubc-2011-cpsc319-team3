@@ -536,22 +536,114 @@ function postJobAd(mode, formDiv, heading){
 	if(noNullData){
 		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
-		var searchFields = $(":input:not('.map')", theForm).serializeArray();
+		var inputFields = $(":input:not('.map')", theForm).serializeArray();
 		
-		jQuery.each(searchFields, function(i, field){
+		jQuery.each(inputFields, function(i, field){
 				request.addParam(field.name, field.value); //add parameter to the request
 		   });
 		//get location info
 		var locList = $("li", $("#locList", theForm)).get();
-		var location="";
-		$.each(locList, function(index){ // get location from the list
-			request.addParam("addr"+index, $(this).data("addr"));
-			request.addParam("latlng"+index, $(this).data("latlng"));
-			console.log($(this).data("city"));
-			location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
-		});
-		location=location.substring(0,location.length-1); //remove last "-"
-		request.addParam("loc-field", location);
+		if(locList.length!=0){
+			var location="";
+			$.each(locList, function(index){ // get location from the list
+				request.addParam("addr"+index, $(this).data("addr"));
+				request.addParam("latlng"+index, $(this).data("latlng"));
+				location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
+			});
+			location=location.substring(0,location.length-1); //remove last "-"
+			request.addParam("loc-field", location);
+		}
+		
+		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		}
+		else{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		if(mode=="submit"){
+			theheading.html("<h2 class='info'>Sending Request...</h2>");
+		}
+		else if(mode=="draft"){
+			theheading.html("<h2 class='info'>Saving Draft...</h2>");
+		}
+		else if(mode=="edit"){
+			theheading.html("<h2 class='info'>Updating Your Ad...</h2>");
+		}
+		xmlhttp.open("POST","../ServletJobAd" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.send(request.toString());
+		
+		console.log(request.toString());
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			  
+//			  var message = xmlhttp.responseXML.getElementById("message");xmlhttp.responseXML.getElementById("message") +
+		  	$("#lbImg", theForm).removeClass("load").addClass("good");
+			$("#lbMsg",theForm).html("Action Successful!");
+			$.fn.smartLightBox.closeLightBox(2000, formDiv);  
+			setTimeout ( $.fn.DynaSmartTab.close, 2000 );
+				
+//		    theheading.html("<h2 class='good'>Action Performed Successfully!</h2>");
+		    }
+		  else if(xmlhttp.status!=200){
+			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$.fn.smartLightBox.closeLightBox(2000, formDiv);
+//			  theheading.html("<h2 class='error'>opps something is wrong!</h2>");
+		  }
+		};
+		
+	}//IF MANDATORIES FILLED
+}
+
+/*******************************************************************************************************************************
+ * 						Update Draft or Open JobAd
+ * 
+ * - IN CHARGE OF SUBMITTING AD OR SAVING DRAFT 
+ *******************************************************************************************************************************/
+function updateJobAd(mode, formDiv, heading){
+	var noNullData=false;
+	var theForm =$("#"+formDiv);
+	var theheading =$("."+heading);
+	var sessionKey = $("#sessionKey").val();
+	var infoText;
+	request = new Request;
+	if(mode=="openAd" ){
+		request.addAction("updateOpenAd");
+		noNullData = checkMandatory(theForm);
+		infoText="Submitting Your Request...";
+	}
+	else if(mode=="draftAd"){
+		request.addAction("updateDraftAd");
+		noNullData = true;
+		infoText="Saving Draft...";
+	}
+	
+	if(noNullData){
+		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
+		request.addSessionKey( sessionKey );
+		var inputFields = $(":input:not('.map')", theForm).serializeArray();
+		var changedData = compareChange("oldAdValues", inputFields, formDiv);
+		if(changedData.length)
+//			$.each(changedData.allData(), function(i, field){
+//					request.addParam(field.name, field.value); //add parameter to the request
+//			});
+		$.each( changedData.data(),function(name, value) {
+			request.addParam(name, value);
+			});
+		//get location info
+		var locList = $("li", $("#locList", theForm)).get();
+		if(locList.length){
+			var location="";
+			$.each(locList, function(index){ // get location from the list
+				request.addParam("addr"+index, $(this).data("addr"));
+				request.addParam("latlng"+index, $(this).data("latlng"));
+				location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
+			});
+			location=location.substring(0,location.length-1); //remove last "-"
+			request.addParam("loc-field", location);
+		}
 		
 		if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 			xmlhttp=new XMLHttpRequest();
@@ -618,104 +710,20 @@ function checkMandatory(formContainer){
 	}
 }
 
-
-
-	  
-	  
-	  
-
-
-
-
-/*******************************************************************************************************************
- * 				searchJobAdvertisement Function
- * outputDiv => The table container div
- * 
- *******************************************************************************************************************/
-function searchJobAdvertisement(outputDiv){
+function compareChange(oldVal, newVal, formDiv){
 	
-	request = new Request;
-	request.addAction("searchJobAdvertisement");
-	
-	var searchFields = $(":input", "#advSearchForm").serializeArray();
-	var emptyCounts=0;
-	jQuery.each(searchFields, function(i, field){
-        if(field.value == ""){
-        	emptyCounts++;
-        }
-        else{
-        	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
-        }
-	   });
-	
-	   if(emptyCounts != searchFields.length){//Check if All NULL
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-				xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			//send the parameters to the servlet with POST
-			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true);
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.send(request.toString());
-			
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			    {
-					//parse XML response from server
-					buildAdListTb("jobAd", outputDiv);
-		
-			    }
-			  };
-	   }//ENDOF CHECK-ALL-NULL
-	   else{
-		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
-	   }
-		  
-}
-
-function quickSearchJobAd(outputDiv){
-	
-	request = new Request;
-	request.addAction("searchJobAdvertisement");
-	
-//	var searchFields = $("#quickSearchBox", ).serializeArray();
-	if($("#quickSearchBox", "#qkSearchForm" ).val() != ""){ //Check if All NULL
-		
-			request.addParam($("#quickSearchBox", "#qkSearchForm" ).attr("name"), $("#quickSearchBox", "#qkSearchForm" ).val()); //add parameter to the request according to how many search criteria filled
-
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-				xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			//send the parameters to the servlet with POST
-			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true); //PATH TO SERVLET DIFFERS FROM TESTPAGES
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.send(request.toString());
-			
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			    {
-				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
-					//parse XML response from server
-					buildAdListTb("jobAd", outputDiv);
-		
-			    }
-			  };
-	   }//ENDOF CHECK-ALL-NULL
+	var changedData =$('<input>')
+					.attr({'type':'HIDDEN', 'id':'changedData'})
+					.appendTo(domObjById(formDiv));
+					
+	oldVal = domObjById(oldVal);
+	$.each(newVal, function(i, field){
+		var fld=field.name;
+		if(field.value!=oldVal.data(fld)){
+			changedData.data(fld, field.value);
+		}
+	});
+	return changedData;
 }
 /************************************************************************************************************
  * 				View Job Ad Detail

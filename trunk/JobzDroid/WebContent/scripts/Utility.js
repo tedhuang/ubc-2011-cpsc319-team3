@@ -133,5 +133,15 @@ function createXHR() {
     return xhrObj;
 }//eof createXHR
 
-
-
+function domObjById(divId){
+	return $("#"+divId);
+}
+/*****************************************************************************************
+ * 								jQuery.fn.allData
+ * - Loop through all data the object has
+ * 
+ *****************************************************************************************/
+jQuery.fn.allData = function() {
+    var intID = jQuery.data(this.get(0));
+    return(jQuery.cache[intID]);
+};
