@@ -96,7 +96,7 @@ function quickSearchJobAd(outputDiv){
  * - View Detail
  * - Edit Detail
  ************************************************************************************************************/
-function getJobAdById(mode, id, outputDiv)
+function getJobAdById(id, outputDiv)
 {
 //	$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
 	request = new Request;
@@ -126,12 +126,7 @@ function getJobAdById(mode, id, outputDiv)
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		    //parse XML response from server
 		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  if(mode=="detail"){
 		  	buildDetailTable("jobAd", outputDiv);
-		  }
-		  else if(mode=="edit"){
-			  $.fn.DynaSmartTab.loadEdData("jobAd", outputDiv, mode);
-		  }
 	    }
 	  else if(xmlhttp.status!=200){
 		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
@@ -248,13 +243,14 @@ function guestViewJobAd(outputDiv, mode){
  * 				Get suggestion for searcher
  * @param outputDiv
  ************************************************************************************************************/
-function getSuggestionForSearcher(outputDiv){
+function getSuggestionForSearcher(outputDiv, initSugg){
 	
 //	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
 	var strSessionKey = $("#sessionKey").val();
 	request = new Request;
 	request.addAction("getSuggestions");
 	request.addParam("sessionKey", strSessionKey);
+	request.addParam("mode", initSugg);
 	
 	var xhr = createXHR(); //Now created xhr used a function
 	function processResult(){
@@ -294,8 +290,16 @@ function buildSuggList(xmlTag, outputDiv, xhrResponse){
 	else{
 		xmlObj.each(function() {//for All returned xml obj\
 			$('<li></li>')
-			.append('<span class="title">'+$(this).attr("jobAdTitle")+'</span>')
-			.append('<span class="qkView">'+$(this).attr("eduReqFormatted")+'</span>')
+			.append('<span class="title jsBtn">'+$(this).attr("jobAdTitle")+'</span>')
+			.append('<span class="qkView">'+
+					$(this).attr("creationDate") + " | " +
+					$(this).attr("educationReq") + " | " +
+					$(this).attr("location") + " | " +
+					$(this).attr("contactInfo") +
+					'</span>')
+			.delegate("span.title", "click", function(){
+				getJobAdById($(this).attr("jobAdId"), "adDetailTable");//TODO FIX output div
+			})
 			.appendTo(list);
 		 });
 	}
