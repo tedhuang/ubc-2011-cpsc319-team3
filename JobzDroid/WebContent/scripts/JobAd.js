@@ -603,6 +603,7 @@ function adminGetJobAd(outputDiv, mode){
 	var strSessionKey = $("#sessionKey").val();
 	
 	var filter = $("#filter").text();
+	
 	var index = $("#browseIndex").val();
 	if(index < 0)
 		index = 0;
