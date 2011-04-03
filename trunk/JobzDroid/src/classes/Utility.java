@@ -54,9 +54,9 @@ public class Utility {
 	}
 	
 	/***
-	 * Removes all non-ASCII characters from the input text.
+	 * Replaces all non-ASCII characters in the input text with question marks.
 	 * @param text Input text.
-	 * @return Output text after removing all non-ascii characters.
+	 * @return Output text after replacing all non-ascii characters.
 	 */
 	public static String replaceNonAsciiChars(String text){
 		return text.replaceAll("[^\\p{ASCII}]", "?");
