@@ -75,6 +75,7 @@ public class RSSManager {
 	public static SyndFeed createFeed(String title, String link, String description, List<SyndEntry> entries){
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("rss_2.0");
+		feed.setEncoding("UTF-16");
 		feed.setTitle(title);
         feed.setLink(link);
         feed.setDescription(description);
@@ -125,6 +126,7 @@ public class RSSManager {
 	public static SyndFeed addEntryToFeed(SyndFeed feed, SyndEntry entry, int index){
 		SyndFeed outFeed = new SyndFeedImpl();
 		outFeed.setFeedType(feed.getFeedType());
+		outFeed.setEncoding("UTF-16");
 		outFeed.setTitle(feed.getTitle());
 		outFeed.setLink(feed.getLink());
 		outFeed.setDescription(feed.getDescription());
@@ -145,6 +147,7 @@ public class RSSManager {
 	public static SyndFeed removeEntryFromFeed(SyndFeed feed, int index){
 		SyndFeed outFeed = new SyndFeedImpl();
 		outFeed.setFeedType(feed.getFeedType());
+		outFeed.setEncoding(feed.getEncoding());
 		outFeed.setTitle(feed.getTitle());
 		outFeed.setLink(feed.getLink());
 		outFeed.setDescription(feed.getDescription());

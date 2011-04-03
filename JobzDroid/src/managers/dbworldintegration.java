@@ -413,15 +413,17 @@ public class dbworldintegration {
 			String jobContactInfo = webPage;
 			
 			if(subject != null){
+				jobAdvertisementTitle = Utility.replaceNonAsciiChars(jobAdvertisementTitle);
 				jobAdvertisementTitle = Utility.checkInputFormat(jobAdvertisementTitle);
 			}
 			if(message != null){
+				jobDescription = Utility.replaceNonAsciiChars(jobDescription);
 				jobDescription = Utility.checkInputFormat(jobDescription);
 				jobDescription = Utility.processLineBreaksWhiteSpaces(jobDescription);
 			}
 			if(webPage != null){
 				jobContactInfo = Utility.checkInputFormat(jobContactInfo);
-				jobDescription = Utility.processLineBreaksWhiteSpaces(jobDescription);
+				jobContactInfo = Utility.processLineBreaksWhiteSpaces(jobContactInfo);
 			}
 		
 			//Add new entry with specified parameters into database

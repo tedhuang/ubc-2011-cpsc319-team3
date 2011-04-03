@@ -771,10 +771,11 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 			}
 		}
 		// check input
+		title = Utility.replaceNonAsciiChars(title);
 		title = Utility.checkInputFormat(title);
 		if(content != null){
+			content = Utility.replaceNonAsciiChars(content);
 			content = Utility.checkInputFormat(content);
-			// process line breaks and white spaces in content
 			content = Utility.processLineBreaksWhiteSpaces(content);
 		}		
 		else
@@ -928,10 +929,15 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		}
 		
 		// process inputs
-		if(content != null)
+		title = Utility.replaceNonAsciiChars(title);
+		if(content != null){
+			content = Utility.replaceNonAsciiChars(content);
 			content = Utility.processLineBreaksWhiteSpaces(content);
-		if(categories != null)
+		}
+		if(categories != null){
+			categories = Utility.replaceNonAsciiChars(categories);
 			categoriesArray = categories.split(",");
+		}
 		
 		if(allGood){
 			long currentTime = Utility.getCurrentTime();
