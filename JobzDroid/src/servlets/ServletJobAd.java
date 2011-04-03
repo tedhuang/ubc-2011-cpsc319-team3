@@ -56,7 +56,7 @@ public class ServletJobAd extends HttpServlet {
 		getJobAdById,
 		deleteJobAd,
 		getSomeJobAd,
-		getSuggestions,
+		getJobAdSuggestions,
 		
 		saveFavouriteJobAd,
 		listFavouriteJobAd,
@@ -78,7 +78,6 @@ public class ServletJobAd extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		requestProcess(request,response);
 	}
 
@@ -125,7 +124,8 @@ public class ServletJobAd extends HttpServlet {
 				break;
 
 			case deleteJobAd:
-				deleteJobAd(request, response);
+				if(session.checkPrivilege( response, "poster") )
+					deleteJobAd(request, response);
 				break;
 				
 //			case deactivateJobAd:
@@ -137,7 +137,8 @@ public class ServletJobAd extends HttpServlet {
 				searchJobAd(request, response);
 				break;
 			case getJobAdByOwner:
-				getJobAdByOwner(request, response);
+				if(session.checkPrivilege( response, "poster") )
+					getJobAdByOwner(request, response, session);
 				break;
 				
 			case getJobAdById:
@@ -151,8 +152,9 @@ public class ServletJobAd extends HttpServlet {
 			case getSomeJobAd:
 				getSomeJobAd(request, response);
 				break;	
-			case getSuggestions:
-				getSuggestions(request, response);
+			case getJobAdSuggestions:
+				if(session.checkPrivilege( response, "poster") )
+					getJobAdSuggestions(request, response, session);
 				break;				
 		/*****************FAVOURITE AD ACTIONS***********************/		
 				
@@ -162,11 +164,13 @@ public class ServletJobAd extends HttpServlet {
 				break;
 				
 			case listFavouriteJobAd:
-				listFavouriteJobAd(request, response);
+				if(session.checkPrivilege( response, "searcher") )
+					listFavouriteJobAd(request, response, session );
 				break;
 				
 			case deleteFavouriteJobAd:
-				deleteFavouriteJobAd(request, response);
+				if(session.checkPrivilege( response, "searcher") )
+					deleteFavouriteJobAd(request, response, session);
 				break;
 				
 
@@ -296,7 +300,7 @@ public class ServletJobAd extends HttpServlet {
 		
 	
 
-	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException {
 	
 		String message = "getJobAdByOwner failed";
 		boolean isSuccessful = false;
@@ -305,8 +309,6 @@ public class ServletJobAd extends HttpServlet {
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 		
 		//Extract ownerID from session key
-		String sessionKey = request.getParameter("sessionKey");
-		Session session = accManager.getSessionByKey(sessionKey);
 		int ownerId = session.getIdAccount();
 
 		Connection conn = dbManager.getConnection();	
@@ -1565,7 +1567,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 			return suggQueryArr;
 		}
 	 
-	 private void getSuggestions(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	 private void getJobAdSuggestions(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException{
 		 	ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 			mysqlCmd qcmd = new mysqlCmd();
 			String[]authInfo={"idAccount"};
@@ -1576,70 +1578,68 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 			//initialize return statements
 			boolean isSuccessful = false;
 			String msg = "";
-			
-			System.out.println("sessionKey=" + request.getParameter("sessionKey"));
-			
-			String sKey=request.getParameter("sessionKey");
-			System.out.println("sessionKey=" +sKey );
+
 			//Checks the user's privilege
 			int acctId=-1;
+			
+			String sKey = session.getKey();
 			
 			StringBuffer qBuf =sessSearcherAuthQuery(sKey,qcmd, authInfo); // authenticate user
 			String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
 			System.out.println(query);
 				
-				Connection conn = dbManager.getConnection();	
-				Statement stmt = null;
+			Connection conn = dbManager.getConnection();	
+			Statement stmt = null;
+			
+			try {
 				
-				try {
+				System.out.println("Processing " + query);
+				stmt = conn.createStatement();
+				ResultSet authRs = stmt.executeQuery(query);
+				if(authRs.next()){ //authenticating
+					acctId=authRs.getInt("idAccount");
+				}
+				if(acctId==-1){
+					stmt.close();
+					conn.close();
+				}
+				else{
+					stmt=conn.createStatement(); //create a new statement
+					StringBuffer[]suggQueryBuf=buildSuggestionQuery(qcmd, uInfo, adInfo);
 					
-					System.out.println("Processing " + query);
-					stmt = conn.createStatement();
-					ResultSet authRs = stmt.executeQuery(query);
-					if(authRs.next()){ //authenticating
-						acctId=authRs.getInt("idAccount");
-					}
-					if(acctId==-1){
-						stmt.close();
-						conn.close();
-					}
-					else{
-						stmt=conn.createStatement(); //create a new statement
-						StringBuffer[]suggQueryBuf=buildSuggestionQuery(qcmd, uInfo, adInfo);
-						
-						//first get the user info
-						PreparedStatement suggQuery = conn.prepareStatement(suggQueryBuf[0].toString());
-						suggQuery.setInt(1, acctId);
-						
-						ResultSet suggRs = suggQuery.executeQuery();
-						
-						//now get the suggestions from job ad based on user's info
-						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
-						while(suggRs.next()){
-							suggQuery.setInt(1, suggRs.getInt("educationLevel"));//be sure to consistent with the array
-						}
-						
-					   stmt=conn.createStatement(); //create a new statement maybe not needed
-					   //DEBUG
-					   System.out.println("suggestion querying on job ad table: " + suggQuery.toString());
+					//first get the user info
+					PreparedStatement suggQuery = conn.prepareStatement(suggQueryBuf[0].toString());
+					suggQuery.setInt(1, acctId);
 					
-					   suggRs = suggQuery.executeQuery();
-					   
-					   while(suggRs.next()){
-						   JobAdvertisement temp = new JobAdvertisement();
-							
-							temp.jobAdId 				= suggRs.getInt("idJobAd");
-							temp.jobAdTitle				= suggRs.getString("title");
-							temp.creationDate		 	= suggRs.getLong("datePosted");
-							temp.contactInfo 			= suggRs.getString("contactInfo");
-							temp.educationReq	 		= suggRs.getInt("educationRequired");
-							temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
+					ResultSet suggRs = suggQuery.executeQuery();
+					
+					//now get the suggestions from job ad based on user's info
+					suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
+					while(suggRs.next()){
+						suggQuery.setInt(1, suggRs.getInt("educationLevel"));//be sure to consistent with the array
+					}
+					
+				   stmt=conn.createStatement(); //create a new statement maybe not needed
+				   //DEBUG
+				   System.out.println("suggestion querying on job ad table: " + suggQuery.toString());
+				
+				   suggRs = suggQuery.executeQuery();
+				   
+				   while(suggRs.next()){
+					   JobAdvertisement temp = new JobAdvertisement();
+						
+						temp.jobAdId 				= suggRs.getInt("idJobAd");
+						temp.jobAdTitle				= suggRs.getString("title");
+						temp.creationDate		 	= suggRs.getLong("datePosted");
+						temp.contactInfo 			= suggRs.getString("contactInfo");
+						temp.educationReq	 		= suggRs.getInt("educationRequired");
+						temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
 //							temp.tags 					= result.getString("tags");
-							
-							jobAdList.add( temp ); //add to the temporary list
-					   }
-					   
-					  }//ENDOF INSERT INTO LOCATION TABLE 
+						
+						jobAdList.add( temp ); //add to the temporary list
+				   }
+				   
+				  }//ENDOF INSERT INTO LOCATION TABLE 
 				}
 				catch (SQLException e) {
 					//TODO log SQL exception
@@ -1778,12 +1778,10 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  * @param response
  * @throws IOException
  ***********************************************************************************************/
-	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
+	public void listFavouriteJobAd(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
 		ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 		
-		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
-		int accountId = userSession.getIdAccount();
-		
+		int accountId = session.getIdAccount();
 		
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
@@ -1866,10 +1864,9 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  * @param response
  * @throws IOException
  ***********************************************************************************************/	
-	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
+	public void deleteFavouriteJobAd(HttpServletRequest request, HttpServletResponse response, Session session)throws IOException{
 		
-		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
-		int accountId = userSession.getIdAccount();
+		int accountId = session.getIdAccount();
 		
 		String jobAdIdInString = request.getParameter("jobAdId");
 		System.out.println("jobIDINSTRING"+jobAdIdInString);
