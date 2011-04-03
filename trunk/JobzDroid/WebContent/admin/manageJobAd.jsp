@@ -285,7 +285,7 @@
 	</form>
 	
 	<input id="browseIndex"  value="0"/>
-	<input id="filter"  value="all"/>
+	<input id="filter" type="hidden" value="all"/>
 	
 </body>
 </html>
