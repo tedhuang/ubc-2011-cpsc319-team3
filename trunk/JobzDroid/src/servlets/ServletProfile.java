@@ -102,6 +102,7 @@ public class ServletProfile extends HttpServlet{
 				break;
 				
 			case getProfileSearcherById:
+				//TODO needs session check
 				getProfileSearcherById(request,response);
 				break;
 				

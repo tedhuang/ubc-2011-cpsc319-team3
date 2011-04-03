@@ -95,6 +95,11 @@ public class ServletAdmin extends HttpServlet {
 		catch(Exception e){
 			throw new ServletException("Invalid account servlet action.");
 		}
+
+		String sessionKey = request.getParameter("sessionKey");
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
+		
 		
 		switch( EnumAction.valueOf(action) ){
 			case requestForAdminLogin:
@@ -104,37 +109,48 @@ public class ServletAdmin extends HttpServlet {
 				adminGetJobAd(request, response);
 				break;
 			case adminApprove:
-				adminApprove(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					adminApprove(request, response);
 				break;
 			case adminDeny:
-				adminDeny(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					adminDeny(request, response);
 				break;
 			case adminDeleteJobAd:
-				adminDeleteJobAd(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					adminDeleteJobAd(request, response);
 				break;
 			case ban:
-				banHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					banHandler(request, response);
 				break;
 			case unban:
-				unbanHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					unbanHandler(request, response);
 				break;
 			case createAdmin:
-				createAdminHandler(request, response);
+				if(session.checkPrivilege( response, "superAdmin") )
+					createAdminHandler(request, response);
 				break;
 			case deleteAccount:
-				deleteAccountHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					deleteAccountHandler(request, response, session );
 				break;
 			case postNews:
-				postNewsHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					postNewsHandler(request, response);
 				break;
 			case deleteNews:
-				deleteNewsHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					deleteNewsHandler(request, response);
 				break;
 			case postRSSEntry:
-				postRSSEntryHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					postRSSEntryHandler(request, response);
 				break;
 			case removeRSSEntry:
-				removeRSSEntryHandler(request, response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					removeRSSEntryHandler(request, response);
 				break;
 		}
 	}
@@ -303,7 +319,7 @@ public class ServletAdmin extends HttpServlet {
 	 */
 	private void adminApprove(HttpServletRequest request, HttpServletResponse response) throws IOException{	
 		
-		String feedback="adminDeny failed";
+		String feedback="adminApprove failed";
 		String sessKey = request.getParameter("sessionKey");
 		int jobAdId = Integer.parseInt(request.getParameter("jobAdId"));
 
@@ -554,10 +570,8 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles account ban requests.
 	 */
 	private void banHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");
 		String reason = request.getParameter("reason");	
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
 		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
@@ -584,22 +598,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 					allGood = false;
 					message = "Cannot ban account type " + accountTypeToBan + ".";
 				}
-				else{
-					// check session key
-					Session session = accManager.getSessionByKey(sessionKey);
-					if(session == null){			
-						allGood = false;
-						message = "Unauthorized ban action.";
-					}
-					else{
-						// check if user is authorized
-						String userType = session.getAccountType();
-						if( !userType.equals("admin") && !userType.equals("superAdmin")){
-							allGood = false;
-							message = "Unauthorized ban action.";
-						}
-					}
-				}
+
 			}
 		}
 		
@@ -629,10 +628,8 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles account unban requests.
 	 */
 	private void unbanHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String email = request.getParameter("email");
 		String reason = request.getParameter("reason");	
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		email = Utility.checkInputFormat(email);
 		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
@@ -659,22 +656,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 					allGood = false;
 					message = "Account " + email + " is not banned.";
 				}
-				else{
-					// check session key
-					Session session = accManager.getSessionByKey(sessionKey);
-					if(session == null){			
-						allGood = false;
-						message = "Unauthorized unban action.";
-					}
-					else{
-						// check if user is authorized
-						String userType = session.getAccountType();
-						if( !userType.equals("admin") && !userType.equals("superAdmin")){
-							allGood = false;
-							message = "Unauthorized unban action.";
-						}
-					}
-				}
+				
 			}
 		}
 		
@@ -704,11 +686,9 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles create admin requests from the super admin.
 	 */
 	private void createAdminHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String accountName = request.getParameter("accountName");
 		String password = request.getParameter("password");	
 		String passwordRepeat = request.getParameter("passwordRepeat");	
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		accountName = Utility.checkInputFormat(accountName);
 		password = Utility.checkInputFormat(password);
 		passwordRepeat = Utility.checkInputFormat(passwordRepeat);
@@ -745,21 +725,7 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 			message = "Passwords do not match.";
 			allGood = false;
 		}
-		else {
-			Session session = accManager.getSessionByKey(sessionKey);
-			if(session == null){			
-					allGood = false;
-					message = "Unauthorized create admin action.";
-			}
-			else{
-				// check if user is authorized
-				String userType = session.getAccountType();
-				if( !userType.equals("superAdmin")){
-					allGood = false;
-					message = "Unauthorized create admin action.";
-				}
-			}
-		}
+
 		
 		if(allGood){
 			if(accManager.createAdminAccount(accountName, password)){
@@ -784,11 +750,9 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	/***
 	 * Handles delete account requests from the super admin.
 	 */
-	private void deleteAccountHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
+	private void deleteAccountHandler(HttpServletRequest request, HttpServletResponse response, Session session) throws ServletException, IOException{
 		String accountName = request.getParameter("accountName");
 		String reason = request.getParameter("reason");
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		accountName = Utility.checkInputFormat(accountName);
 		reason = Utility.checkInputFormat(reason);
 		boolean allGood = true;
@@ -806,38 +770,34 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 		}
 		else {
 			// if check if user is authorized
-			Session session = accManager.getSessionByKey(sessionKey);
-			if(session == null){			
-					allGood = false;
-					message = "Unauthorized delete account action.";
+
+
+			Account accToDelete = accManager.getAccountFromEmail(accountName);
+			if( accToDelete == null ){
+				allGood = false;
+				message = "Error reading account information.";
 			}
 			else{
-				Account accToDelete = accManager.getAccountFromEmail(accountName);
-				if( accToDelete == null ){
+				accToDeleteType = accToDelete.getType();
+				accToDeleteID = accToDelete.getIdAccount();
+				userType = session.getAccountType();
+				// only super admins can delete admin accounts
+				if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
 					allGood = false;
-					message = "Error reading account information.";
+					message = "Unauthorized delete account action.";
 				}
-				else{
-					accToDeleteType = accToDelete.getType();
-					accToDeleteID = accToDelete.getIdAccount();
-					userType = session.getAccountType();
-					// only super admins can delete admin accounts
-					if( accToDeleteType.equals("admin") && !userType.equals("superAdmin")){
-						allGood = false;
-						message = "Unauthorized delete account action.";
-					}
-					// requires at least admin privilege to delete normal accounts
-					else if( ( accToDeleteType.equals("searcher") || accToDeleteType.equals("searcher") ) 
-							&& (!userType.equals("admin") && !userType.equals("superAdmin")) ){
-						allGood = false;
-						message = "Unauthorized delete account action.";
-					}
-					else if(accToDeleteType.equals("superAdmin")){
-						allGood = false;
-						message = "Invalid delete account action.";
-					}
+				// requires at least admin privilege to delete normal accounts
+				else if( ( accToDeleteType.equals("searcher") || accToDeleteType.equals("searcher") ) 
+						&& (!userType.equals("admin") && !userType.equals("superAdmin")) ){
+					allGood = false;
+					message = "Unauthorized delete account action.";
+				}
+				else if(accToDeleteType.equals("superAdmin")){
+					allGood = false;
+					message = "Invalid delete account action.";
 				}
 			}
+
 		}
 		
 		if(allGood){
@@ -868,33 +828,19 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles post news requests from admins.
 	 */
 	private void postNewsHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");		
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
 
-		// session check
-		Session session = accManager.getSessionByKey(sessionKey);
-		if(session == null){
+
+		if( title == null || title.equals("") ){
 			allGood = false;
-			message = "Unauthorized post news action.";
+			message = "Title cannot be empty.";
 		}
-		else{
-			// check if user is authorized
-			String userType = session.getAccountType();
-			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
-				allGood = false;
-				message = "Unauthorized post news action.";
-			}
-			else if( title == null || title.equals("") ){
-				allGood = false;
-				message = "Title cannot be empty.";
-			}
-		}
+
 		// check input
 		title = Utility.replaceNonAsciiChars(title);
 		title = Utility.checkInputFormat(title);
@@ -946,37 +892,21 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles delete news requests from admins.
 	 */
 	private void deleteNewsHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String strIdNews = request.getParameter("idNews");
 		int idNews = -1;
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
 
-		// session check
-		Session session = accManager.getSessionByKey(sessionKey);
-		if(session == null){
+		try{
+			idNews = Integer.parseInt(strIdNews);
+		}
+		catch(NumberFormatException ex){
 			allGood = false;
-			message = "Unauthorized delete news action.";
+			message = "Invalid News ID.";
 		}
-		else{
-			// check if user is authorized
-			String userType = session.getAccountType();
-			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
-				allGood = false;
-				message = "Unauthorized delete news action.";
-			}
-			else{
-				try{
-					idNews = Integer.parseInt(strIdNews);
-				}
-				catch(NumberFormatException ex){
-					allGood = false;
-					message = "Invalid News ID.";
-				}
-			}
-		}
+
+
 		
 		if(allGood){
 			// load news before we delete 
@@ -1017,40 +947,24 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles add RSS entry requests from admins.
 	 */
 	private void postRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String feedType = request.getParameter("type");
 		String title = request.getParameter("title");
 		String link = request.getParameter("link");
 		String content = request.getParameter("content");	
 		String categories = request.getParameter("categories");	
-		
-		sessionKey = Utility.checkInputFormat(sessionKey);
-		
+				
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
 		String[] categoriesArray = {};
 
-		// session check
-		Session session = accManager.getSessionByKey(sessionKey);
-		if(session == null){
+		if( title == null || title.equals("") ){
 			allGood = false;
-			message = "Unauthorized post RSS action.";
-		}
-		else{
-			String userType = session.getAccountType();
-			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
-				allGood = false;
-				message = "Unauthorized post RSS action.";
-			}
-			else if( title == null || title.equals("") ){
-				allGood = false;
-				message = "Title cannot be empty.";
-			}			
-			else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
-				allGood = false;
-				message = "Invalid feed type.";
-			}
+			message = "Title cannot be empty.";
+		}			
+		else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
+			allGood = false;
+			message = "Invalid feed type.";
 		}
 		
 		// process inputs
@@ -1106,42 +1020,28 @@ private void adminDeleteJobAd(HttpServletRequest request, HttpServletResponse re
 	 * Handles delete RSS entry requests from admins.
 	 */
 	private void removeRSSEntryHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String sessionKey = request.getParameter("sessionKey");
 		String strEntryIndex = request.getParameter("entryIndex");
 		String feedType = request.getParameter("feedType");
 		int entryIndex = -1;
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		boolean allGood = true;
 		boolean result = false;
 		String message = "";
 
-		// session check
-		Session session = accManager.getSessionByKey(sessionKey);
-		if(session == null){
+
+		if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
 			allGood = false;
-			message = "Unauthorized post RSS action.";
+			message = "Invalid feed type.";
 		}
 		else{
-			String userType = session.getAccountType();
-			if( !userType.equals("superAdmin") && !userType.equals("admin") ){
+			try{
+				entryIndex = Integer.parseInt(strEntryIndex);
+			}
+			catch(NumberFormatException e){}
+			// report error if index failed to be parsed, or an invalid index was passed in
+			if(entryIndex < 0){
 				allGood = false;
-				message = "Unauthorized delete RSS action.";
-			}
-			else if( feedType == null || ( !feedType.equals("news") && !feedType.equals("jobAd") ) ){
-				allGood = false;
-				message = "Invalid feed type.";
-			}
-			else{
-				try{
-					entryIndex = Integer.parseInt(strEntryIndex);
+				message = "Invalid entry index.";
 				}
-				catch(NumberFormatException e){}
-				// report error if index failed to be parsed, or an invalid index was passed in
-				if(entryIndex < 0){
-					allGood = false;
-					message = "Invalid entry index.";
-				}
-			}
 		}
 		
 		if(allGood){		
