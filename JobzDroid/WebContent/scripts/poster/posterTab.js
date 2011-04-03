@@ -309,8 +309,8 @@
                 $.fn.DynaSmartTab.floatingTool=function(tRow, adId){
          			
          			var tool= $('<span></span>').addClass('edTool');
-         			$('<a></a>').addClass('jsBtn').addClass('view').text('view | ').appendTo(tool);
-         			$('<a></a>').addClass('jsBtn').addClass('edit').text('edit | ').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('view').text('View | ').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('edit').text('Edit | ').appendTo(tool);
          			$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
          			tRow.hover(function() {
          		        tool.animate({opacity: "show", left: "0"}, 0);

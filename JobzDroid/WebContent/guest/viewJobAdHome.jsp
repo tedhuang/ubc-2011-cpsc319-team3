@@ -6,7 +6,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
-	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
+	<link href="../css/lightboxCenter.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	
