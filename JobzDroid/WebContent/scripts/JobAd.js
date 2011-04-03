@@ -196,7 +196,7 @@ function adminDeleteJobAd(intJobAdId){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		  
 			//Refresh Table:
-			getAllJobAd("allJobAdtable");
+		  adminGetJobAd("allJobAdtable");
 
 		  }
 		  else if(xmlhttp.status!=200){
@@ -260,7 +260,7 @@ function adminApprove(intJobAdId){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			 			  
 			//Refresh Table:
-			getAllJobAd("allJobAdtable");
+			adminGetJobAd("allJobAdtable");
 
 		  }
 		  else if(xmlhttp.status!=200){
@@ -312,7 +312,7 @@ function adminDeny(intJobAdId){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
  			  
 				//Refresh Table:
-				getAllJobAd("allJobAdtable");
+			  adminGetJobAd("allJobAdtable");
 
 			  }
 			  else if(xmlhttp.status!=200){
@@ -593,17 +593,33 @@ function getJobAdById(mode, id, outputDiv)
 }
 
 /************************************************************************************************************
- * 				Get All Job Ads
+ * 				Function used by admin to get job ads of all status
  * @param outputDiv
  ************************************************************************************************************/
-function getAllJobAd(outputDiv){
+function adminGetJobAd(outputDiv, mode){
 	
 	$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+
 	var strSessionKey = $("#sessionKey").val();
-	request = new Request;
 	
-	request.addAction("getAllJobAd");
+	var filter = $("#filter").text();
+	var index = $("#browseIndex").val();
+	if(index < 0)
+		index = 0;
+	
+	if(mode == "first")
+		index = 0;
+	else if(mode == "next")
+		index = parseInt(index)+20; //update index
+	else if(mode == "prev")
+		index = parseInt(index)-20;	  
+	
+	request = new Request;
+	request.addAction("adminGetJobAd");
+	request.addParam("startingIndex", index);
 	request.addParam("sessionKey", strSessionKey);
+	request.addParam("filter", filter);
+
 	
 	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
@@ -611,22 +627,37 @@ function getAllJobAd(outputDiv){
 	else{// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	
+	xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			  
+			  buildAdminJobAdTb("jobAd", outputDiv);//uibot
+			  
+				var xmlObj = $("jobAd",xmlhttp.responseXML);
+
+				if(xmlObj.length < 20 && index >= 20){//if this is the last page of results
+					$("#prevButton").attr("disabled", false);
+					$("#nextButton").attr("disabled", true);
+				}
+				else if(xmlObj.length < 20 && index < 20){ // if result size < 20 on first page
+					$("#prevButton").attr("disabled", true);
+					$("#nextButton").attr("disabled", true);
+				}
+				else if(index < 20){ // if first page
+					$("#prevButton").attr("disabled", true);
+					$("#nextButton").attr("disabled", false);
+				}
+				else{ // middle pages
+					$("#prevButton").attr("disabled", false);
+					$("#nextButton").attr("disabled", false);
+				}
+			  $("#browseIndex").val(index ); //increase index by 20
+		    }
+		};	  
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(request.toString());
 	
-	xmlhttp.onreadystatechange=function(){
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  
-		  buildBrowseJobAdTb("jobAd", outputDiv);//uibot
-	    }
-	  else{
-		  //TODO: implement error handling
-	  }
-	  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
-	};	  
 }
 
 

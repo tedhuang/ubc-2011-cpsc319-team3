@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +20,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 
 import classes.Account;
 import classes.DbQuery;
+import classes.JobAdvertisement;
 import classes.NewsEntry;
 import classes.Session;
 import classes.Utility;
@@ -55,6 +58,7 @@ public class ServletAdmin extends HttpServlet {
     // Enumerates the action parameter
 	private enum EnumAction	{
 		requestForAdminLogin,
+		adminGetJobAd,
 		ban,
 		adminApprove,
 		adminDeny,
@@ -95,6 +99,9 @@ public class ServletAdmin extends HttpServlet {
 		switch( EnumAction.valueOf(action) ){
 			case requestForAdminLogin:
 				adminLoginReqTaker(request, response);
+				break;
+			case adminGetJobAd:
+				adminGetJobAd(request, response);
 				break;
 			case adminApprove:
 				adminApprove(request, response);
@@ -171,6 +178,124 @@ public class ServletAdmin extends HttpServlet {
 		}
 		
 	}
+	
+	
+	/**
+	 * Returns an xml formatted arraylist of all job advertisements
+	 */
+	private void adminGetJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		System.out.println("ServletJobAd: Inside getAllJobAd");
+
+		int numToGet = 20;
+		int index = Integer.parseInt(request.getParameter("startingIndex"));
+		String filter = request.getParameter("filter");
+		
+		String message = "adminGetJobAd failed";
+		boolean isSuccessful = false;
+			
+		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+		
+//		String sessionKey = request.getParameter("sessionKey");
+//		Session session = dbManager.getSessionByKey(sessionKey);
+
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+			
+			String query = 
+			 	"SELECT * FROM tableJobAd ";
+			
+			if(!filter.equals("all")){ //Check if status filter is set
+				query += "WHERE status = '" + filter + "' ";
+			}
+			
+			query+=
+				"ORDER BY datePosted DESC "+
+			 	"LIMIT " + index +  ", " + numToGet + ";";
+			
+			
+			System.out.println("getAllJobAd query:" + query);
+			isSuccessful = stmt.execute(query);
+			
+			ResultSet result = stmt.getResultSet();
+			
+			while(result.next()){
+				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+				
+				//Fill in the fields of the jobAd object
+				jobAd.jobAdId 			= result.getInt("idJobAd");
+				jobAd.ownerID 			= result.getInt("idAccount");
+				jobAd.creationDate 		= result.getLong("datePosted");
+				jobAd.jobAdTitle		= result.getString("title");
+				jobAd.expiryDate		= result.getLong("expiryDate");
+				jobAd.jobAvailability	= result.getString("jobAvailability");
+				jobAd.status 			= result.getString("status");
+				jobAd.educationReq 		= result.getInt("educationRequired");
+				jobAd.isApproved 		= result.getInt("isApproved");
+				jobAd.numberOfViews 	= result.getInt("numberOfViews");
+
+				//jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.startingDate 		= result.getLong("dateStarting");
+				jobAd.contactInfo 		= result.getString("contactInfo");
+				jobAd.tags 				= result.getString("tags");
+				
+	
+				jobAdList.add(jobAd);
+			
+			}//END OF WHILE LOOP
+			
+			if(jobAdList.isEmpty()){
+				message = "Error: No Job Ad found";
+				System.out.println("Error: No Job Ad found");
+			}
+			else{
+				System.out.println("getAllJobAd successful");
+				message = "adminGetJobAd successful";
+				isSuccessful = true;
+			}
+					
+			
+		} //END OF TRY
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
+		
+		Iterator<JobAdvertisement> itr = jobAdList.iterator();
+	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    }
+		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+	}
+	
 	
 	
 	/*
