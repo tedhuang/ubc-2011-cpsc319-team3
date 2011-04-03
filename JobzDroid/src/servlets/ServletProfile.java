@@ -351,22 +351,24 @@ public class ServletProfile extends HttpServlet{
 	
 	
 /************************************************************************************************************************************* 
- * viewAllASearchers(HttpServletRequest request, HttpServletResponse response)
+ * getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)
  * 
- * Method to view all Job Searchers in the database. A mySQL query is created from these parameters, and is passed to 
- * DBManager to process a result set. The method creates an XML table from this result set and passes it as a 
- * HttpServletResponse to the XMLHttp Object that invoked this method.
+ * Method to retrieve Job Searcher's profile and account information. A mySQL query is created from these parameters, 
+ * and is passed to DBManager to process a result set. The method creates an XML table from this result set and passes 
+ * it as a HttpServletResponse to the XMLHttp Object that invoked this method.
  * 
- * Caller function: viewAllSearchers() from Profile.js
+ * Caller function: getProfileSearcherById from Profile.js
  * 
  * @param request - The HttpServletRequest that invokes this method
  * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
+ * @throws ServletException
  * @throws IOException
  ************************************************************************************************************************************/
 	private void getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		boolean isSuccessful = false;
 		String message = "Profile Search Failed";
 		
+		//Convert Job Searcher's id from String to integer
 		String profileSearcherId = request.getParameter("accountId");
 		int intProfileId = -1;
 		try{
@@ -376,12 +378,14 @@ public class ServletProfile extends HttpServlet{
 			response.sendRedirect("error.html");
 		}
 		
+		//Create connection with database and statement to store/execute query
 		Connection conn=dbManager.getConnection();
 		Statement stmt =null;
 		ProfileSearcher profileSearcher = new ProfileSearcher();
 		
 		try{
 			stmt = conn.createStatement();
+			//Query to gather Job Searcher's data (profile summary, account info -for emails, location)
 			String query = "SELECT * " +
 					"FROM tableProfileSearcher " +
 					"INNER JOIN tableAccount USING (idAccount)" +
@@ -389,13 +393,16 @@ public class ServletProfile extends HttpServlet{
 					"WHERE idAccount="+profileSearcherId;
 			
 			System.out.println("getProfileSearcherById query:"+query);
+			
+			//Execute query and get result set
 			stmt.executeQuery(query);
 			ResultSet result = stmt.getResultSet();
+			
+			//create ArrayList locationList to store Job Searcher's location(s)
 			Location location = new Location("Not Specified");
 			ArrayList<Location> locationList = new ArrayList<Location>();
 			
-			if(result.first()){
-				System.out.println("result.first()");
+			if(result.first()){ //if there is an entry from result set - check first one
 				message = "Profile Search successful";
 				
 				String empPref = "";
@@ -403,6 +410,7 @@ public class ServletProfile extends HttpServlet{
 				int partTime = 0;
 				int internship = 0;
 				
+				//Load Job Searcher's profile and account information into profileSearcher object
 				profileSearcher.accountID = result.getInt("idAccount");
 				profileSearcher.name = result.getString("name");
 				profileSearcher.phone = result.getString("phone");
@@ -411,7 +419,8 @@ public class ServletProfile extends HttpServlet{
 				profileSearcher.educationLevel = result.getInt("educationLevel");		
 				profileSearcher.email = result.getString("email");
 				profileSearcher.secondaryEmail = result.getString("secondaryEmail");
-
+				
+				//Load location values into locationList and pass it on to profileSearcher object's addressList
 				location.address = result.getString("location");
 				location.longitude = result.getDouble("longitude");
 				location.latitude = result.getDouble("latitude");
@@ -422,7 +431,7 @@ public class ServletProfile extends HttpServlet{
 				fullTime = result.getInt("fullTime");
 				partTime = result.getInt("partTime");
 				internship = result.getInt("internship");	
-				
+				//Convert integer values that define employment availability to Full-time, Part-time, or Internship
 				if( (fullTime+partTime+internship) == 3   || (fullTime+partTime+internship) == 0)
 					empPref = "N/A"; //no preference
 				else{					
@@ -433,7 +442,6 @@ public class ServletProfile extends HttpServlet{
 					if(internship == 1)
 						empPref += "Internship";
 				}
-				System.out.println("Employment Preference: " + empPref);
 				profileSearcher.employmentPreference = empPref;
 				
 				isSuccessful = true;
@@ -467,14 +475,16 @@ public class ServletProfile extends HttpServlet{
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
 	    }/**end of finally block**/
-	    
+
+		//Create XML table to store all results from result set
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
+		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n"); //tag to see if Searcher info is loaded successfully
 		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append(profileSearcher.toXMLContent() );
-		XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( intProfileId ));
+		//append Job Searcher's data (stored in profielSearcher object) to XML table
+		XMLResponse.append(profileSearcher.toXMLContent() ); 
+		XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( intProfileId )); //append Job Searcher's file paths (resume,etc.) to XML table
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);	
@@ -1306,6 +1316,7 @@ public class ServletProfile extends HttpServlet{
 		
 		//ArrayList that stores the result set, and later passes its content to the XML Response table
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
+		//Create connection database and create statement to store/execute query
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 			
@@ -1463,77 +1474,89 @@ public class ServletProfile extends HttpServlet{
 		
 	}
 
-/*************************************************************************************
-* saveCandidate()
-* 
-*  
-* 
-*************************************************************************************/
+/****************************************************************************************************************************
+ * saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session )
+ * 
+ * Method to save favourite Job Searcher (by id) into Candidates List. A mySQL query is created from these parameters, and is 
+ * passed to DBManager to process a result set. The method creates an XML table from this result set and passes it as 
+ * a HttpServletResponse to the XMLHttp Object that invoked this method.
+ * 
+ * @param request - The HttpServletRequest that invokes this method
+ * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
+ * @param session - The current session the user is currently in
+ * @throws IOException
+ ****************************************************************************************************************************/
 	public void saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
 						
 		String msg = "";
 
-		int accountId = -1;
-		int searcherId = -1;
-		long dateAdded = -1;
-		String query = "";
-			
+		int accountId = -1;	//account id of user. Initialise
+		int searcherId = -1;	//account id of Job Searcher. Initialise
+		long dateAdded = -1;	//date and time (in milliseconds) the Job Searcher was saved. Initialise
+		String query = "";	//mySQL query. Initialise
+		
+		//get account Id from selected Job Searcher and convert it from String to Integer
 		String searcherIdInString = request.getParameter("searcherId");
 		try{
 			searcherId = Integer.parseInt(searcherIdInString);
 		}
-			catch(NumberFormatException e){
-				response.sendRedirect("error.html");
-			}
-			
-			accountId = session.getIdAccount();	
-			
-			dateAdded = Utility.getCurrentTime();
-			
-			query = "INSERT IGNORE INTO tablecandidate(idAccount, idSearcher, dateAdded) VALUES " +
+		catch(NumberFormatException e){
+			response.sendRedirect("error.html");
+		}
+		
+		//get user's account Id from the current session the user is in
+		accountId = session.getIdAccount();	
+		//get current data and time	
+		dateAdded = Utility.getCurrentTime();
+		
+		//mySql query to save's user's account id, Job Searcher's account id, and current date&time into database
+		query = "INSERT IGNORE INTO tablecandidate(idAccount, idSearcher, dateAdded) VALUES " +
 				"('"  + accountId + "','" + searcherId + "','" + dateAdded + "')";		
-			
-			Connection conn = dbManager.getConnection();
-			PreparedStatement preparedStmt = null;
-			Statement stmt2 = null;
-			int isSucessful = -1;
-			ResultSet rs = null;
-			
-			try {			
-				System.out.println("Processing " + query);
-				preparedStmt = conn.prepareStatement(query);
-				isSucessful = preparedStmt.executeUpdate();
+		
+		//Create connection with database and create Statement to store/execute query
+		Connection conn = dbManager.getConnection();
+		PreparedStatement preparedStmt = null;
+		Statement stmt2 = null; //for debugging and diagnostics
+		int isSucessful = -1;
+		ResultSet rs = null;
+		
+		//for debugging and diagnostics. Check to see if query is executed correctly and whether
+		//Job Searcher and user's Ids and current time are saved
+		try {			
+			System.out.println("Processing " + query);
+			preparedStmt = conn.prepareStatement(query);
+			isSucessful = preparedStmt.executeUpdate();
 				
-				query="SELECT * FROM tablefavouritejobad ORDER BY dateAdded LIMIT 1";
-				stmt2 = conn.createStatement();
-				stmt2.execute(query);
-				msg = "Action Performed Successfully";
-				System.out.println(msg);
-				if(isSucessful != -1){
-					rs = stmt2.getResultSet();
-					if (rs.next()){
-						accountId = rs.getInt("idAccount");
-						System.out.println("Retrieved: Account ID:" + accountId);
-						searcherId = rs.getInt("idJobAd"); 
-						System.out.println("Retrieved: Job Ad ID:" + searcherId);
-					}
-					else
-						System.out.println("Error: Inserted row not found after creation");
+			query="SELECT * FROM tablefavouritejobad ORDER BY dateAdded LIMIT 1";
+			stmt2 = conn.createStatement();
+			stmt2.execute(query);
+			msg = "Action Performed Successfully";
+			System.out.println(msg);
+			if(isSucessful != -1){
+				rs = stmt2.getResultSet();
+				if (rs.next()){
+					accountId = rs.getInt("idAccount");
+					System.out.println("Retrieved: Account ID:" + accountId);
+					searcherId = rs.getInt("idJobAd"); 
+					System.out.println("Retrieved: Job Ad ID:" + searcherId);
+				}
+				else
+					System.out.println("Error: Inserted row not found after creation");
 					
-					if(accountId !=-1 && searcherId != -1){
-							System.out.println("accountId and jobAdId are valid values");
-					}
-					else{
-						System.out.println("accountId or jobAdId not valid");
-					}
-				}
-				else{
-					System.out.println("preparedStmt not sucessful");
-				}
+				if(accountId !=-1 && searcherId != -1)
+					System.out.println("accountId and jobAdId are valid values");
+				else
+					System.out.println("accountId or jobAdId not valid");	
 			}
+			else
+				System.out.println("preparedStmt not sucessful");
+				
+			}/**end of try block**/
+		
 			catch (SQLException e) {
 				Utility.logError("SQL exception : " + e.getMessage());
 			}
+			
 		    finally {
 		        try{
 		            if (preparedStmt != null)
@@ -1542,6 +1565,7 @@ public class ServletProfile extends HttpServlet{
 		            	stmt2.close();
 		        }
 		        catch (Exception e) {
+		        	//TODO log "Cannot close Prepared Statement"
 		        	System.out.println("Cannot close Prepared Statement : " + e.getMessage());
 		        }
 		        try {
@@ -1549,20 +1573,21 @@ public class ServletProfile extends HttpServlet{
 		                conn.close();
 		        }
 		        catch (SQLException e) {
+		        	//TODO log Cannot close Connection
 		        	System.out.println("Cannot close Connection : " + e.getMessage());
 		        }
-		    }
+		    }/**end of finally block**/
 			
-		}	
+		}/**end of method saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session)**/
 
-	/*********************************************************************************************
-	 *
-	 * listCandidate()
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 ***********************************************************************************************/
+	
+/***************************************************************************************************************
+ * listCandidate()
+ * 
+ * @param request
+ * @param response
+ * @throws IOException
+ ***************************************************************************************************************/
 		public void listCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
 			ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 			
