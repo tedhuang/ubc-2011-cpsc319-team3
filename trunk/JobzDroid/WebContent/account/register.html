@@ -5,7 +5,10 @@
 	<title>Register on JobzDroid!</title>	
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
+	<link href="../css/lightboxCenter.css" rel="stylesheet" type="text/css" />
+	
 	<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>	
+	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 	<script type="text/javascript" src='../scripts/Utility.js'></script>
 	<script type="text/javascript" src='../scripts/UserRegistration.js'></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
@@ -20,9 +23,9 @@
 	        <img src="../images/logo-small.png">
 		</a>
 		<ul id="topnav" class="topnav">
-		    <li><a href="../news.html" class="btn">News</a></li>
-		    <li><a href="../rss.html" class="btn">RSS</a></li>
-		    <li><a href="#" class="btn">View Job Ads</a></li>
+		    <li><a href="../news.html" target="_blank" class="btn">News</a></li>
+		    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
+		    <li><a href="guest/viewJobAdHome.jsp" target="_blank" class="btn">Browse Job Ads</a></li>
 		</ul>
 
 	  </div>
@@ -85,6 +88,8 @@
 			<tr>
 				<td class="label">
 			            ** You are a:
+				</td>
+				<td>
 					<input type="radio" name="accountType" value="searcher" checked="checked" />Job Searcher 
 					<input type="radio" name="accountType" value="poster" />Job Poster <br />
 				</td>
@@ -178,16 +183,13 @@
 			</tr>
 			
 		</tbody>
-	</table>
-		
+	</table>		
 		<p align="center"><button id="submitButton" type="button">Submit</button></p>
-		<!--TODO STYLE THE BUTTON-->
-		<p id="statusText" class="pagefont" align="center" style="font-weight:bold" ></p>
         <br/>	
         
 	</div>	
   </div> 
 </div> <!-- ENDOF MAIN-->
-<div id="mapCanvas"></div>
+<div id="lightBox"></div>
 </body>
 </html>
