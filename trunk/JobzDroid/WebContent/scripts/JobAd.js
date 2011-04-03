@@ -669,7 +669,7 @@ function adminGetJobAd(outputDiv, mode){
  ************************************************************************************************************/
 function guestViewJobAd(outputDiv, mode){
 	
-	//$.fn.smartLightBox.openDivlb("home-frame",'load','loading...');
+	$.fn.smartLightBox.openlb('small','Loading...','load');
 
 	var index = $("#browseIndex").val();
 	if(index < 0)
@@ -717,7 +717,7 @@ function guestViewJobAd(outputDiv, mode){
 				}
 			  $("#browseIndex").val(index ); //increase index by 20
 		    }
-		  //$.fn.smartLightBox.closeLightBox(1000,"home-frame");
+		    $.fn.smartLightBox.closeLightBox(500);
 		};	  
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
