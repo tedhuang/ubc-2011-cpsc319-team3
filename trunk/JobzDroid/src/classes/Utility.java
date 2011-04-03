@@ -54,6 +54,15 @@ public class Utility {
 	}
 	
 	/***
+	 * Removes all non-ASCII characters from the input text.
+	 * @param text Input text.
+	 * @return Output text after removing all non-ascii characters.
+	 */
+	public static String replaceNonAsciiChars(String text){
+		return text.replaceAll("[^\\p{ASCII}]", "?");
+	}
+	
+	/***
 	 * Converts string line breaks into HTML line break tags, and two or more white spaces into a sequence of NBSP.
 	 * @param input Input string.
 	 * @return Processed string.

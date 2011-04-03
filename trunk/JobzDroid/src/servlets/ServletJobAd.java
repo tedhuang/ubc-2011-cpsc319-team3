@@ -1330,9 +1330,13 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 					long aDate=Utility.dateConvertor(request.getParameter(paraName)); //TODO Double Check convertor
 					paraMap.put(colName, aDate);
 				}
-				// preserve line breaks and sequences of white spaces to properly display in HTML
+				else if(colName.equals("title")){
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					paraMap.put(colName, strFormatted);
+				}
 				else if(colName.equals("description")){
-					String strFormatted=Utility.processLineBreaksWhiteSpaces(request.getParameter(paraName));
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					strFormatted = Utility.processLineBreaksWhiteSpaces(strFormatted);
 					paraMap.put(colName, strFormatted);
 				}
 				else{
@@ -1439,8 +1443,13 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 					long aDate=Utility.dateConvertor(request.getParameter(paraName));
 					paraMap.put(colName, aDate);
 				}
+				else if(colName.equals("title")){
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					paraMap.put(colName, strFormatted);
+				}
 				else if(colName.equals("description")){
-					String strFormatted=Utility.processLineBreaksWhiteSpaces(request.getParameter(paraName));
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					strFormatted = Utility.processLineBreaksWhiteSpaces(strFormatted);
 					paraMap.put(colName, strFormatted);
 				}
 				else{

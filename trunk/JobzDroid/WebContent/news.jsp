@@ -20,8 +20,8 @@
 		</a>
 		<ul id="topnav" class="topnav">
 		    <li><a href="#" class="btn">News</a></li>
-		    <li><a href="rss.html" class="btn">RSS</a></li>
-		    <li><a href="#" class="btn">View Job Ads</a></li>
+		    <li><a href="rss.html" target="_blank" class="btn">RSS</a></li>
+		    <li><a href="guest/viewJobAdHome.jsp" target="_blank" class="btn">Browse Job Ads</a></li>
 		</ul>
 	  </div>
 	  
