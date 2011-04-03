@@ -156,7 +156,6 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 			  if(jobAd.attr("isApproved") == 1)
 				  alert("This Job Ad has already been approved");
 			  else{			  
-			      alert("Approving Job Ad - TODO: Add transition loading screen..");
 				  adminApprove(jobAd.attr("jobAdId"));
 			      //TODO: implement transition loading screen - UI
 			  }
@@ -167,7 +166,6 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 					  if(jobAd.attr("isApproved") == 0)
 						  alert("This Job Ad has not yet been approved");
 					  else{			  
-					      alert("Denying Job Ad - TODO: Add transition loading screen..");
 					      adminDeny(jobAd.attr("jobAdId"));
 					      //TODO: implement transition loading screen - UI
 					  }

@@ -168,6 +168,8 @@ function changeJobAdStatus(intJobAdId, strNewStatus){
  */
 function adminDeleteJobAd(intJobAdId){
 	
+	var formDiv = 'home-frame';
+	var theForm =$("#"+formDiv);
 	var sessionKey = $("#sessionKey").val();
 	
 	if( intJobAdId == null ){
@@ -191,19 +193,17 @@ function adminDeleteJobAd(intJobAdId){
 	  
 	xmlhttp.onreadystatechange=function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-		   document.getElementById("feedback").innerHTML=responseText;
-		   if (result){
-			   //TODO: add UI transition handling
-			   alert("Job Ad Deleted Successfully (TODO: add UI tranisition)");
-		   }
-		   else{
-			   alert("Failed to Delete Job Ad");
-		   }
-	    }
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+		  
+			//Refresh Table:
+			getAllJobAd("allJobAdtable");
+
+		  }
+		  else if(xmlhttp.status!=200){
+			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$.fn.smartLightBox.closeLightBox(1000, formDiv);
+		  }
 	  };
 	
 	//send the parameters to the servlet with POST
@@ -221,8 +221,11 @@ function adminDeleteJobAd(intJobAdId){
  */
 function adminApprove(intJobAdId){
 	
+	var formDiv = 'home-frame';
+	var theForm =$("#"+formDiv);
+//	$.fn.smartLightBox.openDivlb(formDiv,'load','Loading..');
+	
 	var sessionKey = document.getElementById("sessionKey").value;
-	//var intJobAdId = document.getElementById("jobAdId").value;
 	
 	if( intJobAdId == null ){
 		alert("Job Ad ID is not provided");
@@ -253,25 +256,26 @@ function adminApprove(intJobAdId){
 	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 	
 	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-		   document.getElementById("feedback").innerHTML=responseText;
-		   if (result){
-			   //TODO: add UI transition handling
-			   alert("Job Ad Approved Successfully (TODO: add UI tranisition)");
-		   }
-		   else{
-			   alert("Failed to Approve Job Ad");
-		   }
-	    }
+	  {	  
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			 			  
+			//Refresh Table:
+			getAllJobAd("allJobAdtable");
+
+		  }
+		  else if(xmlhttp.status!=200){
+			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$.fn.smartLightBox.closeLightBox(1000, formDiv);
+		  }
 	  };
 }
 
 
 function adminDeny(intJobAdId){
+	
+	var formDiv = 'home-frame';
+	var theForm =$("#"+formDiv);
 	
 	var sessionKey =  $("#sessionKey").val();
 	
@@ -305,19 +309,17 @@ function adminDeny(intJobAdId){
 	
 	xmlhttp.onreadystatechange=function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var responseText = (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-		   var result = (xmlhttp.responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-		   document.getElementById("feedback").innerHTML=responseText;
-		   if (result = true){
-			   //TODO: add UI transition handling
-			   alert("Job Ad Denied Successfully (TODO: add UI tranisition)");
-		   }
-		   else{
-			   alert("Failed to Deny Job Ad");
-		   }
-	    }
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+ 			  
+				//Refresh Table:
+				getAllJobAd("allJobAdtable");
+
+			  }
+			  else if(xmlhttp.status!=200){
+				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+					$("#lbMsg",theForm).html("Action Not Successful, please try again");
+					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+			  }
 	  };
 }
 
