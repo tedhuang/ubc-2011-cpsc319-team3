@@ -32,10 +32,30 @@
 		$('#sideMenu').sideNavMenu({});
     	$('#tabs').DynaSmartTab({});
 
-    	getAllJobAd("allJobAdtable");
-		
+    	changeFilterStatus("all");
+    	adminGetJobAd('allJobAdtable', 'first');
+    	
     	bindClearError();
 	});
+    
+    //Changes the filter input on the page
+    function changeFilterStatus(newFilter){
+    	if(newFilter == "all")
+    		$("#filter").text("all");
+    	
+    	else if(newFilter == "pending")
+    		$("#filter").text("pending");
+    	
+    	else if(newFilter == "inactive")
+    		$("#filter").text("inactive");
+    	
+    	else if(newFilter == "draft")
+    		$("#filter").text("draft");
+    	
+    	else
+    		alert("Error, invalid filter status");
+    }
+    
 </script>
 	
 	<title>Manage Job Ad</title>
@@ -152,14 +172,14 @@
 			<h2 class="welcome"><b><font size='4'>List of Job Advertisements</font></b></h2>
 
 		 <div id="headToolBar">
-          	<ul id="filter">
-          		<li><a class="jsBtn cAll" onclick="filterTable('', allJobAdtable)">View All<span id="numActive"></span></a></li>
-	          	<li><a class="jsBtn cOpen" onclick="filterTable('open', allJobAdtable)">Open<span id="numActive"></span></a></li>
-				<li><a class="jsBtn cDraft" onclick="filterTable('draft', allJobAdtable)">Draft<span id="numDraft"></span></a></li>
-				<li><a class="jsBtn cPending" onclick="filterTable('pending', allJobAdtable)">Pending<span id="numPending"></span></a></li>
-				<li><a class="jsBtn cInact" onclick="filterTable('inactive', allJobAdtable)">Inactive<span id="numInactive"></span></a></li>
+          	<ul id="filterArea">
+          		<li><a class="jsBtn cAll" onclick='changeFilterStatus("all"); 	  adminGetJobAd("allJobAdtable", "first")'>View All</a></li>
+          		<li><a class="jsBtn cAll" onclick='changeFilterStatus("pending"); adminGetJobAd("allJobAdtable", "first")'>Pending</a></li>
+          		<li><a class="jsBtn cAll" onclick='changeFilterStatus("draft");	  adminGetJobAd("allJobAdtable", "first")'>Draft</a></li>
+          		<li><a class="jsBtn cAll" onclick='changeFilterStatus("inactive");adminGetJobAd("allJobAdtable", "first")'>Inactive</a></li>
           		
           	</ul>
+          	
           </div>
 	       <div id="allJobAdtable" class="resultTableDiv">
 	          <table>
@@ -220,9 +240,13 @@
 					<tbody></tbody>
 				</table><!--ENDOF TABLE-->
 				
+			<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 20</button>
+			<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 20</button>	
+				
+				
 			</div>
 			
-			<button type="button" onclick="getAllJobAd('allJobAdtable')">Load all Job Ads</button>
+			<button type="button" onclick="changeFilterStatus('all');adminGetJobAd('allJobAdtable', 'first')">Load all Job Ads</button>
 			
 		
 			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
@@ -260,7 +284,8 @@
 		<input type="hidden" id="sessionKey" name="sessionKey"/>
 	</form>
 	
-	
+	<input id="browseIndex"  value="0"/>
+	<input id="filter"  value="all"/>
 	
 </body>
 </html>

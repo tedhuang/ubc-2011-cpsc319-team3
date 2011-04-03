@@ -107,12 +107,12 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 
 
 /************************************************************************************************
- * 					BUILD TABLE CONTAINING ALL JOB ADS - used by Admin(manageJobAd.jsp) and Searcher
+ * 					BUILD TABLE CONTAINING ALL JOB ADS - used by Admin(manageJobAd.jsp)
  * INSERT RETURNED DATA INTO THE TABLE
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
-function buildBrowseJobAdTb(targetXMLTag, outputDiv){
+function buildAdminJobAdTb(targetXMLTag, outputDiv){
 	
 	//TODO: finish implementing
 	
@@ -188,7 +188,10 @@ function buildBrowseJobAdTb(targetXMLTag, outputDiv){
 		});
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
+		 
 	}
+	  $.fn.smartLightBox.closeLightBox(2000,"home-frame");
+
 }
 
 

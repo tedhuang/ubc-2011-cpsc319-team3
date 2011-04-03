@@ -55,7 +55,6 @@ public class ServletJobAd extends HttpServlet {
 		getJobAdByOwner,
 		getJobAdById,
 		deleteJobAd,
-		getAllJobAd,
 		getSomeJobAd,
 		getSuggestions,
 		
@@ -63,9 +62,6 @@ public class ServletJobAd extends HttpServlet {
 		listFavouriteJobAd,
 		deleteFavouriteJobAd,
 		
-		adminApprove,
-		adminDeny,
-		adminDeleteJobAd,
 		loadAdList //search loader(?)
 		
 	}
@@ -151,10 +147,6 @@ public class ServletJobAd extends HttpServlet {
 			case loadAdList:
 				searchJobAd(request, response);
 				break;
-			
-			case getAllJobAd:
-				getAllJobAd(request, response);
-				break;
 				
 			case getSomeJobAd:
 				getSomeJobAd(request, response);
@@ -200,9 +192,6 @@ public class ServletJobAd extends HttpServlet {
 		
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 		
-//		String sessionKey = request.getParameter("sessionKey");
-//		Session session = dbManager.getSessionByKey(sessionKey);
-
 		
 		int numToGet = 20;
 		int index = Integer.parseInt(request.getParameter("startingIndex"));
@@ -307,118 +296,6 @@ public class ServletJobAd extends HttpServlet {
 		
 	
 
-	/**
-	 * Returns an xml formatted arraylist of all job advertisements
-	 */
-	private void getAllJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		System.out.println("ServletJobAd: Inside getAllJobAd");
-
-		String message = "getAllJobAd failed";
-		boolean isSuccessful = false;
-		
-		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
-		
-//		String sessionKey = request.getParameter("sessionKey");
-//		Session session = dbManager.getSessionByKey(sessionKey);
-
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		Statement stmtLoc = null;
-		Statement stmtEmp = null;
-
-		try {
-			stmt = conn.createStatement();
-			
-			String query = "SELECT * FROM tableJobAd" +
-							" ORDER BY datePosted DESC";
-			
-			System.out.println("getAllJobAd query:" + query);
-			isSuccessful = stmt.execute(query);
-			
-			ResultSet result = stmt.getResultSet();
-			
-			while(result.next()){
-				JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
-				
-				//Fill in the fields of the jobAd object
-				jobAd.jobAdId 			= result.getInt("idJobAd");
-				jobAd.ownerID 			= result.getInt("idAccount");
-				jobAd.creationDate 		= result.getLong("datePosted");
-				jobAd.jobAdTitle		= result.getString("title");
-				jobAd.expiryDate		= result.getLong("expiryDate");
-				jobAd.jobAvailability	= result.getString("jobAvailability");
-				jobAd.status 			= result.getString("status");
-				jobAd.educationReq 		= result.getInt("educationRequired");
-				jobAd.isApproved 		= result.getInt("isApproved");
-				jobAd.numberOfViews 	= result.getInt("numberOfViews");
-
-				//jobAd.jobAdDescription 	= result.getString("description");
-				jobAd.startingDate 		= result.getLong("dateStarting");
-				jobAd.contactInfo 		= result.getString("contactInfo");
-				jobAd.tags 				= result.getString("tags");
-				
-	
-				jobAdList.add(jobAd);
-			
-			}//END OF WHILE LOOP
-			
-			if(jobAdList.isEmpty()){
-				message = "Error: No Job Ad found";
-				System.out.println("Error: No Job Ad found");
-			}
-			else{
-				System.out.println("getAllJobAd successful");
-				message = "getAllJobAd successful";
-				isSuccessful = true;
-			}
-					
-			
-		} //END OF TRY
-		catch (SQLException e) {
-			//TODO log SQL exception
-			Utility.logError("SQL exception : " + e.getMessage());
-		}
-		// close DB objects
-	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	            if(stmtLoc != null)
-	            	stmtLoc.close();
-	            if(stmtEmp != null)
-	            	stmtEmp.close();
-	        }
-	        catch (Exception e) {
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
-	        try {
-	            if (conn  != null)
-	                conn.close();
-	        }
-	        catch (SQLException e) {
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
-	        }
-	    }
-	    
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		
-		Iterator<JobAdvertisement> itr = jobAdList.iterator();
-	    while (itr.hasNext()) {//iterate through all list and append to xml
-	    	XMLResponse.append(itr.next().toXMLContent() ); 
-	    }
-		
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-	}
-	
-	
-	
-	
 	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		String message = "getJobAdByOwner failed";
