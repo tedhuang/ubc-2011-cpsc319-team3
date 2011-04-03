@@ -103,7 +103,6 @@ public class ServletProfile extends HttpServlet{
 				
 			case getProfileSearcherById:
 				getProfileSearcherById(request,response);
-				System.out.println("DAN DAN DAN");
 				break;
 				
 //			case createProfile:
@@ -147,7 +146,6 @@ public class ServletProfile extends HttpServlet{
 	
 	
 	private void getProfileById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
-		
 		
 		int accountID = Integer.parseInt(request.getParameter("idAccount"));
 		
@@ -350,11 +348,21 @@ public class ServletProfile extends HttpServlet{
 		response.getWriter().println(XMLResponse);
 	}
 	
-/******************************************************************
- * getProfileSearcherById()
- ******************************************************************/
+	
+/************************************************************************************************************************************* 
+ * viewAllASearchers(HttpServletRequest request, HttpServletResponse response)
+ * 
+ * Method to view all Job Searchers in the database. A mySQL query is created from these parameters, and is passed to 
+ * DBManager to process a result set. The method creates an XML table from this result set and passes it as a 
+ * HttpServletResponse to the XMLHttp Object that invoked this method.
+ * 
+ * Caller function: viewAllSearchers() from Profile.js
+ * 
+ * @param request - The HttpServletRequest that invokes this method
+ * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
+ * @throws IOException
+ ************************************************************************************************************************************/
 	private void getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
-		System.out.println("getProfileSearcherById method successfully entered");
 		boolean isSuccessful = false;
 		String message = "Profile Search Failed";
 		
@@ -398,22 +406,17 @@ public class ServletProfile extends HttpServlet{
 				profileSearcher.name = result.getString("name");
 				profileSearcher.phone = result.getString("phone");
 				profileSearcher.selfDescription = result.getString("selfDescription");
-				//profileSearcher.docLink = "";
-				//profileSearcher.employmentPreference = result.getString("");
 				profileSearcher.preferredStartDate = result.getLong("startingDate");
-				profileSearcher.educationLevel = result.getInt("educationLevel");
-				
+				profileSearcher.educationLevel = result.getInt("educationLevel");		
 				profileSearcher.email = result.getString("email");
 				profileSearcher.secondaryEmail = result.getString("secondaryEmail");
-				//profileSearcher.startingDateFormatted = "";
-				//profileSearcher.educationFormatted = "";
-				
-				//profileSearcher.addressList = "";
+
 				location.address = result.getString("location");
 				location.longitude = result.getDouble("longitude");
 				location.latitude = result.getDouble("latitude");
 				locationList.add(location);
 				profileSearcher.addressList = locationList;
+				
 				//Load Employment Preference vales
 				fullTime = result.getInt("fullTime");
 				partTime = result.getInt("partTime");
@@ -437,11 +440,13 @@ public class ServletProfile extends HttpServlet{
 			else{
 				System.out.println("Error: Profile not found with ID:" +profileSearcherId);
 			}
-		}
+		}/**end of try block**/
+		
 		catch (SQLException e) {
 			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
+		
 		// close DB objects
 	    finally {
 	        try{
@@ -460,7 +465,7 @@ public class ServletProfile extends HttpServlet{
 	        	//TODO log Cannot close Connection
 	        	System.out.println("Cannot close Connection : " + e.getMessage());
 	        }
-	    }
+	    }/**end of finally block**/
 	    
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
@@ -471,8 +476,11 @@ public class ServletProfile extends HttpServlet{
 		XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( intProfileId ));
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);		
-	}
+		response.getWriter().println(XMLResponse);	
+		
+	}/**end of method getProfileSearcherById(HttpServletRequest request, HttpServletResponse response)**/
+	
+	
 	
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response, Session session)throws ServletException, IOException{
 		
@@ -1086,17 +1094,23 @@ public class ServletProfile extends HttpServlet{
 
 
 
-/*******************************************************
- * searchSearcherProfile
+/*********************************************************************************************************************
+ * searchSearcherProfile(HttpServletRequest request, HttpServletResponse response)
  * 
+ * Method to find Job Searchers based on the parameters the user (Job Poster) has selected or typed in the Search 
+ * Job Searcher's page. A mySQL query is created from these parameters, and is passed to DBManager to process a
+ * result set. The method creates an XML table from this result set and passes it as a HttpServletResponse 
+ * to the XMLHttp Object that invoked this method.
  * 
+ * Caller Function: searchSearcherProfile() in Profile.js
  * 
- * @param
- * @param
- * 
- ********************************************************/
+ * @param request - The HttpServletRequest that invokes this method
+ * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
+ * @throws IOException  
+ ********************************************************************************************************************/
 	public void searchSearcherProfile(HttpServletRequest request, HttpServletResponse response) throws IOException{
-
+		
+		//ArrayList that stores the result set, and later passes its content to the XML Response table
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
 			
 		Connection conn = dbManager.getConnection();	
@@ -1104,18 +1118,21 @@ public class ServletProfile extends HttpServlet{
 			
 		try {		
 			stmt = conn.createStatement();
-			/**BUILD SEARCH QUERY(REQUEST)**/
-			//Add individual queries onto total query
-			String query = buildSearchSearcherQuery(request);
-				
+			
+			//Call helper method buildSearchSearcherQuery to add individual queries onto one total query
+			String query = buildSearchSearcherQuery(request);				
 			//DEBUG
 			System.out.println(query);
+			
+			//Create ArrayList to store Job Searcher's location(s) in jsList as parameter "locationList"
 			Location location = new Location();
 			ArrayList<Location> locationList = new ArrayList<Location>();
+			
+			//Execute query and get result set
 			stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
 				
-			//Compile the result into the arraylist
+			//Compile each result from the result set into jsList ArrayList
 			while( result.next() ) {
 				ProfileSearcher temp = new ProfileSearcher();
 					
@@ -1124,25 +1141,22 @@ public class ServletProfile extends HttpServlet{
 				temp.educationLevel			= result.getInt("educationLevel");
 				temp.preferredStartDate		= result.getLong("startingDate");
 
-				location.address = result.getString("location");
-				location.longitude = result.getDouble("longitude");
-				location.latitude = result.getDouble("latitude");
+				location.address 			= result.getString("location");
+				location.longitude 			= result.getDouble("longitude"); //long. and lat. to display in Google Map
+				location.latitude 			= result.getDouble("latitude");		
 				locationList.add(location);
-				temp.addressList = locationList;
+				temp.addressList 			= locationList;
 					
-				jsList.add( temp ); //add to the temporary list
-			}
-				
-			stmt.close();
-				
-			System.out.println("Query Successfully Finished");
-
-				
-		} catch (SQLException e1) {
-		e1.printStackTrace();
+				jsList.add( temp ); //add temporary ProfileSearcher object into jsList
+			}							
+			System.out.println("Query Successfully Finished");	
+			
+		}/**end of try block**/ 
+		
+		catch (SQLException e1) { //Catch mySQL exception
+			e1.printStackTrace();
 		}
-			
-			
+						
 		// close DB objects
 		finally {
 			try{
@@ -1161,57 +1175,73 @@ public class ServletProfile extends HttpServlet{
 				//TODO log Cannot close Connection
 				System.out.println("Cannot close Connection : " + e.getMessage());
 			}
-		}
-			
+		}/**end of finally block**/
+		
+		//Create XML table to store all results from result set
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
+		//iterate through jsList and append to xml
 		Iterator<ProfileSearcher> itr = jsList.iterator();
-	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    while (itr.hasNext()) {
 	    	XMLResponse.append(itr.next().toXMLContent() ); 
-	    }
-			
+	    }		
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-	}
+		
+	}/**end of method searchSearcherProfile(HttpServletRequest request, HttpServletResponse response)**/
 
 
 
 /*****************************************************************************************************************
- * 					buildSearchSearcherQuery Function
- * Dynamically making the query as the user's interests
- * Caller Function:  searchSearcherProfile()
+ * buildSearchSearcherQuery(HttpServlet Request request)
+ * 
+ * Helper method that dynamically makes a query based on the user's interest in the Search Job Searcher's page. 
+ *
+ * Caller Function:  searchSearcherProfile(HttpServletRequest request, HttpServletResponse response) in 
+ * ServletProfile.java
+ *
+ * @param request - The HttpServletRequest that invokes searchSearcherProfile()
+ * @return - the query based on what the user's search in Search Job Searcher's page
  *****************************************************************************************************************/
 	private String buildSearchSearcherQuery(HttpServletRequest request){
-		Map<String, String>paraMap = new HashMap<String, String>();//col-value
+		
+		//Create a Map that will store the Search Parameter names and Search Parameter value
+		//ie.) location: USA, Hawaii --> Search Paramter name: location; Search Parameter value: USA, Hawaii
+		Map<String, String>paraMap = new HashMap<String, String>();
 		boolean qkSearch=false;
 		
+		//Get Map from DbDict that stores all the Search Parameter names (front-end and back-end)
+		//Front-end: what it's called in the website
+		//Back-end: what it's called in the code and database
 		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
 		
-		
+		//A list (enumeration) of the search parameter names from the Search Job Searcher 
 		Enumeration paramNames = request.getParameterNames();
+		
 		while (paramNames.hasMoreElements()) {			
 			String paraName = (String) paramNames.nextElement();
+			
 			//If request parameter name is "action", this will cause colName to be null. Hence, do and write nothing.
 			if( paraName.equals("action")){
 				//do and write nothing
 			}
-			//Else if paraName is something else i.e.) a request parameter name of an html input:
-			else
-			{
-				System.out.println("paraName: "+ paraName);
-				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
-				//Put the parameters' names and values into the MAP
+			//Else if parameter name is something else i.e.) a request parameter name of an html input: "name", etc.
+			else {
+				//Look up corresponding search parameter names from paraColMap MAP
+				String colName = paraColMap.get(paraName);
+				//Put the parameters' names and values into the paraMap MAP
 				paraMap.put(colName,request.getParameter(paraName) );
+				
 				//Debug
 				System.out.println("Column: " + colName); 
 				System.out.println("Value: " + paraMap.get(colName));
 			}
-		}
+		}/**end of while loop**/
+		
 		//CAUTION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
-		String queryWithLoc		= "SELECT * FROM tableProfileSearcher LEFT OUTER JOIN tableLocationProfile USING (idAccount) WHERE ";
-		String panicQuery		= "SELECT idAccount, name, educationLevel, startingDate FROM tableProfileSearcher";
+		String query			= "SELECT * FROM tableProfileSearcher LEFT OUTER JOIN tableLocationProfile USING (idAccount) WHERE ";
 		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
 		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
 		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
@@ -1222,116 +1252,104 @@ public class ServletProfile extends HttpServlet{
 		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
 		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
 		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
-		boolean panic = false;
 		
 		StringBuffer queryBuf = new StringBuffer();
-		queryBuf.append(queryWithLoc);
+		queryBuf.append(query);
 		
-       for(Map.Entry<String, String> entry : paraMap.entrySet()){
-    	   String column = entry.getKey();
-    	   String value = entry.getValue();
-    	   if(!(column.equals("quickSearch"))){
-    		   System.out.println(column);
-    		   if(column.equals("name")){
-    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
-    		   }
-    		   else if(column.equals("educationLevel")){
-   	    		    queryBuf.append(column+ "=" + value + andKeyword);
-    		   }
-    		   else if(column.equals("startingDate")){
-    			   long dateInLong = Utility.dateStringToLong(value);
-    		//	   dateInLong = -dateInLong;
-    			   queryBuf.append(column+ ">=" +dateInLong +andKeyword);
-    		   }
-    		   else if(column.equals("location")){
-    			   queryBuf.append(column + likeKeyword + "\'%" +value+"%\'" + andKeyword);
-    		   }
- 
-    		   else{//TODO NOT WORKING NEED TO FIX 
-    			   panic= true;
-	    		   System.out.println("PANIC ACTION!");
-	    		   queryBuf.setLength(0);
-	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
-	    		   queryWithLoc = queryBuf.toString();
-	    		   break;
-    		   }
-    	   }//ENDOF IF NOT QUICK SEARCH
-    	   
-        }//ENDOF FOR-MAP LOOP
+		for(Map.Entry<String, String> entry : paraMap.entrySet()){
+			//Get parameter's name and value
+			String column = entry.getKey();
+			String value = entry.getValue();
+
+    		if(column.equals("name")){
+    			queryBuf.append(column + likeKeyword + "\'%" +value+"%\'" + andKeyword);
+    		}
+    		else if(column.equals("educationLevel")){
+   	    		queryBuf.append(column+ "=" + value + andKeyword);
+    		}
+    		else if(column.equals("startingDate")){
+    			long dateInLong = Utility.dateStringToLong(value);
+    			queryBuf.append(column+ ">=" + dateInLong +andKeyword);
+    		}
+    		else if(column.equals("location")){
+    			queryBuf.append(column + likeKeyword + "\'%" +value+"%\'" + andKeyword);
+    		} 
+        }/**end of for loop**/
+             			
+	  	if(!qkSearch)
+	  		queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
+	  	else
+	  		queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
+	  		
+	  	query = queryBuf.toString();
        
-       
-    	   if (!panic){
-	  			
-	  			if(!qkSearch){
-	  				queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
-	  			}
-	  			else{
-	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
-	  			}
-	  			//queryBuf.append(orderByKeyword + "datePosted" + descKeyword);//TODO Can have pages using limited
-	  			queryWithLoc = queryBuf.toString();
-			}
-       
-		return queryWithLoc;
-	}
+		return query;
+		
+	}/**end of method buildSearchSearcherQuery(HttpServletRequest request)**/
+
 	
-	/**
-	 * 
-	 * viewAllASearchers
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
+/******************************************************************************************************************** 
+ * viewAllASearchers(HttpServletRequest request, HttpServletResponse response)
+ * 
+ * Method to view all Job Searchers in the database. A mySQL query is created from these parameters, and is passed to 
+ * DBManager to process a result set. The method creates an XML table from this result set and passes it as a 
+ * HttpServletResponse to the XMLHttp Object that invoked this method.
+ * 
+ * Caller function: viewAllSearchers() from Profile.js
+ * 
+ * @param request - The HttpServletRequest that invokes this method
+ * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
+ * @throws IOException
+ ********************************************************************************************************************/
 	public void viewAllSearchers(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
+		//ArrayList that stores the result set, and later passes its content to the XML Response table
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
 			
 		try {		
 			stmt = conn.createStatement();
-			/**BUILD SEARCH QUERY(REQUEST)**/
-			//Add individual queries onto total query
+			
+			//Query: Select all Job Searchers in the database
 			String query = "SELECT * FROM tableProfileSearcher LEFT OUTER JOIN tableLocationProfile USING (idAccount)";
 				
 			//DEBUG
 			System.out.println(query);
+			
+			//Execute the query and get result set
 			stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
 				
-			//Compile the result into the arraylist
+			//Compile each result from the result set into jsList ArrayList
 			while( result.next() ) {
 				ProfileSearcher temp = new ProfileSearcher();
-				
-				Location location = new Location();
-				ArrayList<Location> locationList = new ArrayList<Location>();
-					
+						
 				temp.accountID 				= result.getInt("idAccount");
 				temp.name					= result.getString("name");
 				temp.educationLevel			= result.getInt("educationLevel");
 				temp.preferredStartDate		= result.getLong("startingDate");
-
-
+				
+				//Create ArrayList to store Job Searcher's location(s) in jsList as parameter "locationList"
+				Location location = new Location();
+				ArrayList<Location> locationList = new ArrayList<Location>();
 				location.address = result.getString("location");
 				location.longitude = result.getDouble("longitude");
 				location.latitude = result.getDouble("latitude");
 				locationList.add(location);
 				temp.addressList = locationList;
 					
-				jsList.add( temp ); //add to the temporary list
+				jsList.add( temp ); //add temporary ProfileSearcher object into jsList
 			}
 				
-			stmt.close();
-				
 			System.out.println("Query for View All Searchers Successfully Finished");
-
-				
-		} catch (SQLException e1) {
+			
+		}/**end of try block**/
+		
+		catch (SQLException e1) {
 		e1.printStackTrace();
 		}
-			
-			
+					
 		// close DB objects
 		finally {
 			try{
@@ -1350,21 +1368,27 @@ public class ServletProfile extends HttpServlet{
 				//TODO log Cannot close Connection
 				System.out.println("Cannot close Connection : " + e.getMessage());
 			}
-		}
-			
+		}/**end of finally block**/
+		
+		//Create XML table to store all results from result set			
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
+		//iterate through jsList and append to xml
 		Iterator<ProfileSearcher> itr = jsList.iterator();
-	    while (itr.hasNext()) {//iterate through all list and append to xml
+	    while (itr.hasNext()) {
 	    	XMLResponse.append(itr.next().toXMLContent() ); 
-	    }
-			
+	    }		
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
-	}
+	
+	}/**end of method viewAllSearchers(HttpServletRequest request, HttpServletResponse response)**/
 
+	
+/**
+ * 	
+ */
 	public void searcherProfileSummary(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String sKey = request.getParameter("sessionKey");
@@ -1396,8 +1420,7 @@ public class ServletProfile extends HttpServlet{
 				stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(selQuery);
 				while(rs.next()){
-					//CDATA
-					responseMsg.append("Hello, " + rs.getString("name") +".");
+					responseMsg.append("Hello, " + rs.getString("name") +". &#xD;");
 				}
 				File[]userFile =ServletDocument.getUserFiles(acctId);
 				responseMsg.append("You have " + userFile.length + "Files");
@@ -1463,9 +1486,9 @@ public class ServletProfile extends HttpServlet{
 			catch(NumberFormatException e){
 				response.sendRedirect("error.html");
 			}
-
+			
 			accountId = session.getIdAccount();	
-
+			
 			dateAdded = Utility.getCurrentTime();
 			
 			query = "INSERT IGNORE INTO tablecandidate(idAccount, idSearcher, dateAdded) VALUES " +
