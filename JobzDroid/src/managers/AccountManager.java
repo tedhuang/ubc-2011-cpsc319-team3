@@ -754,24 +754,16 @@ public class AccountManager {
 	 * @param newEmail New email address to change to.
 	 * @return boolean indicating whether adding the email change was successful
 	 */
-	public boolean addEmailChangeRequest(String sessionKey, String newEmail, UUID uuid){
+	public boolean addEmailChangeRequest( int idAccount, String newEmail, UUID uuid){
 		System.out.println("Inside ServletAccount: addEmailChangeRequest");
 		Connection conn = dbManager.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		newEmail = Utility.checkInputFormat(newEmail);
 		long currentTime = Utility.getCurrentTime();
 		
 		try {
-			// get accout id from sessionKey
-			int idAccount;
-			Session session = getSessionByKey(sessionKey);
-			if(session != null)
-				idAccount = session.getIdAccount();
-			else
-				return false;
 			// add entry to email verification table
 			long expiryTime = currentTime + SystemManager.expiryTimeEmailVerification;	
             String query = "INSERT INTO tableEmailVerification(idEmailVerification, idAccount, expiryTime, emailPending)" +

@@ -100,6 +100,11 @@ public class ServletJobAd extends HttpServlet {
 			return;
 		}
 		
+		
+		String sessionKey = request.getParameter("sessionKey");
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
+		
 		//Check which function the request is calling from the servlet
 		switch( EnumAction.valueOf(action) ){
 		
@@ -110,14 +115,17 @@ public class ServletJobAd extends HttpServlet {
 				break;
 				
 			case editJobAd:
-				postJobAd(request, response);
+				if(session.checkPrivilege( response, "poster" ) )
+					postJobAd(request, response, session);
 				break;
 				
 			case saveJobAdDraft:
-				postJobAd(request, response);
+				if(session.checkPrivilege( response, "poster") )
+					postJobAd(request, response, session);
 				break;
 			case updateDraft:
-				postJobAd(request, response);
+				if(session.checkPrivilege( response, "poster") )
+					postJobAd(request, response, session);
 				break;
 
 			case deleteJobAd:
@@ -157,7 +165,8 @@ public class ServletJobAd extends HttpServlet {
 		/*****************FAVOURITE AD ACTIONS***********************/		
 				
 			case saveFavouriteJobAd:
-				saveFavouriteJobAd(request, response);
+				if(session.checkPrivilege( response, "searcher") )
+					saveFavouriteJobAd(request, response, session);
 				break;
 				
 			case listFavouriteJobAd:
@@ -1010,145 +1019,84 @@ public class ServletJobAd extends HttpServlet {
  * Mode:SAVE DRAFT, NEW AD and EDIT AD
  *
  *********************************************************************************************************************/
-	private void postJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void postJobAd(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException{
 		
 		//Debug
 		System.out.println("Entered PostJobAdvertisement");
 		//initialize return statements
 		boolean isSuccessful = false;
 		String msg = "";
+			
+		String query = buildPostQuery(request, session.getIdAccount() );
+		System.out.println(query);
 		
-		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
 		
-		//Checks the user's privilege
-		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
-		int acctId;
-		
-		earlyExit: {
-			System.out.println("Entered user sessionKey");
-				
-			if ( userSession == null ) {
-				//TODO session invalid, handle error
-				System.out.println("session is null, Failed to authenticate user session");
-				msg = "Have You Logged in? Please Try Re-login";
-				break earlyExit;
-			}
-			else {
-				//TODO implmement this
-				System.out.println("checking usertype");
-				System.out.println("usertype = " + userSession.getAccountType());
-				acctId= userSession.getIdAccount();
-				
-//				if( userSession.getAccountType().equals("poster") ||
-//						userSession.getAccountType().equals("admin")) {
-				if( userSession.checkPrivilege("poster", "admin", "superAdmin")) {
-					System.out.print("User has the correct priviliege\n");
-				}
-				else {
-					System.out.print( "User does not have the right privilege\n");
-					break earlyExit;
-				}
+		try {
+			
+			System.out.println("Processing " + query);
+			stmt = conn.createStatement();
+			
+			int success = stmt.executeUpdate(query);
+			if (success != 1){
+				System.out.println("New JobAd Creation failed");
+				Utility.logError("New JobAd insert in DB failed");
 			}
 			
-			System.out.print("User Access Granted for key: \n" + userSession.getKey() +"\n" );
-			
-			String query = buildPostQuery(request, acctId);
-			System.out.println(query);
+			msg = "Action Performed Successfully";
+			//Get jobAdId By Using select the last inserted ID
+			PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+			ResultSet rs = getLastInsertId.executeQuery();
+			int jobAdId = -1;
+			if (rs.next())
+			{
+				jobAdId = rs.getInt("last_insert_id()"); 
+				System.out.println("Retrived: Job Ad ID: " + jobAdId);
+			}
+			else{
+				System.out.println("Error: Job Ad ID not found after creation");
+			}
+			if(jobAdId != -1){
+		   	//Insert location values into location table
 
-//			String address 				 = request.getParameter("address");
-//			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
-//			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
 			
-//			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
-//			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
-			
-			Connection conn = dbManager.getConnection();	
-			Statement stmt = null;
-			
-			try {
-				
-				System.out.println("Processing " + query);
-				stmt = conn.createStatement();
-				
-				int success = stmt.executeUpdate(query);
-				if (success != 1){
-					System.out.println("New JobAd Creation failed");
-					Utility.logError("New JobAd insert in DB failed");
-				}
-				
-				msg = "Action Performed Successfully";
-				//Get jobAdId By Using select the last inserted ID
-				PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
-				ResultSet rs = getLastInsertId.executeQuery();
-				int jobAdId = -1;
-				if (rs.next())
-				{
-					jobAdId = rs.getInt("last_insert_id()"); 
-					System.out.println("Retrived: Job Ad ID: " + jobAdId);
-				}
-				else{
-					System.out.println("Error: Job Ad ID not found after creation");
-				}
-			   if(jobAdId != -1){
-			   	//Insert location values into location table
-//				query = 
-//					"INSERT INTO tableLocationJobAd (location, longitude, latitude, idJobAd) " + 
-//					"VALUES " + "('" 
-//					+ address + "','" 
-//					+ longitude + "','" 
-//					+ latitude + "','" 
-//					+ jobAdId +
-//				"');";
-//				
-//				System.out.println("Location table query: " + query);
-//				
-//				success = stmt.executeUpdate(query);
-//				
-//				System.out.println("Row Inserted: " + success);
-				
-				if (success == 1){
-					System.out.println("New JobAd Creation success (DB)");
-					isSuccessful = true;
+			if (success == 1){
+				System.out.println("New JobAd Creation success (DB)");
+				isSuccessful = true;
 
-//					message = "Create Job Advertisement Successful";
-				}
-				else{
-					System.out.println("Insert location for new job ad failed");
-					Utility.logError("Insert location for new job ad failed");
-				}
+			}
+			else{
+				System.out.println("Insert location for new job ad failed");
+				Utility.logError("Insert location for new job ad failed");
+			}
 
-				//Debug print
-//				System.out.println("Location Query: "+ query);
-				
-//				if( stmt.executeUpdate(query) != 1 ){ //Error Check
-//					System.out.println("Error: Location Update Failed");
-//				}
-			  }//ENDOF INSERT INTO LOCATION TABLE 
-			}
-			catch (SQLException e) {
-				//TODO log SQL exception
-				Utility.logError("SQL exception : " + e.getMessage());
-			}
-			// close DB objects
-		    finally {
-		        try{
-		            if (stmt != null)
-		                stmt.close();
-		        }
-		        catch (Exception e) {
-		        	//TODO log "Cannot close Statement"
-		        	System.out.println("Cannot close Statement : " + e.getMessage());
-		        }
-		        try {
-		            if (conn  != null)
-		                conn.close();
-		        }
-		        catch (SQLException e) {
-		        	//TODO log Cannot close Connection
-		        	System.out.println("Cannot close Connection : " + e.getMessage());
-		        }
-		    }
-		}//earlyExit:
+		  }//ENDOF INSERT INTO LOCATION TABLE 
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+		}
+
 		
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
@@ -1859,13 +1807,12 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
  * 
  * 
  ****/
-	public void saveFavouriteJobAd(HttpServletRequest request, HttpServletResponse response)throws IOException{
-		
-		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
+	public void saveFavouriteJobAd(HttpServletRequest request, HttpServletResponse response, Session session)throws IOException{
+
 		
 		String msg = "";
-		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
-		int accountId = -1;
+
+		int accountId = session.getIdAccount();
 		int jobAdId = -1;
 		long dateAdded = -1;
 		String query = "";
@@ -1878,25 +1825,6 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 			response.sendRedirect("error.html");
 		}
 		
-		earlyExit: {
-			if ( userSession == null ) {
-				System.out.println("Session is null, Failed to authenticate user session");
-				msg = "Have You Logged in? Please Try Re-login";
-				break earlyExit;
-			}
-			else {
-				System.out.println("checking usertype");
-				System.out.println("usertype = " + userSession.getAccountType());
-				accountId= userSession.getIdAccount();	
-				if( userSession.checkPrivilege("searcher")) {
-					System.out.print("User has the correct priviliege\n");
-				}
-				else {
-					System.out.print( "User does not have the right privilege\n");
-					break earlyExit;
-				}
-			}
-		}
 		
 		dateAdded = Utility.getCurrentTime();
 		
@@ -2117,7 +2045,7 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	}
 	
 
-	private void addNewTag(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void addNewTag(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException{
 		
 		//Debug
 		System.out.println("Entered PostJobAdvertisement");
@@ -2129,111 +2057,80 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		
 		//Checks the user's privilege
 		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
-		int acctId;
+		int acctId =  session.getIdAccount();
+
+		System.out.print("User Access Granted for key: \n" + userSession.getKey() +"\n" );
 		
-		earlyExit: {
-			System.out.println("Entered user sessionKey");
-				
-			if ( userSession == null ) {
-				System.out.println("session is null, Failed to authenticate user session");
-				msg = "Have You Logged in? Please Try Re-login";
-				break earlyExit;
-			}
-			else {
-				//TODO implmement this
-				System.out.println("checking usertype");
-				System.out.println("usertype = " + userSession.getAccountType());
-				acctId= userSession.getIdAccount();
-				
-//				if( userSession.getAccountType().equals("poster") ||
-//						userSession.getAccountType().equals("admin")) {
-				if( userSession.checkPrivilege("poster", "admin", "superAdmin")) {
-					System.out.print("User has the correct priviliege\n");
-				}
-				else {
-					System.out.print( "User does not have the right privilege\n");
-					break earlyExit;
-				}
+		String query = buildPostQuery(request, acctId);
+
+		
+		Connection conn = dbManager.getConnection();	
+		Statement stmt = null;
+		
+		try {
+			
+			System.out.println("Processing " + query);
+			stmt = conn.createStatement();
+			
+			int success = stmt.executeUpdate(query);
+			if (success != 1){
+				System.out.println("New JobAd Creation failed");
+				Utility.logError("New JobAd insert in DB failed");
 			}
 			
-			System.out.print("User Access Granted for key: \n" + userSession.getKey() +"\n" );
-			
-			String query = buildPostQuery(request, acctId);
+			msg = "Action Performed Successfully";
+			//Get jobAdId By Using select the last inserted ID
+			PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+			ResultSet rs = getLastInsertId.executeQuery();
+			int jobAdId = -1;
+			if (rs.next())
+			{
+				jobAdId = rs.getInt("last_insert_id()"); 
+				System.out.println("Retrived: Job Ad ID: " + jobAdId);
+			}
+			else{
+				System.out.println("Error: Job Ad ID not found after creation");
+			}
+		   if(jobAdId != -1){
+		   	//Insert location values into location table
 
-			
-			Connection conn = dbManager.getConnection();	
-			Statement stmt = null;
-			
-			try {
-				
-				System.out.println("Processing " + query);
-				stmt = conn.createStatement();
-				
-				int success = stmt.executeUpdate(query);
-				if (success != 1){
-					System.out.println("New JobAd Creation failed");
-					Utility.logError("New JobAd insert in DB failed");
-				}
-				
-				msg = "Action Performed Successfully";
-				//Get jobAdId By Using select the last inserted ID
-				PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
-				ResultSet rs = getLastInsertId.executeQuery();
-				int jobAdId = -1;
-				if (rs.next())
-				{
-					jobAdId = rs.getInt("last_insert_id()"); 
-					System.out.println("Retrived: Job Ad ID: " + jobAdId);
-				}
-				else{
-					System.out.println("Error: Job Ad ID not found after creation");
-				}
-			   if(jobAdId != -1){
-			   	//Insert location values into location table
-
-				if (success == 1){
-					System.out.println("New JobAd Creation success (DB)");
-					isSuccessful = true;
+			if (success == 1){
+				System.out.println("New JobAd Creation success (DB)");
+				isSuccessful = true;
 
 //					message = "Create Job Advertisement Successful";
-				}
-				else{
-					System.out.println("Insert location for new job ad failed");
-					Utility.logError("Insert location for new job ad failed");
-				}
+			}
+			else{
+				System.out.println("Insert location for new job ad failed");
+				Utility.logError("Insert location for new job ad failed");
+			}
 
-				//Debug print
-//				System.out.println("Location Query: "+ query);
-				
-//				if( stmt.executeUpdate(query) != 1 ){ //Error Check
-//					System.out.println("Error: Location Update Failed");
-//				}
-			  }//ENDOF INSERT INTO LOCATION TABLE 
-			}
-			catch (SQLException e) {
-				//TODO log SQL exception
-				Utility.logError("SQL exception : " + e.getMessage());
-			}
-			// close DB objects
-		    finally {
-		        try{
-		            if (stmt != null)
-		                stmt.close();
-		        }
-		        catch (Exception e) {
-		        	//TODO log "Cannot close Statement"
-		        	System.out.println("Cannot close Statement : " + e.getMessage());
-		        }
-		        try {
-		            if (conn  != null)
-		                conn.close();
-		        }
-		        catch (SQLException e) {
-		        	//TODO log Cannot close Connection
-		        	System.out.println("Cannot close Connection : " + e.getMessage());
-		        }
-		    }
-		}//earlyExit:
+		  }//ENDOF INSERT INTO LOCATION TABLE 
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (stmt != null)
+	                stmt.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        }
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	//TODO log Cannot close Connection
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+
 		
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");

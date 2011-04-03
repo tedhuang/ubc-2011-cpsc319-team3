@@ -87,10 +87,18 @@ public class ServletProfile extends HttpServlet{
 	
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String action = request.getParameter("action");
+		
+
+		String sessionKey = request.getParameter("sessionKey");
+		sessionKey = Utility.checkInputFormat(sessionKey);
+		Session session = accManager.getSessionByKey(sessionKey);
+		
+		
 		switch(EnumAction.getAct(action)){
 		
 			case getProfileById:
-				getProfileById(request,response);
+				if(session.checkPrivilege( response, "admin", "superAdmin") )
+					getProfileById(request,response);
 				break;
 				
 			case getProfileSearcherById:
@@ -107,7 +115,8 @@ public class ServletProfile extends HttpServlet{
 				break;
 				
 			case getProfileBySessionKey:
-				getProfileBySessionKey(request, response);
+				if(session.checkPrivilege( response, "searcher", "poster") )
+					getProfileBySessionKey(request, response, session);
 				break;
 			
 			case searchProfile:
@@ -124,6 +133,10 @@ public class ServletProfile extends HttpServlet{
 			case smrSearcherProfile:
 				searcherProfileSummary(request, response);
 				break;
+				
+			case saveCandidate:
+				if(session.checkPrivilege( response, "poster") )
+					saveCandidate( request, response, session );
 			default:
 				System.out.print("Dont you try to hack =D");
 				break;
@@ -135,10 +148,8 @@ public class ServletProfile extends HttpServlet{
 	
 	private void getProfileById(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
 		
-		String sessionKey = request.getParameter("sessionKey");
 		
 		int accountID = Integer.parseInt(request.getParameter("idAccount"));
-		Session currSession = accManager.getSessionByKey(sessionKey );
 		
 		//Initialize Return statments
 		boolean isSuccessful = false;
@@ -155,16 +166,6 @@ public class ServletProfile extends HttpServlet{
 		earlyExit: {
 		try{
 			stmt = conn.createStatement();
-		
-		if ( currSession == null ) {
-			message = "Invalid Session";
-			break earlyExit;
-		}
-		
-		if ( currSession.checkPrivilege("poster", "admin", "superAdmin") == false) {
-			message = "User does not have privilige to get profile by ID.";
-			break earlyExit;
-		}
 
 		
 		String query = 		
@@ -473,10 +474,8 @@ public class ServletProfile extends HttpServlet{
 		response.getWriter().println(XMLResponse);		
 	}
 	
-	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response, Session session)throws ServletException, IOException{
 		
-		String sessionKey = request.getParameter("sessionKey");
-		Session currSession = accManager.getSessionByKey( sessionKey );
 		
 		//Initialize Return statements
 		boolean isSuccessful = false;
@@ -491,27 +490,22 @@ public class ServletProfile extends HttpServlet{
 		
 //		String documentList = "";
 		// if invalid session, redirect to error page
-		if(currSession == null){
-			response.sendRedirect("error.html");
-			return;
-		}
+
 		earlyExit:
 		{
 		try{
 
 			String acctType = "";
 						
-			if( currSession.checkPrivilege( "searcher") ) {
+			if( session.getAccountType().equalsIgnoreCase("searcher") ) {
 				acctType = "Searcher";
 				profile = searcher;
 			}
-			else if ( currSession.checkPrivilege( "poster") ) {
+			else if ( session.getAccountType().equalsIgnoreCase( "poster") ) {
 				acctType = "Poster";
 				profile = poster;
 			}
-			else {
-				break earlyExit;
-			}
+
 			
 			System.out.println("Getting Job " + acctType + " Profile");
 			
@@ -522,7 +516,7 @@ public class ServletProfile extends HttpServlet{
 			String query = 
 //				"SELECT * FROM tableProfile"+ acctType +" WHERE idAccount=" + currSession.getIdAccount();
 				"SELECT * FROM tableProfile"+ acctType +" INNER JOIN tableAccount " + 
-					"USING (idAccount) WHERE idAccount=" + currSession.getIdAccount();
+					"USING (idAccount) WHERE idAccount=" + session.getIdAccount();
 			
 			System.out.println("getProfileBySessionKey query:" + query);
 			isSuccessful = stmt.execute(query);
@@ -533,7 +527,7 @@ public class ServletProfile extends HttpServlet{
 				System.out.println("getProfileBySessionKey successful");
 				message = "getProfileBySessionKey successful";
 				
-				if ( currSession.getAccountType().equals("searcher") ) {
+				if ( session.getAccountType().equals("searcher") ) {
 					searcher.accountID			= result.getInt("idAccount");
 					searcher.name				= result.getString("name");
 					searcher.phone		 		= result.getString("phone");
@@ -544,7 +538,7 @@ public class ServletProfile extends HttpServlet{
 					searcher.secondaryEmail		= result.getString("secondaryEmail");
 					
 				}
-				if ( currSession.getAccountType().equals("poster") ) {					
+				if ( session.getAccountType().equals("poster") ) {					
 					poster.accountID		= result.getInt("idAccount");
 					poster.name				= result.getString("name");
 					poster.phone		 	= result.getString("phone");
@@ -557,14 +551,14 @@ public class ServletProfile extends HttpServlet{
 			}
 			else{ //Error case
 				isSuccessful = false;
-				message = "Error: Profile not found with ID=" + currSession.getIdAccount();
-				System.out.println("Error: Profile not found with ID=" + currSession.getIdAccount());
+				message = "Error: Profile not found with ID=" + session.getIdAccount();
+				System.out.println("Error: Profile not found with ID=" + session.getIdAccount());
 			}
 				
 				
 			/**Get Location values */
 			query = "SELECT * FROM tableLocationProfile WHERE " +
-						"idAccount= '" + currSession.getIdAccount() +"'";
+						"idAccount= '" + session.getIdAccount() +"'";
 			System.out.println(query);
 			isSuccessful = stmt.execute(query);
 			result = stmt.getResultSet();
@@ -582,23 +576,23 @@ public class ServletProfile extends HttpServlet{
 			}
 			fetchedAddressList.add(address);
 			
-			if ( currSession.getAccountType().equals("searcher") ) {
+			if ( session.getAccountType().equalsIgnoreCase("searcher") ) {
 				searcher.addressList = fetchedAddressList;
 			}
-			else if ( currSession.getAccountType().equals("poster") ) {
+			else if ( session.getAccountType().equalsIgnoreCase("poster") ) {
 				poster.addressList = fetchedAddressList;
 			}
 			
 			
 			/**Get Employment Preference values */
-			if ( currSession.getAccountType().equals("searcher") ) {
+			if ( session.getAccountType().equals("searcher") ) {
 				String empPref = "";
 				int fullTime = 0;
 				int partTime = 0;
 				int internship = 0;
 				
 				query = "SELECT * FROM tableSearcherEmpPref WHERE " +
-				"idAccount= '" + currSession.getIdAccount() +"'";
+				"idAccount= '" + session.getIdAccount() +"'";
 				System.out.println(query);
 				isSuccessful = stmt.execute(query);
 				result = stmt.getResultSet();
@@ -667,12 +661,12 @@ public class ServletProfile extends HttpServlet{
 		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
 		XMLResponse.append("\t<message>" + message + "</message>\n");
 		
-		if ( currSession.getAccountType().equals("searcher") ) {
+		if ( session.getAccountType().equalsIgnoreCase("searcher") ) {
 			XMLResponse.append( ((ProfileSearcher)profile).toXMLContent() );
-			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( currSession.getIdAccount() ));
+			XMLResponse.append( ServletDocument.getFilesXMLByOwnerID( session.getIdAccount() ));
 //			XMLResponse.append( documentList );
 		}
-		else if ( currSession.getAccountType().equals("poster") ) {
+		else if ( session.getAccountType().equalsIgnoreCase("poster") ) {
 			XMLResponse.append( ((ProfilePoster)profile).toXMLContent() );
 		}
 		
@@ -1453,12 +1447,10 @@ public class ServletProfile extends HttpServlet{
 *  
 * 
 *************************************************************************************/
-	public void saveCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
-			
-		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
-			
+	public void saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
+						
 		String msg = "";
-		Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
+
 		int accountId = -1;
 		int searcherId = -1;
 		long dateAdded = -1;
@@ -1471,27 +1463,9 @@ public class ServletProfile extends HttpServlet{
 			catch(NumberFormatException e){
 				response.sendRedirect("error.html");
 			}
-			
-			earlyExit: {
-				if ( userSession == null ) {
-					System.out.println("Session is null, Failed to authenticate user session");
-					msg = "Have You Logged in? Please Try Re-login";
-					break earlyExit;
-				}
-				else {
-					System.out.println("checking usertype");
-					System.out.println("usertype = " + userSession.getAccountType());
-					accountId= userSession.getIdAccount();	
-					if( userSession.checkPrivilege("poster")) {
-						System.out.print("User has the correct priviliege\n");
-					}
-					else {
-						System.out.print( "User does not have the right privilege\n");
-						break earlyExit;
-					}
-				}
-			}
-			
+
+			accountId = session.getIdAccount();	
+
 			dateAdded = Utility.getCurrentTime();
 			
 			query = "INSERT IGNORE INTO tablecandidate(idAccount, idSearcher, dateAdded) VALUES " +
