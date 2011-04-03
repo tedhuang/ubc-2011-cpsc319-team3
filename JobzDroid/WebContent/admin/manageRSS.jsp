@@ -9,7 +9,7 @@
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
-	<link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
+	<link href="../css/lightboxCenter.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
@@ -17,7 +17,7 @@
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
-	<script type="text/javascript" src="../scripts/manageRSS.js"></script>
+	<script type="text/javascript" src="../scripts/admin/manageRSS.js"></script>
 	<title>Manage RSS</title>
 </head>
 <body>

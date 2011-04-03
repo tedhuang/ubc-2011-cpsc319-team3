@@ -246,8 +246,7 @@ public class ServletAccount extends HttpServlet {
 				if(accountCreated){
 					//send verification email to new user
 					emailManager.sendAccountActivationEmail(email, name, uuid);
-					message = "Account creation successful! An email has been sent to your inbox, " +
-							"please follow the instructions to activate your account within "
+					message = "Account was successfully created! Please follow the instructions sent to your email to activate your account within "
 					+ (int)Math.floor(SystemManager.expiryTimeEmailVerification/(1000*60)) + " minutes.";
 					result = true;
 					

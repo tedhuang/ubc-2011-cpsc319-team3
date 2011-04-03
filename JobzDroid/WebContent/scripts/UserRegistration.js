@@ -50,6 +50,7 @@ $("document").ready(function() {
 	});
 	// send request to account servlet on submit
 	$("#submitButton").bind("click",sendRegRequest);
+	$('#lightBox').smartLightBox({});
 });
 
 
@@ -179,7 +180,7 @@ function sendRegRequest(evt){
 					//parse XML response from server
 					var responseText = parseRegResponse(xmlHttpReq.responseXML);
 					$("#submitButton").removeAttr("disabled");
-			    	$("#statusText").text(responseText);
+			    	$("#lbMsg","#lightBox").html(responseText);
 				}
 			}};
 	}
@@ -231,15 +232,12 @@ function sendRegRequest(evt){
 	}
 
 
+	$.fn.smartLightBox.openlb('small','Processing Registration Request...','load');
 	//send the request to servlet
 	xmlHttpReq.open("POST","../ServletAccount", true);
 	xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlHttpReq.send(request.toString());
 	
-	//update status text
-	$("#statusText").removeClass("errorTag");	
-	$("#statusText").removeClass("successTag");
-	$("#statusText").text("Processing...This may take a moment.");
 }
 
 // parses response from server
@@ -252,14 +250,13 @@ function parseRegResponse(responseXML){
 		 $("select").attr("disabled", true);
 		 $("textarea").attr("disabled", true);
 		 $("button").attr("disabled", true);
-		 $("#statusText").addClass("successTag");
-		 $("#submitButton").text("Return to Home Page");
-		 $("#submitButton").unbind("click", sendRegRequest);
-		 $("#submitButton").bind("click", function(){
-			 window.location = "../index.html";
-		 });
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("good");
+			$.fn.smartLightBox.closeLightBox(4000);
+		 setTimeout("window.location = '../index.html'",4500);
 	 }
-	 else
-		 $("#statusText").addClass("errorTag");
+	 else{
+		 $("#lbImg", "#lightBox").removeClass("load").addClass("alert");
+		 $.fn.smartLightBox.closeLightBox(2000);
+		}
 	 return strMsg;
 }
