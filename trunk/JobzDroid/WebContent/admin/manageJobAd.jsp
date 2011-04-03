@@ -180,12 +180,14 @@
 							<div  class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Job Title</div>
 							</div>
-						</th>			
+						</th>
+						<!-- 			
 						<th id="col-viewLoc">
-							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
+							<div class="columnButton" onclick="">
 								<div class="headText">Job Location</div>
 							</div>
 						</th>
+						 -->
 						<th id="col-Tools">
 							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Status</div>
