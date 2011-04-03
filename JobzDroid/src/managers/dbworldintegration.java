@@ -47,19 +47,18 @@ public class dbworldintegration {
 	private String user;
 	private String password;
 	
-/*
+/**********************************************
  * dbworldintegration()
  * 
  * Constructor for dbworldintegration class
- * 
- */
+ **********************************************/
 	public dbworldintegration(){
 		dbManager= DBManager.getInstance();
 	}
 	
 
 
-/*
+/************************************************************************************************************
  * emailParse(String username, String password)
  * 
  * The emailParse() method connects to the email account, reads through all email messages that are from
@@ -67,12 +66,11 @@ public class dbworldintegration {
  * the information (author, job description, job title, etc.) from these messages and creates 
  * a new JobzDroid Job Advertisement with it.
  * 
- * @param: username - The email account to connect to 
- * @param: password - The password of the email account
- * @param: jobAdRSSPath - The RSS path that will link any created Job Ad to RSS feed. Passed as a parameter 
+ * @param username - The email account to connect to 
+ * @param password - The password of the email account
+ * @param jobAdRSSPath - The RSS path that will link any created Job Ad to RSS feed. Passed as a parameter 
  * when calling the function to create Job Ad.
- * 
- */
+ **************************************************************************************************************/
 	public void emailParse(String username,String password, String jobAdRSSPath) {
 		
 		//Setup to connect to JobzDroid database. Create connection.
@@ -192,7 +190,7 @@ public class dbworldintegration {
 						
 						//create Job Advertisement with current email msg
 						createJobAdvertisementWithEmail(stmt, subject, message, webPage, 
-						millisStartDate, millisExpiryDate, millisSentDate, jobAdRSSPath, status);
+								millisStartDate, millisExpiryDate, millisSentDate, jobAdRSSPath, status);
 						
 					}/**end of inner if() block **/						
 					else
@@ -251,14 +249,14 @@ public class dbworldintegration {
 	}/**end of method receive(String username, String password)**/
 
 	
-/*
+/***********************************************************************************
  * checkHeaderForJobAnn(Enumeration headers)
  * 
  * This method checks through every header in the message to see if it contains
  * "job/announcement". If yes, set flag to true.
  *  
- * @param: headers - list of all the headers in the message
- */
+ * @param headers - list of all the headers in the message
+ ***********************************************************************************/
 	protected boolean checkHeaderForJobAnn(Enumeration headers){
 		boolean flag = false;
         int num = 0;				
@@ -276,15 +274,14 @@ public class dbworldintegration {
 	}
 	
 	
-/*
+/********************************************************************************************
  * getStartDate(Enumeration headers)
  * 
  * Assuming current email message is a DBWorld mailing list posting, this method returns the 
  * post's start-date from the X-DBWorld-Start-Date header. Else returns a null Date.
  * 	
- * @param: headers - list of all the headers in the message
- * 
- */
+ * @param headers - list of all the headers in the message 
+ *********************************************************************************************/
 	protected Date getStartDate(Enumeration headers){
 		int num = 0;
 		Date startDate = null;
@@ -304,20 +301,18 @@ public class dbworldintegration {
 					}
 			}
 		}		
-		return startDate;
-		
+		return startDate;		
 	}
 	
 	
-/*
+/*********************************************************************************************
  * getExpiryDate(Enumeration headers)
  * 
  * Assuming current email message is a DBWorld mailing list posting, this method returns the
  * post's expiry-date from the X-DBWorld-Deadline header. Else returns a null Date.
  * 
- * @param: headers - list of all the headers in the message
- * 	
- */
+ * @param headers - list of all the headers in the message	
+ **********************************************************************************************/
 	protected Date getExpiryDate(Enumeration headers){
 		int num = 0;
 		Date expiryDate = null;
@@ -340,39 +335,16 @@ public class dbworldintegration {
 		return expiryDate;
 	}
 
-
-/*
- * getLocation(Enumeration headers)
- * 
- * Assuming current email message is a DBWorld mailing list posting, this method returns the 
- * post's location field from the X-DBWorld-Location header. Else returns a null String.
- * 
- * @param: headers - list of all the headers in the message
- * 
- */
-	protected String getLocation(Enumeration headers){
-		int num = 0;
-		String location = null;
-		while (headers.hasMoreElements()){
-			Header h = (Header) headers.nextElement();
-			if(h.getName().contains("DBWorld-Location")){
-					System.out.println(h.getValue());
-					location = h.getValue();
-			}
-		}
-		return location;
-	}
-
-
-/*
+	
+	
+/********************************************************************************************
  * getWebPage(Enumeration headers)
  * 
  * Assuming current email message is a DBWorld mailing list posting, this method returns the
  * post's web-page field from the X-DBWorld-Web-Page header. Else returns a null String.
  * 
- * @param: headers - list of all the headers in the message
- * 	
- */
+ * @param headers - list of all the headers in the message
+ *********************************************************************************************/
 	protected String getWebPage(Enumeration headers){
 		int num = 0;
 		String webPage = null;
@@ -387,25 +359,25 @@ public class dbworldintegration {
 	}
 	
 	
-/*
+/******************************************************************************************************************************************
  * createJobAdvertisementWithEmail(Statement stmt, String subject, String message, String webPage, 
- * long millisStartDate, long millisExpiryDate, long millisSentDate)
+ * 		long millisStartDate, long millisExpiryDate, long millisSentDate)
  * 
  * Sends information obtained from email message to JobAdTable in database as new entry.
  * 
- * @param: stmt - Database statement that executes/updates queries to the Database
- * @param: subject - Subject heading of email message
- * @param: message - Content body of email message
- * @param: webPage - Web-page field heading of email message (denoted as X-DBWorld-Web-Page as heading name)
- * @param: millisStartDate - Starting date in millisecs. of event given in email message (denoted as X-DBWorld-Start-Date as heading name)
- * @param: millisExpiryDate - Expiry date in millisecs. of event given in email message (denoted as X-DBWorld-Deadline as heading name)
- * @param: millisSentDate - Date the email was sent in milliseconds. Also used to compute JobAdID	
- * @param: jobAdRSSPath - RSS path to link Job Advertisement to JobzDroid Job Ad RSS feed
- * @param: status - Status that the user wishes to give to the newly created Job Advertisement
- * 
- */
+ * @param stmt - Database statement that executes/updates queries to the Database
+ * @param subject - Subject heading of email message
+ * @param message - Content body of email message
+ * @param webPage - Web-page field heading of email message (denoted as X-DBWorld-Web-Page as heading name)
+ * @param millisStartDate - Starting date in millisecs. of event given in email message (denoted as X-DBWorld-Start-Date as heading name)
+ * @param millisExpiryDate - Expiry date in millisecs. of event given in email message (denoted as X-DBWorld-Deadline as heading name)
+ * @param millisSentDate - Date the email was sent in milliseconds. Also used to compute JobAdID	
+ * @param jobAdRSSPath - RSS path to link Job Advertisement to JobzDroid Job Ad RSS feed
+ * @param status - Status that the user wishes to give to the newly created Job Advertisement 
+ ******************************************************************************************************************************************/
 	protected void createJobAdvertisementWithEmail(Statement stmt, String subject, String message, String webPage, 
 			long millisStartDate, long millisExpiryDate, long millisSentDate, String jobAdRSSPath, String status){
+		
 		try{
 			int jobAdId = -1;
 			String jobAdvertisementTitle = subject;
@@ -472,7 +444,7 @@ public class dbworldintegration {
 			else{
 				System.out.println("Error: Job Ad ID not found after creation");
 			}
-
+			
 		}/**end of try block**/
 		
 		catch (SQLException e) {
