@@ -14,7 +14,8 @@
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
 	<div id="edAdForm" class="edFormContainer">
-		<h2 class="welcome">Editing Ad:</h2>
+		<h2 class="welcome" id="edTabTitle">Editing Ad:</h2>
+		<input type=HIDDEN id="oldAdValues">
 		   <div class="headToolBar">
 					<ul id="edAdTool">
 						<li><a class="jsBtn ed_saveDraft">Save Draft |</a></li>

@@ -294,11 +294,11 @@ function buildSuggList(xmlTag, outputDiv, xhrResponse){
 			.append('<span class="qkView">'+
 					$(this).attr("creationDate") + " | " +
 					$(this).attr("educationReq") + " | " +
-					$(this).attr("location") + " | " +
+					$(this).attr("location") 	 + " | " +
 					$(this).attr("contactInfo") +
 					'</span>')
 			.delegate("span.title", "click", function(){
-				getJobAdById($(this).attr("jobAdId"), "adDetailTable");//TODO FIX output div
+				$.fn.DynaSmartTab.viewDetail($(this).attr("jobAdId"));
 			})
 			.appendTo(list);
 		 });
