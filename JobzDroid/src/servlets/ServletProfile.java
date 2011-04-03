@@ -1428,7 +1428,7 @@ public class ServletProfile extends HttpServlet{
 				responseMsg.append("You have " + userFile.length + " files.");
 			}
 			else{
-				System.out.println("Account Doesnot exist or session key expires");
+				System.out.println("Account does not exist or session key expires");
 			}
 		}
 		catch (SQLException e) {
