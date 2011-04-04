@@ -40,8 +40,10 @@ Install JRE or JDK
 
 = Steps for Restoration =
 
-Install MySQL
+== Install MySQL ==
 - Different instruction on windows and linux
+- linux - http://www.cyberciti.biz/tips/how-do-i-enable-remote-access-to-mysql-database-server.html
+
 
 Run MySQL
 {{{
