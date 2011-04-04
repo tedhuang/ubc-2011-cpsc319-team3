@@ -15,7 +15,9 @@ Backup MySQL DB
 {{{
 .\mysqldump.exe -u *username* -h *hostIP* --database *dbname* -p > *filename.sql*
 }}}
-Notes: succeeded when using mysqldump.exe from MySQL Server 5.1, the one packaged with MySQL workbench did not work
+Notes:
+  *succeeded when using mysqldump.exe from MySQL Server 5.1, the one packaged with MySQL workbench did not work
+  * Convert the .sql file to UTF8 if you are on windows. use notepad
 
 = Installation =
 
