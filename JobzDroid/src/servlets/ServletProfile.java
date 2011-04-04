@@ -111,7 +111,8 @@ public class ServletProfile extends HttpServlet{
 //				break;
 				
 			case editProfile:
-				editProfile(request,response);
+				if(session.checkPrivilege( response, "searcher", "poster") )
+					editProfile(request,response);
 				break;
 				
 			case getProfileBySessionKey:
@@ -698,14 +699,11 @@ public class ServletProfile extends HttpServlet{
 	
 	
 
-	private void editProfile(HttpServletRequest request, HttpServletResponse response) 
+	private void editProfile(HttpServletRequest request, HttpServletResponse response, Session session) 
 								throws ServletException, IOException{
 		
-		String sessionKey 		= request.getParameter("sessionKey");
-		Session currSession 	= accManager.getSessionByKey( sessionKey );
-		
-		int accountID 			= currSession.getIdAccount();
-		String accountType 		= currSession.getAccountType();
+		int accountID 			= session.getIdAccount();
+		String accountType 		= session.getAccountType();
 		
 		String name 			= request.getParameter("name");
 		String phone 			= request.getParameter("phone");
