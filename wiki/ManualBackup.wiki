@@ -69,6 +69,8 @@ Add MySQL Server on startup
   * in Windows, add mySQL as a startup service.  You can add arguments, or edit the config file to modify startup option
   * in linux, add MySQL to the startup script...
 
+== Install Tomcat ==
+http://www.mkyong.com/tomcat/how-to-install-tomcat-in-ubuntu/
 
 Restoring MySQL DB
   * use mySQL console and type in
