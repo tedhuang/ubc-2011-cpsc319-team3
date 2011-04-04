@@ -65,9 +65,10 @@ source *filename.sql*;
   * or run mysql.exe by this...
 {{{
 if on windows
-./mysql.exe -u *username* -p --lower_case_table_names=2 < *filename.sql
+./mysql.exe -u *username* -p < *filename.sql
 }}}
 
+NOTE: Make sure, if you're on windows, convert .sql file to UTF8 format. You can use notepad to save it as UTF8
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
