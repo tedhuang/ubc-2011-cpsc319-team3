@@ -49,9 +49,9 @@ public class ServletJobAd extends HttpServlet {
 	private enum EnumAction	{
 		//Add new functions here
 		createJobAdvertisement,
-		editJobAd,
 		saveJobAdDraft,
-		updateDraft,
+		updateDraftAd,
+		updateOpenAd,
 		
 		searchJobAdvertisement,
 		getJobAdByOwner,
@@ -111,19 +111,20 @@ public class ServletJobAd extends HttpServlet {
 //				createJobAdvertisement(request, response);
 				createJobAd(request, response);
 				break;
-				
-			case editJobAd:
-				if(session.checkPrivilege( response, "poster" ) )
-					postJobAd(request, response, session);
-				break;
-				
+			
 			case saveJobAdDraft:
 				if(session.checkPrivilege( response, "poster") )
 					postJobAd(request, response, session);
 				break;
-			case updateDraft:
+				
+			case updateOpenAd:
+				if(session.checkPrivilege( response, "poster" ) )
+					updateJobAd(request, response);
+				break;
+				
+			case updateDraftAd:
 				if(session.checkPrivilege( response, "poster") )
-					postJobAd(request, response, session);
+					updateJobAd(request, response);
 				break;
 
 			case deleteJobAd:
@@ -991,7 +992,7 @@ public class ServletJobAd extends HttpServlet {
  * @param request	
  * @param response
  * @throws IOException
- */
+ ****************************************************************************************************************/
 private void createJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		mysqlCmd qcmd = new mysqlCmd();
 		//Debug
@@ -1233,6 +1234,213 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
 		locQueryBuf.append(stm1.append(stm2));//merge the query
 	
+	queriesBuffer[0]=queryBuf;
+	queriesBuffer[1]=locQueryBuf;
+	return queriesBuffer;
+}
+
+private void updateJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	//Debug
+	System.out.println("<====================Entered updateJobAd===========================>");
+	//initialize return statements
+	String msg = "Opps, Apearently There Is Some Problem When Updating your Ad. Please Try Again Later.";
+	
+	//Checks the user's privilege
+	System.out.println("User with sessionKey: " + request.getParameter("sessionKey"));
+	String sKey=request.getParameter("sessionKey");
+	
+	int acctId=-1;
+	StringBuffer qBuf =DBQ.sessAuthQuery(sKey,new String[]{"idAccount"},"poster"); // authenticate user
+	String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
+	//DEBUG
+	System.out.println(query);
+
+	Connection conn = dbManager.getConnection();	
+		
+	try {
+			
+		System.out.println("Processing " + query);
+		ResultSet authRs = conn.createStatement().executeQuery(query);
+		if(authRs.next()){
+			acctId=authRs.getInt("idAccount");
+		}
+		if(acctId==-1){
+			conn.close(); //user-auth failed
+		}
+		else{
+			
+			StringBuffer[]postQuery=buildUpdateAdQuery(request, acctId);
+			
+			query = postQuery[0].toString(); //The update input-form Query
+			if(query.length()!=0){
+				int success = conn.createStatement().executeUpdate(query);
+				if (success != 1){
+					System.out.println("Job Ad Input Form Update failed");
+					Utility.logError("Job Ad Input Form Update failed");
+				}
+				else{
+					msg = "Ad Updated Successfully";
+				}
+			}
+			
+			query = postQuery[1].toString(); //The update location Query
+			if(query.length()!=0){
+				int success = conn.createStatement().executeUpdate(query);
+				if (success != 1){
+					System.out.println("Job Ad Location Update failed");
+					Utility.logError("Job Ad Location Update failed");
+				}
+				else{
+					msg = "Ad Updated Successfully";
+				}
+			}
+			
+
+		  }//ENDOF INSERT INTO LOCATION TABLE 
+		}
+		catch (SQLException e) {
+			//TODO log SQL exception
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try{
+	            if (conn != null)
+	                conn.close();
+	        }
+	        catch (Exception e) {
+	        	//TODO log "Cannot close Statement"
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	  //Debug
+	System.out.println("<====================EOF updateJobAd===========================>");
+	
+	StringBuffer XMLResponse = new StringBuffer();	
+	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+	XMLResponse.append("<response>\n");
+	XMLResponse.append("\t<message>" + msg + "</message>\n");
+	XMLResponse.append("</response>\n");
+	response.setContentType("application/xml");
+	response.getWriter().println(XMLResponse);
+	
+}
+
+/***************************************************************************************************************
+ * 					Build Post Job Ad Query
+ * - In charge of Creating and Drafting Job Ad
+ * @param request
+ * @param IdAcct
+ * @return
+ ***************************************************************************************************************/
+private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct){
+	StringBuffer [] queriesBuffer = new StringBuffer[2];//size 2
+	Map<String, Object>paraMap	= new HashMap<String, Object>();//JobAd Table Mapping
+	Map<String, String>locMap	= new HashMap<String, String>();//JobAd Location Table Mapping
+	StringBuffer queryBuf 		= new StringBuffer();
+	StringBuffer locQueryBuf	= new StringBuffer();
+	String action = request.getParameter("action");
+	
+	Map<String, String> paraColMap = DbDict.getDict(action);
+	Map<String, String> jobLocMap  = DbDict.getDict("jobAdLocation");
+	int jobAdId=-1;
+	
+	Enumeration paramNames = request.getParameterNames();
+	
+	 while (paramNames.hasMoreElements()) {
+		
+		String paraName = (String) paramNames.nextElement();
+		if( !paraName.equals("action") && !paraName.equals("sessionKey")){//Not querying "action"&"sKey"
+			//debug
+			System.out.println("Request: "  + paraName + " Value: " +request.getParameter(paraName));
+			
+			if(paraName.matches("(?i).*addr.*") || paraName.matches("(?i).*latlng.*")){//Distinguish for the location query 
+				String colName = jobLocMap.get(paraName);
+				locMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );
+				//Debug
+			    System.out.println("Column: " + colName + " Value: " + locMap.get(colName)+"\n");
+			}
+			
+			else{
+				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
+				
+				//Put the parameters' names and values into the MAP
+				if(colName.matches("(?i).*date.*")){//if it is a field about "date" convert to Long
+					long aDate=Utility.dateConvertor(request.getParameter(paraName)); //TODO Double Check convertor
+					paraMap.put(colName, aDate);
+				}
+				else if(colName.equals("idJobAd")){
+					String str = request.getParameter(paraName);
+					jobAdId = Integer.parseInt(str);
+				}
+				else if(colName.equals("title")){
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					paraMap.put(colName, strFormatted);
+				}
+				else if(colName.equals("description")){
+					String strFormatted = Utility.replaceNonAsciiChars(request.getParameter(paraName));
+					strFormatted = Utility.processLineBreaksWhiteSpaces(strFormatted);
+					paraMap.put(colName, strFormatted);
+				}
+				else{
+					paraMap.put(colName, Utility.checkInputFormat(request.getParameter(paraName)) );//will fail if no value is actually passed
+				}
+				//Debug
+			    System.out.println("Column: " + colName + " Value: " + paraMap.get(colName)+"\n");
+			}
+			
+			
+		} //ENDOF IF SET COL-VAL IN PARAMAP
+		
+	  	
+	  }//ENDOF WHILE paramNames.hasMoreElements()
+	 StringBuffer stm1 = new StringBuffer();
+	 StringBuffer stm2 = new StringBuffer();
+	 
+	 if(!paraMap.isEmpty()){ //only location is updated
+		 
+		paraMap.put("datePosted", Calendar.getInstance().getTimeInMillis());//set the creation timeStamp
+		
+		/*
+		 * Entering Query making
+		 * CAUTION: SPACE IMPORTANT
+		 */
+		
+		stm1.append( DBQ.UPDATE + "tableJobAd" +DBQ.SET);
+		stm2.append( DBQ.WHERE + "idAccount" + DBQ.EQ + IdAcct + DBQ.AND +"idJobAd" +DBQ.EQ + jobAdId);
+	    
+		for(Map.Entry<String, Object> entry : paraMap.entrySet()){
+			String column= entry.getKey();
+			Object value = entry.getValue();
+			
+			if(value instanceof String){
+				stm1.append(column +DBQ.EQ + DBQ.SQUO+ value + DBQ.SQUO + DBQ.COMA);
+			}
+			else if((value instanceof Long) || (value instanceof Integer)){
+				stm1.append(column +DBQ.EQ + value + DBQ.COMA);
+			}
+		}
+			stm1.delete(stm1.length() - DBQ.COMA.length(), stm1.length());//get rid of last coma
+			queryBuf.append(stm1.append(stm2));//merge the query
+	 }
+	 
+	if(!locMap.isEmpty()){
+		//Handle Location query
+		stm1.setLength(0);
+		stm2.setLength(0);
+		stm1.append( DBQ.UPDATE + "tableLocationJobAd " + DBQ.SET);
+	//	stm1.insert(stm1.length()-2, "idJobAd, "); //Prepare for the job id
+		stm2.append( DBQ.WHERE + "idJobAd" + DBQ.EQ + jobAdId);
+		
+		for(Map.Entry<String, String> entry : locMap.entrySet()){
+			String column= entry.getKey();
+			String value = entry.getValue();
+			stm1.insert(stm1.length()-2 , column+ DBQ.COMA);//insert col into the parentheses
+				stm1.append(DBQ.SQUO + value + DBQ.SQUO + DBQ.COMA);
+		}
+			stm1.delete(stm1.length() - DBQ.COMA.length()-2, stm1.length()-2);//get rid of last coma
+			locQueryBuf.append(stm1.append(stm2));//merge the query
+	}
 	queriesBuffer[0]=queryBuf;
 	queriesBuffer[1]=locQueryBuf;
 	return queriesBuffer;

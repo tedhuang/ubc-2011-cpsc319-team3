@@ -14,20 +14,19 @@
 <div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
 
 	<div id="edAdForm" class="edFormContainer">
-		<h2 class="welcome" id="edTabTitle">Editing Ad:</h2>
-		<input type=HIDDEN id="oldAdValues">
-		   <div class="headToolBar">
-					<ul id="edAdTool">
-						<li><a class="jsBtn ed_saveDraft">Save Draft |</a></li>
-						<li><a class="jsBtn ed_update" >Publish |</a></li>
-						<li><a class="jsBtn ed_reset" > Reset Fields</a></li>
-					</ul>
-						<!-- <span class="feedback">Feed Back Area</span>-->
-			  </div><!--ENDOF headBar-->
+		
+		<input type="hidden" id="oldAdValues">
+		   <div id="edAdTool" class="head-Bar">
+	   		   <h2 class="welcome" id="edTabTitle">Editing Ad:</h2>
+			   <a class="jsBtn" id="ed_saveDraft">Save Draft |</a>
+			   <a class="jsBtn" id="ed_update" >Publish |</a>
+			   <a class="jsBtn" id="ed_reset" > Reset Fields</a>
+				<!-- <span class="feedback">Feed Back Area</span>-->
+			</div><!--ENDOF head-Bar-->
 			  
-		  	<div id="typeInForm" class="fillInForm"> 
+	<div id="typeInForm" class="fillInForm"> 
 				<div class="field">
-					<label for="title-field" >Ad Title</label>
+					<label for="title-field" >Ad Title:</label>
 					<input id="title-filed" name="title-field" class="textBox mustNotNull" value="" />
 					<input id="adId-field"  name="adId-field"  class="hidden mustNotNull" READONLY/>
 				</div>
@@ -35,17 +34,26 @@
 						<label for="contact-field" >Company:</label> 
 						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
 					</div>
+					
 					<div class="field"> 
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
+				<div class="field"> 
+					<label>Is Graduate Funding Available:</label>
+						<input type="radio" name="gf-field" value="1" id="gf-field1" class="mustNotNull form-rb"/> 
+						<label class="label-rbn" for="gf-field1">Yes</label>
+						<input type="radio" name="gf-field" value="0" id="gf-field2" class="mustNotNull form-rb"/>
+						<label class="label-rbn" for="gf-field2">No</label>
+					
+				</div>
 			</div><!--ENDOF typeInForm-->
 				
 		<div id="chooseForm" class="fillInForm">
 			<div class="field"> 
 				<label for="edu-field">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
-					<option value="">Not Specified</option>
+					<option value="">Choose a degree</option>
 					<option value="1">B.Sc.</option>
 					<option value="2">M.Sc.</option>
 					<option value="3">Ph.D.</option>
@@ -54,25 +62,26 @@
 					
 			<div class="field">
 					<label for="startTime-field">Starting Date</label>
-					<input id="startTime-field" name="startTime-field" class="mustNotNull" value="" READONLY/>
+					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
 			</div >	
 			<div class="field">
 				<label for="expireTime-field">Expiry date</label>
-				<input id="expireTime-field" name="expireTime-field" class="mustNotNull" value="" READONLY/>
-				
+				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
 			</div>
 					
-			<div id="jobAvailField" class="field"> 
-				<label>Employment Type:</label>
-				<label class="group label-cb" >
-					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull"/>
-					Full Time
-					<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull"/>
-    				 Part Time
-    				 <input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull"/>
-   		 			Internship
-				</label>
-			</div>
+					<div class="field"> 
+						<label>Available Positions:</label>
+							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
+							<label class="label-cbn" for="ft-field">Full Time</label>
+							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
+		    				<label class="label-cbn" for="pt-field">Part Time</label>
+		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
+		   		 			<label class="label-cbn" for="is-field">Internship</label>
+					</div>
+				<div class="field"> 
+					<label class="mapLabel">Add Locations:</label>
+					<span class="jsBtn btn-map" title="Add Location"></span>
+				</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 			   <div id="fields">
 			   	  
@@ -87,10 +96,10 @@
 				  	<span>You Can Save Up To 3 Job Locations</span>
 				  	<ul id="locList"></ul>
 				 </div>
-				</div><!-- ENDOF MAP -->
-			   <div id="desc-div" class="descForm">
+				</div><!-- EOF MAP FIELD DIV -->
+			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
-						<label for="desc-field" >Job Description:</label> 
+						<label for="desc-field" >Job Description:</label>
 						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
 				   </div>
 				</div>
@@ -102,10 +111,9 @@
 		  <div id="newAdForm" class="newFormContainer">
 			  <div id="head-bar">
 					<h2 class="welcome">Create New Ad</h2>
-						<a class="jsBtn" onclick="postJobAd('draft', 'newAdForm','newAdfb')">Save to Draft |</a>
-			    		<a class="jsBtn" onclick="postJobAd('create','newAdForm','newAdfb')">Post it |</a>
-						<a class="jsBtn" onclick="resetFields('newAdForm');"> Reset Fields</a>
-						<span class="feedback">Feed Back Area</span>
+						<a class="jsBtn" id="newAd_saveDraft">Save to Draft |</a>
+			    		<a class="jsBtn" id="newAd_publish">Post it |</a>
+						<a class="jsBtn" id="newAd_reset"> Reset Fields</a>
 			  </div><!--ENDOF headBar-->
 		  
 		  	<div id="typeInForm" class="fillInForm"> 
@@ -179,7 +187,7 @@
 				  	<span>You Can Save Up To 3 Job Locations</span>
 				  	<ul id="locList"></ul>
 				 </div>
-				</div><!-- ENDOF MAP -->
+				</div><!-- EOF MAP FIELD DIV -->
 			   <div id="desc-div" class="fillInForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label>
