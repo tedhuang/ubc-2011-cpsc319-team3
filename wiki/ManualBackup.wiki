@@ -70,7 +70,8 @@ Add MySQL Server on startup
   * in linux, add MySQL to the startup script...
 
 == Install Tomcat ==
-http://www.mkyong.com/tomcat/how-to-install-tomcat-in-ubuntu/
+  * http://www.mkyong.com/tomcat/how-to-install-tomcat-in-ubuntu/
+  * on linux startup run /.../apache-tomcat-6.0.16/bin$ sh startup.sh
 
 Restoring MySQL DB
   * use mySQL console and type in
