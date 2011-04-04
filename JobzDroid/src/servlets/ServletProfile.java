@@ -112,7 +112,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case editProfile:
 				if(session.checkPrivilege( response, "searcher", "poster") )
-					editProfile(request,response);
+					editProfile(request,response, session);
 				break;
 				
 			case getProfileBySessionKey:
