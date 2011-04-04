@@ -22,61 +22,7 @@
              		 return infoBox;
              	}
         		
-        		function buildBtnBox(mode){
-             	 	
-        			var btnBox= $('<div></div>').attr('id', 'btnBox');
-        			switch(mode){
-        			case "closeNewAd":
-        				$('<a></a>')
-                 		.addClass("save jsBtn")
-                 		.html("Save Draft")
-                 		.appendTo(btnBox);
-        				
-        				$('<a></a>')
-                 		.addClass("notsave jsBtn")
-                 		.html("Don't save")
-                 		.appendTo(btnBox);
-        				
-                 		$('<a></a>')
-                 		.addClass("no jsBtn")
-                 		.html("keep writing")
-                 		.appendTo(btnBox);
-        				break;
-        			
-        			case "closeEdAd":
-        				$('<a></a>')
-                 		.addClass("save jsBtn")
-                 		.html("Save Draft")
-                 		.appendTo(btnBox);
-        				
-        				$('<a></a>')
-                 		.addClass("post jsBtn")
-                 		.html("Post It")
-                 		.appendTo(btnBox);
-        				
-                 		$('<a></a>')
-                 		.addClass("no jsBtn")
-                 		.html("keep writing")
-                 		.appendTo(btnBox);
-        				break;
-        				
-        			default:
-        				$('<a></a>')
-                 		.addClass("yes jsBtn")
-                 		.html("OK")
-                 		.appendTo(btnBox);
-                 		$('<a></a>')
-                 		.addClass("no jsBtn")
-                 		.html("Cancel")
-                 		.appendTo(btnBox);
-                 		
-        				break;
-        			}
-        			btnBox.delegate('a.no', "click", function(){
-             			rmLightbox(0);
-             		});
-             		 return btnBox;
-             	}
+        		
         		
         		function fullLightBox(infoBox){
      		    
@@ -214,6 +160,59 @@
 				
      	};
      	
+     	function buildBtnBox(mode){
+     	 	
+			var btnBox= $('<div></div>').attr('id', 'btnBox');
+			switch(mode){
+			case "closeNewAd":
+				$('<a></a>')
+         		.addClass("ret jsBtn")
+         		.html("Return To Ad")
+         		.appendTo(btnBox);
+				
+				$('<a></a>')
+         		.addClass("close jsBtn")
+         		.html("Close the Tab")
+         		.appendTo(btnBox);
+				break;
+			
+			case "closeEdAd":
+				$('<a></a>')
+         		.addClass("ret jsBtn")
+         		.html("Return To Ad")
+         		.appendTo(btnBox);
+				
+				$('<a></a>')
+         		.addClass("close jsBtn")
+         		.html("Close the Tab")
+         		.appendTo(btnBox);
+				
+				break;
+				
+			case "notification": //only notify user some info
+				$('<a></a>')
+         		.addClass("no jsBtn ntfBtn")
+         		.html("OK")
+         		.appendTo(btnBox);
+				break;	
+				
+			default:
+				$('<a></a>')
+         		.addClass("yes jsBtn")
+         		.html("OK")
+         		.appendTo(btnBox);
+         		$('<a></a>')
+         		.addClass("no jsBtn")
+         		.html("Cancel")
+         		.appendTo(btnBox);
+         		
+				break;
+			}
+			btnBox.delegate('a.no', "click", function(){
+     			rmLightbox(0);
+     		});
+     		 return btnBox;
+     	}
      	
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each

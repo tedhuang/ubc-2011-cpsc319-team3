@@ -24,7 +24,7 @@
 .navBar ul li a small {   font: normal 12px Verdana, Arial, Helvetica, sans-serif;  float:left;}
 .navBar ul li a.curTab {   color: #000000;   background-color:#FFF; border-bottom	: none;}
 .navBar ul li a.dis {  color: #CCCCCC;   background	: #F8F8F8;   cursor	:text; }
-.navBar ul li span.close{   position	: absolute;  right	: .3em;  font-size	: 12px;  top: 3px;  cursor	: pointer;}
+.navBar ul li span.close, .navBar ul li span.newAdClose,.navBar ul li span.edAdClose{ position:absolute; right:.3em;font-size: 12px;top: 3px; cursor: pointer;}
 .navBar ul li span.close:hover{font-weight	: bold;	color : #df0000;}
 
 /********************TabFrame *********************************************************/
@@ -36,7 +36,7 @@
 #tabFrame div.subFrame .newFormContainer,
 #tabFrame div.subFrame .edFormContainer{ top: 0; left: 0;right: 0; bottom: 0;	background-color: white;}
 .edFormContainer .fillInForm,
-.newFormContainer .fillInForm{	float: left;	margin:2em;	width: auto;	background-color: whiteSmoke;
+.newFormContainer .fillInForm{	float: left;	margin:2em;	width: 430px;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
 .edFormContainer .descForm{	margin-top: 20px;	width: 480px;	background-color: whiteSmoke;
 	background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmoke));}
