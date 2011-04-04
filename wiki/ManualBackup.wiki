@@ -40,13 +40,16 @@ Install JRE or JDK
 
 = Steps for Restoration =
 
-Install and run MySQL
+Install MySQL
+- Different instruction on windows and linux
+
+Run MySQL
 {{{
 on windows run 
 mysqld --lower_case_table_names=2
 
 on linux run 
-mysqld --lower_case_table_names=0
+/etc/init.d/mysql start --lower_case_table_names=0
 }}}
 
 Allow Remote connection on MySQL
@@ -58,6 +61,12 @@ DBNAME is the db you grant access to
 USERNAME is the user name, usually the highest user is 'root'
 IP is the IP of the incoming connector, could be set to '%' for all IP
 PASSWORD is the password for USERNAME@IP
+
+
+Add MySQL Server on startup
+  * in Windows, add mySQL as a startup service.  You can add arguments, or edit the config file to modify startup option
+  * in linux, add MySQL to the startup script...
+
 
 Restoring MySQL DB
   * use mySQL console and type in
