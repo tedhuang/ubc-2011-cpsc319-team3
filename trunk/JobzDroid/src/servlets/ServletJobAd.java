@@ -29,6 +29,7 @@ public class ServletJobAd extends HttpServlet {
 	private DBColName DbDict =	ServletInitializer.retDbColName();
 	private AccountManager accManager;
 	private Map<String, String>jobAdDBDict=DbDict.getClsDict("jobAd");
+	private Map<String, String>jobAdLocDict=DbDict.getDict("jobAdLocation");
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -274,7 +275,13 @@ public class ServletJobAd extends HttpServlet {
 		response.getWriter().println(XMLResponse);
 	}
 		
-	
+/*******************************************************************************************************************************
+ * 									<===+==========GetJobAdByOwner================>
+ * - Poster's functions, it retrieves all ads by the owner
+ * @param request
+ * @param response
+ * @throws IOException
+ ********************************************************************************************************************************/
 
 	private void getJobAdByOwner(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
@@ -290,7 +297,6 @@ public class ServletJobAd extends HttpServlet {
 
 		Connection conn = dbManager.getConnection();	
 		Statement stmt = null;
-		Statement stmtLoc = null;
 
 		try {
 			stmt = conn.createStatement();
@@ -378,104 +384,133 @@ public class ServletJobAd extends HttpServlet {
 	 */
 	private void getJobAdById(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		String message = "Create Job Advertisement Failed";
-		boolean isSuccessful = false;
-		
+		String message = "There is a problem getting the detail, please try again.";
 		String jobAdId = request.getParameter("jobAdId");
 		
+		String[]colToGet={"adTb.idJobAd", "idAccount", "title", "description", "expiryDate", "dateStarting", "datePosted", 
+							"contactInfo", "educationRequired", "jobAvailability", "tags", "hasGradFunding",
+							"addr0", "addr1", "addr2", "latlng0", "latlng1","latlng2"};
+		String[]tables={"tableJobAd as adTb", "tableLocationJobAd as adLoc"};
+		String[]onCond={"adTb.idJobAd=adLoc.idJobAd", DBQ.AND+"adTb.idJobAd="+jobAdId };
+		
 		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
 		JobAdvertisement jobAd = new JobAdvertisement(); //create a new job ad object to hold the info
+		StringBuffer[]qBuf=DBQ.buildJoinQuery(tables, colToGet, "join", onCond);
 		
 		try {
-			stmt = conn.createStatement();
 			
-			String query = 
-				"SELECT * FROM tableJobAd WHERE idJobAd=" + jobAdId;
-			
+			String query = qBuf[0].append(qBuf[1]).toString();
 			System.out.println("getJobAdById query:" + query);
-			isSuccessful = stmt.execute(query);
 			
-			ResultSet result = stmt.getResultSet();
+			ResultSetMetaData rsmd=null;
+			ResultSet result = conn.createStatement().executeQuery(query);
+			   if(result.next()){
+				   rsmd = result.getMetaData();
+					int numColumns = rsmd.getColumnCount();
+					for(int i=1; i<=numColumns; i++){
+						String colName = rsmd.getColumnName(i);
+						if(colName.matches("(?i)addr.*")|| colName.matches("(?i)latlng.*")){
+							if(result.getString(colName)!=null) //get the locations
+								jobAd.adLocMap.put(jobAdLocDict.get(colName), result.getString(colName));
+						}
+						else{ // get the ad info
+							 jobAd.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
+						}
+					}
+				}
+			   else{ //if the job ad doesn't specify  a location
+				   String[]adOnly={"idJobAd", "idAccount", "title", "description", "expiryDate", "dateStarting", "datePosted", 
+							"contactInfo", "educationRequired", "jobAvailability", "tags", "hasGradFunding"};
+				   Map<String, Object>conditionMap=new HashMap<String, Object>();
+				   conditionMap.put("idJobAd=", jobAdId);
+				   qBuf=DBQ.buidlSelQuery(new String[]{"tableJobAd"}, adOnly, conditionMap);
+				   query=qBuf[0].append(qBuf[1]).toString();
+				   result = conn.createStatement().executeQuery(query);
+				   if(result.next()){
+					   rsmd = result.getMetaData();
+						int numColumns = rsmd.getColumnCount();
+						for(int i=1; i<=numColumns; i++){
+							String colName = rsmd.getColumnName(i);
+								 jobAd.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
+						}
+				   }
+			   }
+		 }//eof try
 			
-			if (result.first()){
-				System.out.println("getJobAd successful");
-				message = "getJobAd successful";
+//			ResultSet result = stmt.getResultSet();
+			
+//			if (result.first()){
+//				System.out.println("getJobAd successful");
+//				message = "getJobAd successful";
 				
 				//Fill in the fields of the jobAd object
 				
-				jobAd.jobAdId 			= result.getInt("idJobAd");
-				jobAd.ownerID 			= result.getInt("idAccount");
-				jobAd.jobAdTitle		= result.getString("title");
-				jobAd.jobAdDescription 	= result.getString("description");
-				jobAd.expiryDate		= result.getLong("expiryDate");
-				jobAd.startingDate 		= result.getLong("dateStarting");
-				jobAd.creationDate 		= result.getLong("datePosted");
-				jobAd.status 			= result.getString("status");
-				jobAd.contactInfo 		= result.getString("contactInfo");
-				jobAd.educationReq 		= result.getInt("educationRequired");
-				jobAd.tags 				= result.getString("tags");
-				jobAd.hasGradFunding	= result.getInt("hasGradFunding");
+//				jobAd.jobAdId 			= result.getInt("idJobAd");
+//				jobAd.ownerID 			= result.getInt("idAccount");
+//				jobAd.jobAdTitle		= result.getString("title");
+//				jobAd.jobAdDescription 	= result.getString("description");
+//				jobAd.expiryDate		= result.getLong("expiryDate");
+//				jobAd.startingDate 		= result.getLong("dateStarting");
+//				jobAd.creationDate 		= result.getLong("datePosted");
+//				jobAd.status 			= result.getString("status");
+//				jobAd.contactInfo 		= result.getString("contactInfo");
+//				jobAd.educationReq 		= result.getInt("educationRequired");
+//				jobAd.tags 				= result.getString("tags");
+//				jobAd.hasGradFunding	= result.getInt("hasGradFunding");
 				
 				
-			}
-			else{ //Error case
-				isSuccessful = false;
-				message = "Error: Job Ad not found with ID=" + jobAdId;
-				System.out.println("Error: Job Ad not found with ID=" + jobAdId);
-			}
+//			}
+//			else{ //Error case
+//				isSuccessful = false;
+//				message = "Error: Job Ad not found with ID=" + jobAdId;
+//				System.out.println("Error: Job Ad not found with ID=" + jobAdId);
+//			}
 			
 			/**Get Employment Availability values */
-				String empAvail = "";
-				int fullTime = 0;
-				int partTime = 0;
-				int internship = 0;
-				
-				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
-				"idJobAd= '" + jobAdId + "'";
-				System.out.println(query);
-				
-				isSuccessful = stmt.execute(query);
-				result = stmt.getResultSet();
-				
-				if(!result.first()){
-						System.out.println("No Employment Type Found");
-				}
-				else{
-					fullTime = result.getInt("fullTime");
-					partTime = result.getInt("partTime");
-					internship = result.getInt("internship");	
-
-					if( (fullTime+partTime+internship) == 0 ){
-						empAvail = "Not Specified"; //no preference
-					}
-					else{
-						if( fullTime == 1){
-							empAvail += "Full-time ";
-						}
-						if(partTime == 1){
-							empAvail += "Part-time ";
-						}
-						if(internship == 1){
-							empAvail += "Internship";
-						}
-					}
-					System.out.println("Job Positions Available: " + empAvail);
-					jobAd.jobAvailability = empAvail;
-				}
-		}
+//				String empAvail = "";
+//				int fullTime = 0;
+//				int partTime = 0;
+//				int internship = 0;
+//				
+//				query = "SELECT * FROM tableEmpTypeJobAd WHERE " +
+//				"idJobAd= '" + jobAdId + "'";
+//				System.out.println(query);
+//				
+//				isSuccessful = stmt.execute(query);
+//				result = stmt.getResultSet();
+//				
+//				if(!result.first()){
+//						System.out.println("No Employment Type Found");
+//				}
+//				else{
+//					fullTime = result.getInt("fullTime");
+//					partTime = result.getInt("partTime");
+//					internship = result.getInt("internship");	
+//
+//					if( (fullTime+partTime+internship) == 0 ){
+//						empAvail = "Not Specified"; //no preference
+//					}
+//					else{
+//						if( fullTime == 1){
+//							empAvail += "Full-time ";
+//						}
+//						if(partTime == 1){
+//							empAvail += "Part-time ";
+//						}
+//						if(internship == 1){
+//							empAvail += "Internship";
+//						}
+//					}
+//					System.out.println("Job Positions Available: " + empAvail);
+//					jobAd.jobAvailability = empAvail;
+//				}
+		 
+	    
 		catch (SQLException e) {
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
 	    finally {
-	        try{
-	            if (stmt != null)
-	                stmt.close();
-	        }
-	        catch (Exception e) {
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
-	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
@@ -488,9 +523,12 @@ public class ServletJobAd extends HttpServlet {
 		StringBuffer XMLResponse = new StringBuffer();	
 		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append(jobAd.toXMLContent() );
+		if(jobAd.valueMap.size()>0){
+			XMLResponse.append(jobAd.xmlParser() );
+		}
+		else{
+			XMLResponse.append("\t<message>" + message + "</message>\n");
+		}
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
@@ -766,7 +804,7 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 					else{
 						System.out.println("Error: Job Ad ID not found after creation");
 					}
-				   if(jobAdId != -1){	
+				   if(jobAdId != -1 && postQuery[1]!=null){	
 					   stmt=conn.createStatement(); //create a new statement maybe not needed
 					   PreparedStatement postLocation = conn.prepareStatement(postQuery[1].toString());
 					   postLocation.setInt(1, jobAdId);
@@ -782,9 +820,8 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 					   }
 					   
 					   else{
-						System.out.println("Insert location for new job ad failed");
-						Utility.logError("Insert location for new job ad failed");
-					}
+						Utility.logError("No Location Specified or Inserting location for new job ad failed");
+					   }
 	
 				  }//ENDOF INSERT INTO LOCATION TABLE 
 				}
@@ -914,33 +951,34 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 		stm1.delete(stm1.length() - qcmd.COMA.length()-2, stm1.length()-2);//get rid of last coma
 		stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
 		queryBuf.append(stm1.append(stm2));//merge the query
+		queriesBuffer[0]=queryBuf;
 	
-	
-	//Handle Location query
-	stm1.setLength(0);
-	stm2.setLength(0);
-	stm1.append( qcmd.INSERT + qcmd.INTO + "tableLocationJobAd " + qcmd.PRNTHS);
-//	stm1.insert(stm1.length()-2, "idJobAd, "); //Prepare for the job id
-	stm2.append( qcmd.VALUES + qcmd.PRNTHS);
-	locMap.put("idJobAd", "?");//This will be used in the preparedStatement
-	
-	for(Map.Entry<String, String> entry : locMap.entrySet()){
-		String column= entry.getKey();
-		String value = entry.getValue();
-		stm1.insert(stm1.length()-2 , column+ qcmd.COMA);//insert col into the parentheses
-		if(column.equals("idJobAd")){
-		 stm2.insert(stm2.length()-2,  value + qcmd.COMA);
+	if(locMap.size()>0){
+		//Handle Location query
+		stm1.setLength(0);
+		stm2.setLength(0);
+		stm1.append( qcmd.INSERT + qcmd.INTO + "tableLocationJobAd " + qcmd.PRNTHS);
+	//	stm1.insert(stm1.length()-2, "idJobAd, "); //Prepare for the job id
+		stm2.append( qcmd.VALUES + qcmd.PRNTHS);
+		locMap.put("idJobAd", "?");//This will be used in the preparedStatement
+		
+		for(Map.Entry<String, String> entry : locMap.entrySet()){
+			String column= entry.getKey();
+			String value = entry.getValue();
+			stm1.insert(stm1.length()-2 , column+ qcmd.COMA);//insert col into the parentheses
+			if(column.equals("idJobAd")){
+			 stm2.insert(stm2.length()-2,  value + qcmd.COMA);
+			}
+			else{
+				stm2.insert(stm2.length()-2,  qcmd.SQUO+ value + qcmd.SQUO + qcmd.COMA);
+			}
 		}
-		else{
-			stm2.insert(stm2.length()-2,  qcmd.SQUO+ value + qcmd.SQUO + qcmd.COMA);
-		}
+			stm1.delete(stm1.length() - qcmd.COMA.length()-2, stm1.length()-2);//get rid of last coma
+			stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
+			locQueryBuf.append(stm1.append(stm2));//merge the query
+			queriesBuffer[1]=locQueryBuf;
 	}
-		stm1.delete(stm1.length() - qcmd.COMA.length()-2, stm1.length()-2);//get rid of last coma
-		stm2.delete(stm2.length() - qcmd.COMA.length()-2, stm2.length()-2);
-		locQueryBuf.append(stm1.append(stm2));//merge the query
 	
-	queriesBuffer[0]=queryBuf;
-	queriesBuffer[1]=locQueryBuf;
 	return queriesBuffer;
 }
 

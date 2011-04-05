@@ -20,11 +20,16 @@
 			var dfltLat=setting.dftLat;
 			var dfltLng=setting.dftLng;
 			var addrMap={addr:"", city:"",province:"",country:"",zip:""};
+			var displayMap = setting.displayMap;
 			
 			var infoWindow = new google.maps.InfoWindow({});
-			
-			initMap();
-			initAutoCplt();
+			if(displayMap){
+				
+			}
+			else{
+				initMap();
+				initAutoCplt();
+			}
 //			getUserLoc();
 			
 			
@@ -44,17 +49,6 @@
 				  geocoder = new google.maps.Geocoder();
 				        
 				}
-			function placeMarkr(location){
-//				var markr=new google.maps.Marker({
-				var markr=new google.maps.Marker({
-					position  : location,
-					map		  : map,
-					animation : google.maps.Animation.DROP,
-					draggable : true
-				});
-				map.setCenter(location);
-				addDragListener.call(markr);
-			}
 			
 			function addMarkr(location) {//For multiple work locations
 				if(markers.length>=maxAddrNum){
@@ -70,7 +64,6 @@
 					  markers.push(markr);
 					  map.setCenter(location);
 					  markr.set("id", $.inArray(markr, markers ));
-					  console.log(markr.get("id"));
 					  addDragListener.call(markr);
 					  return markr;
 				}
@@ -371,7 +364,56 @@
 					google.maps.event.trigger(map, 'resize');
 				};
 				
+				$.fn.smartMap.displayMap=function(container, locObjArray){//display the a new map according to info
+					var dispMap = $('<div></div>').addClass("displayMap").appendTo(container);
+					var dispList = $('<ul></ul>').addClass("dispLocList").appendTo(dispMap);
+					var mapPatch = $('<div></div>').addClass("dispMapPatch").appendTo(dispMap);
+					var location = new google.maps.LatLng(dfltLat,dfltLng);
+					  var options = {
+					    zoom: 14,
+					    center: location,
+					    mapTypeId: google.maps.MapTypeId.ROADMAP
+					  };
+					  
+					  map = new google.maps.Map(mapPatch.get(0), options);
+					 
+					
+					$.each(locObjArray, function(i){
+						lat=this.latlng.split(",")[0];
+						lng=this.latlng.split(",")[1];
+						var location = new google.maps.LatLng(lat,lng);
+						placeMarkr(location);
+						buildDisplayList(dispList, lat, lng, this.addr ,i+1);
+					});
+					
+					
+				};
 				
+				function placeMarkr(location){ //place display marker
+//					var markr=new google.maps.Marker({
+					var markr=new google.maps.Marker({
+						position  : location,
+						map		  : map,
+						animation : google.maps.Animation.DROP
+					});
+					map.setCenter(location);
+					return markr;
+				}
+				function buildDisplayList(dispList, lat, lng, addr, idx){
+					var li=	$("<li></li>")
+							.addClass("jsBtn")
+							.data({
+									"lat":lat,
+									"lng":lng
+								 })
+							.delegate("span", "click", function(){
+								 loc = new google.maps.LatLng(lat, lng);
+						         map.panTo(loc);
+							})
+							.prepend('<span class="title">Location '+ idx +'</span>')
+							.append('<span class="addr">'+addr+'</span>')
+							.appendTo(dispList); //ENDOF ADD <li>
+				}
 	/*****************************************************************************************************		 
 	 *   Get User Location FUNCTION GROUP
 	 *****************************************************************************************************/
@@ -495,7 +537,8 @@
 	$.fn.smartMap.defaults = {
     		
     		dftLat : 49.26518835849344,
-    		dftLng : -123.24735386655271 //UBC COORD
+    		dftLng : -123.24735386655271, //UBC COORD
+    		displayMap: false
 
           
     };

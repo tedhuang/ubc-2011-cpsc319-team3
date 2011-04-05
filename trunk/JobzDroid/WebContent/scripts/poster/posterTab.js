@@ -70,7 +70,8 @@
      			   $('.newadbtn')//new ad btn
      			   .attr('title', 'Compose New Ad')	
      			   .bind("click", function(){
-     			   		openTab('newAdTab'); 
+     			   		openTab('newAdTab');
+     			   		open_newAd_form();
      			   	});
      			   
      			   $("#refreshOwnerAd")//refresh and load woner's ads
@@ -189,7 +190,7 @@
 /*****************************************************************************************************************************
  * 										Show TAB FUNCTION
  * ****************************************************************************************************************************/  
-                function openTab(tabId, param){
+                function openTab(tabId){
                 	   var openingTab = $('#'+tabId);
                 	   var openingFrame = $(openingTab.find('a').attr("href"));
                 	   var curTab = tabs.eq(curTabIdx); 
@@ -217,10 +218,6 @@
                     	refreshTabs();
                     	curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                     	showTab();
-                    	switch(tabId){
-                    	case "newAdTab": open_newAd_form(); break;
-                    	case "edAdTab":	open_edAd_form(param);break;
-                    	}
                     }
                   }return false;
                 }//ENDOF SHOWTAB
@@ -316,8 +313,27 @@
 //         			tRow.find('a.edit').click(function(){ loadEdit(adId);});
          			var status=tRow.find('td.td-status').text();
          			tRow.delegate("a.edit", "click", function(){
-         				openTab('edAdTab', status);
-         				getJobAdById("edit",adId, "edAdForm" );
+         				openTab('edAdTab');
+         				if(!$("#edAdForm").length){
+         					open_edAd_form(status);
+         					getJobAdById("edit",adId, "edAdForm" );
+         				}
+         				else{
+         					var theForm = domObjById("edAdForm");
+         		        	var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray(); 
+         		        		if(compareChange("oldAdValues", inputFields, "edAdFrame").numChanged){
+
+         							$.fn.smartLightBox.diaBox("you have unsaved data, take a look?", "alert", "closeConfirm");
+         							$("#btnBox").delegate('a.ret', "click", function(){
+         								$.fn.smartLightBox.closeLightBox(0);
+         			 		   		});
+         			 		   		
+         							$("#btnBox").delegate('a.close', "click", function(){
+         								$.fn.smartLightBox.closeLightBox(0);
+         								getJobAdById("edit",adId, "edAdForm" );
+         			 		   		});
+         		     		   	 }
+         	        	}
          				
          			});
          			tRow.delegate('a.view', "click", function(){
@@ -362,7 +378,7 @@
          		$( "#startTime-field","#newAdFrame" ).datepicker({ minDate: "+1M", maxDate: "+3M +10D" });
          		$( "#expireTime-field" ,"#newAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
          		$("#mapPanel", "#newAdFrame").smartMap({});
-         		bindHeadToolBar("edAdTool", "edAdForm",status);
+         		bindHeadToolBar("newAdTool", "newAdForm");
          		$(".btn-map").click(function(){
        			 $("#mapPanel").slideToggle("slow");
        	 			$.fn.smartMap.resize();
@@ -385,10 +401,10 @@
         function bindCloseConfirm(formDiv){
         	var curTab=this;
         	var theForm = domObjById(formDiv);
-        	var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray();
+        	var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray(); 
         		if(compareChange("oldAdValues", inputFields, formDiv).numChanged){
 
-					$.fn.smartLightBox.diaBox("you have unsaved data here, do you want to save?", "alert", "closeEdAd");
+					$.fn.smartLightBox.diaBox("you have unsaved data, take a look?", "alert", "closeConfirm");
 					$("#btnBox").delegate('a.ret', "click", function(){
 						$.fn.smartLightBox.closeLightBox(0);
 	 		   		});
@@ -455,6 +471,7 @@
  						$.fn.smartLightBox.closeLightBox(0);
  					});
         		});
+        		break;
         	}
         }
         function open_adDetail(adId, status){
@@ -494,9 +511,9 @@
         	autoCloseTab();//for close tab after action performed
         };
         
-        $.fn.DynaSmartTab.loadEdData = function(targetXMLTag, edFormContainer){
+        $.fn.DynaSmartTab.loadEdData = function(targetXMLTag, edFormContainer, xhrResponse){
     	
-    	var xmlData= $(targetXMLTag,xmlhttp.responseXML);
+    	var xmlData= $(targetXMLTag,xhrResponse);
     	var edFormContainer = domObjById(edFormContainer);
     	var inputOldValue = $("#oldAdValues");
  

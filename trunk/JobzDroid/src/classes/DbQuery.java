@@ -26,6 +26,7 @@ public class DbQuery{
 	public final String INTO			= " INTO "; 		//CAUTION: SPACE IMPORTANT
 	public final String FROM			= " FROM "; 		//CAUTION: SPACE IMPORTANT
 	public final String VALUES			= " VALUES "; 	//CAUTION: SPACE IMPORTANT
+	public final String IJ			= " INNER JOIN "; 	//CAUTION: SPACE IMPORTANT
 	
 	public final String COMA			= ", ";		//CAUTION: SPACE IMPORTANT
 	public final String PRNTHS			= "() ";	//CAUTION: SPACE IMPORTANT, insert-pos:1
@@ -35,6 +36,7 @@ public class DbQuery{
 	public final String GRTR			= ">";
 	public final String SMLR			= "<";
 	public final String BR				= "&lt;br /&gt;";
+	public final String SP				= " ";
 	
 	public final StringBuffer wordRegExBuffer 	 =  new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
 	public final StringBuffer SQ				 =  new StringBuffer("'' ");//CAUTION: SPACE IMPORTANT, insert-pos:1
@@ -94,15 +96,24 @@ public StringBuffer sessAdminAuthQuery(String sKey, String[]getArr){
 		return qAcctTb;
 	}
 	
-	public  StringBuffer [] buidlSelQuery( String tableName, String[]colToGet, Map<String, Object>conditionMap ){
+	public  StringBuffer [] buidlSelQuery( String[] tableNames, String[]colToGet, Map<String, Object>conditionMap ){
 		StringBuffer[]outputQueries =new StringBuffer[2];
 		StringBuffer stmt1 =new StringBuffer();
 		StringBuffer conditionBuf =new StringBuffer();
 		StringBuffer columns =new StringBuffer();
-		for(String str:colToGet){
+		StringBuffer tables =new StringBuffer();
+		
+		for(String str:colToGet){ //retrieve the cols we want to get
 			columns.append(str+ COMA);
 		}
 		columns.delete(columns.length()-COMA.length(), columns.length());
+		
+		for(String str:tableNames){ //retrieve the tables we are querying
+			tables.append(str+ COMA);
+		}
+		
+		tables.delete(tables.length()-COMA.length(), tables.length());
+		
 		for(Map.Entry<String, Object> entry : conditionMap.entrySet()){
 			//colOprt in condition map will consistent with columnName and operators
 			String colOprt = entry.getKey();
@@ -113,7 +124,40 @@ public StringBuffer sessAdminAuthQuery(String sKey, String[]getArr){
     		}
     	}
 		
-		stmt1.append(SELECT + columns + FROM + tableName + WHERE);
+		stmt1.append(SELECT + columns + FROM + tables + WHERE);
+		outputQueries[0]=stmt1;
+		outputQueries[1]=conditionBuf;
+		
+		return outputQueries;
+	}
+	public  StringBuffer [] buildJoinQuery( String[] tableNames, String[]colToGet, String joinType, String[]onCond){
+		StringBuffer[]outputQueries =new StringBuffer[2];
+		StringBuffer stmt1 =new StringBuffer();
+		StringBuffer conditionBuf =new StringBuffer();
+		
+		StringBuffer columns =new StringBuffer();
+		StringBuffer tables =new StringBuffer();
+		StringBuffer onCondition =new StringBuffer();
+		
+		for(String str:colToGet){ //retrieve the cols we want to get
+			columns.append(str+ COMA);
+		}
+		columns.delete(columns.length()-COMA.length(), columns.length());
+		
+		joinType=SP+ joinType +SP;
+		for(String str:tableNames){ //retrieve the tables we are querying
+			tables.append(str + joinType);
+		}
+		tables.delete(tables.length()-joinType.length(), tables.length());
+		stmt1.append(SELECT + columns + FROM + tables);//first stm1 defined tb and col
+		
+		for(String str:onCond){ //retrieve the "on" condition we are querying
+			onCondition.append(str);
+		}
+//		onCondition.delete(onCondition.length()-AND.length(), onCondition.length());
+		
+		conditionBuf.append(ON + onCondition);
+		
 		outputQueries[0]=stmt1;
 		outputQueries[1]=conditionBuf;
 		

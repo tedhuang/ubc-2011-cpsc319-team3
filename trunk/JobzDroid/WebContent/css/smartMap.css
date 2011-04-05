@@ -11,3 +11,10 @@
 #mapPanel ul#locList span.title{color: white;}
 #mapPanel ul#locList span.rm{color:red; font: 0.9em/1.3em bold italic small-caps Times New Roman, serif; clear:right;}
 #theMap #map_canvas{width:550px; height:400px;}
+div.displayMap{width:450px; height:400px; padding:1em;}
+div.displayMap div.dispMapPatch{width:400px; height:300px;}
+div.displayMap ul.dispLocList{list-style: none outside none; top: 0.5em;;}
+div.displayMap ul.dispLocList li{padding-top: 1em;}
+div.displayMap ul.dispLocList span{padding-left: 0.5em;color:blue;}
+div.displayMap ul.dispLocList span.addr{display:block;}
+div.displayMap ul.dispLocList span.title{}
