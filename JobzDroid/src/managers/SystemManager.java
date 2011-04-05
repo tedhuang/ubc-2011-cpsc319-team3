@@ -29,7 +29,6 @@ public class SystemManager {
 	public static long 		timeIntervalAutomatedTasks 				= 10 * 60 * 1000;				// default 10 minutes
 	public static long		timeIntervalAutomatedDBWorldTasks		= 1* 60 * 60 * 1000;			// default 1 hour
 	public static long      expiryTimeJobAdDefault					= 30 * 24 * 60 * 60 * 1000;		// default 1 month
-	//TODO add maximum expiry time for each value
 	
 	// default string patterns
 	public static String emailPattern 		= "^[_A-Za-z0-9-\\.]+@[_A-Za-z0-9-\\.]+(\\.[A-Za-z]{2,})$";
@@ -63,7 +62,7 @@ public class SystemManager {
 	
 	// document and file system management variables
 	public static String[] validFileExtensions
-						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" }; //TODO check SRS for file extensions
+						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" };
 	public static String documentDirectory		= "/JobzDroid/Documents/"; //TODO maybe change to default user path
 	public static long bytesInMB				=  1000 * 1000;
 	public static long fileStorageSizeLimit		= 5 * bytesInMB; // limit is 5 Mb, base unit is byte
