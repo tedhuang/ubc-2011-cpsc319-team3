@@ -142,7 +142,9 @@ public class dbworldintegration {
 						
 						Enumeration edHeaders = msg[i].getAllHeaders(); //expiry-date header
 						Date expiryDate = getExpiryDate(edHeaders); 
-						long millisExpiryDate = 30*24*60*60*1000;
+						
+						// use default ad life span for unspecified expiry dates 
+						long millisExpiryDate = Utility.getCurrentTime() + SystemManager.expiryTimeJobAdDefault;
 						
 						if(expiryDate !=null){
 							cal.setTime(expiryDate);
