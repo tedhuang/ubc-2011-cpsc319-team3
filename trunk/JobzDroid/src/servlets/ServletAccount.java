@@ -536,7 +536,7 @@ public class ServletAccount extends HttpServlet {
 	}
 /***************************/
 	private void logoutReqTaker(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException{
-		
+		//TODO make this happen
 		if(accManager.userLogout(req.getParameter("sessionKey").toString())){
 			System.out.println("Logout Successfully");
 		}
@@ -644,7 +644,8 @@ public class ServletAccount extends HttpServlet {
 		String oldPassword = request.getParameter("oldPassword");
 		String newPassword = request.getParameter("newPassword");
 		String newPasswordRepeat = request.getParameter("newPasswordRepeat");
-				
+		
+		//TODO refactor out session key from here
 		String message = "";
 		boolean result = false;
 		int idAccount = -1;

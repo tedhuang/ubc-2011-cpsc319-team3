@@ -1,14 +1,10 @@
 package managers;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,13 +15,10 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 
@@ -38,14 +31,9 @@ import classes.Utility;
 
 import managers.DBManager;
 
-import servlets.ServletInitializer;
-import sun.net.www.URLConnection;
-
 
 public class dbworldintegration {
-	private DBManager dbManager;	
-	private String user;
-	private String password;
+	private DBManager dbManager;
 	
 /**********************************************
  * dbworldintegration()
@@ -104,7 +92,6 @@ public class dbworldintegration {
 			//Create statement to pass sql queries.
 			stmt = conn.createStatement();
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Total number of messages in INBOX: "+msg.length);
 			for (int i = msg.length-1; i >= 0; i--) 
 			{
@@ -283,7 +270,6 @@ public class dbworldintegration {
  * @param headers - list of all the headers in the message 
  *********************************************************************************************/
 	protected Date getStartDate(Enumeration headers){
-		int num = 0;
 		Date startDate = null;
 		String startDateInString = null;
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
@@ -314,7 +300,6 @@ public class dbworldintegration {
  * @param headers - list of all the headers in the message	
  **********************************************************************************************/
 	protected Date getExpiryDate(Enumeration headers){
-		int num = 0;
 		Date expiryDate = null;
 		String expiryDateInString = null;
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
@@ -346,7 +331,6 @@ public class dbworldintegration {
  * @param headers - list of all the headers in the message
  *********************************************************************************************/
 	protected String getWebPage(Enumeration headers){
-		int num = 0;
 		String webPage = null;
 		while (headers.hasMoreElements()){
 			Header h = (Header) headers.nextElement();
@@ -420,7 +404,6 @@ public class dbworldintegration {
 					// set feed category to "DBWorld"
 					String[] feedCategory = {"DBWorld"};
 					SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
-					//TODO add link maybe?
 					SyndEntry entry = RSSManager.createFeedEntry(jobAdvertisementTitle, new java.util.Date(millisSentDate),
 							jobDescription, null, feedCategory);
 					RSSManager.addEntryToFeed(feed, entry, 0);

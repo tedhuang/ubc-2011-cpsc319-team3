@@ -102,13 +102,9 @@ public class ServletProfile extends HttpServlet{
 				break;
 				
 			case getProfileSearcherById:
-				//TODO needs session check
-				getProfileSearcherById(request,response);
+				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+					getProfileSearcherById(request,response);
 				break;
-				
-//			case createProfile:
-//				createProfile(request, response); //implement error checks
-//				break;
 				
 			case editProfile:
 				if(session.checkPrivilege( response, "searcher", "poster") )
@@ -119,29 +115,34 @@ public class ServletProfile extends HttpServlet{
 				if(session.checkPrivilege( response, "searcher", "poster") )
 					getProfileBySessionKey(request, response, session);
 				break;
-			
-			case searchProfile:
-				searchProfile(request,response);
-				break;
-				
+							
 			case searchSearcherProfile:
-				searchSearcherProfile(request, response);
+				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+					searchSearcherProfile(request, response);
 				break;
 				
 			case viewAllSearchers:
-				viewAllSearchers(request, response);
+				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+					viewAllSearchers(request, response);
 				break;
 			case smrSearcherProfile:
-				searcherProfileSummary(request, response);
+				if(session.checkPrivilege( response, "searcher" ) )
+					searcherProfileSummary(request, response, session);
 				break;
 				
 			case saveCandidate:
 				if(session.checkPrivilege( response, "poster") )
 					saveCandidate( request, response, session );
-			default:
-				System.out.print("Dont you try to hack =D");
-				break;
-		
+				
+			case deleteCandidate:
+				if(session.checkPrivilege( response, "poster") )
+					//TODO add session checking
+					deleteCandidate( request, response );
+
+			case listCandidate:
+				if(session.checkPrivilege( response, "poster") )
+					//TODO add session checking
+					listCandidate( request, response );
 		}//ENDOF SWITCH
 	
 	}//ENDOF processReq Func
@@ -510,7 +511,7 @@ public class ServletProfile extends HttpServlet{
 		
 //		String documentList = "";
 		// if invalid session, redirect to error page
-
+//TODO REFACTOR
 		earlyExit:
 		{
 		try{
@@ -884,225 +885,6 @@ public class ServletProfile extends HttpServlet{
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-/*****************************************************************************************************************
- * 					searchProfile Function
- * 
- * FOR QUICK SEARCH AND ADVANCED SEARCH 
- * 
- *****************************************************************************************************************/
-	private void searchProfile(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
-	ArrayList<ProfileSearcher> profileList = new ArrayList<ProfileSearcher>();
-		
-		Connection conn = dbManager.getConnection();	
-		Statement stmt = null;
-		
-		try {		
-			stmt = conn.createStatement();
-			//Add individual queries onto total query
-			String query = buildSearchQuery(request);
-			
-			//DEBUG
-			System.out.println(query);
-			
-			stmt.execute(query);
-			ResultSet result = stmt.getResultSet();
-			
-			//Compile the result into the arraylist
-			while( result.next() ) {
-				ProfileSearcher temp = new ProfileSearcher();
-				
-				temp.accountID				= result.getInt("idAccount");
-				temp.name					= result.getString("name");
-				temp.phone					= result.getString("phone");
-				temp.educationLevel 		= result.getInt("educationLevel");
-				
-				//TODO: add other necessary fields
-
-				profileList.add( temp ); //add to the temporary list
-			}
-			
-			stmt.close();
-			System.out.println("Query Successfully Finished");
-			
-		} catch (SQLException e1) {
-		e1.printStackTrace();
-		}
-		
-		
-		// close DB objects
-		finally {
-			try{
-				if (stmt != null)
-					stmt.close();
-			}
-			catch (Exception e) {
-				//TODO log "Cannot close Statement"
-				System.out.println("Cannot close Statement : " + e.getMessage());
-			}
-			try {
-				if (conn  != null)
-					conn.close();
-			}
-			catch (SQLException e) {
-				//TODO log Cannot close Connection
-				System.out.println("Cannot close Connection : " + e.getMessage());
-			}
-		}
-		
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		Iterator<ProfileSearcher> itr = profileList.iterator();
-	    while (itr.hasNext()) {//iterate through all list and append to xml
-	    	XMLResponse.append(itr.next().toXMLContent() ); 
-	    }
-		
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
-	}
-	
-	
-	
-	private String buildSearchQuery(HttpServletRequest request){
-		
-		Map<String, String>paraMap = new HashMap<String, String>();//col-value
-		boolean qkSearch=false;
-		
-		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action")); //action=searchProfile
-		Map<String, String> DbCols = DbDict.getColNameMap();
-		
-		Enumeration paramNames = request.getParameterNames();
-		while (paramNames.hasMoreElements()) {
-			
-			String paraName = (String) paramNames.nextElement();
-			if( paraName.equals("action")){//Not Querying this
-				//Do Nothing
-			}
-			else{
-				String colName = paraColMap.get(paraName);//Look Up Corresponding col names
-			    //Put the parameters' names and values into the MAP
-				
-			//TODO: Check if this is needed
-//				if(colName.equals("jobAvailability")){
-//					if(paraMap.get(colName)!=null){
-//						
-//						// If it is search by job availability
-//						//CAUTION: MIDDLE SPACE IMPORTANT
-//						String curVal = paraMap.get(colName);
-//						curVal = curVal.substring(0, curVal.length()-1);
-//						String jobAvailTerm = curVal+ ", '" + request.getParameter(paraName) + "')";
-//						paraMap.put(colName, jobAvailTerm);
-//					}
-//					else{
-//						paraMap.put(colName,"(\'"+request.getParameter(paraName)+"\')" );
-//					}
-//				}
-//				else{
-////						paraMap.put(colName,request.getParameter(paraName) );
-//						paraMap.put(colName,request.getParameter(paraName) );
-//					
-//				}
-				
-//				paraMap.put(colName,request.getParameter(paraName) );
-				paraMap.put(colName,request.getParameter(paraName) );
-			    
-				//Debug
-			    System.out.println("Column: " + colName + "\n" +
-			    					"Value: " + paraMap.get(colName));
-			}
-		}
-		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
-		String query 			="SELECT idAccount, name, educationLevel FROM tableProfileSearcher WHERE ";
-		String panicQuery		="SELECT idAccount, name, educationLevel jobAvailability FROM tableProfileSearcher";
-		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
-		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
-		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
-		String likeKeyword		= " LIKE "; 	//CAUTION: SPACE IMPORTANT
-		String regExKeyword 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
-		String whereKeyword		= " WHERE ";	//CAUTION: SPACE IMPORTANT
-		String orderByKeyword	= " ORDER BY "; //CAUTION: SPACE IMPORTANT
-		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
-		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
-		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
-		boolean panic = false;
-		
-		StringBuffer queryBuf = new StringBuffer();
-		queryBuf.append(query);
-		
-       for(Map.Entry<String, String> entry : paraMap.entrySet()){
-    	   String column = entry.getKey();
-    	   String value = entry.getValue();
-    	   if(!(column.equals("quickSearch"))){
-    		   
-    		   if(DbCols.get(column).equals("name")){
-    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
-    		   }
-    		   else if(DbCols.get(column).equals("education")){
-    			   //if search by the availability term use IN
-   	    		    queryBuf.append(column+ inKeyword + value + andKeyword);
-    		   }
-    		   
-    		 //TODO: add location
-//    		   else if(DbCols.get(column).equals("employmentPref")){
-//   	    		    queryBuf.append(column+ "=" + value + andKeyword);
-//    		   }  
-    		   //TODO: add location
-//    		   else if(DbCols.get(column).equals("location")){
-//    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
-//    		   }
-    		   else{//TODO NOT WORKING NEED TO FIX 
-    			   panic= true;
-	    		   System.out.println("PANIC ACTION!");
-	    		   queryBuf.setLength(0);
-	    		   queryBuf.append( panicQuery + orderByKeyword + "name" + descKeyword);
-	    		   query = queryBuf.toString();
-	    		   break;
-    		   }
-    	   }//ENDOF IF NOT QUICK SEARCH
-    	   
-    	   else{//Perform quick search, only one value but wild search on all
-    		   qkSearch=true;
-    		   wordRegExBuffer.insert(9,value);
-    		   queryBuf.append(DbCols.get("title") 			+ regExKeyword + wordRegExBuffer.toString() + orKeyword);
-    		   queryBuf.append(DbCols.get("education") 		+ regExKeyword + wordRegExBuffer.toString() + orKeyword);
-
-//    		   queryBuf.append(DbCols.get("location") 		+ regExKeyword + wordRegExBuffer.toString() + orKeyword);
-//    		   queryBuf.append(DbCols.get("employmentPref") + regExKeyword + wordRegExBuffer.toString() + orKeyword);
-
-    		   if (Utility.degreeConvertor(value)>0){
-    			   queryBuf.insert(query.length(), DbCols.get("education") + "=" + Utility.degreeConvertor(value) + orKeyword);
-    		   }
-    	   }
-        }//ENDOF FOR-MAP LOOP
-       
-       
-    	   if (!panic){
-	  			
-	  			if(!qkSearch){
-	  				queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
-	  			}
-	  			else{
-	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
-	  			}
-	  			queryBuf.append(orderByKeyword + "name" + descKeyword);//TODO Can have pages using limited
-	  			query = queryBuf.toString();
-			}
-       
-		return query;
-		
-		
-	}
-
-
-
 /*********************************************************************************************************************
  * searchSearcherProfile(HttpServletRequest request, HttpServletResponse response)
  * 
@@ -1117,7 +899,7 @@ public class ServletProfile extends HttpServlet{
  * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
  * @throws IOException  
  ********************************************************************************************************************/
-	public void searchSearcherProfile(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void searchSearcherProfile(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		//ArrayList that stores the result set, and later passes its content to the XML Response table
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
@@ -1310,7 +1092,7 @@ public class ServletProfile extends HttpServlet{
  * @param response - The HttpServletResponse that is passed back to the XMLHttp Object that calls this method
  * @throws IOException
  ********************************************************************************************************************/
-	public void viewAllSearchers(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void viewAllSearchers(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		//ArrayList that stores the result set, and later passes its content to the XML Response table
 		ArrayList<ProfileSearcher> jsList = new ArrayList<ProfileSearcher>();
@@ -1399,12 +1181,14 @@ public class ServletProfile extends HttpServlet{
 /**
  * 	
  */
-	public void searcherProfileSummary(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	private void searcherProfileSummary(HttpServletRequest request, HttpServletResponse response, Session session) throws IOException{
 		
-		String sKey = request.getParameter("sessionKey");
+		
 		String[]colToGet={"name"};//TODO MORE COLUMNS
 		Map<String,Object>condMap=new HashMap<String, Object>();
 		StringBuffer responseMsg =new StringBuffer();
+		
+		String sKey = session.getKey();
 		
 		StringBuffer qBuf = DBQ.sessAuthQuery(sKey, new String[]{"idAccount"}, "searcher");
 		String authQuery =qBuf.substring(1, qBuf.length()-2) //Remove bracket	
@@ -1487,7 +1271,7 @@ public class ServletProfile extends HttpServlet{
  * @param session - The current session the user is currently in
  * @throws IOException
  ****************************************************************************************************************************/
-	public void saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
+	private void saveCandidate(HttpServletRequest request, HttpServletResponse response, Session session )throws IOException{
 						
 		String msg = "";
 
@@ -1589,7 +1373,7 @@ public class ServletProfile extends HttpServlet{
  * @param response
  * @throws IOException
  ***************************************************************************************************************/
-		public void listCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
+		private void listCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
 			ArrayList<JobAdvertisement> favJobAdList = new ArrayList<JobAdvertisement>();
 			
 			Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
@@ -1679,7 +1463,7 @@ public class ServletProfile extends HttpServlet{
 	 * @param response
 	 * @throws IOException
 	 ***********************************************************************************************/	
-		public void deleteCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
+		private void deleteCandidate(HttpServletRequest request, HttpServletResponse response)throws IOException{
 			
 			Session userSession = accManager.getSessionByKey(request.getParameter("sessionKey"));
 			int accountId = userSession.getIdAccount();

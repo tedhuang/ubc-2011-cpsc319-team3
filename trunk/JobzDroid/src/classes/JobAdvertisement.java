@@ -166,18 +166,7 @@ public class JobAdvertisement {
 			}
 			//String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
 		}
-		xmlBuf.append(" >\n");
-		
-		
-//		/************ Add a list of location objects to XML ***********/
-//		for( int i = 0 ; i < locationList.size() ; i++ ){
-//			String addr = locationList.get(i).address;
-//			addr = Utility.processXMLEscapeChars(addr);
-//			result=result.concat("\t\t<location address=\""  + addr + "\"" +
-//										 " latitude=\""  + locationList.get(i).latitude + "\"" +
-//										 " longitude=\"" + locationList.get(i).longitude + "\" ></location>\n" );
-//		}
-		
+		xmlBuf.append(" >\n");		
 		xmlBuf.append("\t</jobAd>\n");
 		
 		System.out.println("JobAdvertisement Object XML:\n" + xmlBuf.toString());
