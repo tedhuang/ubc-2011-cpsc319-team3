@@ -170,8 +170,8 @@
   <div id="tabFrame">		
 		<div id="home-frame" class="subFrame unremovable">
 			<h2 class="welcome"><b><font size='4'>List of Job Advertisements</font></b></h2>
-
 		 <div id="headToolBar">
+		     <span><b>Filter By Status:</b></span>
           	<ul id="filterArea">
           		<li><a class="jsBtn cAll" onclick='changeFilterStatus("all"); 	  adminGetJobAd("allJobAdtable", "first")'>View All</a></li>
           		<li><a class="jsBtn cAll" onclick='changeFilterStatus("pending"); adminGetJobAd("allJobAdtable", "first")'>Pending</a></li>
@@ -181,6 +181,9 @@
           	</ul>
           	
           </div>
+          
+
+		  
 	       <div id="allJobAdtable" class="resultTableDiv">
 	          <table>
 				<thead>
@@ -201,13 +204,6 @@
 								<div class="headText">Job Title</div>
 							</div>
 						</th>
-						<!-- 			
-						<th id="col-viewLoc">
-							<div class="columnButton" onclick="">
-								<div class="headText">Job Location</div>
-							</div>
-						</th>
-						 -->
 						<th id="col-Tools">
 							<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 								<div class="headText">Status</div>
@@ -233,22 +229,19 @@
 								<div class="headText">Delete</div>
 							</div>
 						</th>
-						
 					</tr>
-				
 				</thead>
 					<tbody></tbody>
 				</table><!--ENDOF TABLE-->
-				
-			<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 20</button>
-			<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 20</button>	
-				
-				
+				<div id="buttonDiv" align="center">
+					<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 20</button>
+			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 20</button>	
+			  		<!-- <button type="button" id='nextButton' onclick="">Approve All</button> -->
+			  		<button type="button" id='nextButton' onclick='adminBatchChangeJobAd()'>Submit All Changes</button>	
+		  		</div>
 			</div>
-			
-			<button type="button" onclick="changeFilterStatus('all');adminGetJobAd('allJobAdtable', 'first')">Load all Job Ads</button>
-			
-		
+				
+				
 			<p id="statusTextFirstFrame" class="pagefont" align="center" style="font-weight:bold" ></p>
 		    <br/>
 		</div><!--end of ALL JOB AD FRAME-->
