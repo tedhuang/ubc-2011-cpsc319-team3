@@ -77,14 +77,13 @@ function adminDeleteJobAd(intJobAdId){
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  
-			//Refresh Table:
-		  adminGetJobAd("allJobAdtable");
+		  //Successful
+
 
 		  }
 		  else if(xmlhttp.status!=200){
 			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$("#lbMsg",theForm).html("Deleting Not Successful, please try again");
 				$.fn.smartLightBox.closeLightBox(1000, formDiv);
 		  }
 	  };
@@ -141,14 +140,15 @@ function adminApprove(intJobAdId){
 	xmlhttp.onreadystatechange=function()
 	  {	  
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-			 			  
-			//Refresh Table:
-			adminGetJobAd("allJobAdtable");
+			  //Successful
 
 		  }
 		  else if(xmlhttp.status!=200){
+			  
+			  console.log("Approve Job Ad not successful");		
+			  
 			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-				$("#lbMsg",theForm).html("Action Not Successful, please try again");
+				$("#lbMsg",theForm).html("Approving Not Successful, please try again");
 				$.fn.smartLightBox.closeLightBox(1000, formDiv);
 		  }
 	  };
@@ -193,18 +193,55 @@ function adminDeny(intJobAdId){
 	xmlhttp.onreadystatechange=function()
 	  {
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
- 			  
-				//Refresh Table:
-			  adminGetJobAd("allJobAdtable");
+			  //Successful
 
 			  }
 			  else if(xmlhttp.status!=200){
+				  console.log("Deny Job Ad not successsful");
 				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-					$("#lbMsg",theForm).html("Action Not Successful, please try again");
+					$("#lbMsg",theForm).html("Denying Not Successful, please try again");
 					$.fn.smartLightBox.closeLightBox(1000, formDiv);
 			  }
 	  };
 }
+
+
+function adminBatchChangeJobAd(mode){
+
+	var xmlObj = $("jobAd",xmlhttp.responseXML);
+	if(xmlObj.length==0){//if no results
+//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
+//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
+	}
+	else{
+		xmlObj.each(function() {//for All returned xml obj
+			var jobAd = $(this);
+			var jobAdId = jobAd.attr("jobAdId");
+			var isApprovedOld=jobAd.attr("isApproved");
+			var radioButton= $('input:radio[name='+jobAdId+']:checked').val();
+			
+			  //Job Ad is Approved
+			  if( isApprovedOld == 0 && radioButton == "approve"){
+				  adminApprove(jobAdId);
+			  }
+			  //Job Ad is Denied
+			  else if( isApprovedOld == 1 && radioButton == "deny" ){
+				  adminDeny(jobAdId);
+			  }
+			  //Job Ad is Deleted
+			  else if( radioButton == "delete" ){
+				  adminDeleteJobAd(jobAdId);
+			  }else{
+				  //Nothing Changed for this Job Ad
+			  }
+		});
+		//adminGetJobAd("allJobAdtable");
+	}
+}
+
+
+
+
 
 /*******************************************************************************************************************
  * 				searchJobAdvertisement Function

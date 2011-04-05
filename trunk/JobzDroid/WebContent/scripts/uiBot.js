@@ -117,6 +117,7 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 	//TODO: finish implementing
 	
 	var tbody  = $("tbody", "#"+outputDiv).html("");
+
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
 //		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
@@ -129,10 +130,10 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').attr("id", id='td-date').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-date').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  //$('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
 		  var isApprovedFormatted;
 		  if(jobAd.attr("isApproved") == 0)
@@ -141,57 +142,81 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 				isApprovedFormatted = "Approved";
 		  $('<td></td>').attr("id", id='td-approval').text(isApprovedFormatted).appendTo(tr);
 		  
+		  var jobAdId = jobAd.attr("jobAdId");
+
+		  //ADD CHECK BOXES
+		  var approveInput = $('<td></td>');
+		  var denyInput = $('<td></td>');
+		  var deleteInput = $('<td></td>');
 		  
-		  //ADD ADMIN FUNCTIONS:
-		  var approveButton = $('<td></td>');
-		  var denyButton = $('<td></td>');
-		  var deleteButton = $('<td></td>');
+		  $('<input type="radio" value="approve">').attr("name", jobAdId).attr("id", "approve-"+jobAdId).appendTo(approveInput);
+		  $('<input type="radio" value="deny">').attr("name", jobAdId).attr("id", "deny-"+jobAdId).appendTo(denyInput);
+		  $('<input type="radio" value="delete">').attr("name", jobAdId).attr("id", "delete-"+jobAdId).appendTo(deleteInput);		  
 		  
-		  approveButton.appendTo(tr);
-		  denyButton.appendTo(tr);
-		  deleteButton.appendTo(tr);
+		  approveInput.appendTo(tr);
+		  denyInput.appendTo(tr);
+		  deleteInput.appendTo(tr);
 		  
-		  $("<button>Approve</button>").attr("id", id='td-approveButton').click(
-			function() {
-			  if(jobAd.attr("isApproved") == 1)
-				  alert("This Job Ad has already been approved");
-			  else{			  
-				  adminApprove(jobAd.attr("jobAdId"));
-			      //TODO: implement transition loading screen - UI
-			  }
-		  }).appendTo(approveButton);
-		  
-		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
-					function() {
-					  if(jobAd.attr("isApproved") == 0)
-						  alert("This Job Ad has not yet been approved");
-					  else{			  
-					      adminDeny(jobAd.attr("jobAdId"));
-					      //TODO: implement transition loading screen - UI
-					  }
-		  }).appendTo(denyButton);
-		  
-		  $("<button>Delete</button>").attr("id", id='td-deleteButton').click(
-					function() {
-						  alert("This Job Ad will be permanently deleted! (TODO: Add Checks)");
-						  adminDeleteJobAd(jobAd.attr("jobAdId"));
-					      //TODO: implement transition loading screen - UI
-					  }
-		  ).appendTo(deleteButton);
-		  
-		  
-		  
-		  //TODO: get the tabs working with approve/deny/delete
-		  //$.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		  
-		});
+		  //Update Radio button to current settings
+			 var isApproved=jobAd.attr("isApproved") ;
+			  if( isApproved == 0 ){
+				  $("input[name='"+jobAdId+"']")[1].checked = true;
+			  }else{
+				  $("input[name='"+jobAdId+"']")[0].checked = true;
+			  }
+			  
+		  
+		  //$('input:radio[name=bar]:checked').val();
+			  
+		  
+		  //ADD ADMIN BUTTONS: (deprecated - changed to radio buttons)
+//		  var approveButton = $('<td></td>');
+//		  var denyButton = $('<td></td>');
+//		  var deleteButton = $('<td></td>');
+//
+//		  approveButton.appendTo(tr);
+//		  denyButton.appendTo(tr);
+//		  deleteButton.appendTo(tr);
+//		  
+//		  $("<button>Approve</button>").attr("id", id='td-approveButton').click(
+//			function() {
+//			  if(jobAd.attr("isApproved") == 1)
+//				  alert("This Job Ad has already been approved");
+//			  else{			  
+//				  adminApprove(jobAd.attr("jobAdId"));
+//			  }
+//		  }).appendTo(approveButton);
+//		  
+//		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
+//					function() {
+//					  if(jobAd.attr("isApproved") == 0)
+//						  alert("This Job Ad has not yet been approved");
+//					  else{			  
+//					      adminDeny(jobAd.attr("jobAdId"));
+//					  }
+//		  }).appendTo(denyButton);
+//		  
+//		  $("<button>Delete</button>").attr("id", id='td-deleteButton').click(
+//					function() {
+//						  alert("This Job Ad will be permanently deleted! (TODO: Add Checks)");
+//						  adminDeleteJobAd(jobAd.attr("jobAdId"));
+//					  }
+//		  ).appendTo(deleteButton);
+//		  
+//		  
+//		 tr.appendTo(tbody);
+		  
+			  
+			  
+		});//END OF FOR EACH FUNCTION
+		
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		 
 	}
 	  $.fn.smartLightBox.closeLightBox(2000,"home-frame");
-
 }
 
 
