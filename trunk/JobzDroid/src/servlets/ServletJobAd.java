@@ -1,7 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
 import java.util.*;
 
@@ -10,20 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-
 import classes.DBColName;
 import classes.DbQuery;
 import classes.JobAdvertisement;
-import classes.Location;
 import classes.Session;
 import classes.Utility;
 
 import managers.AccountManager;
 import managers.DBManager;
-import managers.RSSManager;
-import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletJobAdvertisement
@@ -92,7 +85,6 @@ public class ServletJobAd extends HttpServlet {
 		
 		
 		String sessionKey = request.getParameter("sessionKey");
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		Session session = accManager.getSessionByKey(sessionKey);
 		
 		//Check which function the request is calling from the servlet
@@ -1426,6 +1418,7 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
 						while(suggRs.next()){
 							//THE ORDER NEEDS TO BE CONSISTENT WITH THE USERINFO ARRAY
+							//TODO NULL CHECK
 							String[]locInfo=Utility.locationParser(suggRs.getString("location"));
 							suggQuery.setInt(1, suggRs.getInt("educationLevel"));
 							suggQuery.setLong(2, suggRs.getLong("startingDate"));
