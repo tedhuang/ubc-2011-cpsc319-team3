@@ -19,7 +19,35 @@ function searchJobAdvertisement(outputDiv){
         	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
         }
 	   });
-	
+	 if(emptyCounts != searchFields.length){
+		var xhr=createXHR();
+		if(xhr){
+			try{
+				xhr.open("POST","../ServletJobAd" ,true);
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				xhr.onreadystatechange = processResult;
+				xhr.send(request.toString());
+				$("#feedback").html("<h2>Sending Request</h2>");
+			}catch(e){
+				
+			}
+		}
+	 }//eof check empty fields
+	 function processResult(){
+		 if (xhr.readyState == 4) {
+				try {
+					  if (xhr.status == 200) {
+						  buildAdListTb("jobAd", outputDiv,xhr.responseXML);
+					  }
+	                else { 
+	                	$("#feedback").html("<h2 class='error'>Well this is embrassing, you request cannot be preformed</h2>");
+	                }
+				} 
+				catch (e){
+					console.log(e);
+				}
+		 }
+	 }
 	   if(emptyCounts != searchFields.length){//Check if All NULL
 			if (window.XMLHttpRequest)
 			  {// code for IE7+, Firefox, Chrome, Opera, Safari

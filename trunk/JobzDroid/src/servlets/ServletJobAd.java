@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import classes.DBColName;
 import classes.DbQuery;
 import classes.JobAdvertisement;
+import classes.Location;
 import classes.Session;
 import classes.Utility;
 
@@ -404,19 +405,22 @@ public class ServletJobAd extends HttpServlet {
 			
 			ResultSetMetaData rsmd=null;
 			ResultSet result = conn.createStatement().executeQuery(query);
+			Map<String, String>locationMap = new HashMap<String, String>();
 			   if(result.next()){
 				   rsmd = result.getMetaData();
 					int numColumns = rsmd.getColumnCount();
 					for(int i=1; i<=numColumns; i++){
 						String colName = rsmd.getColumnName(i);
 						if(colName.matches("(?i)addr.*")|| colName.matches("(?i)latlng.*")){
-							if(result.getString(colName)!=null) //get the locations
-								jobAd.adLocMap.put(jobAdLocDict.get(colName), result.getString(colName));
+							if(result.getString(colName)!=null){ //get the locations
+								locationMap.put(jobAdLocDict.get(colName), result.getString(colName));
+							}
 						}
 						else{ // get the ad info
 							 jobAd.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
 						}
 					}
+					jobAd.adLocation=new Location(result.getInt("idJobAd"), locationMap);
 				}
 			   else{ //if the job ad doesn't specify  a location
 				   String[]adOnly={"idJobAd", "idAccount", "title", "description", "expiryDate", "dateStarting", "datePosted", 
@@ -546,7 +550,10 @@ public class ServletJobAd extends HttpServlet {
 	private void searchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
-		
+		ArrayList<Location> adLocationList = new ArrayList<Location>();
+		ArrayList <String> locQueryCond = new ArrayList<String>();
+		String locCond="idJobAd=";
+		String locCol[]={"idJobAd","addr0", "latlng0","addr1", "latlng1","addr2", "latlng2"};
 		//tags = Utility.checkInputFormat( tags );
 		//location = Utility.checkInputFormat( location );
 		//education = Utility.checkInputFormat( education );
@@ -564,26 +571,61 @@ public class ServletJobAd extends HttpServlet {
 			
 			stmt.execute(query);
 			ResultSet result = stmt.getResultSet();
+			ResultSetMetaData rsmd = null;
 			
 			//Compile the result into the arraylist
 			while( result.next() ) {
 				JobAdvertisement temp = new JobAdvertisement();
-				
-				temp.jobAdId 				= result.getInt("idJobAd");
-				temp.jobAdTitle				= result.getString("title");
-				temp.creationDate		 	= result.getLong("datePosted");
-				temp.contactInfo 			= result.getString("contactInfo");
-				temp.educationReq	 		= result.getInt("educationRequired");
-				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
+				rsmd = result.getMetaData();
+				int numColumns = rsmd.getColumnCount();
+				for(int i=1; i<=numColumns; i++){
+					String colName = rsmd.getColumnName(i);
+						 temp.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
+				}
+				jobAdList.add( temp ); //add to the temporary list
+				temp.jobAdId = result.getInt("idJobAd");
+				locQueryCond.add(locCond+result.getInt("idJobAd")+DBQ.OR); //prepare the jobId to locInfo 
+//				
+//				temp.jobAdTitle				= result.getString("title");
+//				temp.creationDate		 	= result.getLong("datePosted");
+//				temp.contactInfo 			= result.getString("contactInfo");
+//				temp.educationReq	 		= result.getInt("educationRequired");
+//				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
 //				temp.tags 					= result.getString("tags");
 				
-				jobAdList.add( temp ); //add to the temporary list
+				 
+				
+			}
+			StringBuffer[]qBuf=DBQ.buidlSelQuery(new String[]{"tableLocationJobAd"}, locCol, locQueryCond);
+			query=qBuf[0].append(qBuf[1].delete(qBuf[1].length()-DBQ.OR.length(), qBuf[1].length())).toString();//get rid of last "OR"
+			
+			result=conn.createStatement().executeQuery(query);
+			Map<String, String>locationMap;
+			while(result.next()){ //if we have locations
+				rsmd = result.getMetaData();
+				int numColumns = rsmd.getColumnCount();
+				locationMap=new HashMap<String, String>();
+				for(int i=1; i<=numColumns; i++){
+					String colName = rsmd.getColumnName(i);
+					if(result.getString(colName)!=null){ //not getting the null values
+						locationMap.put(colName, result.getString(colName));
+					}
+				}
+				Location temp = new Location(result.getInt("idJobAd"), locationMap);
+				adLocationList.add(temp);
+			}
+			
+			for(JobAdvertisement job_ad : jobAdList){
+				for (Location location : adLocationList){
+					if (job_ad.jobAdId==location.masterJobId){
+						job_ad.adLocation=location;
+//						return;
+					}
+				}
 			}
 			
 			stmt.close();
-			
 			System.out.println("Query Successfully Finished");
-//			return jobAdList;
 			
 		} catch (SQLException e1) {
 		e1.printStackTrace();
@@ -613,9 +655,8 @@ public class ServletJobAd extends HttpServlet {
 		XMLResponse.append("<response>\n");
 		Iterator<JobAdvertisement> itr = jobAdList.iterator();
 	    while (itr.hasNext()) {//iterate through all list and append to xml
-	    	XMLResponse.append(itr.next().toXMLContent() ); 
+	    	XMLResponse.append(itr.next().xmlParser() ); 
 	    }
-		
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);
