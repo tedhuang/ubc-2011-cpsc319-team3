@@ -9,7 +9,6 @@ $("document").ready(function(){
  ****************************************************************************************************/
 function userLoginRequest(){
 	
-	//TODO ADD LOGIN FORM
 	var email = $("#email").val();
 	var password = $("#password").val();
 	if(email.length||password.length){
@@ -50,9 +49,6 @@ function userLoginRequest(){
 			    	}
 		    }
 	  };
-	}
-	else{
-		//TODO ERROR
 	}
 }
 /*****************************************************************************************************
