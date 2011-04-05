@@ -360,7 +360,7 @@ public class ServletAdmin extends HttpServlet {
 				// Update job ad RSS feed
 					query = "SELECT * FROM tableJobAd WHERE idJobAd = '" + jobAdId +"';";
 					ResultSet newRs = conn.createStatement().executeQuery(query);
-					if(rs.first()){
+					if(newRs.first()){
 						String title = newRs.getString("title");
 						String desc = newRs.getString("description");
 						long datePosted = newRs.getLong("datePosted");
@@ -374,7 +374,7 @@ public class ServletAdmin extends HttpServlet {
 						}
 						try {
 							SyndFeed feed = RSSManager.readFeedFromURL(SystemManager.serverBaseURL + "jobAd.xml");
-							//TODO add link
+							// currently job ads are not linkable (link is null)
 							SyndEntry entry = RSSManager.createFeedEntry(title, new java.util.Date(datePosted),
 									desc, null, feedCategory);
 							RSSManager.addEntryToFeed(feed, entry, 0);

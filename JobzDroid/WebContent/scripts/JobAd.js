@@ -235,8 +235,8 @@ function adminBatchChangeJobAd(mode){
 				  //Nothing Changed for this Job Ad
 			  }
 		});
-		//adminGetJobAd("allJobAdtable");
 	}
+	adminGetJobAd("allJobAdtable");
 }
 
 

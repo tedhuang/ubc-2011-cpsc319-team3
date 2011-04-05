@@ -216,7 +216,7 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		 
 	}
-	  $.fn.smartLightBox.closeLightBox(2000,"home-frame");
+	  $.fn.smartLightBox.closeLightBox(200,"home-frame");
 }
 
 
