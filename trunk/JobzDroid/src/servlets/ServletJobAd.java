@@ -62,10 +62,7 @@ public class ServletJobAd extends HttpServlet {
 		
 		saveFavouriteJobAd,
 		listFavouriteJobAd,
-		deleteFavouriteJobAd,
-		
-		loadAdList //search loader(?)
-		
+		deleteFavouriteJobAd	
 	}
 	
 	/**
@@ -139,11 +136,7 @@ public class ServletJobAd extends HttpServlet {
 			case getJobAdById:
 				getJobAdById(request, response);
 				break;
-			
-			case loadAdList:
-				searchJobAd(request, response);
-				break;
-				
+							
 			case getSomeJobAd:
 				getSomeJobAd(request, response);
 				break;	
