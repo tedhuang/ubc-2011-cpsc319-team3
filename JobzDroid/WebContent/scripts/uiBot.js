@@ -276,7 +276,7 @@ function buildAdListTb(targetXMLTag, outputDiv){
 		  
 		  tr.appendTo(tbody);
 		  $("#td-title", tr).click(function(){
-			  getJobAdById("detail", jobAd.attr("jobAdId"),'adDetailTable');
+			  getJobAdById(jobAd.attr("jobAdId"),'adDetailTable');
 			 });
 		});
 		 

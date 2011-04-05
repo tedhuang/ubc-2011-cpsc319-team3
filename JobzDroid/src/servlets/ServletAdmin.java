@@ -97,7 +97,6 @@ public class ServletAdmin extends HttpServlet {
 		}
 
 		String sessionKey = request.getParameter("sessionKey");
-		sessionKey = Utility.checkInputFormat(sessionKey);
 		Session session = accManager.getSessionByKey(sessionKey);
 		
 		

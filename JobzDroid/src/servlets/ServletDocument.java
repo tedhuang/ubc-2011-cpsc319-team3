@@ -71,7 +71,6 @@ public class ServletDocument extends HttpServlet {
 			String action = request.getParameter("action");
 			
 			String sessionKey = request.getParameter("sessionKey");
-			sessionKey = Utility.checkInputFormat(sessionKey);
 			Session session = accManager.getSessionByKey(sessionKey);
 			
 			// throw error if action is invalid
@@ -143,7 +142,7 @@ public class ServletDocument extends HttpServlet {
 //			    }
 			    // fetch the hidden sessionkey
 			    if(name.equals("sessionKey")) {
-			    	sessionKey = Utility.checkInputFormat(value);
+			    	sessionKey = value;
 			    }
 			    
 			    InputStream uploadedStream = item.getInputStream();
