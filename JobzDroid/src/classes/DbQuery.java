@@ -95,7 +95,35 @@ public StringBuffer sessAdminAuthQuery(String sKey, String[]getArr){
 										   AND + "status" +EQ +"'active'");
 		return qAcctTb;
 	}
+public  StringBuffer [] buidlSelQuery( String[] tableNames, String[]colToGet, ArrayList<String>conditions ){
+	StringBuffer[]outputQueries =new StringBuffer[2];
+	StringBuffer stmt1 =new StringBuffer();
+	StringBuffer conditionBuf =new StringBuffer();
+	StringBuffer columns =new StringBuffer();
+	StringBuffer tables =new StringBuffer();
 	
+	for(String str:colToGet){ //retrieve the cols we want to get
+		columns.append(str+ COMA);
+	}
+	columns.delete(columns.length()-COMA.length(), columns.length());
+	
+	for(String str:tableNames){ //retrieve the tables we are querying
+		tables.append(str+ COMA);
+	}
+	
+	tables.delete(tables.length()-COMA.length(), tables.length());
+	
+	for(String str : conditions){
+		//colOprt in condition map will consistent with columnName and operators
+			conditionBuf.append(str);
+	}
+	
+	stmt1.append(SELECT + columns + FROM + tables + WHERE);
+	outputQueries[0]=stmt1;
+	outputQueries[1]=conditionBuf;
+	
+	return outputQueries;
+}
 	public  StringBuffer [] buidlSelQuery( String[] tableNames, String[]colToGet, Map<String, Object>conditionMap ){
 		StringBuffer[]outputQueries =new StringBuffer[2];
 		StringBuffer stmt1 =new StringBuffer();

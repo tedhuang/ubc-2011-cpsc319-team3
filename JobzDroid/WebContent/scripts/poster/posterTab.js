@@ -333,6 +333,10 @@
          								getJobAdById("edit",adId, "edAdForm" );
          			 		   		});
          		     		   	 }
+         		        		else{
+         		        			open_edAd_form(status);
+         		        			getJobAdById("edit",adId, "edAdForm" );
+         		        		}
          	        	}
          				
          			});
@@ -512,51 +516,50 @@
         };
         
         $.fn.DynaSmartTab.loadEdData = function(targetXMLTag, edFormContainer, xhrResponse){
-    	
-    	var xmlData= $(targetXMLTag,xhrResponse);
-    	var edFormContainer = domObjById(edFormContainer);
-    	var inputOldValue = $("#oldAdValues");
- 
-    	$("#edTabTitle").append(xmlData.attr("jobAdTitle"));
-    	$("input[name='title-field']", 		edFormContainer).val(xmlData.attr("jobAdTitle"));
-    	$("input[name='adId-field']", 		edFormContainer).val(xmlData.attr("jobAdId"));
-		$("input[name='company-field']", 	edFormContainer).val(xmlData.attr("contactInfo"));
-		$("input[name='tag-field']", 		edFormContainer).val(xmlData.attr("tags"));
-		
-		// replace &nbsp; with space and <br /> with \n for description in textarea
-		var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
-		processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
-		
-		$("textarea[name='desc-field']", 	edFormContainer).val(processedDesc);//Type-in Forms
-		
-		$("#edu-field option",edFormContainer).each(function(){
-			if($(this).text()==xmlData.attr("eduReqFormatted")){
-				$(this).attr("selected", "selected");
-				return false;
-			}
-		});
-		$("input[name='startTime-field']",  edFormContainer).val(xmlData.attr("startingDateFormatted"));
-		$("input[name='expireTime-field']", edFormContainer).val(xmlData.attr("expiryDateFormatted"));
-		
-		$($(":input","#jobAvailField"), edFormContainer).each(function(){
-			console.log($(this).val().toLowerCase());
-			console.log(xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase());
-			if($(this).val().toLowerCase()==xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase()){
-				$(this).attr('checked', true);
-				return false;
-			}
-		});
-		
-		var inputFields = $(":input:not('.map')", edFormContainer).serializeArray();
-		jQuery.each(inputFields, function(i, field){
-				var fldName=field.name;
-				inputOldValue.data(field.name, field.value); //add data to cache
-		   });
-		//TODO MAP
-		
-		customizeInput("form-cb", "label-cbn", "label-cby");
-		customizeInput("form-rb", "label-rbn", "label-rby");
-		$.fn.smartLightBox.closeLightBox(0, $(edFormContainer).parent(".subFrame").attr('id'));
+	    	var xmlData= $(targetXMLTag,xhrResponse);
+	    	var edFormContainer = domObjById(edFormContainer);
+	    	var inputOldValue = $("#oldAdValues");
+	 
+	    	$("#edTabTitle").append(xmlData.attr("jobAdTitle"));
+	    	$("input[name='title-field']", 		edFormContainer).val(xmlData.attr("jobAdTitle"));
+	    	$("input[name='adId-field']", 		edFormContainer).val(xmlData.attr("jobAdId"));
+			$("input[name='company-field']", 	edFormContainer).val(xmlData.attr("contactInfo"));
+			$("input[name='tag-field']", 		edFormContainer).val(xmlData.attr("tags"));
+			
+			// replace &nbsp; with space and <br /> with \n for description in textarea
+			var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
+			processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
+			
+			$("textarea[name='desc-field']", 	edFormContainer).val(processedDesc);//Type-in Forms
+			
+			$("#edu-field option",edFormContainer).each(function(){
+				if($(this).text()==xmlData.attr("educationReq")){
+					$(this).attr("selected", "selected");
+					return false;
+				}
+			});
+			$("input[name='startTime-field']",  edFormContainer).val(xmlData.attr("startingDate"));
+			$("input[name='expireTime-field']", edFormContainer).val(xmlData.attr("expiryDate"));
+			
+			$($(":input","#jobAvailField"), edFormContainer).each(function(){
+				console.log($(this).val().toLowerCase());
+				console.log(xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase());
+				if($(this).val().toLowerCase()==xmlData.attr("jobAvail").replace(/\s/g,"").toLowerCase()){
+					$(this).attr('checked', true);
+					return false;
+				}
+			});
+			
+			var inputFields = $(":input:not('.map')", edFormContainer).serializeArray();
+			jQuery.each(inputFields, function(i, field){
+					var fldName=field.name;
+					inputOldValue.data(field.name, field.value); //add data to cache
+			   });
+			//TODO MAP
+			
+			customizeInput("form-cb", "label-cbn", "label-cby");
+			customizeInput("form-rb", "label-rbn", "label-rby");
+			$.fn.smartLightBox.closeLightBox(0, $(edFormContainer).parent(".subFrame").attr('id'));
 		
       };
      
