@@ -4,11 +4,11 @@
  * @param outputDiv
  * @param heading
  *********************************************************************************************************************/
-function buildDetailTable(targetXMLTag, outputDiv){
+function buildDetailTable(targetXMLTag, outputDiv, xmlResponse){
 	var fb =$(".feedback", "#"+outputDiv);
 	var heading=$('.heading', "#"+outputDiv);
 	
-	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
+	var jobAd = $(targetXMLTag,xmlResponse);
 	
 	if(jobAd.length==0){//if no results
 		fb.html("<h2 class='error'>Oops, you are looking at something not does not exist</h2>");
@@ -18,36 +18,49 @@ function buildDetailTable(targetXMLTag, outputDiv){
 		heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
 		var tr = $('<tr></tr>').addClass("verticalTb");
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Date Posted</td><td class="verticalTb">'+ jobAd.attr("creationDateFormatted")+ '</td>')
+		.append('<td class="verticalTh">Date Posted</td><td class="verticalTb">'+ jobAd.attr("creationDate")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Company</td><td class="verticalTb">'+ jobAd.attr("contactInfo")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Degree Required</td><td class="verticalTb">'+ jobAd.attr("eduReqFormatted")+ '</td>')
+		.append('<td class="verticalTh">Degree Required</td><td class="verticalTb">'+ jobAd.attr("educationReq")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvail")+ '</td>')
+		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvailability")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Starting Date</td><td class="verticalTb">'+ jobAd.attr("startingDateFormatted")+ '</td>')
-		.appendTo(tbody);
-		$('<tr></tr>')
-		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvail")+ '</td>')
+		.append('<td class="verticalTh">Starting Date</td><td class="verticalTb">'+ jobAd.attr("startingDate")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Grad Funding Availability</td><td class="verticalTb">'+ jobAd.attr("hasGradFunding")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Tags</td><td class="verticalTb">'+ jobAd.attr("location")+ '</td>')
+		.append('<td class="verticalTh">Tags</td><td class="verticalTb">'+ jobAd.attr("tags")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Job Description</td><td class="verticalTb">'+ jobAd.attr("jobAdDescription")+ '</td>')
 		.appendTo(tbody);
-		$('<tr></tr>')
-		.append('<td class="verticalTh">Location</td><td class="verticalTb">'+ jobAd.attr("location")+ '</td>')
-		.appendTo(tbody);
-	 	
+		
+		var locRow =$('<tr></tr>')
+					.append('<td class="verticalTh">Location</td>')
+					.appendTo(tbody);
+		var locTd = $('<td class="verticalTb loc-td"></td>').appendTo(locRow);
+		locTd.smartMap({displayMap:true});
+		var locations=jobAd.find("location");
+		if(locations.length){ //if there is some location
+			var locObjArray = [];
+			$.each(locations, function(idx){
+				var locObj={addr:null, latlng:null};
+				locObj.addr=$(this).attr("addr"+idx);
+				locObj.latlng=$(this).attr("latlng"+idx);
+				locObjArray.push(locObj);
+			});
+			$.fn.smartMap.displayMap(locTd, locObjArray);
+		}
+		else{
+			locTd.text("Location not specified.");
+		}
 	 	//TODO FIX LIGHT BOX FOR SEARCHER JOB AD DETAILS
 	 	$.fn.smartLightBox.closeLightBox(0, $("#"+outputDiv).parent(".subFrame").attr('id'));
 	 	fb.hide();
@@ -63,9 +76,9 @@ function buildDetailTable(targetXMLTag, outputDiv){
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
-function buildOwnerAdTb(targetXMLTag, outputDiv){
+function buildOwnerAdTb(targetXMLTag, outputDiv, xmlresponse){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	var xmlObj = $(targetXMLTag,xmlresponse);
 	if(xmlObj.length==0){//if no results
 		$("#"+outputDiv).hide();
 //		$(".headToolBar", "#home-frame").hide();

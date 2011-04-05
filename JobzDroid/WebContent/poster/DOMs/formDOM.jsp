@@ -109,7 +109,7 @@
 	
           
 		  <div id="newAdForm" class="newFormContainer">
-			  <div id="head-bar">
+			  <div class="head-bar" id="newAdTool">
 					<h2 class="welcome">Create New Ad</h2>
 						<a class="jsBtn" id="newAd_saveDraft">Save to Draft |</a>
 			    		<a class="jsBtn" id="newAd_publish">Post it |</a>

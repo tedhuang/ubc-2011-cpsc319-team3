@@ -1205,8 +1205,8 @@ public class ServletProfile extends HttpServlet{
 			}
 			if(acctId!=-1){
 				condMap.put("idAccount=", acctId); //TODO put more
-				String selQuery = DBQ.buidlSelQuery("tableProfileSearcher", colToGet, condMap)[0]
-				                  .append(DBQ.buidlSelQuery("tableProfileSearcher", colToGet, condMap)[1])
+				String selQuery = DBQ.buidlSelQuery(new String[]{"tableProfileSearcher"}, colToGet, condMap)[0]
+				                  .append(DBQ.buidlSelQuery(new String[]{"tableProfileSearcher"}, colToGet, condMap)[1])
 				                  .toString();
 				
 				System.out.println("Summarizing Searcher Profile----->Processing " + selQuery);

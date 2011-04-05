@@ -26,6 +26,8 @@ public class JobAdvertisement {
 	public String   location;
 	
 	public Map<String, Object> valueMap= new HashMap<String, Object>();
+	public Map<String, String> adLocMap= new HashMap<String, String>();
+	
 	private ArrayList<String>fieldNames=new ArrayList<String>();
 	
 	public ArrayList<Location> locationList;
@@ -150,7 +152,7 @@ public class JobAdvertisement {
 					int req = Integer.parseInt(value.toString());
 					xmlBuf.append(fld + EQ + QUO + Utility.degreeConvertor(req) +QUO+SP);
 				}
-				else if(fld.equals("creationDate")||fld.equals("expiryDate")||fld.equals("startingDate")){
+				else if(fld.matches("(?i).*date.*")){
 					Long time = Long.valueOf(value.toString());
 					if(time!=0){
 						xmlBuf.append(fld+ EQ + QUO + Utility.dateConvertor(time) +QUO+SP);
@@ -166,8 +168,41 @@ public class JobAdvertisement {
 			}
 			//String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
 		}
-		xmlBuf.append(" >\n");		
-		xmlBuf.append("\t</jobAd>\n");
+		xmlBuf.append(" >\n"); //eof putting ad info
+		
+		StringBuffer[] locList=new StringBuffer[3];
+		int locIdx=0;
+//		xmlBuf.append("\t\t<location" + SP); //sof location info
+		if(adLocMap.size()>0){
+			for(Map.Entry<String, String> entry : adLocMap.entrySet()){
+				String fld= entry.getKey();
+				Object value = entry.getValue();
+				if(fld.matches("(?i)addr.*")){
+					locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, fld+EQ+QUO+value+QUO+SP));
+					locIdx++;
+				}
+				else if(fld.matches("(?i)latlng.*")){
+					int idx=Integer.parseInt(fld.substring("latlng".length()));
+					if(locList[idx]!=null){
+						locList[idx].insert(12,fld+EQ+QUO+value+QUO+SP);
+					}
+					else{
+						locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, fld+EQ+QUO+value+QUO+SP));
+						locIdx++;
+					}
+				}
+			}
+			for(StringBuffer strBuf:locList){
+				if(strBuf!=null){
+					xmlBuf.append(strBuf);
+				}
+			}
+		}
+//		else{
+//			xmlBuf.append("\t\t<location noLoc=\"Location Not Specified.\">\n\t\t</location>\n");
+//		}
+//		xmlBuf.append(">\n \t\t</location>\n");//eof location info
+		xmlBuf.append("\t</jobAd>\n");//eof xml parsing
 		
 		System.out.println("JobAdvertisement Object XML:\n" + xmlBuf.toString());
 		

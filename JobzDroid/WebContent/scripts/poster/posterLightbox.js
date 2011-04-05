@@ -164,7 +164,7 @@
      	 	
 			var btnBox= $('<div></div>').attr('id', 'btnBox');
 			switch(mode){
-			case "closeNewAd":
+			case "closeConfirm":
 				$('<a></a>')
          		.addClass("ret jsBtn")
          		.html("Return To Ad")
@@ -174,19 +174,6 @@
          		.addClass("close jsBtn")
          		.html("Close the Tab")
          		.appendTo(btnBox);
-				break;
-			
-			case "closeEdAd":
-				$('<a></a>')
-         		.addClass("ret jsBtn")
-         		.html("Return To Ad")
-         		.appendTo(btnBox);
-				
-				$('<a></a>')
-         		.addClass("close jsBtn")
-         		.html("Close the Tab")
-         		.appendTo(btnBox);
-				
 				break;
 				
 			case "notification": //only notify user some info
