@@ -433,7 +433,11 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 
 		$("#name").val(profile.attr("name"));
 		$("#phone").val(profile.attr("phone"));
-		$("#selfDescription").val(profile.attr("selfDescription"));
+		
+		var processedDesc = profile.attr("selfDescription").replace(/&nbsp;/gi, ' ');
+		processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
+		
+		$("#selfDescription").val(processedDesc);
 		$("#selfDescription").bind("keyup", function(){
 			limitChars('selfDescription', 5000, 'descInfo');
 		});
@@ -594,7 +598,11 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 
 		$("#name").val(profile.attr("name"));
 		$("#phone").val(profile.attr("phone"));
-		$("#selfDescription").val(profile.attr("selfDescription"));
+		
+		var processedDesc = profile.attr("selfDescription").replace(/&nbsp;/gi, ' ');
+		processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
+		
+		$("#selfDescription").val(processedDesc);
 		$("#selfDescription").bind("keyup", function(){
 			limitChars('selfDescription', 5000, 'descInfo');
 		});
