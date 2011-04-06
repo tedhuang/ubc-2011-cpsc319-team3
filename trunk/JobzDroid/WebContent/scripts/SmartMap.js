@@ -47,83 +47,108 @@
 	
 	function initSearchLocAutoCplt(inputBar){
 		locSearchBar=domObjById(inputBar);
-		locSearchBar.data({"city":"", "province":"", "country":"", "zip":""});//init data of the input
+		locSearchBar.data({"city":"", "province":"", "country":""});//init data of the input
 		
-		var location=({city:"", province:"", country:""});
+		var location=({citySN:"", provinceSN:"", countrySN:"",
+					   cityLN:"", provinceLN:"", countryLN:""});
 		var	citySN, provinceSN, countrySN, zipSN;
-		var cityLN, provinceLN, countryLN, zipLN;
-		var addr;
+		var itemAddr;
+		var dispAddr;
+		var selected;
 		
 		geocoder = new google.maps.Geocoder();
 		locSearchBar.autocomplete({
-		      source: //use jquery UI auto complete function to get the address
+				autoFocus: true,
+				
+		    	source: //use jquery UI auto complete function to get the address
 		    	  
-		    	function(request, response) {
-		    	  //reset all fields
-		    	  	location=({city:"", province:"", country:""});
-		  			citySN="";provinceSN="";countrySN="";zipSN="";
-		  			cityLN="";provinceLN="";countryLN="";zipLN="";
-		  			addr="";
-		  			
+		    	 function(request, response) {
+		    	  
 			        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
 			          response($.map(results, function(item) {
-			        	  
+			        	//reset all fields
+			        	location=({citySN:"", provinceSN:"", countrySN:"",
+			        				cityLN:"", provinceLN:"", countryLN:""});
+				  		citySN="";provinceSN="";countrySN="";zipSN="";
+				  		itemAddr="";
+				  		dispAddr="";
+				  		selected=false;
+				  			
 			        	  $.each(item['address_components'], function(index){
 					    		$.each(item['address_components'][index]['types'], function(i){
 					    			
 					    			if(item['address_components'][index]['types'][i]=="locality"){
 //					    				addrMap.city=item['address_components'][index]['short_name'];
-					    				citySN=item['address_components'][index]['short_name'];
-					    				location.city=item['address_components'][index]['long_name'];
+					    				location.citySN=item['address_components'][index]['short_name'];
+					    				location.cityLN=item['address_components'][index]['long_name'];
 					    			} //city
 					    				
 					    			else if(item['address_components'][index]['types'][i]=="administrative_area_level_1"){
 //					    				addrMap.province=item['address_components'][index]['short_name'];
-					    				provinceSN=item['address_components'][index]['short_name'];
-					    				location.province=item['address_components'][index]['long_name'];
+					    				location.provinceSN=item['address_components'][index]['short_name'];
+					    				location.provinceLN=item['address_components'][index]['long_name'];
 					    			} //province or state
 					    				
 					    			else if(item['address_components'][index]['types'][i]=="country"){
 //					    				addrMap.country=item['address_components'][index]['short_name'];
-					    				countrySN=item['address_components'][index]['short_name'];
-					    				location.country=item['address_components'][index]['long_name'];
+					    				location.countrySN=item['address_components'][index]['short_name'];
+					    				location.countryLN=item['address_components'][index]['long_name'];
 					    			}
-					    			else if(item['address_components'][index]['types'][i]=="postal_code"){
+//					    			else if(item['address_components'][index]['types'][i]=="postal_code"){
 //					    				addrMap.zip=item['address_components'][index]['short_name'];
-					    				zipSN=item['address_components'][index]['short_name'];
-					    				zipLN=item['address_components'][index]['long_name'];
-					    			}
+//					    				zipSN=item['address_components'][index]['short_name'];
+//					    				zipLN=item['address_components'][index]['long_name'];
+//					    			}
 					    		});
 					    	});
 			        	  
-			        	  $.each(location, function(){
-				    			if(typeof this != 'undefined' && this!=""){
-				    				addr+=this+",";
+			        	  $.each(location, function(key, value){
+				    			if(typeof value != 'undefined' && value!=""){
+				    				if(key.match(/(\w+)LN/)){
+				    					itemAddr+=value+",";
+				    				}
+				    				else if(key.match(/(\w+)SN/)){
+				    					dispAddr+=value+",";
+				    				}
+				    				
 				    			}
 				    		});
-			        	  addr=addr.substring(0, (addr.length-1));
+			        	  itemAddr=itemAddr.substring(0, (itemAddr.length-1));
+			        	  dispAddr=dispAddr.substring(0, (dispAddr.length-1));
 			            return {
 			            	
-//			            	cityLN+","+provinceLN+","+countryLN,
-			              label:  	  addr,
-			              value: 	  addr, // value displayed when selected 
-			              latitude:   item.geometry.location.lat(),
-			              longitude:  item.geometry.location.lng()
+			              label:  	  itemAddr,
+			              value: 	  dispAddr, // value displayed when selected
+			              citySN:     location.citySN,	  
+			              provinceSN: location.provinceSN,
+			              countrySN:  location.countrySN
 			            };
-			          }));
-			        });
-		      },
+			          })); //eof geocode response
+			        }); // eof geocode
+		      }, //eof source making
+		      
 		      select: //on select desired location set the fields
 		    	  function(event, ui) { 
 			        var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
 			        $(this).data({
-			        	"city"		: citySN, 
-			        	"province"  : provinceSN, 
-			        	"country"   : countrySN, 
-			        	"zip"       : zipSN
+			        	"city"		: ui.item.citySN, 
+			        	"province"  : ui.item.provinceSN, 
+			        	"country"   : ui.item.countrySN 
+//			        	"zip"       : zipSN
 			        });
-			      }
-			    });
+			        selected=true;
+			      }, //eof select listener
+			      
+		      close: 
+		    	  function (event, ui){
+		    	  if(!selected){
+		    		  //reset data and clear cache if not selected 
+		    		  locSearchBar.val("");
+		    		  locSearchBar.data({"city":"", "province":"", "country":""});
+		    	  }
+		      }
+		      
+	 });//eof auto-complete
 	}
 	$.fn.smartMap.initSearchAutoCplt=function(inputBar){
 		initSearchLocAutoCplt(inputBar);

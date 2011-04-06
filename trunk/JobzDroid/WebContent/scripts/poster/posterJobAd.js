@@ -67,7 +67,10 @@ function postJobAd(mode, formDiv){
 //						else if(value!=null){
 //							
 //						}
-					location += $(this).data("city")+","+$(this).data("province")+","+$(this).data("zip")+"-";
+					location += $(this).data("city")+","+
+								$(this).data("province")+","+
+								$(this).data("country")+","+
+								$(this).data("zip")+"-";
 				});
 			});
 			location=location.substring(0,location.length-1); //remove last "-"
