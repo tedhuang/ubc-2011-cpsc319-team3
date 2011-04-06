@@ -55,7 +55,7 @@ function postJobAd(mode, formDiv){
 		if(locList.length!=0){
 			var location="";
 			$.each(locList, function(index){ // get location from the list
-				$.each($(this).data(), function(key, name){
+				$.each($(this).data(), function(key, value){
 					if(key!="lat" || key!="lng"){
 						if(key=="addr"|| key=="latlng")
 							if(value!=null){
@@ -258,6 +258,7 @@ function getJobAdById(mode, id, outputDiv)
 	var fb = $(".feedback", "#"+outputDiv);
 	//change the text while sending the request
 	fb.html("<h2>Sending getJobAdById Request</h2>");
+	
 	var xhr=createXHR();
 	if(xhr){
 		try{

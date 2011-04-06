@@ -585,52 +585,42 @@ public class ServletJobAd extends HttpServlet {
 				jobAdList.add( temp ); //add to the temporary list
 				temp.jobAdId = result.getInt("idJobAd");
 				locQueryCond.add(locCond+result.getInt("idJobAd")+DBQ.OR); //prepare the jobId to locInfo 
-//				
-//				temp.jobAdTitle				= result.getString("title");
-//				temp.creationDate		 	= result.getLong("datePosted");
-//				temp.contactInfo 			= result.getString("contactInfo");
-//				temp.educationReq	 		= result.getInt("educationRequired");
-//				temp.jobAvailability 		= Utility.jobTypeTranslator(false,result.getString("jobAvailability"));
-//				temp.tags 					= result.getString("tags");
-				
-				 
 				
 			}
-			StringBuffer[]qBuf=DBQ.buidlSelQuery(new String[]{"tableLocationJobAd"}, locCol, locQueryCond);
-			query=qBuf[0].append(qBuf[1].delete(qBuf[1].length()-DBQ.OR.length(), qBuf[1].length())).toString();//get rid of last "OR"
-			
-			result=conn.createStatement().executeQuery(query);
-			Map<String, String>locationMap;
-			while(result.next()){ //if we have locations
-				rsmd = result.getMetaData();
-				int numColumns = rsmd.getColumnCount();
-				locationMap=new HashMap<String, String>();
-				for(int i=1; i<=numColumns; i++){
-					String colName = rsmd.getColumnName(i);
-					if(result.getString(colName)!=null){ //not getting the null values
-						locationMap.put(colName, result.getString(colName));
+			if(result.first()){ // if we have hits
+				StringBuffer[]qBuf=DBQ.buidlSelQuery(new String[]{"tableLocationJobAd"}, locCol, locQueryCond);
+				query=qBuf[0].append(qBuf[1].delete(qBuf[1].length()-DBQ.OR.length(), qBuf[1].length())).toString();//get rid of last "OR"
+				
+				result=conn.createStatement().executeQuery(query);
+				Map<String, String>locationMap;
+				while(result.next()){ //if we have locations
+					rsmd = result.getMetaData();
+					int numColumns = rsmd.getColumnCount();
+					locationMap=new HashMap<String, String>();
+					for(int i=1; i<=numColumns; i++){
+						String colName = rsmd.getColumnName(i);
+						if(result.getString(colName)!=null){ //not getting the null values
+							locationMap.put(colName, result.getString(colName));
+						}
+					}
+					Location temp = new Location(result.getInt("idJobAd"), locationMap);
+					adLocationList.add(temp);
+				}
+				
+				for(JobAdvertisement job_ad : jobAdList){
+					for (Location location : adLocationList){
+						if (job_ad.jobAdId==location.masterJobId){
+							job_ad.adLocation=location;
+	//						return;
+						}
 					}
 				}
-				Location temp = new Location(result.getInt("idJobAd"), locationMap);
-				adLocationList.add(temp);
-			}
-			
-			for(JobAdvertisement job_ad : jobAdList){
-				for (Location location : adLocationList){
-					if (job_ad.jobAdId==location.masterJobId){
-						job_ad.adLocation=location;
-//						return;
-					}
-				}
-			}
-			
-			stmt.close();
-			System.out.println("Query Successfully Finished");
+			}//eof query location base on non-null result
+			System.out.println("Search Query Successfully Finished");
 			
 		} catch (SQLException e1) {
 		e1.printStackTrace();
 		}
-		
 		
 		// close DB objects
 		finally {
@@ -672,7 +662,6 @@ public class ServletJobAd extends HttpServlet {
 		boolean qkSearch=false;
 		
 		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
-		Map<String, String> DbCols = DbDict.getColNameMap();
 		
 		Enumeration paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
@@ -699,7 +688,6 @@ public class ServletJobAd extends HttpServlet {
 					}
 				}
 				else{
-//						paraMap.put(colName,request.getParameter(paraName) );
 						paraMap.put(colName,request.getParameter(paraName) );
 					
 				}
@@ -710,50 +698,40 @@ public class ServletJobAd extends HttpServlet {
 			}
 		}
 		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
-		String query 			="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability, location FROM tableJobAd WHERE ";
-		String panicQuery		="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd";
-		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
-		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT
-		String orKeyword		= " OR "; 		//CAUTION: SPACE IMPORTANT
-		String likeKeyword		= " LIKE "; 	//CAUTION: SPACE IMPORTANT
-		String regExKeyword 	= " REGEXP ";	//CAUTION: SPACE IMPORTANT
-		String whereKeyword		= " WHERE ";	//CAUTION: SPACE IMPORTANT
-		String orderByKeyword	= " ORDER BY "; //CAUTION: SPACE IMPORTANT
-		String limitKeyword		= " LIMIT "; 	//CAUTION: SPACE IMPORTANT
-		String descKeyword		= " DESC "; 	//CAUTION: SPACE IMPORTANT
-		StringBuffer wordRegExBuffer = new StringBuffer(" '[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, Middle pos:9
+		String query =DBQ.SELECT + 
+					  "idJobAd, title, datePosted, contactInfo, " +
+					  "educationRequired, jobAvailability, location FROM tableJobAd" +  DBQ.WHERE;
 		boolean panic = false;
 		
 		StringBuffer queryBuf = new StringBuffer();
+		StringBuffer qLocBuf = new StringBuffer();
 		queryBuf.append(query);
 		
        for(Map.Entry<String, String> entry : paraMap.entrySet()){
     	   String column = entry.getKey();
-    	   String value = entry.getValue();
+    	   String value = Utility.checkInputFormat(entry.getValue());
+    	   
     	   if(!(column.equals("quickSearch"))){
     		   
     		   if(column.equals("title")||column.equals("tags")){
-    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
+    			   StringBuffer sb =DBQ.wordRegExBuffer;
+    			   queryBuf.append(column+ DBQ.REGEXP + sb.insert(8,value) + DBQ.AND);
     		   }
     		   else if(column.equals("jobAvailability")){
     			   //if search by the availability term use IN
-   	    		    queryBuf.append(column+ inKeyword + value + andKeyword);
+   	    		    queryBuf.append(column+ DBQ.IN + value + DBQ.AND);
     		   }
     		   else if(column.equals("educationRequired")){
-   	    		    queryBuf.append(column+ "=" + value + andKeyword);
+   	    		    queryBuf.append(column+ DBQ.EQ + value + DBQ.AND);
     		   }
-//    		   else if(column.equals("location")){
-//    			   queryBuf.append(column+ regExKeyword + wordRegExBuffer.insert(9,value) + andKeyword);
-//    		   }
-    		   else{//TODO NOT WORKING NEED TO FIX 
-    			   panic= true;
-	    		   System.out.println("PANIC ACTION!");
-	    		   queryBuf.setLength(0);
-	    		   queryBuf.append( panicQuery + orderByKeyword + "datePosted" + descKeyword);
-	    		   query = queryBuf.toString();
+    		   else if(column.equals("location")){
+    			   queryBuf.append(column+ DBQ.LIKE + DBQ.SQUO+DBQ.PCNT+value+DBQ.PCNT+DBQ.SQUO + DBQ.AND);
+    		   }
+    		   else{
+	    		   System.out.println("DON'T YOU TRY TO HACK!");
+	    		   panic=true;
 	    		   break;
     		   }
-		  
     	   }
         }//ENDOF FOR-MAP LOOP
        
@@ -761,14 +739,18 @@ public class ServletJobAd extends HttpServlet {
     	   if (!panic){
 	  			
 	  			if(!qkSearch){
-	  				queryBuf.delete(queryBuf.length() - andKeyword.length(), queryBuf.length()); //remove the last " AND "
+	  				//remove the last " AND "
+//	  				qLocBuf.delete(qLocBuf.length() - DBQ.AND.length(), qLocBuf.length());
+	  				queryBuf.delete(queryBuf.length() - DBQ.AND.length(), queryBuf.length()); 
+	  				
+//	  				queryBuf.append(qLocBuf);
 	  			}
 	  			else{
-	  				queryBuf.delete(queryBuf.length() - orKeyword.length(), queryBuf.length()); //remove the last " OR "
+	  				queryBuf.delete(queryBuf.length() - DBQ.OR.length(), queryBuf.length()); //remove the last " OR "
 	  			}
-	  			queryBuf.append(orderByKeyword + "datePosted" + descKeyword);//TODO Can have pages using limited
+	  			queryBuf.append(DBQ.ORDERBY + "datePosted" + DBQ.DESC);//TODO Can have pages using limited
 	  			query = queryBuf.toString();
-			}
+			}//eof IF-NOT-PANIC
        
 		return query;
 	}

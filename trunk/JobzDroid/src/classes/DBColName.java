@@ -38,6 +38,7 @@ public class DBColName{
 			"searchStartDate",
 			"searchCompany",
 			"searchEduReq",
+			"searchJobLoc",
 			//////job avail////////////
 			"searchFT", 
 			"searchPT",
@@ -313,16 +314,18 @@ public class DBColName{
 		for(int i=0; i<searchAdFields.length; i++){
 			searchAdFieldsMap.put(searchAdFields[i], searchAdFields[i]);
 		}
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTitle"), 		tbJobAdColMap.get("title"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTitle"), 			tbJobAdColMap.get("title"));
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStartDate"),		tbJobAdColMap.get("dateStarting"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchCompany"), 		tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchEduReq"),		tbJobAdColMap.get("educationRequired"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchFT"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchPT"), 			tbJobAdColMap.get("jobAvailability"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchIS"), 			tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchCompany"), 			tbJobAdColMap.get("contactInfo"));//TODO CHANGE DB COL
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchEduReq"),			tbJobAdColMap.get("educationRequired"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchFT"), 				tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchPT"), 				tbJobAdColMap.get("jobAvailability"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchIS"), 				tbJobAdColMap.get("jobAvailability"));
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTags"), 			tbJobAdColMap.get("tags"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStatus"), 		tbJobAdColMap.get("status"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStatus"), 			tbJobAdColMap.get("status"));
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchAprv"), 			tbJobAdColMap.get("isApproved"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobLoc"), 			tbJobAdColMap.get("location"));
+		
 		colDictSearchJobAd.put("quickSearch", "quickSearch");
 		
 		colDictSearchJobAd = Collections.unmodifiableMap(colDictSearchJobAd);

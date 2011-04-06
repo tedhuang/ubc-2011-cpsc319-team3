@@ -37,6 +37,7 @@ public class DbQuery{
 	public final String SMLR			= "<";
 	public final String BR				= "&lt;br /&gt;";
 	public final String SP				= " ";
+	public final String PCNT			= "%";
 	
 	public final StringBuffer wordRegExBuffer 	 =  new StringBuffer("'[[:<:]][[:>:]]' "); //CAUTION: SPACE IMPORTANT, insert-pos:8
 	public final StringBuffer SQ				 =  new StringBuffer("'' ");//CAUTION: SPACE IMPORTANT, insert-pos:1
