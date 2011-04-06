@@ -8,9 +8,10 @@
 <link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 <link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 <link href="../css/smartLightbox.css" rel="stylesheet" type="text/css" />
+<link href="../css/smartMap.css" rel="stylesheet" type="text/css"/>
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-
+<script type="text/javascript" src="../scripts/jq-ui/jquery-ui-1.8.1.custom.min.js"></script>
 <script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/smartLightbox.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherUiBot.js"></script>
@@ -19,10 +20,12 @@
 <script type="text/javascript" src="../scripts/searcher/searcherJobAd.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherTab.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherProfile.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
 <script type="text/javascript" src='../scripts/accountAction.js'></script>
 <script type="text/javascript" src='../scripts/sortable.js'></script>
+<script type="text/javascript" src='../scripts/SmartMap.js'></script>
+
 
 <script type="text/javascript">
    
@@ -31,7 +34,8 @@
 		//ADD/RM "sliding:false" to parameter to toggle hiding effect
   		$('#sideMenu').sideNavMenu({});
 		$('#tabs').DynaSmartTab({});
-		
+		$("#adSearchMap").smartMap({displayMap:true});
+		$.fn.smartMap.initSearchAutoCplt("locSearch");
 		$('#lightBox').smartLightBox({});		
 		
        	$("#desc-field").bind("keyup", function(){
@@ -201,7 +205,8 @@
 					</div>
 					<div class="formFieldWrapper">
 						<label class="formFieldLabel">Location</label><br />
-						<input id="locSearch" type="text" name="searchJobLoc" size="40" />
+						<input id="locSearch" class="loc_search" type="text" name="searchJobLoc" size="40" />
+						<div id="adSearchMap"></div>
 					</div>
 				  <div class="formFieldWrapper">
 						<label class="formFieldLabel">Tags </label><br />

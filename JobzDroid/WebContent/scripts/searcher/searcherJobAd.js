@@ -6,11 +6,13 @@
  *******************************************************************************************************************/
 function searchJobAdvertisement(outputDiv){
 	
+	var tbody=$("tbody", domObjById(outputDiv));
 	request = new Request;
 	request.addAction("searchJobAdvertisement");
 	
-	var searchFields = $(":input", "#advSearchForm").serializeArray();
+	var searchFields = $(":input:not('.loc_search')", "#advSearchForm").serializeArray();
 	var emptyCounts=0;
+	var emptyLocCounts=0;
 	jQuery.each(searchFields, function(i, field){
         if(field.value == ""){
         	emptyCounts++;
@@ -19,7 +21,20 @@ function searchJobAdvertisement(outputDiv){
         	request.addParam(field.name, field.value); //add parameter to the request according to how many search criteria filled
         }
 	   });
-	 if(emptyCounts != searchFields.length){
+	$.each($("#locSearch").data(), function(key, value){
+		if(key=="city"||key=="province"||key=="country"||key=="zip"){
+			if(value!=""){
+				request.addParam("searchJobLoc", value);
+			}
+			else{
+				emptyLocCounts++;
+			}
+		}
+		else{
+			emptyLocCounts++;
+		}
+	});
+	 if(emptyCounts != searchFields.length || emptyLocCounts!=6){
 		var xhr=createXHR();
 		if(xhr){
 			try{
@@ -27,12 +42,20 @@ function searchJobAdvertisement(outputDiv){
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				xhr.onreadystatechange = processResult;
 				xhr.send(request.toString());
+				tbody.html("");
 				$("#feedback").html("<h2>Sending Request</h2>");
 			}catch(e){
 				
 			}
 		}
 	 }//eof check empty fields
+	 else{
+		   $('<h2></h2>')
+		   .addClass("info")
+		   .html("Please enter Condition to search")
+		   .appendTo($("#feedback"))
+		   .stop(true, true).fadeOut(10000);
+	 }
 	 function processResult(){
 		 if (xhr.readyState == 4) {
 				try {
@@ -75,9 +98,6 @@ function searchJobAdvertisement(outputDiv){
 //			    }
 //			  };
 //	   }//ENDOF CHECK-ALL-NULL
-//	   else{
-//		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
-//	   }
 		  
 }
 

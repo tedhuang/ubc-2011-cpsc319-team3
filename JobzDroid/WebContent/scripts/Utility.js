@@ -145,3 +145,7 @@ jQuery.fn.allData = function() {
     var intID = jQuery.data(this.get(0));
     return(jQuery.cache[intID]);
 };
+jQuery.fn.DataSize = function() { //get the data stored in the cache
+    var intID = jQuery.data(this.get(0));
+    return(jQuery.cache[intID].length);
+};

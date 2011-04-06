@@ -44,7 +44,90 @@
 		  //GEOCODER
 		  geocoder = new google.maps.Geocoder();
 	}//eof initMap
-			
+	
+	function initSearchLocAutoCplt(inputBar){
+		locSearchBar=domObjById(inputBar);
+		locSearchBar.data({"city":"", "province":"", "country":"", "zip":""});//init data of the input
+		
+		var location=({city:"", province:"", country:""});
+		var	citySN, provinceSN, countrySN, zipSN;
+		var cityLN, provinceLN, countryLN, zipLN;
+		var addr;
+		
+		geocoder = new google.maps.Geocoder();
+		locSearchBar.autocomplete({
+		      source: //use jquery UI auto complete function to get the address
+		    	  
+		    	function(request, response) {
+		    	  //reset all fields
+		    	  	location=({city:"", province:"", country:""});
+		  			citySN="";provinceSN="";countrySN="";zipSN="";
+		  			cityLN="";provinceLN="";countryLN="";zipLN="";
+		  			addr="";
+		  			
+			        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
+			          response($.map(results, function(item) {
+			        	  
+			        	  $.each(item['address_components'], function(index){
+					    		$.each(item['address_components'][index]['types'], function(i){
+					    			
+					    			if(item['address_components'][index]['types'][i]=="locality"){
+//					    				addrMap.city=item['address_components'][index]['short_name'];
+					    				citySN=item['address_components'][index]['short_name'];
+					    				location.city=item['address_components'][index]['long_name'];
+					    			} //city
+					    				
+					    			else if(item['address_components'][index]['types'][i]=="administrative_area_level_1"){
+//					    				addrMap.province=item['address_components'][index]['short_name'];
+					    				provinceSN=item['address_components'][index]['short_name'];
+					    				location.province=item['address_components'][index]['long_name'];
+					    			} //province or state
+					    				
+					    			else if(item['address_components'][index]['types'][i]=="country"){
+//					    				addrMap.country=item['address_components'][index]['short_name'];
+					    				countrySN=item['address_components'][index]['short_name'];
+					    				location.country=item['address_components'][index]['long_name'];
+					    			}
+					    			else if(item['address_components'][index]['types'][i]=="postal_code"){
+//					    				addrMap.zip=item['address_components'][index]['short_name'];
+					    				zipSN=item['address_components'][index]['short_name'];
+					    				zipLN=item['address_components'][index]['long_name'];
+					    			}
+					    		});
+					    	});
+			        	  
+			        	  $.each(location, function(){
+				    			if(typeof this != 'undefined' && this!=""){
+				    				addr+=this+",";
+				    			}
+				    		});
+			        	  addr=addr.substring(0, (addr.length-1));
+			            return {
+			            	
+//			            	cityLN+","+provinceLN+","+countryLN,
+			              label:  	  addr,
+			              value: 	  addr, // value displayed when selected 
+			              latitude:   item.geometry.location.lat(),
+			              longitude:  item.geometry.location.lng()
+			            };
+			          }));
+			        });
+		      },
+		      select: //on select desired location set the fields
+		    	  function(event, ui) { 
+			        var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
+			        $(this).data({
+			        	"city"		: citySN, 
+			        	"province"  : provinceSN, 
+			        	"country"   : countrySN, 
+			        	"zip"       : zipSN
+			        });
+			      }
+			    });
+	}
+	$.fn.smartMap.initSearchAutoCplt=function(inputBar){
+		initSearchLocAutoCplt(inputBar);
+	};
 	$.fn.smartMap.resize=function(){//fix map when the map is resized or position changed
 		google.maps.event.trigger(map, 'resize');
 	};
@@ -197,11 +280,6 @@
 				    this.length = 0;
 				    this.push.apply(this, rest);
 				    return this; // <- This seems like a jQuery-ish thing to do but is optional
-				};
-				
-				jQuery.fn.allData = function() { //get the data stored in the cache
-				    var intID = jQuery.data(this.get(0));
-				    return(jQuery.cache[intID]);
 				};
 				
 		});//return THIS.EACH
