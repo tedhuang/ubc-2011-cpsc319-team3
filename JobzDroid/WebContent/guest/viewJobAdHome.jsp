@@ -8,6 +8,7 @@
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/lightboxCenter.css" rel="stylesheet" type="text/css" />
 	<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+	<link href="../css/smartMap.css" rel="stylesheet" type="text/css"/>
 	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -19,6 +20,8 @@
 	<script type="text/javascript" src='../scripts/JobAd.js'></script>
 	<script type="text/javascript" src='../scripts/uiBot.js'></script>
 	<script type="text/javascript" src='../scripts/guest/guestTab.js'></script>
+	<script type="text/javascript" src='../scripts/SmartMap.js'></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 <script type="text/javascript">
    

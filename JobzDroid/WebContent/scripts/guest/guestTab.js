@@ -248,7 +248,7 @@
          			.unbind('click')
          			.click( function(){
          				openTab('adDetailTab'); 
-         				getJobAdById("detail", adId, "adDetailTable");
+         				getJobAdById(adId, "adDetailTable");
          			});
 
          };

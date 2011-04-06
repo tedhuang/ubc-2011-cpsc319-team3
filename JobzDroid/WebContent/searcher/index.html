@@ -13,7 +13,7 @@
 
 <script type="text/javascript" src="../scripts/Utility.js"></script>
 <script type="text/javascript" src="../scripts/smartLightbox.js"></script>
-<script type="text/javascript" src="../scripts/uiBot.js"></script>
+<script type="text/javascript" src="../scripts/searcher/searcherUiBot.js"></script>
 <script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
 <script type="text/javascript" src="../scripts/authentication.js"></script>
 <script type="text/javascript" src="../scripts/searcher/searcherJobAd.js"></script>
@@ -173,36 +173,12 @@
 				<table>
 					<thead>
 					<tr>
-						<th id="col-viewDate">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Date</div>
-							</div>
-						</th>
-						<th id="col-viewTitle">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Job Title</div>
-							</div>
-						</th>
-						<th id="col-viewCompany">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Company</div>
-							</div>
-						</th>
-						<th id="col-viewEduReq">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Degree</div>
-							</div>
-						</th>
-						<th id="col-viewAvail">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Availability</div>
-							</div>
-						</th>
-						<th id="col-viewLoc">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Location</div>
-							</div>
-						</th>
+						<th class="headText">Date</th>
+						<th class="headText">Job Title</th>
+						<th class="headText">Company</th>
+						<th class="headText">Degree</th>
+						<th class="headText">Availability</th>
+						<th class="headText">Location</th>
 					</tr>
 				</thead>
 					<tbody>
@@ -266,7 +242,7 @@
 			  </div>	
 			</div><!--END ADVSEARCHFORM-->
 			
-			<div id="resultTable" class="resultTableDiv">
+			<div id="resultTable" class="resultTableDiv fullTab">
 				<table class='sortable' id='sortableJobAd'>
 					<thead>
 					<tr>
