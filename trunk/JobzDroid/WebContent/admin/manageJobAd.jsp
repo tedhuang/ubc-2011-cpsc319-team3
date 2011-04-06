@@ -10,6 +10,8 @@
 	<link href="../css/sideNavMenu.css" rel="stylesheet" type="text/css"/>
 	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	<link rel="stylesheet" href="../css/smartLightbox.css"/>
+ 	<link href="../css/smartMap.css" rel="stylesheet" type="text/css"/>
+	
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
@@ -21,6 +23,7 @@
 	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
 	<script type="text/javascript" src='../scripts/JobAd.js'></script>
 	<script type="text/javascript" src='../scripts/uiBot.js'></script>
+	<script type="text/javascript" src='../scripts/SmartMap.js'></script>
 	
 	
 <script type="text/javascript">
@@ -156,8 +159,9 @@
 			<li id="jobAdTab">
   				<a href="#home-frame"><h2>All Job Ads</h2></a>
   			</li>
-			<li id="jobAdDetailsTab">
-  				<a href="#jobAdDetailsFrame"><h2>Job Ad Details</h2></a>
+			<li id="adDetailTab" class="hideOnly iniHidden">
+				<span class="close">x</span>
+  				<a href="#adDetailFrame"><span>View Detail</span></a>
 			</li>
 		</ul>
 	  </div><!--ENDOF NAVBAR-->
@@ -238,6 +242,7 @@
 			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 20</button>	
 			  		<!-- <button type="button" id='nextButton' onclick="">Approve All</button> -->
 			  		<button type="button" id='nextButton' onclick='adminBatchChangeJobAd()'>Submit All Changes</button>	
+			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'first')">Reset</button>	
 		  		</div>
 			</div>
 				
@@ -251,15 +256,12 @@
 <!--===================== JOB AD DETAILS FRAME  ==========================-->
 <!-- ==================================================================== -->	
 
-		<div id="jobAdDetailsFrame" class="subFrame">
-			 <div id="profileTable" class="resultTableDiv noBorder">
-			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
-				<table>
-					<tbody>
-					</tbody>
-				</table>
-			 </div>		
-		</div><!--end of TABPROFILEFRAME-->
+	<div id="adDetailFrame" class="subFrame unremovable">
+		<div id="adDetailTable" class="resultTableDiv noBorder fullTab">
+			<h2 id="adDetailHeading" class="welcome heading"></h2>
+			<table><tbody></tbody></table>
+		</div>
+	</div><!--end of EDADFRAME-->
 		
 	  </div><!--ENDOF TABFRAME-->
 	</div>   <!--end of tabs DIV-->		  
