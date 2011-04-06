@@ -1,3 +1,4 @@
+
 //TODO: hook up with UI
 function changeJobAdStatus(intJobAdId, strNewStatus){
 	
@@ -78,8 +79,7 @@ function adminDeleteJobAd(intJobAdId){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 		  //Successful
-
-
+		  
 		  }
 		  else if(xmlhttp.status!=200){
 			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
@@ -89,7 +89,7 @@ function adminDeleteJobAd(intJobAdId){
 	  };
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,false);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -102,6 +102,8 @@ function adminDeleteJobAd(intJobAdId){
  * Admin Function: handles approving job ads
  */
 function adminApprove(intJobAdId){
+	
+	var requestPending = false;
 	
 	var formDiv = 'home-frame';
 	var theForm =$("#"+formDiv);
@@ -130,23 +132,27 @@ function adminApprove(intJobAdId){
 	  }
 	
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,false);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
-
+	requestPending = true;
+	
 	//change the text while sending the request
 	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	
 	
 	xmlhttp.onreadystatechange=function()
 	  {	  
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			  //Successful
-
+			  requestPending = false;
+			  //Update Cells
+			  $("#td-status-"+intJobAdId).text("open");
+			  $("#td-approval-"+intJobAdId).text("Approved");
 		  }
 		  else if(xmlhttp.status!=200){
-			  
+			  requestPending = false;
 			  console.log("Approve Job Ad not successful");		
-			  
 			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
 				$("#lbMsg",theForm).html("Approving Not Successful, please try again");
 				$.fn.smartLightBox.closeLightBox(1000, formDiv);
@@ -156,7 +162,7 @@ function adminApprove(intJobAdId){
 
 
 function adminDeny(intJobAdId){
-	
+
 	var formDiv = 'home-frame';
 	var theForm =$("#"+formDiv);
 	
@@ -182,7 +188,7 @@ function adminDeny(intJobAdId){
 	  }
 	  
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,true);
+	xmlhttp.open("POST","../ServletAdmin" ,false);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send( request.toString() );
 
@@ -194,39 +200,49 @@ function adminDeny(intJobAdId){
 	  {
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
 			  //Successful
-
+			  			  
+			  //Update Cells
+			  $("#td-status-"+intJobAdId).text("draft");
+			  $("#td-approval-"+intJobAdId).text("Not Approved");
 			  }
+		  
 			  else if(xmlhttp.status!=200){
 				  console.log("Deny Job Ad not successsful");
 				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
 					$("#lbMsg",theForm).html("Denying Not Successful, please try again");
-					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+					$.fn.smartLightBox.closeLightBox(2000, formDiv);
 			  }
 	  };
+	  
+	  
 }
 
 
-function adminBatchChangeJobAd(mode){
-
+function adminBatchChangeJobAd(){    
+	//$.fn.smartLightBox.openDivlb("home-frame",'load','Reloading Data, please wait...');
+	
 	var xmlObj = $("jobAd",xmlhttp.responseXML);
 	if(xmlObj.length==0){//if no results
-//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
-//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
+	  	$("#lbImg", $("#home-frame")).removeClass("load").addClass("alert");
+		$("#lbMsg",$("#home-frame")).html("Denying Not Successful, please try again");
+		$.fn.smartLightBox.closeLightBox(2000, "home-frame");
 	}
 	else{
-		xmlObj.each(function() {//for All returned xml obj
+		xmlObj.each( function() {
+		    
+			//for All returned xml obj
 			var jobAd = $(this);
 			var jobAdId = jobAd.attr("jobAdId");
 			var isApprovedOld=jobAd.attr("isApproved");
 			var radioButton= $('input:radio[name='+jobAdId+']:checked').val();
-			
+			var isCallFinished=false;
 			  //Job Ad is Approved
 			  if( isApprovedOld == 0 && radioButton == "approve"){
-				  adminApprove(jobAdId);
+				   adminApprove(jobAdId); 
 			  }
 			  //Job Ad is Denied
 			  else if( isApprovedOld == 1 && radioButton == "deny" ){
-				  adminDeny(jobAdId);
+				   adminDeny(jobAdId);
 			  }
 			  //Job Ad is Deleted
 			  else if( radioButton == "delete" ){
@@ -234,9 +250,11 @@ function adminBatchChangeJobAd(mode){
 			  }else{
 				  //Nothing Changed for this Job Ad
 			  }
-		});
+		});//END OF FOR EACH LOOP
 	}
-	adminGetJobAd("allJobAdtable");
+	adminGetJobAd("allJobAdtable", "first");
+	//$.fn.smartLightBox.closeLightBox(2000, "home-frame");
+	
 }
 
 

@@ -142,6 +142,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .resultTableDiv td span:hover{	cursor: pointer;}
 .resultTableDiv tr.oddRow td{	background-color: #DFF6CD;}
 .resultTableDiv tr.hover td {background-color: #2ED40D;cursor:pointer;}
+.resultTableDiv tr.change td {background-color: #FBB917;cursor:pointer;}
 .headText {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 .headTextJSGeneral {padding-left: 4.1em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 .headTextJSLoc {padding-left: 7em;	padding-right: 0em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}

@@ -345,7 +345,7 @@ public class ServletAdmin extends HttpServlet {
 				
 				
 				if(adRs.next()){
-					System.out.println("JobAd: ID-" + adRs.getInt("idJobAd") +"was denied by " + 
+					System.out.println("JobAd: ID-" + adRs.getInt("idJobAd") +"was approved by " + 
 			   			"Use: ID-" + adRs.getInt("idAccount") +" with sessionKey-" + sessKey +
 			   			"At time:" + new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
 					adRs.updateString("status", "open");
