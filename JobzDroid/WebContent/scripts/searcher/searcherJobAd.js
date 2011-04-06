@@ -22,13 +22,17 @@ function searchJobAdvertisement(outputDiv){
         }
 	   });
 	$.each($("#locSearch").data(), function(key, value){
-		if(key=="city"||key=="province"||key=="country"||key=="zip"){
-			if(value!=""){
-				request.addParam("searchJobLoc", value);
-			}
-			else{
-				emptyLocCounts++;
-			}
+		if(key=="city"&&value.length){
+			request.addParam("searchJobCity", value);
+		}
+		else if(key=="province"&&value.length){
+			request.addParam("searchJobProvince", value);
+		}
+		else if(key=="country"&&value.length){
+			request.addParam("searchJobCountry", value);
+		}
+		else if(key=="zip"&& value.length){
+			request.addParam("searchJobZip", value);
 		}
 		else{
 			emptyLocCounts++;
@@ -42,6 +46,7 @@ function searchJobAdvertisement(outputDiv){
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				xhr.onreadystatechange = processResult;
 				xhr.send(request.toString());
+				console.log(request.toString());
 				tbody.html("");
 				$("#feedback").html("<h2>Sending Request</h2>");
 			}catch(e){

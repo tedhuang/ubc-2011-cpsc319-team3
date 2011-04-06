@@ -662,6 +662,7 @@ public class ServletJobAd extends HttpServlet {
 		boolean qkSearch=false;
 		
 		Map<String, String> paraColMap = DbDict.getDict(request.getParameter("action"));
+		StringBuffer qLocBuf = new StringBuffer();
 		
 		Enumeration paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
@@ -687,6 +688,9 @@ public class ServletJobAd extends HttpServlet {
 						paraMap.put(colName,"(\'"+request.getParameter(paraName)+"\')" );
 					}
 				}
+				else if(colName.equals("location")){
+					 qLocBuf.append(colName+ DBQ.LIKE + DBQ.SQUO+DBQ.PCNT+request.getParameter(paraName)+DBQ.PCNT+DBQ.SQUO + DBQ.AND);
+				}
 				else{
 						paraMap.put(colName,request.getParameter(paraName) );
 					
@@ -704,7 +708,6 @@ public class ServletJobAd extends HttpServlet {
 		boolean panic = false;
 		
 		StringBuffer queryBuf = new StringBuffer();
-		StringBuffer qLocBuf = new StringBuffer();
 		queryBuf.append(query);
 		
        for(Map.Entry<String, String> entry : paraMap.entrySet()){
@@ -714,7 +717,7 @@ public class ServletJobAd extends HttpServlet {
     	   if(!(column.equals("quickSearch"))){
     		   
     		   if(column.equals("title")||column.equals("tags")){
-    			   StringBuffer sb =DBQ.wordRegExBuffer;
+    			   StringBuffer sb = new StringBuffer(DBQ.wordRegExBuffer);
     			   queryBuf.append(column+ DBQ.REGEXP + sb.insert(8,value) + DBQ.AND);
     		   }
     		   else if(column.equals("jobAvailability")){
@@ -724,9 +727,9 @@ public class ServletJobAd extends HttpServlet {
     		   else if(column.equals("educationRequired")){
    	    		    queryBuf.append(column+ DBQ.EQ + value + DBQ.AND);
     		   }
-    		   else if(column.equals("location")){
-    			   queryBuf.append(column+ DBQ.LIKE + DBQ.SQUO+DBQ.PCNT+value+DBQ.PCNT+DBQ.SQUO + DBQ.AND);
-    		   }
+//    		   else if(column.equals("location")){
+//    			   qLocBuf.append(column+ DBQ.LIKE + DBQ.SQUO+DBQ.PCNT+value+DBQ.PCNT+DBQ.SQUO + DBQ.AND);
+//    		   }
     		   else{
 	    		   System.out.println("DON'T YOU TRY TO HACK!");
 	    		   panic=true;
@@ -740,10 +743,14 @@ public class ServletJobAd extends HttpServlet {
 	  			
 	  			if(!qkSearch){
 	  				//remove the last " AND "
-//	  				qLocBuf.delete(qLocBuf.length() - DBQ.AND.length(), qLocBuf.length());
-	  				queryBuf.delete(queryBuf.length() - DBQ.AND.length(), queryBuf.length()); 
+	  				if(qLocBuf.length()>0){
+	  					qLocBuf.delete(qLocBuf.length() - DBQ.AND.length(), qLocBuf.length());
+		  				queryBuf.append(qLocBuf);
+	  				}
+	  				else{
+	  					queryBuf.delete(queryBuf.length() - DBQ.AND.length(), queryBuf.length()); 
+	  				}
 	  				
-//	  				queryBuf.append(qLocBuf);
 	  			}
 	  			else{
 	  				queryBuf.delete(queryBuf.length() - DBQ.OR.length(), queryBuf.length()); //remove the last " OR "

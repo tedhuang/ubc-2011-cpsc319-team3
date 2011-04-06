@@ -30,7 +30,8 @@ public class DBColName{
 	
 	private final String[]searchAdFields={
 	/******************************************************************************
-	 * Those are input forms' name, MUST be matched
+	 * - Input forms' names MUST be matched
+	 * - PARAMETER NAME MUST BE MATCHED
 	 * Entries Starts With NO means CLIENTS CANNOT DO SUCH REQUEST (YET)
 	 *****************************************************************************/
 			"searchJobId",
@@ -38,7 +39,11 @@ public class DBColName{
 			"searchStartDate",
 			"searchCompany",
 			"searchEduReq",
-			"searchJobLoc",
+			
+			/////SEARCH BY LOCATION/////
+			"searchJobCity",
+			"searchJobProvince",
+			"searchJobCountry",
 			//////job avail////////////
 			"searchFT", 
 			"searchPT",
@@ -324,7 +329,10 @@ public class DBColName{
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchTags"), 			tbJobAdColMap.get("tags"));
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchStatus"), 			tbJobAdColMap.get("status"));
 		colDictSearchJobAd.put(searchAdFieldsMap.get("searchAprv"), 			tbJobAdColMap.get("isApproved"));
-		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobLoc"), 			tbJobAdColMap.get("location"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobCity"), 			tbJobAdColMap.get("location"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobProvince"), 		tbJobAdColMap.get("location"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobCountry"), 		tbJobAdColMap.get("location"));
+		colDictSearchJobAd.put(searchAdFieldsMap.get("searchJobZip"), 			tbJobAdColMap.get("location"));
 		
 		colDictSearchJobAd.put("quickSearch", "quickSearch");
 		
