@@ -18,52 +18,50 @@ function buildDetailTable(targetXMLTag, outputDiv){
 		heading.text(jobAd.attr("jobAdTitle"));//TODO FIX the HEADING
 		var tr = $('<tr></tr>').addClass("verticalTb");
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Date Posted</td><td class="verticalTb">'+ jobAd.attr("creationDate")+ '</td>')
+		.append('<td class="verticalTh">Date Posted</td><td class="verticalTb">'+ jobAd.attr("creationDateFormatted")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Company</td><td class="verticalTb">'+ jobAd.attr("contactInfo")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Degree Required</td><td class="verticalTb">'+ jobAd.attr("eduReq")+ '</td>')
+		.append('<td class="verticalTh">Degree Required</td><td class="verticalTb">'+ jobAd.attr("eduReqFormatted")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvailability")+ '</td>')
+		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvail")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Starting Date</td><td class="verticalTb">'+ jobAd.attr("startingDate")+ '</td>')
+		.append('<td class="verticalTh">Starting Date</td><td class="verticalTb">'+ jobAd.attr("startingDateFormatted")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Expiry Date</td><td class="verticalTb">'+ jobAd.attr("expiryDate")+ '</td>')
+		.append('<td class="verticalTh">Position Type</td><td class="verticalTb">'+ jobAd.attr("jobAvail")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Grad Funding Availability</td><td class="verticalTb">'+ jobAd.attr("hasGradFunding")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
-		.append('<td class="verticalTh">Tags</td><td class="verticalTb">'+ jobAd.attr("tags")+ '</td>')
+		.append('<td class="verticalTh">Tags</td><td class="verticalTb">'+ jobAd.attr("location")+ '</td>')
 		.appendTo(tbody);
 		$('<tr></tr>')
 		.append('<td class="verticalTh">Job Description</td><td class="verticalTb">'+ jobAd.attr("jobAdDescription")+ '</td>')
 		.appendTo(tbody);
-		var locRow =$('<tr></tr>')
-		.append('<td class="verticalTh">Location</td>')
+		$('<tr></tr>')
+		.append('<td class="verticalTh">Location</td><td class="verticalTb">'+ jobAd.attr("location")+ '</td>')
 		.appendTo(tbody);
-		var locTd = $('<td class="verticalTb loc-td"></td>').appendTo(locRow);
-		locTd.smartMap({displayMap:true});
-		var locations=jobAd.find("location");
-		if(locations.length){ //if there is some location
-		var locObjArray = [];
-		$.each(locations, function(idx){
-			var locObj={addr:null, latlng:null};
-			locObj.addr=$(this).attr("addr"+idx);
-			locObj.latlng=$(this).attr("latlng"+idx);
-			locObjArray.push(locObj);
-		});
-		$.fn.smartMap.displayMap(locTd, locObjArray);
-		}
-		else{
-		locTd.text("Location not specified.");
-		}
 		
+//		var rowText = "<tr><td>Date Posted</td><td>" 				+ jobAd.attr("creationDateFormatted") 			+ "</td></tr>" +
+//	  				"<tr><td>Location</td><td>"						+ jobAd.find("location").attr("address")		+ "</td></tr>" +
+//	  				"<tr><td>Minimal Degree Requirement</td><td>"	+ jobAd.attr("eduReqFormatted")					+ "</td></tr>" +
+//	  				"<tr><td>Available Positions</td><td>"			+ jobAd.attr("jobAvail") 						+ "</td></tr>" +
+//	  				"<tr><td>Has Graduate Funding</td><td>"			+ gradFunding									+ "</td></tr>" +
+//	  				"<tr><td>Starting Date</td><td>"				+ jobAd.attr("startingDateFormatted")			+ "</td></tr>" +
+//	  				"<tr><td>Contact Info</td><td>"					+ jobAd.attr("contactInfo")						+ "</td></tr>" +
+//	  				"<tr><td style='vertical-align:top'>Job Description</td><td>" + jobAd.attr("jobAdDescription")	+ "</td></tr>" +
+//	  				"<tr class='clean'></tr>" +	
+//	  				"<tr><td>Tags</td><td>"							+ jobAd.attr("tags")							+ "</td></tr>" ;
+	  
+//	    $(tbody).append(rowText);
+//	 	$(tbody).find('tr').find('td:first').addClass("nameCol");
+//	 	$(tbody).find('tr').find('td:last').addClass("dataCol");
 	 	fb.hide();
 	}
 }
@@ -92,7 +90,7 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 		  $('<td></td>').addClass('td-date').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
 		  $('<td></td>').addClass('td-date').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
 		  $('<td></td>').addClass('td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').addClass('td-loc').text(jobAd.attr("location")).appendTo(tr);
+		  $('<td></td>').addClass('td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
 		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
 		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
 		  $.fn.DynaSmartTab.guestTool(tr, jobAd.attr("jobAdId"));
@@ -271,23 +269,23 @@ function bindClearError(){
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
-function buildAdListTb(targetXMLTag, outputDiv){
+function buildAdListTb(targetXMLTag, outputDiv, xmlResponse){
 	outputDiv="#"+outputDiv;
 	var tbody  = $("tbody", outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
+	var xmlObj = $(targetXMLTag,xmlResponse);
+	if(xmlObj.length==0 || xmlObj==null){//if no results
 		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var tr =$('<tr></tr>');
-		  $('<td></td>').attr("id", id='td-pDate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').addClass('jsBtn').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("contactInfo")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
+		  $('<td></td>').addClass('td-data').text(jobAd.attr("creationDate")).appendTo(tr);
+		  $('<td></td>').addClass('td-title').addClass('jsBtn').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').text(jobAd.attr("contactInfo")).appendTo(tr);
+		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("educationReq")).appendTo(tr);
+		  $('<td></td>').text(jobAd.attr("jobAvailability")).appendTo(tr);
+		  $('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
 		  var strSessionKey = $("#sessionKey").val();
 //		  var favouriteAnchor =  "<a class='button' href='#' " +
 //		  		"onclick='saveFavouriteJobAd("+ strSessionKey +", "+ jobAd.attr('jobAdId')+">" +

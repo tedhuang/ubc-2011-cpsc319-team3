@@ -32,7 +32,7 @@ public class ProfileSearcher {
 
 		//Empty location just to avoid null pointers
 		if(addressList.isEmpty()){
-			Location loc = new Location("Not Specified");
+			Location loc = new Location();
 			addressList.add(loc);
 		}
 		

@@ -157,12 +157,14 @@
 	};
      	
      	$.fn.smartLightBox.openlb=function(mode, text, imgClass){
+     		
      		switch (mode){
      		
      			case "full":
      				fullLightBox(buildInfoBox(text,imgClass));
      				break;
      			case "small":
+     				$('body').scrollTop();
      				smallLightBox(buildInfoBox(text,imgClass));
      				break;
      			case "info":
@@ -185,12 +187,13 @@
  		};
      	
      	$.fn.smartLightBox.openDivlb=function(div, imgClass, msg){
+     		$('body').scrollTop(0);
      		divLightBox(div, imgClass, msg);
      	};
      	
      	$.fn.smartLightBox.diaBox=function(msg,imgClass, mode ){
      	
-     		$('body').css('overflow-y', 'hidden');
+     		$('body').css('overflow-y', 'hidden').scrollTop();
  			
  			$('<div id="overlay"></div>').addClass('whitebg')
  			.css('opacity', '0').animate({'opacity': '0.5'}, 1000)

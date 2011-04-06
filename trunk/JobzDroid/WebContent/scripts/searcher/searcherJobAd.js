@@ -48,36 +48,36 @@ function searchJobAdvertisement(outputDiv){
 				}
 		 }
 	 }
-	   if(emptyCounts != searchFields.length){//Check if All NULL
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-				xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			//send the parameters to the servlet with POST
-			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true);
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.send(request.toString());
-			
-	//		$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			    {
-					//parse XML response from server
-					buildAdListTb("jobAd", outputDiv);
-	//				$.fn.smartLightBox.closeLightBox(0);
-			    }
-			  };
-	   }//ENDOF CHECK-ALL-NULL
-	   else{
-		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
-	   }
+//	   if(emptyCounts != searchFields.length){//Check if All NULL
+//			if (window.XMLHttpRequest)
+//			  {// code for IE7+, Firefox, Chrome, Opera, Safari
+//				xmlhttp=new XMLHttpRequest();
+//			  }
+//			else
+//			  {// code for IE6, IE5
+//				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+//			  }
+//			
+//			//send the parameters to the servlet with POST
+//			$("#feedback").html("<h2>Sending Request</h2>");
+//			xmlhttp.open("POST","../ServletJobAd" ,true);
+//			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//			xmlhttp.send(request.toString());
+//			
+//	//		$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
+//			xmlhttp.onreadystatechange=function()
+//			  {
+//			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+//			    {
+//					//parse XML response from server
+//					buildAdListTb("jobAd", outputDiv);
+//	//				$.fn.smartLightBox.closeLightBox(0);
+//			    }
+//			  };
+//	   }//ENDOF CHECK-ALL-NULL
+//	   else{
+//		   $("#feedback").html('<h2 class="info">Please enter Condition to search</h2>');
+//	   }
 		  
 }
 

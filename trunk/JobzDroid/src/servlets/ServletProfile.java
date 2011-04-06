@@ -400,7 +400,7 @@ public class ServletProfile extends HttpServlet{
 			ResultSet result = stmt.getResultSet();
 			
 			//create ArrayList locationList to store Job Searcher's location(s)
-			Location location = new Location("Not Specified");
+			Location location = new Location();
 			ArrayList<Location> locationList = new ArrayList<Location>();
 			
 			if(result.first()){ //if there is an entry from result set - check first one

@@ -214,7 +214,7 @@ public class ServletJobAd extends HttpServlet {
 				jobAd.isApproved 		= result.getInt("isApproved");
 				jobAd.numberOfViews 	= result.getInt("numberOfViews");
 
-				//jobAd.jobAdDescription 	= result.getString("description");
+				jobAd.location		 	= result.getString("location");
 				jobAd.startingDate 		= result.getLong("dateStarting");
 				jobAd.contactInfo 		= result.getString("contactInfo");
 				jobAd.tags 				= result.getString("tags");
@@ -710,7 +710,7 @@ public class ServletJobAd extends HttpServlet {
 			}
 		}
 		//CATION: NEED TO HAVE A SPACE AT THE END oF FOLLOWING Query!
-		String query 			="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd WHERE ";
+		String query 			="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability, location FROM tableJobAd WHERE ";
 		String panicQuery		="SELECT idJobAd, title, datePosted, contactInfo, educationRequired, jobAvailability FROM tableJobAd";
 		String andKeyword 		= " AND ";		//CAUTION: SPACE IMPORTANT
 		String inKeyword 		= " IN ";		//CAUTION: SPACE IMPORTANT

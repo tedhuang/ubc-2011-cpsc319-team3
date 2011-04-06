@@ -70,6 +70,9 @@ public class JobAdvertisement {
 		if(jobAvailability == null){
 			jobAvailability = "Not Specified";
 		}
+		if(location==null){
+			location = "Not Specified";
+		}
 		
 		eduReqFormatted 		= Utility.degreeConvertor(educationReq);
 		creationDateFormatted	= Utility.dateConvertor(creationDate);
@@ -100,6 +103,7 @@ public class JobAdvertisement {
 		" creationDate=\"" 			+ creationDate + "\"" +
 		" educationReq=\"" 			+ educationReq + "\"" +
 		" hasGradFunding=\"" 		+ gfStr + "\"" +
+		" location=\"" 				+ location + "\"" +
 		
 		/**********FORMAT FOR THE OUTPUT TO THE CLIENT *********************/
 		" creationDateFormatted=\"" + creationDateFormatted + "\"" +
@@ -169,29 +173,6 @@ public class JobAdvertisement {
 			//String jobAvail	= Utility.jobTypeTranslator(false,jobAvailability);
 		}
 		xmlBuf.append(" >\n"); //eof putting ad info
-		
-//		StringBuffer[] locList=new StringBuffer[3];
-//		int locIdx=0;
-//		xmlBuf.append("\t\t<location" + SP); //sof location info
-//		if(adLocMap.size()>0){
-//			for(Map.Entry<String, String> entry : adLocMap.entrySet()){
-//				String fld= entry.getKey();
-//				Object value = entry.getValue();
-//				if(fld.matches("(?i)addr.*")){
-//					locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, fld+EQ+QUO+value+QUO+SP));
-//					locIdx++;
-//				}
-//				else if(fld.matches("(?i)latlng.*")){
-//					int idx=Integer.parseInt(fld.substring("latlng".length()));
-//					if(locList[idx]!=null){
-//						locList[idx].insert(12,fld+EQ+QUO+value+QUO+SP);
-//					}
-//					else{
-//						locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, fld+EQ+QUO+value+QUO+SP));
-//						locIdx++;
-//					}
-//				}
-//			}
 		StringBuffer locBuf[];
 		if(adLocation!=null){ //for retrieving single ad
 			locBuf=adLocation.locXMLParser();
@@ -201,12 +182,6 @@ public class JobAdvertisement {
 				}
 			}
 		}
-		
-		
-//		else{
-//			xmlBuf.append("\t\t<location noLoc=\"Location Not Specified.\">\n\t\t</location>\n");
-//		}
-//		xmlBuf.append(">\n \t\t</location>\n");//eof location info
 		xmlBuf.append("\t</jobAd>\n");//eof xml parsing
 		
 		System.out.println("JobAdvertisement Object XML:\n" + xmlBuf.toString());

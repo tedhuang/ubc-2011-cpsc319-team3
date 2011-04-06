@@ -124,7 +124,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .resultTableDiv table{font-size: 14px; width:100%; margin-bottom: 1em;	border-spacing: 0;}
 
 .resultTableDiv thead {cursor: default;overflow: hidden;height: 31px;padding: 0px 0px 0px 0px;}
-.resultTableDiv th{ border-right: 1px solid white; background-color:#4E8975;  line-height: 25px; height:31px;margin:0; padding:0; cursor:pointer;text-align: center;}
+.resultTableDiv th{ border-right: 1px solid white; background-color:#4E8975;  line-height: 25px; padding:0; cursor:pointer;text-align: center;}
 .resultTableDiv tbody {	color: #000;}
 .resultTableDiv td {border-right: 1px solid white;height: 23px;	overflow: hidden; /*word-wrap: break-word;*/ text-align: left;}
 .resultTableDiv td.verticalTh{border-bottom: 1px solid grey; max-height: 30px; width:200px; word-wrap: break-word; background-color: #4E8975;
@@ -134,7 +134,7 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .resultTableDiv td.nameCol{	min-width: 100px; padding: 1em;	font-weight: bold;}
 .resultTableDiv td.td-data{	max-width: 92px;}
 .resultTableDiv td.td-eduReq{max-width: 92px;}
-.resultTableDiv td.td-title{max-width:300px;word-wrap: break-word;}
+.resultTableDiv td.td-title{min-width:200px;max-width:350px;word-wrap: break-word;}
 .resultTableDiv td.td-loc{max-width:300px;word-wrap: break-word;}
 .resultTableDiv td.clean {	padding: 0 5px;}
 .resultTableDiv td.hide{display: none;}
