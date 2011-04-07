@@ -2,28 +2,37 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-<title>JobzDroid | Your Ultimate Database Job Market</title>
+<title>JobzDroid | Your Ultimate Database Job Market </title>
 
-<link href="css/mainStyle.css" rel="stylesheet" type="text/css"/>
-<link href="css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
+<link href="../css/mainStyle.css" rel="stylesheet" type="text/css"/>
+<link href="../css/DynaSmartTab.css" rel="stylesheet" type="text/css"/>
 
 <!--CAUTION: DO NOT CHANGE THIS LINE!--><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src='scripts/DynaSmartTab.js'></script>
-<script type="text/javascript" src='scripts/Utility.js'></script>
-<script type="text/javascript" src='scripts/JobAd.js'></script>
+<script type="text/javascript" src='../scripts/DynaSmartTab.js'></script>
+<script type="text/javascript" src='../scripts/Utility.js'></script>
+<script type="text/javascript" src='../scripts/JobAd.js'></script>
+<script type="text/javascript" src='../scripts/uiBot.js'></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
 		$('#tabs').DynaSmartTab({});
-		});
+		
+		//init customized element style
+		$('body').addClass('has-style');
+	    $('.label-cb, .label-rb').click(function(){
+	        setupLabel();
+	    });
+	    setupLabel(); 
+	});
+
 </script>
 </head>
 <body>
 
 <div class="main">
   	<div class="header">
-		<a id="logo" title="home" href="http://localhost:8080/Tryouts/319UI/home.html">
-	        <img src="http://localhost:8080/JobzDroid/images/logo-small.png"/>
+		<a id="logo" title="home" href="../">
+	        <img src="../images/logo-small.png"/>
 		</a>
 		<ul id="topnav" class="topnav">
 		    <li><a href="#" class="btn">News</a></li>
@@ -40,14 +49,17 @@
 	  	  <div id="navBar" class="navBar">
 			<ul>
 	  			<li id="tab1">
-	  				<a href="#advSearchtab"><h2>Search</h2></a>
+	  				<a href="#advSearchFrame"><h2>Search</h2></a>
+				</li>
+				<li id="tab2">
+	  				<a href="#adDetailFrame"><h2>Details</h2></a>
 				</li>
 			</ul>
 		</div><!--ENDOF NAVBAR-->
 	
 	
 		  <div id="tabFrame">
-			<div id="advSearchtab" class="subFrame">
+			<div id="advSearchFrame" class="subFrame">
 				
 			  <div id="advSearchForm" class="content">
 		       	<label class="heading-text">Advanced Search</label>
@@ -55,21 +67,21 @@
 			     <div class="columnBox">
 			     	<div class="formFieldWrapper">
 						<label class="formFieldLabel">Search title: </label><br/>
-						<input id="titleSearch" type="text" name="searchTitle" size="40"/>
+						<input id="titleSearch" type="text" name="searchTitle" size="40" />
 					</div>
 					<div class="formFieldWrapper">
-						<label class="formFieldLabel">Location</label><br/>
-						<input id="locSearch" type="text" name="searchJobLoc" size="40"/>
+						<label class="formFieldLabel">Location</label><br />
+						<input id="locSearch" type="text" name="searchJobLoc" size="40" />
 					</div>
 				  <div class="formFieldWrapper">
-						<label class="formFieldLabel">Tags </label><br/>
-						<input id="searchTags" type="text" name="tags" size="40"/><br/>
+						<label class="formFieldLabel">Tags </label><br />
+						<input id="searchTags" type="text" name="tags" size="40" /><br />
 				  </div>
 				 </div>	<!--ENDOF columnBox-->
 				 
 			 <div class="columnBox">
 			 	<div class="formFieldWrapper">
-					<label class="formFieldLabel">Education Requirement: </label><br/>
+					<label class="formFieldLabel">Education Requirement: </label><br />
 					<select id="eduReqsearch" name="searchEduReq">
 							<option value="">Choose a degree</option>
 							<option value="1">B.Sc.</option>
@@ -79,15 +91,15 @@
 				</div>
 				<div class="formFieldWrapper">
 					  	 <label class="formFieldLabel">Employment Type:</label><br/>
-								<label for="ftChk">
+								<label for="ftChk" class="label-cb">
 									<input type="checkbox" name="searchFT" value="fullTime" id="ftChk"/>
 									Full Time
 								</label>
-				   		<label for="ptChk">
+				   		<label for="ptChk" class="label-cb">
 							 <input type="checkbox" name="searchPT" value="partTime" id="ptChk"/>
 				    		 Part Time
 						</label>
-						<label for="isChk">
+						<label for="isChk" class="label-cb">
 				    		<input type="checkbox" name="searchIS" value="internship" id="isChk"/>
 				   		 	Internship
 						</label>
@@ -95,7 +107,7 @@
 			  </div><!--ENDOF columnBox-->
 			  
 			  <div class="floatLeftBtn"> 
-				<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement(resultTable)">Search</button>
+				<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement('resultTable')">Search</button>
 				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
 			  </div>	
 			</div><!--END ADVSEARCHFORM-->
@@ -134,26 +146,30 @@
 								<div class="headText">Location</div>
 							</div>
 						</th>
-						<th id="col-Tools">
-							<div id="colBtn" class="columnButton" onclick=""><!--Prepare to click sorting-->
-								<div class="headText">Tools</div>
-							</div>
-						</th>
 					</tr>
 				</thead>
 					<tbody>
 					</tbody>
 				</table><!--ENDOF TABLE-->
 			  </div><!--ENDOF DIV RESULT TABLE-->
-			  		
-		</div><!--ENDOF DIV SEARCH TAB-->			
+			 
+		</div><!--ENDOF DIV SEARCH TAB-->	
+		<div id="adDetailFrame" class="subFrame">
+			 <div id="adDetailTable" class="resultTableDiv noBorder">
+			 	<span id="detailFB"></span>
+			 	<h2 id="adDetailHeading" class="welcome"></h2>
+				<table>
+					<tbody>
+					</tbody>
+				</table>
+			 </div>		
+		</div><!--end of TABDETAILFRAME-->  
 	  </div><!--ENDOF TABFRAME-->
-	</div><!--end of tabs DIV-->  
-	
+ 	 </div><!--ENDOF TABS-->
 	</div><!--ENDOF CONTENT-->
   </div><!--ENDOF MAIN CONTAINER-->
  </div><!--ENDOF DIV MAIN-->
- 
+
 
 </body>
 </html>

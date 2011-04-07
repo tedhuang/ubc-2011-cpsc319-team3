@@ -55,6 +55,7 @@ function postJobAd(mode, formDiv){
 		if(locList.length!=0){
 			var location="";
 			$.each(locList, function(index){ // get location from the list
+				location="";
 				$.each($(this).data(), function(key, value){
 					if(key!="lat" || key!="lng"){
 						if(key=="addr"|| key=="latlng")
@@ -67,11 +68,17 @@ function postJobAd(mode, formDiv){
 //						else if(value!=null){
 //							
 //						}
-					location += $(this).data("city")+","+
-								$(this).data("province")+","+
-								$(this).data("country")+","+
-								$(this).data("zip")+"-";
-				});
+					if(key.match(/city|province|country|zip/gi)){
+						if(typeof value != undefined  && value!= ""){
+							location += value+",";
+						}
+						
+					}
+//					 $(this).data("city")+","+
+//								$(this).data("province")+","+
+//								$(this).data("country")+","+
+//								$(this).data("zip")+"-";
+				}); //eof extracting each location
 			});
 			location=location.substring(0,location.length-1); //remove last "-"
 			request.addParam("loc-field", location);
