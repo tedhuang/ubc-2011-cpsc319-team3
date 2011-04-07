@@ -90,7 +90,9 @@ public class ServletProfile extends HttpServlet{
 		
 
 		String sessionKey = request.getParameter("sessionKey");
+		System.out.println(sessionKey);
 		Session session = accManager.getSessionByKey(sessionKey);
+		System.out.println(session == null);
 		
 		
 		switch(EnumAction.getAct(action)){
@@ -391,6 +393,7 @@ public class ServletProfile extends HttpServlet{
 					"FROM tableProfileSearcher " +
 					"INNER JOIN tableAccount USING (idAccount)" +
 					"LEFT OUTER JOIN tableLocationProfile USING (idAccount) " +
+					"LEFT OUTER JOIN tableSearcherEmpPref USING (idAccount) " +
 					"WHERE idAccount="+profileSearcherId;
 			
 			System.out.println("getProfileSearcherById query:"+query);
@@ -453,7 +456,6 @@ public class ServletProfile extends HttpServlet{
 		}/**end of try block**/
 		
 		catch (SQLException e) {
-			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		
@@ -1014,7 +1016,7 @@ public class ServletProfile extends HttpServlet{
 			String paraName = (String) paramNames.nextElement();
 			
 			//If request parameter name is "action", this will cause colName to be null. Hence, do and write nothing.
-			if( paraName.equals("action")){
+			if( paraName.equals("action") || paraName.equals("sessionKey")){
 				//do and write nothing
 			}
 			//Else if parameter name is something else i.e.) a request parameter name of an html input: "name", etc.
@@ -1058,7 +1060,7 @@ public class ServletProfile extends HttpServlet{
    	    		queryBuf.append(column+ "=" + value + andKeyword);
     		}
     		else if(column.equals("startingDate")){
-    			long dateInLong = Utility.dateStringToLong(value);
+    			long dateInLong = Utility.dateConvertor(value);
     			queryBuf.append(column+ ">=" + dateInLong +andKeyword);
     		}
     		else if(column.equals("location")){

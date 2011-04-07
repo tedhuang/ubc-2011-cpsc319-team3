@@ -129,7 +129,7 @@ function validateForm(evt){
 	// case: starting date changed
 	else if( $(this).attr('id') == "startingDate" ){
 		var strStartingDate = $("#startingDate").val();
-		var strDatePattern = /^\d{4}\/\d{2}\/\d{2}$/;
+		var strDatePattern = /^\d{2}\/\d{2}\/\d{4}$/;
 		if( strStartingDate && strStartingDate != "" ) {
 			if(strDatePattern.test(strStartingDate) == false)
 				$("#startingDateError").text("Invalid date format.");

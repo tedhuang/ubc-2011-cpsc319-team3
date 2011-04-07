@@ -147,24 +147,6 @@ public class Utility {
 	      }
 	}
 	
-	/****
-	 * Converts a date string into a long.
-	 * @param dateString Date string with format yyyy/MM/dd
-	 * @return A long integer representing the date.
-	 */
-	public static long dateStringToLong(String dateString){
-		DateFormat df = new SimpleDateFormat("yyyy/MM/dd"); 
-		long dateLong = -1;
-		try { 
-			Date date = df.parse(dateString);
-			dateLong = date.getTime();
-		} 
-		catch (ParseException e) { 
-			logError("Failure while converting date string to long: " + e.getMessage()); 
-		} 
-		return dateLong;
-	}
-	
 	/***
 	 * Converts a long to a formatted date string.
 	 * @param time Time represented as a long.
@@ -242,7 +224,7 @@ public class Utility {
         return formatter.format(calendar.getTime());
 	}
 //////////////////////////////////////////////////////////////////////////////////
-	public static long dateConvertor(String date){
+	public static long dateConvertor(String dateString){
 	  boolean badFormat=true;
 	  boolean badTime =true;
 	  long dateInMs=0;
@@ -252,12 +234,12 @@ public class Utility {
 	  Calendar maxCal=Calendar.getInstance();
 	  maxCal.add(Calendar.MONTH, 3);
 	  
-	  if(date!=null){
+	  if(dateString!=null){
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
-		StringTokenizer st=new StringTokenizer(date, "/");
+		StringTokenizer st=new StringTokenizer(dateString, "/");
 		if(st.countTokens()==3){//we know the delimiters format is right
 			try { 
-				Date aDate = df.parse(date);
+				Date aDate = df.parse(dateString);
 				badFormat=false;
 				dateInMs = aDate.getTime();
 				if(dateInMs > minCal.getTimeInMillis()|| dateInMs<maxCal.getTimeInMillis() ){
