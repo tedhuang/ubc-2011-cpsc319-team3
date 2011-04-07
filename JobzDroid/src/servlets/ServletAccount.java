@@ -84,6 +84,8 @@ public class ServletAccount extends HttpServlet {
 		
 		String sessionKey = request.getParameter("sessionKey");
 		Session session = accManager.getSessionByKey(sessionKey);
+
+		boolean sessionCheck = true;
 		
 		switch( EnumAction.valueOf(action) ){
 			// account registration
@@ -96,7 +98,11 @@ public class ServletAccount extends HttpServlet {
 				break;
 			// request for a primary email change
 			case requestEmailChange:
-				if(session.checkPrivilege( response, "searcher", "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				if(sessionCheck = session.checkPrivilege( "searcher", "poster") )
 					requestEmailChangeHandler(request, response, session);
 				break;
 			//request for a secondary email change
@@ -126,9 +132,19 @@ public class ServletAccount extends HttpServlet {
 				logoutReqTaker(request, response);
 				break;
 			case requestPasswordChange:
-				if(session.checkPrivilege( response, "searcher", "poster", "admin", "superAdmin") )
-						requestChangePasswordHandler(request,response, session);
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				if (sessionCheck = session.checkPrivilege( "searcher", "poster", "admin", "superAdmin") ) 
+					requestChangePasswordHandler(request,response, session);
+
+						
 				break;
+		}
+		
+		if( sessionCheck == false && session != null  ) {
+			response.sendRedirect("../error.html");
 		}
 		
 	}

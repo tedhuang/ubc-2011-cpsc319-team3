@@ -45,41 +45,36 @@ public class Session {
 	}
 	
 	
-	public boolean checkPrivilege( HttpServletResponse response, String authorizedUserType0 ) throws IOException {
+	public boolean checkPrivilege( String authorizedUserType0 ) throws IOException {
 		if( this == null ) {
-			response.sendRedirect("sessionExpired.html");
+			return false;
 		}
 		else if( this != null
 				|| accountType.equalsIgnoreCase(authorizedUserType0) ) {
 			return true;
 		}
-		else {
-			response.sendRedirect("error.html");
-		}
 		
 		return false;
 	}
 	
-	public boolean checkPrivilege( HttpServletResponse response, String authorizedUserType0, String authorizedUserType1 ) throws IOException {
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1 ) throws IOException {
 		if( this == null ) {
-			response.sendRedirect("sessionExpired.html");
+			return false;
 		}
 		else if( this != null
 				|| accountType.equalsIgnoreCase(authorizedUserType0) 
 				|| accountType.equalsIgnoreCase(authorizedUserType1) ) {
 			return true;
 		}
-		else {
-			response.sendRedirect("error.html");
-		}
+
 		
 		return false;
 	}
 	
-	public boolean checkPrivilege( HttpServletResponse response, String authorizedUserType0, String authorizedUserType1,
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1,
 									String authorizedUserType2 ) throws IOException {
 		if( this == null ) {
-			response.sendRedirect("sessionExpired.html");
+			return false;
 		}
 		else if( this != null
 				|| accountType.equalsIgnoreCase(authorizedUserType0) 
@@ -87,17 +82,15 @@ public class Session {
 				|| accountType.equalsIgnoreCase(authorizedUserType2) ) {
 			return true;
 		}
-		else {
-			response.sendRedirect("error.html");
-		}
+
 		
 		return false;
 	}
 	
-	public boolean checkPrivilege( HttpServletResponse response, String authorizedUserType0, String authorizedUserType1, 
+	public boolean checkPrivilege( String authorizedUserType0, String authorizedUserType1, 
 									String authorizedUserType2,	String authorizedUserType3 ) throws IOException {
 		if( this == null ) {
-			response.sendRedirect("sessionExpired.html");
+			return false;
 		}
 		else if( this != null
 				|| accountType.equals(authorizedUserType0) 
@@ -106,10 +99,7 @@ public class Session {
 				|| accountType.equalsIgnoreCase(authorizedUserType3) ) {
 			return true;
 		}
-		else {
-			response.sendRedirect("error.html");
-		}
-		
+
 		return false;
 	}
 	

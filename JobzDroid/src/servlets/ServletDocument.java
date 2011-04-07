@@ -72,6 +72,8 @@ public class ServletDocument extends HttpServlet {
 			
 			String sessionKey = request.getParameter("sessionKey");
 			Session session = accManager.getSessionByKey(sessionKey);
+
+			boolean sessionCheck = true;
 			
 			// throw error if action is invalid
 			try{
@@ -84,10 +86,19 @@ public class ServletDocument extends HttpServlet {
 			switch( EnumAction.valueOf(action) ){
 				// account registration
 				case deleteDocument:
-					if(session.checkPrivilege( response, "searcher", "poster" ) )
+					if( session == null ) {
+						response.sendRedirect("../sessionExpired.html");
+						return;
+					}
+					else if( sessionCheck = session.checkPrivilege( "searcher", "poster" ) )
 						deleteDocument(request, response, session);
 					break;
 			}
+			
+			if ( sessionCheck == false  ) {
+				response.sendRedirect("../error.html");
+			}
+			
 		}
 
 	}
@@ -163,7 +174,12 @@ public class ServletDocument extends HttpServlet {
 		        
 		        Session session = accManager.getSessionByKey( sessionKey );
 		        
-		        if( session.checkPrivilege(response, "searcher") == false ) {
+		        if (session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+		        	return;
+		        }
+		        else if( session.checkPrivilege( "searcher") == false ) {
+					response.sendRedirect("../error.html");
 		        	return;
 		        }
 		        
