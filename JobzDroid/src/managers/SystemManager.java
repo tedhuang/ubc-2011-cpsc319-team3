@@ -18,7 +18,7 @@ public class SystemManager {
 	 */
 	public static String    serverBaseURL                           = "http://localhost:8080/JobzDroid/";
 	
-	public static long 		sessionRenewPeriodAfterExpiry 			= 30 * 60 * 1000;				// default 15 mins
+	public static long 		sessionRenewPeriodAfterExpiry 			= 30 * 60 * 1000;				// default 30 mins
 	public static long 		expiryTimeSession 						= 1 * 60 * 60 * 1000; 			// default 1 hour
 	public static long 		expiryTimeEmailVerification 			= 60 * 60 * 1000;				// default 60 minutes
 	public static long 		expiryTimeForgetPasswordReset 			= 60 * 60 * 1000;  				// default 60 minutes
@@ -218,7 +218,7 @@ public class SystemManager {
 		long currentTime = Utility.getCurrentTime();
 		try {
 			stmt = conn.createStatement();
-			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime + SystemManager.sessionRenewPeriodAfterExpiry) + "';";
+			query = "DELETE FROM tableSession WHERE expiryTime<'" + (currentTime - SystemManager.sessionRenewPeriodAfterExpiry) + "';";
 			stmt.executeUpdate(query);
 		}
 		catch (SQLException e) {
