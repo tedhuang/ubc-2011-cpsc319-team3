@@ -338,9 +338,9 @@ public static String GFConvertor(int numForm){
 			case 1:
 				return "Yes";
 			case 0:
-				return "No";
+				return "N/A";
 			default:
-				return "Not Specified";
+				return "N/A";
 		}
 	}	
 public static String[] locationParser(String location){

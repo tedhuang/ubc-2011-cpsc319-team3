@@ -58,6 +58,15 @@
     	else
     		alert("Error, invalid filter status");
     }
+
+    function submitChanges(){
+   		var check = confirm("Are you sure you want to submit the changes");
+		if( check == true){
+	    	alert("Making Changes, the browser may be non-responsive");
+	    	adminBatchChangeJobAd();
+	    	adminGetJobAd('allJobAdtable', 'first');
+		}
+    }
     
 </script>
 	
@@ -78,8 +87,7 @@
 		response.sendRedirect("../index.html");	
 	}
 	else{
-		// get all Job Advertisements
-		//ArrayList<JobAdvertisement> JobAd = dbManager.getSearcherPosterAccounts();
+
 	%>	
 	<!--Start tabs-->
 	
@@ -238,12 +246,13 @@
 					<tbody></tbody>
 				</table><!--ENDOF TABLE-->
 				<div id="buttonDiv" align="center">
-					<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 20</button>
-			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 20</button>	
+					<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 10</button>
+			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 10</button>	
 			  		<!-- <button type="button" id='nextButton' onclick="">Approve All</button> -->
-			  		<button type="button" id='nextButton' onclick='adminBatchChangeJobAd()'>Submit All Changes</button>	
+			  		<button type="button" id='nextButton' onclick='submitChanges()'>Submit All Changes</button>	
 			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'first')">Reset</button>	
 		  		</div>
+		  		<br>
 			</div>
 				
 				

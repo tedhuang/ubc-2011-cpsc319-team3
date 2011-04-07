@@ -116,8 +116,6 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 **************************************************************************************************/
 function buildAdminJobAdTb(targetXMLTag, outputDiv){
 	
-	//TODO: finish implementing
-	
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
@@ -209,8 +207,6 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		 
 		    
 		});//END OF FOR EACH FUNCTION
-		
-		
 		
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
