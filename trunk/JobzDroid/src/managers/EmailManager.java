@@ -27,7 +27,7 @@ public class EmailManager {
 		String emailTitle = "JobzDroid Account Activation";
 		String emailBody = "Greetings, " + name + "!\n\nThank you for registering on JobzDroid!\n" +
 							"Please click on the link below to activate your account:\n" +
-							SystemManager.serverBaseURL + "/Account?action=activate&id=" + uuid +
+							SystemManager.serverBaseURL + "Account?action=activate&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
@@ -43,7 +43,7 @@ public class EmailManager {
 		String emailTitle = "JobzDroid Primary Email Change Confirmation";
 		String emailBody = "Greetings,\n\n" +
 							"Please click on the link below to confirm your primary email change:\n" +
-							SystemManager.serverBaseURL + "/Account?action=verifyEmailChange&id=" + uuid +
+							SystemManager.serverBaseURL + "Account?action=verifyEmailChange&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
@@ -58,7 +58,7 @@ public class EmailManager {
 		String emailTitle = "JobzDroid Password Reset Request";
 		String emailBody = "Greetings,\n\n" +
 							"Please click on the link below to reset your password:\n" +
-							SystemManager.serverBaseURL + "/Account?action=emailLinkForgetPassword&id=" + uuid +
+							SystemManager.serverBaseURL + "Account?action=emailLinkForgetPassword&id=" + uuid +
 							"\n\nRegards,\nJobzDroid Development Team\n(Please do not reply to this message.)";
 		sendEmail(address, emailTitle, emailBody);
 	}
