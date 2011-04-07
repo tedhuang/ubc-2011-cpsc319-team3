@@ -1200,7 +1200,7 @@ public class ServletProfile extends HttpServlet{
 				ResultSet rs = stmt.executeQuery(selQuery);
 				while(rs.next()){
 					//CDATA
-					responseMsg.append("Hello, " + rs.getString("name") + DBQ.BR + ".");
+					responseMsg.append("Hello, " + rs.getString("name") + DBQ.BR);
 				}
 				File[]userFile =ServletDocument.getUserFiles(acctId);
 				responseMsg.append("You have posted " + userFile.length + " resume files.");

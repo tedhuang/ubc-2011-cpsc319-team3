@@ -264,7 +264,7 @@ function profileSummary(outputDiv){
                 	 console.log("Status error");
                 	 console.log("Server down...");
                 }
-			} 
+			} 	
 			catch (e){
 			}
 	    }
