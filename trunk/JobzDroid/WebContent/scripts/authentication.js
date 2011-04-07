@@ -79,8 +79,8 @@ function adminLoginRequest()
 		    // get sessionKey
 		  	
 		    var sessionKey = null;
-		    if (xmlhttp.responseXML.getElementsByTagName("sessionKey") != null) {
-		    	sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+		    if (xmlHttpReq.responseXML.getElementsByTagName("sessionKey") != null) {
+		    	sessionKey = (xmlHttpReq.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
 		    }
 			
 		    if( sessionKey != "null" ) { 

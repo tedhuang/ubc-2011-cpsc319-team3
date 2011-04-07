@@ -6,6 +6,7 @@
 	<link href="../css/mainStyle.css" rel="stylesheet" type="text/css" />
 	<link href="../css/GoogleMapsTest.css" rel="stylesheet" type="text/css" />
 	<link href="../css/lightboxCenter.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="../css/jq-ui/jquery.ui.all.css"/>
 	
 	<script type="text/javascript" src='http://code.jquery.com/jquery-latest.min.js'></script>	
 	<script type="text/javascript" src="../scripts/smartLightbox.js"></script>
@@ -13,7 +14,14 @@
 	<script type="text/javascript" src='../scripts/UserRegistration.js'></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"> </script> 
 	<script type="text/javascript" src='../scripts/GoogleMaps.js'></script>
+	<script type="text/javascript" src="../scripts/jq-ui/jquery.ui.datepicker.js"></script>
+	<script type="text/javascript" src="../scripts/jq-ui/jquery.ui.core.js"></script>
 	
+	<script type="text/javascript">
+	$("document").ready(function(){
+		$( "#startingDate" ,"#regpage").datepicker({minDate: "0", maxDate: "+3M"	});
+	});
+	</script>
 </head>
 <body>
 
@@ -168,7 +176,7 @@
 			            Available after <br/> (mm/dd/yyyy):
 			    </td> 
 			    <td>
-			        <input type="text" id="startingDate" class="textinput" maxlength="50" tabindex="14"/><br/>
+			        <input type="text" id="startingDate" class="textinput" maxlength="50" tabindex="14" READONLY/><br/>
 			        <span id="startingDateError" class="errorTag"></span>
 			    </td>
 			</tr>
