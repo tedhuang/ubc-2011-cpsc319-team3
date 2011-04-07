@@ -73,7 +73,7 @@
 	<title>Manage Job Ad</title>
 </head>
 <body>
-	<div id="feedback">Debug: Feedback Area</div>
+	<div id="feedback"></div>
 
 	<%	// check session key
 	AccountManager accManager = new AccountManager();

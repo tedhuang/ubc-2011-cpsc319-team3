@@ -484,10 +484,12 @@ public class ServletAccount extends HttpServlet {
 				if( currSession.getAccountType().equals("poster")) {
 					action = "./poster/";
 				}
-				if( currSession.getAccountType().equals("searcher")) {
+				else if( currSession.getAccountType().equals("searcher")) {
 					action = "./searcher/";
 				}
-				
+				else if( currSession.getAccountType().equals("admin") || currSession.getAccountType().equals("superAdmin")) {
+					action = "./admin/manageJobAd.jsp";
+				}
 				message = "User logged in";
 				
 				StringBuffer XMLResponse = new StringBuffer();
