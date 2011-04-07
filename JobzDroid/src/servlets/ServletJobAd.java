@@ -49,6 +49,7 @@ public class ServletJobAd extends HttpServlet {
 		updateOpenAd,
 		
 		searchJobAdvertisement,
+		quickSearchJobAd,
 		getJobAdByOwner,
 		getJobAdById,
 		deleteJobAd,
@@ -122,6 +123,9 @@ public class ServletJobAd extends HttpServlet {
 			case searchJobAdvertisement:
 				searchJobAd(request, response);
 				break;
+//			case quickSearchJobAd:
+//				quickSearchJobAd(request, response);
+//				break;
 			case getJobAdByOwner:
 				if(session.checkPrivilege( response, "poster" ) )
 					getJobAdByOwner(request, response);
@@ -544,7 +548,7 @@ public class ServletJobAd extends HttpServlet {
 	/*****************************************************************************************************************
  * 					searchJobAd Function
  * 
- * FOR QUICK SEARCH AND ADVANCED SEARCH 
+ * FOR ADVANCED SEARCH 
  * 
  *****************************************************************************************************************/
 	private void searchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -761,8 +765,7 @@ public class ServletJobAd extends HttpServlet {
        
 		return query;
 	}
-
-
+	
 /****************************************************************************************************************
  * 
  * @param request	
@@ -2057,6 +2060,114 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 
 }//ENDOF SERVLETJobAD
 
+
+/*=====================================================================================================================================
+ * 		"MAYBE" FUNCTION--QUICK SEARCH
+ *======================================================================================================================================/
+//private void quickSearchJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException{
+//ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
+//ArrayList<Location> adLocationList = new ArrayList<Location>();
+//ArrayList <String> queryCond = new ArrayList<String>();
+//String locCond="idJobAd=";
+//String locCol[]={"idJobAd","addr0", "latlng0","addr1", "latlng1","addr2", "latlng2"};
+//String[]ColToGet={"idJobAd", "title", "datePosted", "contactInfo","educationRequired", "jobAvailability", "location"};
+//
+//Connection conn = dbManager.getConnection();	
+//Statement stmt = null;
+//Map<String, String> paraColMap = DbDict.getDict(action);
+//
+//for(String )
+//try {		
+//	stmt = conn.createStatement();
+//	
+//		
+//	String query = DBQ.buildSelQuery(new String[]{"tableJobAd"}, colToGet, );
+//	
+//	//DEBUG
+//	System.out.println(query);
+//	
+//	stmt.execute(query);
+//	ResultSet result = stmt.getResultSet();
+//	ResultSetMetaData rsmd = null;
+//	
+//	//Compile the result into the arraylist
+//	while( result.next() ) {
+//		JobAdvertisement temp = new JobAdvertisement();
+//		rsmd = result.getMetaData();
+//		int numColumns = rsmd.getColumnCount();
+//		for(int i=1; i<=numColumns; i++){
+//			String colName = rsmd.getColumnName(i);
+//				 temp.valueMap.put(jobAdDBDict.get(colName), result.getObject(colName));
+//		}
+//		jobAdList.add( temp ); //add to the temporary list
+//		temp.jobAdId = result.getInt("idJobAd");
+//		locQueryCond.add(locCond+result.getInt("idJobAd")+DBQ.OR); //prepare the jobId to locInfo 
+//		
+//	}
+//	if(result.first()){ // if we have hits
+//		StringBuffer[]qBuf=DBQ.buidlSelQuery(new String[]{"tableLocationJobAd"}, locCol, locQueryCond);
+//		query=qBuf[0].append(qBuf[1].delete(qBuf[1].length()-DBQ.OR.length(), qBuf[1].length())).toString();//get rid of last "OR"
+//		
+//		result=conn.createStatement().executeQuery(query);
+//		Map<String, String>locationMap;
+//		while(result.next()){ //if we have locations
+//			rsmd = result.getMetaData();
+//			int numColumns = rsmd.getColumnCount();
+//			locationMap=new HashMap<String, String>();
+//			for(int i=1; i<=numColumns; i++){
+//				String colName = rsmd.getColumnName(i);
+//				if(result.getString(colName)!=null){ //not getting the null values
+//					locationMap.put(colName, result.getString(colName));
+//				}
+//			}
+//			Location temp = new Location(result.getInt("idJobAd"), locationMap);
+//			adLocationList.add(temp);
+//		}
+//		
+//		for(JobAdvertisement job_ad : jobAdList){
+//			for (Location location : adLocationList){
+//				if (job_ad.jobAdId==location.masterJobId){
+//					job_ad.adLocation=location;
+////						return;
+//				}
+//			}
+//		}
+//	}//eof query location base on non-null result
+//	System.out.println("Search Query Successfully Finished");
+//	
+//} catch (SQLException e1) {
+//e1.printStackTrace();
+//}
+//
+//// close DB objects
+//finally {
+//	try{
+//		if (stmt != null)
+//			stmt.close();
+//	}
+//	catch (Exception e) {
+//		Utility.logError("Cannot close Statement : " + e.getMessage());
+//	}
+//	try {
+//		if (conn  != null)
+//			conn.close();
+//	}
+//	catch (SQLException e) {
+//		Utility.logError("Cannot close Connection : " + e.getMessage());
+//	}
+//}
+//
+//StringBuffer XMLResponse = new StringBuffer();	
+//XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//XMLResponse.append("<response>\n");
+//Iterator<JobAdvertisement> itr = jobAdList.iterator();
+//while (itr.hasNext()) {//iterate through all list and append to xml
+//	XMLResponse.append(itr.next().xmlParser() ); 
+//}
+//XMLResponse.append("</response>\n");
+//response.setContentType("application/xml");
+//response.getWriter().println(XMLResponse);
+//}
 
 
 

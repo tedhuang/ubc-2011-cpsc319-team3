@@ -50,13 +50,13 @@ function buildDetailTable(targetXMLTag, outputDiv, xmlResponse){
 		var locations=jobAd.find("location");
 		if(locations.length){ //if there is some location
 			var locObjArray = [];
-			$.each(locations, function(idx){
+			$.each(locations, function(){
 				var locObj={addr:null, latlng:null};
-				locObj.addr=$(this).attr("addr"+idx);
-				locObj.latlng=$(this).attr("latlng"+idx);
+				locObj.addr=$(this).attr("addr");
+				locObj.latlng=$(this).attr("latlng");
 				locObjArray.push(locObj);
 			});
-			$.fn.smartMap.displayMap(locTd, locObjArray);
+			$.fn.smartMap.adDetailMapDisplay(locTd, locObjArray);
 		}
 		else{
 			locTd.text("Location not specified.");

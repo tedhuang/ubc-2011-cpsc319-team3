@@ -58,7 +58,7 @@ function buildDetailTable(targetXMLTag, outputDiv){
 			locObj.latlng=$(this).attr("latlng"+idx);
 			locObjArray.push(locObj);
 		});
-		$.fn.smartMap.displayMap(locTd, locObjArray);
+		$.fn.smartMap.adDetailMapDisplay(locTd, locObjArray);
 		}
 		else{
 		locTd.text("Location not specified.");
