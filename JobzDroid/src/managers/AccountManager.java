@@ -488,7 +488,7 @@ public class AccountManager {
 			if(accountType.equals("searcher")){
 				// update profile table
 				if(startingDate != null){
-					startingDateLong = Utility.dateStringToLong(startingDate);
+					startingDateLong = Utility.dateConvertor(startingDate);
 					if(startingDateLong == -1)
 						return false;
 				}

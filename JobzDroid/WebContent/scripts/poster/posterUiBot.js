@@ -317,10 +317,17 @@ function buildSearcherFileTb(targetXMLTag, outputDiv){
 		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
 		  var deleteAnchor =  "<a title='Delete' onclick='deleteSearcherFile(\"" + filename +"\")'" +
 		  		" class='linkImg' style='float:right'><img src='../images/icon/delete_icon.png'/></a>";
+		  
 		  var filenameCell = $('<td></td>');
+		  filenameCell.css("text-align","center");
 		  filenameAnchor.appendTo(filenameCell);
 		  filenameCell.appendTo(tr);
-		  $('<td></td>').text(file.attr("size")).appendTo(tr);
+		  
+		  var filesizeCell = $('<td></td>');
+		  filesizeCell.text(file.attr("size"));
+		  filesizeCell.css("text-align","center");
+		  filesizeCell.appendTo(tr);
+		  
 		  tr.append(deleteAnchor);
 		  
 		  tr.appendTo(tbody);		  
@@ -346,9 +353,14 @@ function buildSearcherFileViewingTb(targetXMLTag, outputDiv){
 		  var tr = $('<tr></tr>');
 		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
 		  var filenameCell = $('<td></td>');
+		  filenameCell.css("text-align","center");
 		  filenameAnchor.appendTo(filenameCell);
 		  filenameCell.appendTo(tr);
-		  $('<td></td>').text(file.attr("size")).appendTo(tr);
+		  
+		  var filesizeCell = $('<td></td>');
+		  filesizeCell.text(file.attr("size"));
+		  filesizeCell.css("text-align","center");
+		  filesizeCell.appendTo(tr);
 		  
 		  tr.appendTo(tbody);		  
 		});

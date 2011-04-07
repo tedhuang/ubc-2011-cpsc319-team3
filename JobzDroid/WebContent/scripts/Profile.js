@@ -208,8 +208,11 @@ function getProfileBySessionKey(outputDiv, heading){
  *******************************************************************************************************************/
 function searchSearcherProfile(outputDiv){
 	
+	var strSessionKey = $("#sessionKey").val();
+	
 	request = new Request;
 	request.addAction("searchSearcherProfile");
+	request.addSessionKey(strSessionKey);
 	
 	var searchFields = $(":input", "#advSearchForm").serializeArray();
 	var emptyCounts=0;
@@ -299,9 +302,12 @@ function viewAllSearchers(outputDiv){
  * 
  ************************************************************************************************************/
 function getProfileSearcherById(mode, id, profileDiv, fileDiv)
-{
+{	
+	var strSessionKey = $("#sessionKey").val();
+
 	request = new Request;
 	request.addAction("getProfileSearcherById");
+	request.addSessionKey(strSessionKey);
 	request.addParam("accountId", id);
 	var fb = $(".feedback", "#"+profileDiv);
 	//change the text while sending the request
