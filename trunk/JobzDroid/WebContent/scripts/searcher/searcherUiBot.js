@@ -468,9 +468,9 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 				"<tr id='newEmailRow' 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /><span id='emailError'></td></tr>" +
 				"<tr id='oldSecEmailRow'><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
 				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
-				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
-				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew'   /><span id='pwError'></td></tr>" +
-				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat'/></td></tr>";
+				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld' type='password'/></td></tr>" +
+				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew' type='password'/><span id='pwError'></td></tr>" +
+				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat type='password''/></td></tr>";
 
 		var profileText =
 			"<tr id='nameRow'><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name' style='DISPLAY: none;'/><span id='nameError'></td></tr>" +
@@ -512,9 +512,6 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).find('tr').find('td:last').addClass("dataCol");
 		 $("#detailFB").hide();
 		 
-		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
-		 
-		$("#emailNew").val(profile.attr("email")); 
 		$("#secondaryEmail").val(profile.attr("secondaryEmail"));
 
 		$("#name").val(profile.attr("name"));
