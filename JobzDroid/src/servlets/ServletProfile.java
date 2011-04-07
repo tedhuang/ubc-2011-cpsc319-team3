@@ -305,8 +305,7 @@ public class ServletProfile extends HttpServlet{
 			}
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
+			Utility.logError("SQL exception : " + e.getMessage());
 	
 		}
 		
@@ -317,16 +316,14 @@ public class ServletProfile extends HttpServlet{
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 		}//earlyExit:
@@ -466,16 +463,14 @@ public class ServletProfile extends HttpServlet{
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }/**end of finally block**/
 
@@ -650,9 +645,7 @@ public class ServletProfile extends HttpServlet{
 			
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
-	
+			Utility.logError("SQL exception : " + e.getMessage());	
 		}
 		// close DB objects
 	    finally {
@@ -661,16 +654,14 @@ public class ServletProfile extends HttpServlet{
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 	    
@@ -850,8 +841,7 @@ public class ServletProfile extends HttpServlet{
 
 		}//END OF TRY
 		catch (SQLException e) {
-			//TODO log SQL exception
-			System.out.println("SQL exception : " + e.getMessage());
+			Utility.logError("SQL exception : " + e.getMessage());
 	
 		}
 		
@@ -862,16 +852,14 @@ public class ServletProfile extends HttpServlet{
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 		
@@ -956,16 +944,14 @@ public class ServletProfile extends HttpServlet{
 					stmt.close();
 			}
 			catch (Exception e) {
-				//TODO log "Cannot close Statement"
-				System.out.println("Cannot close Statement : " + e.getMessage());
+				Utility.logError("Cannot close Statement : " + e.getMessage());
 			}
 			try {
 				if (conn  != null)
 					conn.close();
 			}
 			catch (SQLException e) {
-				//TODO log Cannot close Connection
-				System.out.println("Cannot close Connection : " + e.getMessage());
+				Utility.logError("Cannot close Connection : " + e.getMessage());
 			}
 		}/**end of finally block**/
 		
@@ -1150,16 +1136,14 @@ public class ServletProfile extends HttpServlet{
 					stmt.close();
 			}
 			catch (Exception e) {
-				//TODO log "Cannot close Statement"
-				System.out.println("Cannot close Statement : " + e.getMessage());
+				Utility.logError("Cannot close Statement : " + e.getMessage());
 			}
 			try {
 				if (conn  != null)
 					conn.close();
 			}
 			catch (SQLException e) {
-				//TODO log Cannot close Connection
-				System.out.println("Cannot close Connection : " + e.getMessage());
+				Utility.logError("Cannot close Connection : " + e.getMessage());
 			}
 		}/**end of finally block**/
 		
@@ -1216,17 +1200,16 @@ public class ServletProfile extends HttpServlet{
 				ResultSet rs = stmt.executeQuery(selQuery);
 				while(rs.next()){
 					//CDATA
-					responseMsg.append("Hello, " + rs.getString("name") + DBQ.BR);
+					responseMsg.append("Hello, " + rs.getString("name") + DBQ.BR + ".");
 				}
 				File[]userFile =ServletDocument.getUserFiles(acctId);
-				responseMsg.append("You have post " + userFile.length + " Resume Files");
+				responseMsg.append("You have posted " + userFile.length + " resume files.");
 			}
 			else{
 				System.out.println("Account Doesnot exist or session key expires");
 			}
 		}
 		catch (SQLException e) {
-			//TODO log SQL exception
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects
@@ -1236,16 +1219,14 @@ public class ServletProfile extends HttpServlet{
 	                stmt.close();
 	        }
 	        catch (Exception e) {
-	        	//TODO log "Cannot close Statement"
-	        	System.out.println("Cannot close Statement : " + e.getMessage());
+	        	Utility.logError("Cannot close Statement : " + e.getMessage());
 	        }
 	        try {
 	            if (conn  != null)
 	                conn.close();
 	        }
 	        catch (SQLException e) {
-	        	//TODO log Cannot close Connection
-	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        	Utility.logError("Cannot close Connection : " + e.getMessage());
 	        }
 	    }
 	
@@ -1351,16 +1332,14 @@ public class ServletProfile extends HttpServlet{
 		            	stmt2.close();
 		        }
 		        catch (Exception e) {
-		        	//TODO log "Cannot close Prepared Statement"
-		        	System.out.println("Cannot close Prepared Statement : " + e.getMessage());
+		        	Utility.logError("Cannot close Prepared Statement : " + e.getMessage());
 		        }
 		        try {
 		            if (conn  != null)
 		                conn.close();
 		        }
 		        catch (SQLException e) {
-		        	//TODO log Cannot close Connection
-		        	System.out.println("Cannot close Connection : " + e.getMessage());
+		        	Utility.logError("Cannot close Connection : " + e.getMessage());
 		        }
 		    }/**end of finally block**/
 			
@@ -1430,16 +1409,14 @@ public class ServletProfile extends HttpServlet{
 						stmt.close();
 				}
 				catch (Exception e) {
-					//TODO log "Cannot close Statement"
-					System.out.println("Cannot close Statement : " + e.getMessage());
+					Utility.logError("Cannot close Statement : " + e.getMessage());
 				}
 				try {
 					if (conn  != null)
 						conn.close();
 				}
 				catch (SQLException e) {
-					//TODO log Cannot close Connection
-					System.out.println("Cannot close Connection : " + e.getMessage());
+					Utility.logError("Cannot close Connection : " + e.getMessage());
 				}
 			}
 			
@@ -1503,188 +1480,17 @@ public class ServletProfile extends HttpServlet{
 						stmt.close();
 				}
 				catch (Exception e) {
-					//TODO log "Cannot close Statement"
-					System.out.println("Cannot close Statement : " + e.getMessage());
+					Utility.logError("Cannot close Statement : " + e.getMessage());
 				}
 				try {
 					if (conn  != null)
 						conn.close();
 				}
 				catch (SQLException e) {
-					//TODO log Cannot close Connection
-					System.out.println("Cannot close Connection : " + e.getMessage());
+					Utility.logError("Cannot close Connection : " + e.getMessage());
 				}
 			}
 			
 			
 		}
 }
-
-
-/**
- * 
- * DEPRECATED
- * 
- */
-
-//private void createProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-//	System.out.println("Checkpoint: Inside createProfile");
-//	
-//	//Account Type: Poster = 1, Searcher = 2
-//	int accountType = Integer.parseInt(request.getParameter("accountType")); 	
-//	int accountID = Integer.parseInt(request.getParameter("accountID"));
-//	
-//	String name;
-//	String phone;
-//	String selfDescription;
-//	String empPref;
-//	long preferredStartDate;
-//	int educationLevel;
-//	
-//	//Initialize Return statments
-//	boolean isSuccessful = false;
-//	String message = "Failure to create new profile";
-//	
-//	Connection conn = dbManager.getConnection();	
-//	Statement stmt = null;
-//	
-//	try{
-//	//Create Job Poster Profile
-//		if(accountType == 1){
-//			System.out.println("Creating Job Poster Profile");
-//			stmt = conn.createStatement();
-//			
-//			name = request.getParameter("posterName");
-//			phone = request.getParameter("posterPhone");
-//			selfDescription = request.getParameter("posterDescription");
-//
-//			//Check format
-//			name = Utility.checkInputFormat( name );
-//			phone = Utility.checkInputFormat( phone );
-//			selfDescription = Utility.checkInputFormat( selfDescription );
-//			
-//		//Add new entry with specified paramters into database
-//			String query = 
-//				"INSERT INTO tableProfilePoster(idAccount, name, phone, selfDescription) " + 
-//				"VALUES ('"
-//					+ accountID + "','"
-//					+ name + "','"
-//					+ phone + "','"
-//					+ selfDescription + 
-//				"')";
-//			
-//			System.out.println("New PosterProfile Query:" + query);
-//			int rowsInserted = stmt.executeUpdate(query);
-//			
-//			if (rowsInserted == 1){
-//				System.out.println("New Profile Creation success (DB)");
-//			}
-//			else{
-//				System.out.println("Error: row not inserted");
-//				stmt.close();
-//			}
-//			
-//			//Check if profile is created successfully
-//			query = "SELECT idAccount FROM tableProfilePoster WHERE " + " idAccount='" + accountID + "'"; 
-//			ResultSet result = stmt.executeQuery(query);
-//			if( result.first() ){
-//				System.out.println("Profile Created in DB");
-//				isSuccessful = true;
-//				message = "Create new profile success";
-//			}
-//			else{
-//				System.out.println("Error: result.first() is false ");
-//			}
-//		}
-//		
-//	//Create Job Searcher Profile
-//		else{
-//			System.out.println("Creating Job Searcher Profile");
-//			
-//			name = request.getParameter("searcherName");
-//			phone = request.getParameter("searcherPhone");
-//			selfDescription = request.getParameter("searcherDescripton");
-//			empPref = request.getParameter("empPref");
-//			educationLevel = Integer.parseInt(request.getParameter("educationLevel"));
-//			preferredStartDate = Long.parseLong(request.getParameter("startingDate"));
-//
-//			stmt = conn.createStatement();
-//			
-//			//Check format
-//			name = Utility.checkInputFormat( name );
-//			phone = Utility.checkInputFormat( phone );
-//			selfDescription = Utility.checkInputFormat( selfDescription );
-//
-//			//TODO: include address
-//			String query = 
-//				"INSERT INTO tableProfileSearcher(idAccount, name, phone, selfDescription, educationLevel, startingDate) " + 
-//				"VALUES ('"
-//					+ accountID + "','"
-//					+ name + "','"
-//					+ phone + "','"
-//					+ selfDescription + 
-//					+ educationLevel + "','"
-//					+ preferredStartDate + 
-//				"')";
-//
-//			// if successful, 1 row should be inserted
-//			System.out.println("New SearcherProfile Query:" + query);
-//			int rowsInserted = stmt.executeUpdate(query);
-//			
-//			if (rowsInserted == 1){
-//				System.out.println("New Profile Creation success (DB)");
-//			}
-//			else{
-//				stmt.close();
-//			}
-//			
-//			//Check if profile is created successfully
-//			query = "SELECT name FROM tableProfileSearcher WHERE " + " idAccount='" + accountID + "'"; 
-//			ResultSet result = stmt.executeQuery(query);
-//			if( result.first() ){
-//				System.out.println("Profile Created in DB");
-//				isSuccessful =  true;
-//				message = "Create new profile success";
-//			}
-//			else{
-//				System.out.println("Error: result.first() is false ");
-//			}
-//		}
-//	}
-//	catch (SQLException e) {
-//		//TODO log SQL exception
-//		System.out.println("SQL exception : " + e.getMessage());
-//
-//	}
-//	// close DB objects
-//    finally {
-//        try{
-//            if (stmt != null)
-//                stmt.close();
-//        }
-//        catch (Exception e) {
-//        	//TODO log "Cannot close Statement"
-//        	System.out.println("Cannot close Statement : " + e.getMessage());
-//        }
-//        try {
-//            if (conn  != null)
-//                conn.close();
-//        }
-//        catch (SQLException e) {
-//        	//TODO log Cannot close Connection
-//        	System.out.println("Cannot close Connection : " + e.getMessage());
-//        }
-//    }
-//    
-//    System.out.println("Checkpoint: End of create profile - Message: " + message);
-//    
-//	StringBuffer XMLResponse = new StringBuffer();	
-//	XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-//	XMLResponse.append("<response>\n");
-//	XMLResponse.append("\t<result>" + isSuccessful + "</result>\n");
-//	XMLResponse.append("\t<message>" + message + "</message>\n");
-//	XMLResponse.append("</response>\n");
-//	response.setContentType("application/xml");
-//	response.getWriter().println(XMLResponse);
-// 
-//}

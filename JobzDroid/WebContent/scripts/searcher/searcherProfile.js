@@ -262,7 +262,7 @@ function profileSummary(outputDiv){
 				  }
                 else{ 
                 	 console.log("Status error");
-                	 console.log("server down...");
+                	 console.log("Server down...");
                 }
 			} 
 			catch (e){
