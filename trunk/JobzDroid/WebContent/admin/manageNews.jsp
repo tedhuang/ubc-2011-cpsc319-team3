@@ -40,9 +40,10 @@
 		        <img src="../images/logo-small.png"/>
 			</a>
 			<ul id="topnav" class="topnav">
-			    <li><a href="../news.jsp" target="_blank" class="btn">News</a></li>
-			    <li><a href="../rss.html" target="_blank" class="btn">RSS</a></li>
-			    <li><a href="../guest/viewJobAdHome.jsp" target="_blank" class="btn">View Job Ads</a></li>
+			    <li><a href="../guest/viewJobAdHome.jsp" class="btn" target="_blank">Browse Job Ads</a></li>
+			    <li><a href="../news.jsp" class="btn" target="_blank">News</a></li>
+			    <li><a href="../rss.html" class="btn" target="_blank">RSS</a></li>
+			    <li><a href="../faq.html" class="btn" target="_blank">FAQ</a></li>
 			</ul>
 		  </div>
 		  <br/>
