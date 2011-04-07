@@ -77,21 +77,6 @@ function postJobAd(mode, formDiv){
 			request.addParam("loc-field", location);
 		}
 		
-		var xhr=createXHR();
-		if(xhr){
-			try{
-				xhr.open("POST","../ServletJobAd" ,true);
-				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-				xhr.onreadystatechange = processResult;
-				xhr.send(request.toString());
-				$.fn.smartLightBox.openDivlb(formDiv,'load',"Publishing...");
-			}catch(e){
-				
-			}
-		}
-		
-		console.log(request.toString());
-		
 		function processResult(){
 			if (xhr.readyState == 4) {
 				try {
@@ -114,6 +99,21 @@ function postJobAd(mode, formDiv){
 		    }
 //			  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
 		}//eof processResult
+		
+		var xhr=createXHR();
+		if(xhr){
+			try{
+				xhr.open("POST","../ServletJobAd" ,true);
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				xhr.onreadystatechange = processResult;
+				xhr.send(request.toString());
+				$.fn.smartLightBox.openDivlb(formDiv,'load',"Publishing...");
+			}catch(e){
+				
+			}
+		}
+		
+		console.log(request.toString());
 		
 	}//IF MANDATORIES FILLED
 }
@@ -262,20 +262,6 @@ function getJobAdById(mode, id, outputDiv)
 	//change the text while sending the request
 	fb.html("<h2>Sending getJobAdById Request</h2>");
 	
-	var xhr=createXHR();
-	if(xhr){
-		try{
-			xhr.open("POST","../ServletJobAd" ,true);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.onreadystatechange = processResult;
-			xhr.send(request.toString());
-		}catch(e){
-			
-		}
-	}
-	
-	console.log(request.toString());
-	
 	function processResult(){
 		if (xhr.readyState == 4) {
 			try {
@@ -298,6 +284,21 @@ function getJobAdById(mode, id, outputDiv)
 	    }
 //		  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
 	}//eof processResult
+	
+	var xhr=createXHR();
+	if(xhr){
+		try{
+			xhr.open("POST","../ServletJobAd" ,true);
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.onreadystatechange = processResult;
+			xhr.send(request.toString());
+		}catch(e){
+			
+		}
+	}
+	
+	console.log(request.toString());
+	
 }
 
 
@@ -322,7 +323,6 @@ function getJobAdByOwner(outputDiv){
 	  }catch(e){
 	  }
 	}
-	
 	
 	function processResponse(){
 	  if (xmlhttp.readyState==4){ 
