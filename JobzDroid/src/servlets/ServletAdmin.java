@@ -201,7 +201,7 @@ public class ServletAdmin extends HttpServlet {
 	private void adminGetJobAd(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println("ServletJobAd: Inside getAllJobAd");
 
-		int numToGet = 20;
+		int numToGet = 15;
 		int index = Integer.parseInt(request.getParameter("startingIndex"));
 		String filter = request.getParameter("filter");
 		

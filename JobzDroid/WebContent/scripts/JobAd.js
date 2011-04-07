@@ -225,7 +225,7 @@ function adminBatchChangeJobAd(){
 	if(xmlObj.length==0){//if no results
 	  	$("#lbImg", $("#home-frame")).removeClass("load").addClass("alert");
 		$("#lbMsg",$("#home-frame")).html("Denying Not Successful, please try again");
-		$.fn.smartLightBox.closeLightBox(2000, "home-frame");
+		//$.fn.smartLightBox.closeLightBox(2000, "home-frame");
 	}
 	else{
 		xmlObj.each( function() {
@@ -252,9 +252,9 @@ function adminBatchChangeJobAd(){
 			  }
 		});//END OF FOR EACH LOOP
 	}
-	adminGetJobAd("allJobAdtable", "first");
-	//$.fn.smartLightBox.closeLightBox(2000, "home-frame");
-	
+    //$.fn.smartLightBox.closeLightBox(2000, "home-frame");
+
+	//adminGetJobAd("allJobAdtable", "first");	
 }
 
 
@@ -453,9 +453,9 @@ function adminGetJobAd(outputDiv, mode){
 	if(mode == "first")
 		index = 0;
 	else if(mode == "next")
-		index = parseInt(index)+20; //update index
+		index = parseInt(index)+15; //update index
 	else if(mode == "prev")
-		index = parseInt(index)-20;	  
+		index = parseInt(index)-15;	  
 	
 	request = new Request;
 	request.addAction("adminGetJobAd");
@@ -477,15 +477,15 @@ function adminGetJobAd(outputDiv, mode){
 			  
 				var xmlObj = $("jobAd",xmlhttp.responseXML);
 
-				if(xmlObj.length < 20 && index >= 20){//if this is the last page of results
+				if(xmlObj.length < 15 && index >= 15){//if this is the last page of results
 					$("#prevButton").attr("disabled", false);
 					$("#nextButton").attr("disabled", true);
 				}
-				else if(xmlObj.length < 20 && index < 20){ // if result size < 20 on first page
+				else if(xmlObj.length < 15 && index < 15){ // if result size < 15 on first page
 					$("#prevButton").attr("disabled", true);
 					$("#nextButton").attr("disabled", true);
 				}
-				else if(index < 20){ // if first page
+				else if(index < 15){ // if first page
 					$("#prevButton").attr("disabled", true);
 					$("#nextButton").attr("disabled", false);
 				}
@@ -493,7 +493,7 @@ function adminGetJobAd(outputDiv, mode){
 					$("#prevButton").attr("disabled", false);
 					$("#nextButton").attr("disabled", false);
 				}
-			  $("#browseIndex").val(index ); //increase index by 20
+			  $("#browseIndex").val(index ); //increase index by 15
 		    }
 		};	  
 	//send the parameters to the servlet with POST
