@@ -241,9 +241,7 @@
 //         			var tool= $('<button></button>').addClass('guestView');
          			
          			tRow.hover(function() {
-         		        $(this).addClass("hover");
-         		    }, function(){
-         		    	$(this).removeClass("hover");
+         		        $(this).toggleClass("hover");
          		    })
          			.unbind('click')
          			.click( function(){

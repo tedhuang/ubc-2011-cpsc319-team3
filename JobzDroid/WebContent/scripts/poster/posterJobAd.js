@@ -349,31 +349,32 @@ function delJobAd(tbRow, jobAdId){
 	request.addParam("sessionKey", strSessionKey);
 	request.addParam("jobAdId", jobAdId);
 	
-//	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+	  try{
+		xmlhttp.open("POST","../ServletJobAd" ,true);
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = processResponse;
+		xmlhttp.send(request.toString());
+	  }catch(e){
 	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
+	}
 	
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  $("#lbImg", "#lightBox").removeClass("load").addClass("good");
-		  $("#lbMsg","#lightBox").html("Your Ad Was Deleted!");
-		  $.fn.smartLightBox.closeLightBox(1500);
-		  tbRow.remove();
+	function processResponse(){
+	  if (xmlhttp.readyState==4){ 
+	    try {
+		  if(xmlhttp.status==200){
+			  $("#lbImg", "#lightBox").removeClass("load").addClass("good");
+			  $("#lbMsg","#lightBox").html("Your Ad Was Deleted!");
+			  $.fn.smartLightBox.closeLightBox(1500);
+			  tbRow.remove();
 	    }
-	  else if ( xmlhttp.status!=200){
-			  console.log("delete was unsuccessful");
-		  }
-		  //TODO Lightbox error
-	  };	  
+		else{
+			 console.log("delete was unsuccessful");
+		}
+	   }catch(e){
+		   //error-handling
+	   }
+	 }//eof readystate==4
+	}
 }

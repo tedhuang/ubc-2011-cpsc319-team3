@@ -87,6 +87,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv, xmlresponse){
 		});
 	}
 	else{
+		var allMenus=$('<div></div>').addClass('menuHolder').appendTo(domObjById("home-frame"));
 		xmlObj.each(function() {//for All returned xml obj
 		$("#"+outputDiv, "#headBar").show();
 		  var jobAd = $(this);
@@ -99,7 +100,9 @@ function buildOwnerAdTb(targetXMLTag, outputDiv, xmlresponse){
 		  $('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
 		  $('<td></td>').addClass('td-status').text(jobAd.attr("status")).appendTo(tr);
 		  
-		  $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
+//		  $.fn.DynaSmartTab.floatingTool(tr, jobAd.attr("jobAdId"));
+		  
+		  $.fn.DynaSmartTab.posterAdTool(tr,allMenus, jobAd.attr("jobAdId"));
 		  tr.appendTo(tbody);
 		  
 		});
@@ -317,7 +320,6 @@ function buildSearcherFileTb(targetXMLTag, outputDiv){
 		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
 		  var deleteAnchor =  "<a title='Delete' onclick='deleteSearcherFile(\"" + filename +"\")'" +
 		  		" class='linkImg' style='float:right'><img src='../images/icon/delete_icon.png'/></a>";
-		  
 		  var filenameCell = $('<td></td>');
 		  filenameCell.css("text-align","center");
 		  filenameAnchor.appendTo(filenameCell);
