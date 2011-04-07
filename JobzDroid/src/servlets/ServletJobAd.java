@@ -18,6 +18,7 @@ import classes.Utility;
 
 import managers.AccountManager;
 import managers.DBManager;
+import managers.SystemManager;
 
 /**
  * Servlet implementation class ServletJobAdvertisement
@@ -970,9 +971,12 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	if(action.equals("saveJobAdDraft")){//status is draft
 		stm2.insert(stm2.length()-2, "'draft'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
 	  }
-	else if(action.equals("createJobAdvertisement")){//TODO CHCK SYSTEM SETTING IF NEEDS APPROVAL
+	else if(action.equals("createJobAdvertisement")){
 		//status is pending
-		stm2.insert(stm2.length()-2, "'pending'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
+		if(SystemManager.enableJobAdApproval)
+			stm2.insert(stm2.length()-2, "'pending'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
+		else
+			stm2.insert(stm2.length()-2, "'open'" + qcmd.COMA);
 	}
 	
 	for(Map.Entry<String, Object> entry : paraMap.entrySet()){
