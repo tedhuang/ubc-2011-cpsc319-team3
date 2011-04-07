@@ -91,6 +91,8 @@ public class ServletJobAd extends HttpServlet {
 		
 		String sessionKey = request.getParameter("sessionKey");
 		Session session = accManager.getSessionByKey(sessionKey);
+
+		boolean sessionCheck = true;
 		
 		//Check which function the request is calling from the servlet
 		switch( EnumAction.valueOf(action) ){
@@ -101,27 +103,47 @@ public class ServletJobAd extends HttpServlet {
 				break;
 			
 			case saveJobAdDraft:
-				if(session.checkPrivilege( response, "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") )
 					createJobAd(request, response);
 				break;
 				
 			case updateOpenAd:
-				if(session.checkPrivilege( response, "poster" ) )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster" ) )
 					updateJobAd(request, response);
 				break;
 				
 			case updateDraftAd:
-				if(session.checkPrivilege( response, "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") )
 					updateJobAd(request, response);
 				break;
 
 			case deleteJobAd:
-				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
 					deleteJobAd(request, response);
 				break;
 			
 			case changeJobAdStatus:
-				if(session.checkPrivilege(response, "poster") ){
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") ){
 					changeJobAdStatus(request,response);
 				break;
 				
@@ -136,7 +158,11 @@ public class ServletJobAd extends HttpServlet {
 //				quickSearchJobAd(request, response);
 //				break;
 			case getJobAdByOwner:
-				if(session.checkPrivilege( response, "poster" ) )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if(session.checkPrivilege( "poster" ) )
 					getJobAdByOwner(request, response);
 				break;
 				
@@ -148,17 +174,31 @@ public class ServletJobAd extends HttpServlet {
 				getSomeJobAd(request, response);
 				break;	
 			case getSuggestions:
-				getSuggestions(request, response);
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
+					getSuggestions(request, response);
 				break;				
 		/*****************FAVOURITE AD ACTIONS***********************/		
 				
 			case saveFavouriteJobAd:
-				if(session.checkPrivilege( response, "searcher") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher") )
 					saveFavouriteJobAd(request, response, session);
 				break;
 				
 			case listFavouriteJobAd:
-				listFavouriteJobAd(request, response);
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
+					listFavouriteJobAd(request, response);
 				break;
 				
 			case deleteFavouriteJobAd:
@@ -170,6 +210,10 @@ public class ServletJobAd extends HttpServlet {
 				System.out.println("Error: failed to process request - action not found");
 				break;
 				
+		}
+		
+		if ( sessionCheck == false && session != null ) {
+			response.sendRedirect("../error.html");
 		}
 		
 	}

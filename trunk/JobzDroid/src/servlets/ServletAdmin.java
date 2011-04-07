@@ -97,6 +97,8 @@ public class ServletAdmin extends HttpServlet {
 
 		String sessionKey = request.getParameter("sessionKey");
 		Session session = accManager.getSessionByKey(sessionKey);
+
+		boolean sessionCheck = true;
 		
 		
 		switch( EnumAction.valueOf(action) ){
@@ -107,50 +109,99 @@ public class ServletAdmin extends HttpServlet {
 				adminGetJobAd(request, response);
 				break;
 			case adminApprove:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					adminApprove(request, response);
 				break;
 			case adminDeny:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					adminDeny(request, response);
 				break;
 			case adminDeleteJobAd:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					adminDeleteJobAd(request, response);
 				break;
 			case ban:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					banHandler(request, response);
 				break;
 			case unban:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					unbanHandler(request, response);
 				break;
 			case createAdmin:
-				if(session.checkPrivilege( response, "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "superAdmin") )
 					createAdminHandler(request, response);
 				break;
 			case deleteAccount:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					deleteAccountHandler(request, response, session );
 				break;
 			case postNews:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					postNewsHandler(request, response);
 				break;
 			case deleteNews:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					deleteNewsHandler(request, response);
 				break;
 			case postRSSEntry:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					postRSSEntryHandler(request, response);
 				break;
 			case removeRSSEntry:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					removeRSSEntryHandler(request, response);
 				break;
 		}
+		
+		if ( sessionCheck == false && session != null ) {
+			response.sendRedirect("error.html");
+		}
+		
 	}
 	
 	private void adminLoginReqTaker(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

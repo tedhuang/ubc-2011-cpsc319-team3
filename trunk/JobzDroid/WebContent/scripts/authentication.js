@@ -31,7 +31,11 @@ function userLoginRequest(){
 		    {
 			    $("#submitButton").removeAttr("disabled");
 			    //Gets sessionKey and prints it to div
-				var sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+				
+			    var sessionKey = null;
+			    if (xmlhttp.responseXML.getElementsByTagName("sessionKey") != null) {
+			    	sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+			    }
 				//var userID = (xmlhttp.responseXML.getElementsByTagName("userID")[0]).childNodes[0].nodeValue;
 				
 			    if( sessionKey != "null" ){ 	
@@ -73,7 +77,12 @@ function adminLoginRequest()
 	    {
 		  	$("#submitButton").removeAttr("disabled");
 		    // get sessionKey
-			var sessionKey = (xmlHttpReq.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;			
+		  	
+		    var sessionKey = null;
+		    if (xmlhttp.responseXML.getElementsByTagName("sessionKey") != null) {
+		    	sessionKey = (xmlhttp.responseXML.getElementsByTagName("sessionKey")[0]).childNodes[0].nodeValue;
+		    }
+			
 		    if( sessionKey != "null" ) { 
 		    	var action = (xmlHttpReq.responseXML.getElementsByTagName("action")[0]).childNodes[0].nodeValue;
 		    	document.sid.action = action;
@@ -163,21 +172,45 @@ function loadSessionKeyFromURL()
 	var result='';
 	for(var i = start;i<=end;i++) {
 		var c = location.search.charAt(i);
-//		next line replaces '+' with ' '
-//		result = result + (c=='+'?' ':c);
 		result = result + (c);
 	}
 	$("#sessionKey").val(result);
-	//TODO wipe the sessionKey from address
+	
+	//stripParam();
+//	var paramStart	= location.search.indexOf("?") - 2;
+//	var newURL = location.search.substring(0, paramStart);
+//	
+//	location.search = newURL;
+	
 }
+
+function stripParam()
+{
+	var url = self.location.href;
+	var RE = new RegExp('(\\?)(.*)(.$)');
+	
+	self.location.href = url.replace(RE, '');
+}
+
+//function addLangDir(lang)
+//{
+//	var url = self.location.href;
+//	var RE = new RegExp('(\.com/)');
+//	return url.replace(RE, '$1' + lang + '/');
+//}
+
 
 /*****************************************************************************************************
  * 					Load the URL and Pass the session key via form
  ****************************************************************************************************/
 function loadPageWithSession( pageURL )
-{		
+{	
 	var sessionKey = document.getElementById("sessionKey").value;
-    if( sessionKey != "null" ) {
+    if( sessionKey == "null" ) {
+    	document.sid.action = "error.html";
+    	document.sid.submit();
+    }
+	if( sessionKey != "null" ) {
     	document.sid.action = pageURL;
     	document.sid.submit();
     }

@@ -90,62 +90,104 @@ public class ServletProfile extends HttpServlet{
 		
 
 		String sessionKey = request.getParameter("sessionKey");
-		System.out.println(sessionKey);
 		Session session = accManager.getSessionByKey(sessionKey);
-		System.out.println(session == null);
+
+		boolean sessionCheck = true;
 		
 		
 		switch(EnumAction.getAct(action)){
 		
 			case getProfileById:
-				if(session.checkPrivilege( response, "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
 					getProfileById(request,response);
 				break;
 				
 			case getProfileSearcherById:
-				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
 					getProfileSearcherById(request,response);
 				break;
 				
 			case editProfile:
-				if(session.checkPrivilege( response, "searcher", "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher", "poster") )
 					editProfile(request,response, session);
 				break;
 				
 			case getProfileBySessionKey:
-				if(session.checkPrivilege( response, "searcher", "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher", "poster") )
 					getProfileBySessionKey(request, response, session);
 				break;
 							
 			case searchSearcherProfile:
-				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
 					searchSearcherProfile(request, response);
 				break;
 				
 			case viewAllSearchers:
-				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
 					viewAllSearchers(request, response);
 				break;
 			case smrSearcherProfile:
-				if(session.checkPrivilege( response, "searcher" ) )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
 					searcherProfileSummary(request, response, session);
 				break;
 				
 			case saveCandidate:
-				if(session.checkPrivilege( response, "poster") )
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") )
 					saveCandidate( request, response, session );
 				
 			case deleteCandidate:
-				if(session.checkPrivilege( response, "poster") )
-					//TODO add session checking
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") )
 					deleteCandidate( request, response );
 
 			case listCandidate:
-				if(session.checkPrivilege( response, "poster") )
-					//TODO add session checking
+				if( session == null ) {
+					response.sendRedirect("../sessionExpired.html");
+					return;
+				}
+				else if( sessionCheck = session.checkPrivilege( "poster") )
 					listCandidate( request, response );
 		}//ENDOF SWITCH
-	
+
+		if ( sessionCheck == false && session != null ) {
+			response.sendRedirect("../error.html");
+		}
+		
 	}//ENDOF processReq Func
 	
 	
