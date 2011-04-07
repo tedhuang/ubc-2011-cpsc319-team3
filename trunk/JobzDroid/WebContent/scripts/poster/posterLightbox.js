@@ -201,6 +201,10 @@
      		 return btnBox;
      	}
      	
+     	$.fn.smartLightBox.infoToggle=function(rmImgCls,addImgCls, infoText ){
+     		$("#lbImg", "#lightBox").removeClass(rmImgCls).addClass(addImgCls);
+			$("#lbMsg","#lightBox").html(infoText);
+     	};
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF smartLightBox

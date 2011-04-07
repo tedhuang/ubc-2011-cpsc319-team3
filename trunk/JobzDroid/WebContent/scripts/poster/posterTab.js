@@ -297,6 +297,133 @@
      * - Publicly Accessible
      *
      * ********************************************************************************************************************/ 
+                
+                $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
+                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
+                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
+                	var subMenu=({
+                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
+                				});
+                	var homeFrame = domObjById("home-frame");
+                	var parentOffset=homeFrame.offset(); // calculate the offset for menu use
+                	
+                	$('<td></td>').addClass("adMenu").html('<span class="act-link">Action</span>').prependTo(tr);//action td
+                	//making the menu
+                	var menuDiv =$('<div></div>').addClass('trPopMenu').appendTo(menuHolder);
+                	$.each(topMenuItem, function(name, cls){
+                		var topMenu=$('<div></div>').addClass("top-li").appendTo(menuDiv);
+                		$('<span></span>').addClass(cls).html(name).appendTo(topMenu);
+                	});
+                	menuDiv.append('<div class="sptr-li"></div>');//add a seperator
+                	// install subMenu
+                	$.each(subMenu, function(){
+                		var topMenu=$('<div></div>').addClass('top-li').appendTo(menuDiv);
+            			var subMenuLi=$('<div></div>').addClass('sub-li').appendTo(topMenu);
+                		
+                		$.each(this, function(name, cls){
+                			if(cls=="top-li"){
+                				$('<span></span>').html(name).appendTo(topMenu);
+                			}
+                			else if(cls=="sub-li"){
+                				$('<span></span>').addClass(name.toLowerCase()).html(name).appendTo(subMenuLi);
+                			}
+                    		
+                		});
+                	});
+                	$(".sub-li", homeFrame).css("margin-left", menuDiv.width());//set the submenu display pos
+                	
+					$(".top-li, .sub-li span").hover(function () {
+							$(this).css({backgroundColor : '#57E964' , cursor : 'pointer'});
+						if ( $(this).children().size() >0 )
+								$(this).find('.sub-li').show();	
+								$(this).css({cursor : 'pointer'});
+						}, 
+						function () {
+							$(this).css('background-color' , '#fff' );
+							$(this).find('.sub-li').hide();
+						});
+                	
+                	tr
+                	.attr("title", "Right Click To use more Actions")
+                	.delegate("span.act-link", "click", function(e){ 
+                		togglePopMenu.call(menuDiv, tr,menuHolder, e.pageX-parentOffset.left, e.pageY-parentOffset.top);
+                	})//delegate ad actions
+                	.bind('contextmenu',function(e){
+                		togglePopMenu.call(menuDiv, tr,menuHolder, e.pageX-parentOffset.left, e.pageY-parentOffset.top);
+                		return false; // no browser default context menu
+                	})
+                	.hover(function() {
+         		        $(this).toggleClass("tr-hover");
+         		    });
+                	
+                	menuDiv
+                	.delegate("span.view", "click", function(){ //delegate ad actions
+			    	 openTab('adDetailTab'); 
+			    	 open_adDetail(adId, status);
+			    	 getJobAdById("detail",adId, "adDetailTable");
+			    	 togglePopMenu.call(menuDiv, tr, menuHolder,"", ""); //hide the menu
+                	})
+			       .delegate("span.edit", "click", function(){
+			    	 openTab('edAdTab');
+         				if(!$("#edAdForm").length){
+         					open_edAd_form(status);
+         					getJobAdById("edit",adId, "edAdForm" );
+         				}
+         				else{
+         					var theForm = domObjById("edAdForm");
+         		        	var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray(); 
+         		        		if(compareChange("oldAdValues", inputFields, "edAdFrame").numChanged){
+
+         							$.fn.smartLightBox.diaBox("you have unsaved data, take a look?", "alert", "closeConfirm");
+         							$("#btnBox").delegate('a.ret', "click", function(){
+         								$.fn.smartLightBox.closeLightBox(0);
+         			 		   		});
+         			 		   		
+         							$("#btnBox").delegate('a.close', "click", function(){
+         								$.fn.smartLightBox.closeLightBox(0);
+         								getJobAdById("edit",adId, "edAdForm" );
+         			 		   		});
+         		     		   	 }
+         		        		else{
+         		        			open_edAd_form(status);
+         		        			getJobAdById("edit",adId, "edAdForm" );
+         		        		}
+	         	        	}
+         				togglePopMenu.call(menuDiv, tr,menuHolder,"", ""); //hide the menu
+    				     }) //eof dalegate edit
+    				      .delegate("span.del", "click", function(){
+    				    	  $.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
+    	     					$('a.yes', "#btnBox").click(function(){
+    	     						$("#btnBox", "#lightBox").hide();
+    	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+    	     						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
+    	     						delJobAd(tr, adId);
+    	     					});
+    	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
+    				      })//eof delegate delete
+    				     ;
+                };
+                
+                function togglePopMenu(tr,allMenus,xPos, yPos){
+                	var popMenu =$(this);
+                	if(popMenu.hasClass('opened')){
+                		popMenu.toggleClass('opened').hide();
+                	}
+                	else{
+                		$('<div></div>').addClass('fullOverlay').appendTo('body').bind("click contextmenu", function(){
+                			$(this).remove();
+                			popMenu.toggleClass('opened').hide();
+                			return false;
+                		}); // setup a overlay so that we can close the menu if user clicks somewhere else
+                		popMenu.css({ left: xPos, top: yPos, zIndex: '300' }).toggleClass('opened').show();
+                	}
+                	 
+                	popMenu.siblings('.opened').toggleClass('opened').hide();
+                	tr.toggleClass('tr-hover');
+                	return false;
+                }
+                
+                
                 $.fn.DynaSmartTab.floatingTool=function(tRow, adId){
          			
          			var tool= $('<span></span>').addClass('edTool');

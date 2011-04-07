@@ -121,11 +121,13 @@ div.fullBox{width:100%;}
 .tableClear{border	: none;	display	: none;}
 .noBorder{	border: none;}
 .fullTab{width:99%; height:100%;}
+.tbWithmenu{margin-left:5px; width:80%; height:100%;}
 .displayTable{	border: 2px solid #004000;}
 .resultTableDiv table{font-size: 14px; width:100%; margin-bottom: 1em;	border-spacing: 0;}
 
 .resultTableDiv thead {cursor: default;overflow: hidden;height: 31px;padding: 0px 0px 0px 0px;}
 .resultTableDiv th{ border-right: 1px solid white; background-color:#4E8975;  line-height: 25px; padding:0; cursor:pointer;text-align: center;}
+.resultTableDiv th.noStyle{background:none; cursor:default; border-bottom:1px solid grey;}
 .resultTableDiv tbody {	color: #000;}
 .resultTableDiv td {border-right: 1px solid white;height: 23px;	overflow: hidden; /*word-wrap: break-word;*/ text-align: left;}
 .resultTableDiv td.verticalTh{border-bottom: 1px solid grey; max-height: 30px; width:200px; word-wrap: break-word; background-color: #4E8975;
@@ -135,14 +137,17 @@ div.fullBox{width:100%;}
 .resultTableDiv td.nameCol{	min-width: 100px; padding: 1em;	font-weight: bold;}
 .resultTableDiv td.td-data{	max-width: 92px;}
 .resultTableDiv td.td-eduReq{max-width: 92px;}
-.resultTableDiv td.td-title{min-width:200px;max-width:350px;word-wrap: break-word;}
+.resultTableDiv td.td-title{min-width:200px;max-width:350px;word-wrap: break-word;cursor:pointer;}
 .resultTableDiv td.td-loc{max-width:300px;word-wrap: break-word;}
+.resultTableDiv td.adMenu{width:2em;}
 .resultTableDiv td.clean {	padding: 0 5px;}
 .resultTableDiv td.hide{display: none;}
 .resultTableDiv td span{margin: 0;}
+.resultTableDiv td span.act-link{font: bold italic small-caps 0.7em/1em verdana, Ariel, sans-serif;}
 .resultTableDiv td span:hover{	cursor: pointer;}
 .resultTableDiv tr.oddRow td{	background-color: #DFF6CD;}
 .resultTableDiv tr.hover td {background-color: #2ED40D;cursor:pointer;}
+.resultTableDiv tr.tr-hover td{background-color: #C3FDB8;}
 .resultTableDiv tr.change td {background-color: #FBB917;cursor:pointer;}
 .headText {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
 .headTextJSGeneral {padding-left: 4.1em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden;}
@@ -175,3 +180,4 @@ ul#edAdTool, ul#ownerDtlViewTool{list-style: none; float:left;list-style-image: 
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
 /***********************************************************************************/
 .rmFavJob{ background-image: url('../images/icon/delete_icon.png');  background-position:left; width: 19px; height:19px; }
+.fullOverlay{left:0; top:0; position:absolute; width:100%; height:100%;}

@@ -51,13 +51,12 @@
 		</a>
 		<ul id="topnav" class="clearfix">
 		    <li><strong id="displayEmail">Welcome: </strong></li><!--TODO ADD Appending Email method-->
-<!-- 	    <li>
+		    <li>
 		    	<a class="jsBtn">
 		    		<img class="link-icon" src="../images/icon/acct-icon.png" alt=""/>
 		    		My Profile
 				</a>
 			</li>
- -->
 		    <li>
 		    	<a class="jsBtn" onclick="userLogoutRequest()">
 		    		<img class="link-icon" style="margin: -8px 0 0 0;" src="../images/icon/exit.png" alt=""/>
@@ -147,10 +146,11 @@
 					<li><a class="jsBtn cInact" onclick="filterTable('inactive', 'ownerAdTable')">Inactive<span id="numInactive"></span></a></li>
 	          	</ul>
 	          </div>
-	          	<div id="ownerAdTable" class="resultTableDiv">
+	          	<div id="ownerAdTable" class="resultTableDiv fullTab">
 	          	<table class="sortable" id="sortableMyAds">
 				<thead>
 				<tr>
+					<th class="unsortable noStyle"></th>
 					<th id="col-viewDate">
 						<div class="columnButton" onclick=""><!--Prepare to click sorting-->
 							<div class="headText">Date</div>

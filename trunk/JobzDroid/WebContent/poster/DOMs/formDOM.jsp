@@ -319,7 +319,20 @@
 			</table><!--ENDOF TABLE-->
 		</div><!--ENDOF File TABLE--> 
 	</div><!--end of js-DETAILFRAME--> 
-	
+<div style="clear: both; height:2em; border-bottom: 6px ridge #79BAEC; margin: 30px 0 30px 0;"></div>
+  <div id="popMenu">	
+	<div class="trPopMenu">
+		<div class="top-li"><span class="view">View</span></div>
+		<div class="top-li"><span class="edit">Edit</span></div>
+		<div class="top-li"><span class="del">Delete</span></div>
+		<div class="sptr-li"></div>
+		<div class="top-li"><span>Change Status</span>
+			<div class="sub-li"><span class="cs_draft">Draft</span></div>
+			<div class="sub-li"><span class="cs_inact">Inactive</span></div>
+		</div>
+	 </div>	
+	</div>
+
 </div><!-- ENDOF MAIN -->		  
 </body>
 </html>
