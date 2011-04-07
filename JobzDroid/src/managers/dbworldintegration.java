@@ -389,7 +389,7 @@ public class dbworldintegration {
 				("INSERT INTO tableJobAd(title, description, contactInfo, expiryDate, dateStarting, datePosted, status, isApproved) "
 						+ "VALUES " + "('" + jobAdvertisementTitle  + "','" 
 						+ jobDescription + "','" + jobContactInfo + "','" 
-						+ millisStartDate + "','" + millisExpiryDate + "','" + millisSentDate + "','" + status + "','" + 1 + "')"); 
+						+ millisExpiryDate + "','" + millisStartDate + "','" + millisSentDate + "','" + status + "','" + 1 + "')"); 
 		
 			System.out.println("New Job Ad query: " + query);
 
