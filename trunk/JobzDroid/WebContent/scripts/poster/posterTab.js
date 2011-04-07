@@ -390,7 +390,7 @@
        	 			$(this).hasClass("active")? $(this).attr("title", "Close Map"): $(this).attr("title","Add Locations");
        	 			return false;
          		});
-         	});
+         	});//eof load form callBack
         }
         
         function open_edAd_form(status){
@@ -399,6 +399,14 @@
         		$( "#startTime-field","#edAdFrame" ).datepicker({ maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
         		bindHeadToolBar("edAdTool", "edAdForm",status);
+        		$("#mapPanel", "#edAdFrame").smartMap({});
+         		$(".btn-map").click(function(){
+       			 $("#mapPanel").slideToggle("slow");
+       	 			$.fn.smartMap.resize();
+       	 			$(this).toggleClass("active");
+       	 			$(this).hasClass("active")? $(this).attr("title", "Close Map"): $(this).attr("title","Add Locations");
+       	 			return false;
+         		});
         	});
         }
         
