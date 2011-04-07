@@ -406,6 +406,7 @@
                 
                 function togglePopMenu(tr,allMenus,xPos, yPos){
                 	var popMenu =$(this);
+                	$(".fullOverlay").length? $(".fullOverlay").remove():null;
                 	if(popMenu.hasClass('opened')){
                 		popMenu.toggleClass('opened').hide();
                 	}

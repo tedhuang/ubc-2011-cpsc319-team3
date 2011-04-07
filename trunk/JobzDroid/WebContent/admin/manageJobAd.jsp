@@ -20,7 +20,7 @@
 	<script type="text/javascript" src="../scripts/authentication.js"></script>
 	<script type="text/javascript" src="../scripts/Profile.js"></script>
 	<script type="text/javascript" src="../scripts/sideNavMenu.js"></script>
-	<script type="text/javascript" src="../scripts/DynaSmartTab.js"></script>
+	<script type="text/javascript" src="../scripts/admin/adminTab.js"></script>
 	<script type="text/javascript" src='../scripts/JobAd.js'></script>
 	<script type="text/javascript" src='../scripts/uiBot.js'></script>
 	<script type="text/javascript" src='../scripts/SmartMap.js'></script>
@@ -62,9 +62,11 @@
     function submitChanges(){
    		var check = confirm("Are you sure you want to submit the changes");
 		if( check == true){
-	    	alert("Making Changes, the browser may be non-responsive");
+			$.fn.smartLightBox.openDivlb("home-frame",'load','Making the changes..');
 	    	adminBatchChangeJobAd();
-	    	adminGetJobAd('allJobAdtable', 'first');
+	    	//adminGetJobAd('allJobAdtable', 'first');
+	        $.fn.smartLightBox.closeLightBox(5000, "home-frame");
+	    	
 		}
     }
     
@@ -246,11 +248,11 @@
 					<tbody></tbody>
 				</table><!--ENDOF TABLE-->
 				<div id="buttonDiv" align="center">
-					<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 10</button>
-			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 10</button>	
+					<button type="button" id='prevButton' onclick="adminGetJobAd('allJobAdtable', 'prev')">Previous 15</button>
+			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'next')">Next 15</button>	
 			  		<!-- <button type="button" id='nextButton' onclick="">Approve All</button> -->
 			  		<button type="button" id='nextButton' onclick='submitChanges()'>Submit All Changes</button>	
-			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'first')">Reset</button>	
+			  		<button type="button" id='nextButton' onclick="adminGetJobAd('allJobAdtable', 'first')">Reset/Refresh</button>	
 		  		</div>
 		  		<br>
 			</div>
