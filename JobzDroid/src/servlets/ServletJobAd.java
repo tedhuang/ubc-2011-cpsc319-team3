@@ -56,6 +56,7 @@ public class ServletJobAd extends HttpServlet {
 		deleteJobAd,
 		getSomeJobAd,
 		getSuggestions,
+		changeJobAdStatus,
 		
 		saveFavouriteJobAd,
 		listFavouriteJobAd,
@@ -118,6 +119,13 @@ public class ServletJobAd extends HttpServlet {
 				if(session.checkPrivilege( response, "poster", "admin", "superAdmin") )
 					deleteJobAd(request, response);
 				break;
+			
+			case changeJobAdStatus:
+				if(session.checkPrivilege(response, "poster") ){
+					changeJobAdStatus(request,response);
+				break;
+				
+			}
 				
 				
 		/*****************Retrieve AD ACTIONS***********************/		
@@ -375,6 +383,63 @@ public class ServletJobAd extends HttpServlet {
 	    	XMLResponse.append(itr.next().xmlParser() ); 
 	    }
 		
+		XMLResponse.append("</response>\n");
+		response.setContentType("application/xml");
+		response.getWriter().println(XMLResponse);
+		
+	}
+	
+	
+	
+	
+	/*
+	 * Method used by job poster to change the status of job advertisements
+	 */
+	private void changeJobAdStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		String message = "There is a problem getting the detail, please try again.";
+		String jobAdId = request.getParameter("jobAdId");
+		String toStatus = request.getParameter("status");
+		
+		String[]colToGet={"idJobAd", "status"};
+		String[]tables={"tableJobAd"};
+		String[]onCond={"idJobAd="+jobAdId };
+		
+		Connection conn = dbManager.getConnection();	
+		StringBuffer[]qBuf=DBQ.buildJoinQuery(tables, colToGet, "join", onCond);
+		
+		try {
+			
+			String query = qBuf[0].append(qBuf[1]).toString();
+			System.out.println("getJobAdById query:" + query);
+			
+			ResultSet result = conn.createStatement().executeQuery(query);
+			   if(result.first()){
+				   result.updateString("status", toStatus);
+				   result.updateRow();
+				}
+			   else{ //if the job ad doesn't specify  a location
+				}
+		 }//eof try		 
+	    
+		catch (SQLException e) {
+			Utility.logError("SQL exception : " + e.getMessage());
+		}
+		// close DB objects
+	    finally {
+	        try {
+	            if (conn  != null)
+	                conn.close();
+	        }
+	        catch (SQLException e) {
+	        	System.out.println("Cannot close Connection : " + e.getMessage());
+	        }
+	    }
+	    
+		StringBuffer XMLResponse = new StringBuffer();	
+		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		XMLResponse.append("<response>\n");
+		XMLResponse.append("\t<message>" + message + "</message>\n");
 		XMLResponse.append("</response>\n");
 		response.setContentType("application/xml");
 		response.getWriter().println(XMLResponse);

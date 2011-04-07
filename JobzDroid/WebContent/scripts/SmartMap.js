@@ -24,7 +24,7 @@
 			var addrMap={addr:"", city:"",province:"",country:"",zip:""};
 			var displayMap = setting.displayMap;
 			
-			var infoWindow = new google.maps.InfoWindow({});
+			//var infoWindow = new google.maps.InfoWindow({});
 			if(!displayMap){
 				initMap();
 //				initAutoCplt();

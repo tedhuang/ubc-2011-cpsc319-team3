@@ -15,34 +15,39 @@ function changeJobAdStatus(intJobAdId, strNewStatus){
 	request.addParam("jobAdId", intJobAdId);
 	request.addParam("status", strNewStatus);
 	
-	//Response Handling:
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-	    {
-		   var message = xmlhttp.responseXML.getElementById("message");
-		   var result = xmlhttp.responseXML.getElementById("result");
-		   var responseText= result + ": " + message;
-		   document.getElementById("feedback").innerHTML=responseText;
-	    }
-	  };
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
+	$("#feedback").text("Sending Request");
 
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  //AJAX: TODO:remove this job ad row
+				  $("#row-"+intJobAdId).remove();
+		    }
+			else{
+				  console.log("Change Job Ad Status Failed");
+				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+					$("#lbMsg",theForm).html("Action Not Successful, please try again");
+					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}
 	
 	
 }
@@ -65,36 +70,41 @@ function adminDeleteJobAd(intJobAdId){
 	request.addParam("jobAdId", intJobAdId);
 	request.addParam("sessionKey", sessionKey);
 	
-	//Response Handling:
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		  //Successful
-		  
-		  }
-		  else if(xmlhttp.status!=200){
-			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-				$("#lbMsg",theForm).html("Deleting Not Successful, please try again");
-				$.fn.smartLightBox.closeLightBox(1000, formDiv);
-		  }
-	  };
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,false);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
+	$("#feedback").text("Sending Delete Request");
 
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Delete Request</h2>";
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletAdmin" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
+	
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  //AJAX: TODO:remove this job ad row
+				  $("#row-"+intJobAdId).remove();
+		    }
+			else{
+				  console.log("Deny Job Ad not successsful");
+				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+					$("#lbMsg",theForm).html("Deleting Not Successful, please try again");
+					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}  
+	
 }
 
 
@@ -102,11 +112,10 @@ function adminDeleteJobAd(intJobAdId){
  * Admin Function: handles approving job ads
  */
 function adminApprove(intJobAdId){
-	
-	var requestPending = false;
-	
+		
 	var formDiv = 'home-frame';
 	var theForm =$("#"+formDiv);
+	var tbody  = $("tbody", "#allJobAdtable");
 //	$.fn.smartLightBox.openDivlb(formDiv,'load','Loading..');
 	
 	var sessionKey = document.getElementById("sessionKey").value;
@@ -119,50 +128,50 @@ function adminApprove(intJobAdId){
 	request.addAction("adminApprove");
 	request.addParam("jobAdId", intJobAdId);
 	request.addParam("sessionKey", sessionKey);
-
 	
-	//Response Handling:
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
+	$("#feedback").text("Sending Request");
 	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,false);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
-	requestPending = true;
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletAdmin" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
 	
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
-	
-	
-	xmlhttp.onreadystatechange=function()
-	  {	  
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-			  //Successful
-			  requestPending = false;
-			  //Update Cells
-			  $("#td-status-"+intJobAdId).text("open");
-			  $("#td-approval-"+intJobAdId).text("Approved");
-		  }
-		  else if(xmlhttp.status!=200){
-			  requestPending = false;
-			  console.log("Approve Job Ad not successful");		
-			  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-				$("#lbMsg",theForm).html("Approving Not Successful, please try again");
-				$.fn.smartLightBox.closeLightBox(1000, formDiv);
-		  }
-	  };
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  $("#td-status-"+intJobAdId).text("open");
+				  $("#td-approval-"+intJobAdId).text("Approved");
+				  $("input[name='"+intJobAdId+"']")[0].checked = true;
+				  $("#row-"+intJobAdId).removeClass("oddRow change");
+				  $("tr:odd", tbody).addClass("oddRow");
+		    }
+			else{
+				  console.log("Approve Job Ad not successful");		
+				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
+					$("#lbMsg",theForm).html("Approving Not Successful, please try again");
+					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}
 }
 
 
 function adminDeny(intJobAdId){
 
+	var tbody  = $("tbody", "#allJobAdtable");
 	var formDiv = 'home-frame';
 	var theForm =$("#"+formDiv);
 	
@@ -177,43 +186,42 @@ function adminDeny(intJobAdId){
 	request.addParam("jobAdId", intJobAdId);
 	request.addParam("sessionKey", sessionKey);
 	
-	//Response Handling:
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletAdmin" ,false);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send( request.toString() );
-
-	//change the text while sending the request
-	document.getElementById("feedback").innerHTML="<h2>Sending Request</h2>";
 	
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletAdmin" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
 	
-	xmlhttp.onreadystatechange=function()
-	  {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-			  //Successful
-			  			  
-			  //Update Cells
-			  $("#td-status-"+intJobAdId).text("draft");
-			  $("#td-approval-"+intJobAdId).text("Not Approved");
-			  }
-		  
-			  else if(xmlhttp.status!=200){
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  $("#td-status-"+intJobAdId).text("draft");
+				  $("#td-approval-"+intJobAdId).text("Not Approved");
+				  $("input[name='"+intJobAdId+"']")[1].checked = true;
+				  $("#row-"+intJobAdId).removeClass("oddRow change");
+				  $("tr:odd", tbody).addClass("oddRow");
+		    }
+			else{
 				  console.log("Deny Job Ad not successsful");
 				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
 					$("#lbMsg",theForm).html("Denying Not Successful, please try again");
-					$.fn.smartLightBox.closeLightBox(2000, formDiv);
-			  }
-	  };
-	  
+					$.fn.smartLightBox.closeLightBox(1000, formDiv);
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}  
 	  
 }
 
@@ -253,8 +261,6 @@ function adminBatchChangeJobAd(){
 		});//END OF FOR EACH LOOP
 	}
     //$.fn.smartLightBox.closeLightBox(2000, "home-frame");
-
-	//adminGetJobAd("allJobAdtable", "first");	
 }
 
 

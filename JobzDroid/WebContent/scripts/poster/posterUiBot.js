@@ -106,7 +106,7 @@ function buildOwnerAdTb(targetXMLTag, outputDiv, xmlresponse){
 		  tr.appendTo(tbody);
 		  
 		});
-		 $("tr:odd", tbody).addClass("oddRow");
+//		 $("tr:odd", tbody).addClass("oddRow");
 
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 	}

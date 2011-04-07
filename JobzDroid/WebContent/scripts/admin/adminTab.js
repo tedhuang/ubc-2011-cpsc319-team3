@@ -2,18 +2,15 @@
  * DynaSmartTab
  * jQuery Tab Control Plugin
  * Author: Cheng Chen
- * Inspired By "SmartTab", http://tech-laboratory.blogspot.com
  * 
  */
-
-var curTabIdx = 0;
 (function($){
     $.fn.DynaSmartTab = function(options) {
        var options = $.extend({}, $.fn.DynaSmartTab.defaults, options);//keep default, only update from the "options"
 
         return this.each(function() {
                 obj = $(this);
-                curTabIdx = options.selected; // Set the current tab index to default tab
+                var curTabIdx = options.selected; // Set the current tab index to default tab
                 var tabidPrefix = options.tabidPrefix;
                 var frameidPrefix = options.frameidPrefix;
                 var tabNum = 0;
@@ -27,9 +24,13 @@ var curTabIdx = 0;
                 
                 hideAllFrames(); // Hide all content on the first load
      		    showTab();
-     		    
+     		    initHome();
+     		   
    /************************STARTOF FUNCTION GROUP******************************************************************************/
-     		   function refreshTabs(){
+     		   function initHome(){
+     		    	guestViewJobAd("allJobAdtable", "first");
+     		   }
+     		    function refreshTabs(){
      			   //update to the latest tab info, any change involving position-changing, visual-changing need to call it at the end  
 	     			  tabs 		= updateTabSet(); // Get all anchors in this array
 	                  tabFrames = updateTabFrameSet(); // All Tab Frames
@@ -62,33 +63,37 @@ var curTabIdx = 0;
      			   return closeBtn;
                }
      		   
+     		   
      		   function bindCloseClick(){
-     		   	$(closeBtn).bind("click", function(){
-     			  	var tabToRm = $($(this).parent().find("a"),obj);
-     			  	if(tabToRm.length>0){
-     			  		$.each(tabToRm, function(){
-     			  			
-     			  			if($($(this).parent(), obj).hasClass("hideOnly")){
-     			  				$($(this).parent(), obj).hide();
-     			  			}
-     			  			else{
-     			  				$($(this).parent(), obj).remove();
-     			  			}
-     			  			
-     			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
-     			  				$($(this).attr("href"), obj).hide();
-     			  			}
-     			  			else{
-     			  					$($(this).attr("href"), obj).remove();
-     			  			}
-     			  		});
-     			  	
-     			   refreshTabs();
-     			  	tabNum--;
-             	    curTabIdx=0;
-             	    showTab();
-     			  	}
-             	  });
+     		   	$(closeBtn).unbind('click').bind("click", function(){
+     		   		 closeTab.call(this);
+     		   	});
+     		   }
+     		   
+     		   function closeTab(){
+     			  tabToRm = $($(this).parent().find("a"),obj);
+     		   	  if(tabToRm.length){
+ 			  		$.each(tabToRm, function(){
+ 			  			
+ 			  			if($($(this).parent(), obj).hasClass("hideOnly")){
+ 			  				$($(this).parent(), obj).hide();
+ 			  			}
+ 			  			else{
+ 			  				$($(this).parent(), obj).remove();
+ 			  			}
+ 			  			
+ 			  			if($($(this).attr("href"), obj).hasClass("unremovable")){
+ 			  				$($(this).attr("href"), obj).hide();
+ 			  			}
+ 			  			else{
+ 			  					$($(this).attr("href"), obj).remove();
+ 			  			}
+ 			  		});
+     		   	  }
+     		   	refreshTabs();
+ 			  	tabNum--;
+         	    curTabIdx=0;
+         	    showTab();
      		   }
      		   
                 function bindOnClick()
@@ -102,7 +107,6 @@ var curTabIdx = 0;
                         showTab();
                         return false;
                     });
-                	
                 }
                 
                 function hideAllFrames(){
@@ -120,12 +124,13 @@ var curTabIdx = 0;
                     $($(curTab, obj).attr("href"), obj).show();
                     return true;
                 }
+                
 /*****************************************************************************************************************************
  * 										Show TAB FUNCTION
  * -Publicly Accessible
  * @params tabId: the Id of the tab
  * ****************************************************************************************************************************/  
-                $.fn.DynaSmartTab.addShowTab=function(tabId){
+                function openTab(tabId){
                 	   var openingTab = $('#'+tabId);
                 	   var openingFrame = $(openingTab.find('a').attr("href"));
                 	   var curTab = tabs.eq(curTabIdx); 
@@ -149,12 +154,12 @@ var curTabIdx = 0;
    	                		openingFrame.insertAfter(lastFrame);
    	                		
    	                	}
-   	                	refreshTabs();
                     	hideFrame(curTabIdx);
+                    	refreshTabs();
                     	curTabIdx = $.inArray(openingTab.attr("id"), tabIdList);
                     	showTab();                   	  }
                   }return false;
-                };//ENDOF SHOWTAB
+                }//ENDOF SHOWTAB
                 
                 function hideFrame(tabIdx){
                     var curTab = tabs.eq(tabIdx);
@@ -225,6 +230,36 @@ var curTabIdx = 0;
                 	  //TODO ADD TAB FULL NOTIFICATION
                   }
                 };
+    /*********************************************************************************************************************
+     * 						guest Tool
+     * - Add FLOATING TOOL BAR TO THE LIST table row and bind them with different functions
+     * - Publicly Accessible
+     *
+     * ********************************************************************************************************************/ 
+                $.fn.DynaSmartTab.adminTool=function(tRow, adId){
+         			
+//         			var tool= $('<button></button>').addClass('guestView');
+         			
+         			tRow.hover(function() {
+         		        $(this).toggleClass("hover");
+         		    })
+         			.unbind('click')
+         			.delegate(".td-title", "click", function(){
+         				openTab('adDetailTab'); 
+         				getJobAdById(adId, "adDetailTable");
+         			});
+
+         };
+ /************************************************************************************************************************
+  * 
+  ************************************************************************************************************************/
+
+        
+        $.fn.DynaSmartTab.close=function(){
+        	autoCloseTab();//for close tab after action performed
+        };
+
+     
   /************************ENDOF FUNCTION GROUP*********************************************/
         });  // ENDOF return Each
     };  //ENDOF DynaSmartTab

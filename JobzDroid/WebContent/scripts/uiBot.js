@@ -129,11 +129,11 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		  var jobAdId = jobAd.attr("jobAdId");
 		  var isApproved=jobAd.attr("isApproved") ;
 
-		  var tr = $('<tr></tr>');//.addClass("oddRow hover");
+		  var tr = $('<tr></tr>').attr("id", id='row-'+jobAdId);//.addClass("oddRow hover");
 		  
-		  $('<td></td>').attr("id", id='td-cdate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-sdate').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').addClass('jsBtn').text(jobAd.attr("jobAdTitle")).appendTo(tr);
+		  $('<td></td>').addClass('td-cdate').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
+		  $('<td></td>').addClass('td-sdate').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
+		  $('<td></td>').addClass('td-title').addClass('jsBtn').text(jobAd.attr("jobAdTitle")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-status-'+jobAdId).text(jobAd.attr("status")).appendTo(tr);
 		  
 		  var isApprovedFormatted;
@@ -145,9 +145,9 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		  
 
 		  //ADD CHECK BOXES
-		  var approveInput = $('<td></td>');
-		  var denyInput = $('<td></td>');
-		  var deleteInput = $('<td></td>');
+		  var approveInput = $('<td></td>').addClass('tool');
+		  var denyInput = $('<td></td>').addClass('tool');
+		  var deleteInput = $('<td></td>').addClass('tool');
 		  
 		  //ADD RADIO INPUTS
 		  $('<input type="radio" value="approve">').attr("name", jobAdId).attr("id", "approve-"+jobAdId).appendTo(approveInput).click(function(){
@@ -181,15 +181,16 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		  approveInput.appendTo(tr);
 		  denyInput.appendTo(tr);
 		  deleteInput.appendTo(tr);
+		  $.fn.DynaSmartTab.adminTool(tr, jobAdId);
 		  
-		  tr.mouseover(function(){
-			  tr.removeClass("oddRow");
-			  tr.addClass("oddRow hover");
-		  });
-		  tr.mouseout(function(){
-			  tr.removeClass("oddRow hover");
-			  $("tr:odd", tbody).addClass("oddRow");
-		  });
+//		  tr.mouseover(function(){
+//			  tr.removeClass("oddRow");
+//			  tr.addClass("oddRow hover");
+//		  });
+//		  tr.mouseout(function(){
+//			  tr.removeClass("oddRow hover");
+//			  $("tr:odd", tbody).addClass("oddRow");
+//		  });
 		  
 		  tr.appendTo(tbody);
 		  
@@ -201,9 +202,9 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 			  }
 		  
 		 //Add Button Function to load details tab
-		  $("#td-title", tr).click(function(){
-			  getJobAdById(jobAdId,'adDetailTable');
-			 });
+//		  $("#td-title", tr).click(function(){
+//			  getJobAdById(jobAdId,'adDetailTable');
+//			 });
 		 
 		    
 		});//END OF FOR EACH FUNCTION
