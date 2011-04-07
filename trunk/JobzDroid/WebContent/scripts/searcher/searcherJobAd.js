@@ -4,7 +4,7 @@
  * outputDiv => The table container div
  * 
  *******************************************************************************************************************/
-function searchJobAdvertisement(outputDiv){
+function searchJobAdvertisement(outputDiv, mapDiv){
 	
 	var tbody=$("tbody", domObjById(outputDiv));
 	request = new Request;
@@ -31,14 +31,14 @@ function searchJobAdvertisement(outputDiv){
 		else if(key=="country"&&value.length){
 			request.addParam("searchJobCountry", value);
 		}
-		else if(key=="zip"&& value.length){
-			request.addParam("searchJobZip", value);
-		}
+//		else if(key=="zip"&& value.length){
+//			request.addParam("searchJobZip", value);
+//		}
 		else{
 			emptyLocCounts++;
 		}
 	});
-	 if(emptyCounts != searchFields.length || emptyLocCounts!=6){
+	 if(emptyCounts != searchFields.length || emptyLocCounts!=5){
 		var xhr=createXHR();
 		if(xhr){
 			try{
@@ -65,7 +65,7 @@ function searchJobAdvertisement(outputDiv){
 		 if (xhr.readyState == 4) {
 				try {
 					  if (xhr.status == 200) {
-						  buildAdListTb("jobAd", outputDiv,xhr.responseXML);
+						  buildAdListTb("jobAd", outputDiv, mapDiv,xhr.responseXML);
 					  }
 	                else { 
 	                	$("#feedback").html("<h2 class='error'>Well this is embrassing, you request cannot be preformed</h2>");
@@ -76,73 +76,64 @@ function searchJobAdvertisement(outputDiv){
 				}
 		 }
 	 }
-//	   if(emptyCounts != searchFields.length){//Check if All NULL
-//			if (window.XMLHttpRequest)
-//			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-//				xmlhttp=new XMLHttpRequest();
-//			  }
-//			else
-//			  {// code for IE6, IE5
-//				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-//			  }
-//			
-//			//send the parameters to the servlet with POST
-//			$("#feedback").html("<h2>Sending Request</h2>");
-//			xmlhttp.open("POST","../ServletJobAd" ,true);
-//			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//			xmlhttp.send(request.toString());
-//			
-//	//		$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
-//			xmlhttp.onreadystatechange=function()
-//			  {
-//			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-//			    {
-//					//parse XML response from server
-//					buildAdListTb("jobAd", outputDiv);
-//	//				$.fn.smartLightBox.closeLightBox(0);
-//			    }
-//			  };
-//	   }//ENDOF CHECK-ALL-NULL
-		  
 }
 
-function quickSearchJobAd(outputDiv){
-	
+function quickSearchJobAd(outputDiv, mapDiv){
+	var mapDiv=domObjById(mapDiv);
 	request = new Request;
 	request.addAction("searchJobAdvertisement");
 	
 //	var searchFields = $("#quickSearchBox", ).serializeArray();
 	if($("#quickSearchBox", "#qkSearchForm" ).val() != ""){ //Check if All NULL
 		
-			request.addParam($("#quickSearchBox", "#qkSearchForm" ).attr("name"), $("#quickSearchBox", "#qkSearchForm" ).val()); //add parameter to the request according to how many search criteria filled
-
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-				xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			//send the parameters to the servlet with POST
-			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletJobAd" ,true); //PATH TO SERVLET DIFFERS FROM TESTPAGES
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.send(request.toString());
-			
-		//	$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			    {
-				  $("#feedback").html("<h2>Successfully finished tasks</h2>");
-					//parse XML response from server
-					buildAdListTb("jobAd", outputDiv);
-		//			$.fn.smartLightBox.closeLightBox(0);
-			    }
-			  };
-	   }//ENDOF CHECK-ALL-NULL
+		request.addParam($("#quickSearchBox", "#qkSearchForm" ).attr("name"),$("#quickSearchBox", "#qkSearchForm" ).val());
+		
+		var xhr=createXHR();
+		if(xhr){
+			try{
+				xhr.open("POST","../ServletJobAd" ,true);
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				xhr.onreadystatechange = processResult;
+				xhr.send(request.toString());
+				console.log(request.toString());
+				tbody.html("");
+				$("#feedback").html("<h2>Sending Request</h2>");
+			}catch(e){
+				
+			}
+		}
+			 
+		 else{
+			   $('<h2></h2>')
+			   .addClass("info")
+			   .html("Please enter Condition to search")
+			   .appendTo($("#feedback"))
+			   .stop(true, true).fadeOut(10000);
+		 }
+		
+   }//ENDOF CHECK-ALL-NULL
+	else{
+		$('<h2></h2>')
+		   .addClass("info")
+		   .html("Please enter Condition to search")
+		   .appendTo($("#feedback"))
+		   .stop(true, true).fadeOut(10000);
+	}
+	 function processResult(){
+		 if (xhr.readyState == 4) {
+				try {
+					  if (xhr.status == 200) {
+						  buildAdListTb("jobAd", outputDiv, mapDiv,xhr.responseXML);
+					  }
+	                else { 
+	                	$("#feedback").html("<h2 class='error'>Well this is embrassing, you request cannot be preformed</h2>");
+	                }
+				} 
+				catch (e){
+					console.log(e);
+				}
+		 }
+	 }
 }
 /************************************************************************************************************
  * 				View Job Ad Detail

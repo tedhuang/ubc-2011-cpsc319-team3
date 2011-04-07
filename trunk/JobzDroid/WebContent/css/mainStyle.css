@@ -102,16 +102,17 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 
 div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin: 0 auto; 	padding: 5px 0 0 0;}
 
-#content { 	padding-bottom: 1em;padding-top: 1em;	margin-left: 1em;	margin-bottom: 3em; 	min-height: 450px; }
+#content { 	padding-bottom: 1em;padding-top: 1em;	margin-left: 1em;	margin-bottom: 3em;	min-height: 450px; }
 
 #info-tab{}
 /***************Search Styles*******************************************/
 #advSearchForm{	float: left;width: 100%;margin-bottom: 14px;}
+#advSearchForm .formFieldLabel {float: left; font-weight: bold;font-size:14px; margin: 2px 0 0 0;color: #000;}
 .columnBox{	float: left;	margin	: 0px 70px !important;	width	: 270px;}
-
 .formFieldWrapper {	margin: 5px 0 15px 0;	padding	: 0;	clear: left;}
-
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
+div.fullBox{width:100%;}
+#locSearchBox label{padding-right:0.5em;}
 /***************Result Table Style**************************************/
 .resultTableDiv{clear: both;position: relative;	width: 765px;	min-height	: 140px;font-size	: 11px;	margin: 0 auto;	padding: 1em;	border-top	: 2px solid #004000;}
 .resultTableDiv tr #edTool,
@@ -152,9 +153,6 @@ div#main-container { min-height: 450px; background: #fff; 	width: 980px;	margin:
 .sortheaderMyAds {	padding-left: 2em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
 .sortheaderMyAdsJobTitle {	padding-left: 4em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
 .sortheaderJobFeeds {	padding-left: 0.33em;	padding-right: 0.33em;	padding-top	: 0.5em;float: left;white-space	: nowrap;overflow: hidden; color:#fff;} 
-
-
-
 .columnButton{ border-left:1px solid #FFFFFF;   border-right:0px solid #FFFFFF;  height:31px;
 				font-weight:normal;  color:#333;  margin:0px; padding:0; width: 100%; cursor:pointer;}
 .headToolBar{ height:32px; padding: 1em;}
@@ -175,6 +173,5 @@ ul#edAdTool, ul#ownerDtlViewTool{list-style: none; float:left;list-style-image: 
 .columnBoxThinRight{position: relative;	float: right; right:-30px;	top: -285px;width: 135px;}
 .columnBoxThinLeft{	position: relative;	width:135px;}
 .floatLeftBtn {	float: left;	padding-left: 5em;	margin: 0;	}
-
 /***********************************************************************************/
 .rmFavJob{ background-image: url('../images/icon/delete_icon.png');  background-position:left; width: 19px; height:19px; }

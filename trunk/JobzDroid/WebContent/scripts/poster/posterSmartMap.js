@@ -364,7 +364,7 @@
 					google.maps.event.trigger(map, 'resize');
 				};
 				
-				$.fn.smartMap.displayMap=function(container, locObjArray){//display the a new map according to info
+				$.fn.smartMap.adDetailMapDisplay=function(container, locObjArray){//display the a new map according to info
 					var dispMap = $('<div></div>').addClass("displayMap").appendTo(container);
 					var dispList = $('<ul></ul>').addClass("dispLocList").appendTo(dispMap);
 					var mapPatch = $('<div></div>').addClass("dispMapPatch").appendTo(dispMap);

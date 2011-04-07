@@ -106,123 +106,6 @@ function buildGuestJobAdTb(targetXMLTag, outputDiv){
 
 
 
-/************************************************************************************************
- * 					BUILD TABLE CONTAINING ALL JOB ADS - used by Admin(manageJobAd.jsp)
- * INSERT RETURNED DATA INTO THE TABLE
- * @param xmlObj: THE xmlObject name returned from the server
- * @param outputDiv: The DIV where the table is held
-**************************************************************************************************/
-function buildAdminJobAdTb(targetXMLTag, outputDiv){
-	
-	//TODO: finish implementing
-	
-	var tbody  = $("tbody", "#"+outputDiv).html("");
-
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
-	if(xmlObj.length==0){//if no results
-//		$(".feedback").html("<h2 class='info'>You Have Not Yet Posted Anything</h2>");
-//		$("#"+outputDiv).html("<h2 class='info'>Unable to find any Job Ads</h2>");
-	}
-	else{
-		xmlObj.each(function() {//for All returned xml obj
-		  var jobAd = $(this);
-		  var tr = $('<tr></tr>');
-		  $('<td></td>').attr("id", id='td-date').text(jobAd.attr("creationDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-date').text(jobAd.attr("startingDateFormatted")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-title').text(jobAd.attr("jobAdTitle")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-status').text(jobAd.attr("status")).appendTo(tr);
-		  //$('<td></td>').attr("id", id='td-eduReq').text(jobAd.attr("eduReqFormatted")).appendTo(tr);
-		  //$('<td></td>').attr("id", id='td-jobAvail').text(jobAd.attr("jobAvail")).appendTo(tr); 
-		  //$('<td></td>').attr("id", id='td-loc').html(jobAd.children("location").attr("address")).appendTo(tr);
-		  
-		  var isApprovedFormatted;
-		  if(jobAd.attr("isApproved") == 0)
-				isApprovedFormatted = "Not Approved";
-		  else
-				isApprovedFormatted = "Approved";
-		  $('<td></td>').attr("id", id='td-approval').text(isApprovedFormatted).appendTo(tr);
-		  
-		  var jobAdId = jobAd.attr("jobAdId");
-
-		  //ADD CHECK BOXES
-		  var approveInput = $('<td></td>');
-		  var denyInput = $('<td></td>');
-		  var deleteInput = $('<td></td>');
-		  
-		  $('<input type="radio" value="approve">').attr("name", jobAdId).attr("id", "approve-"+jobAdId).appendTo(approveInput);
-		  $('<input type="radio" value="deny">').attr("name", jobAdId).attr("id", "deny-"+jobAdId).appendTo(denyInput);
-		  $('<input type="radio" value="delete">').attr("name", jobAdId).attr("id", "delete-"+jobAdId).appendTo(deleteInput);		  
-		  
-		  approveInput.appendTo(tr);
-		  denyInput.appendTo(tr);
-		  deleteInput.appendTo(tr);
-		  
-		  tr.appendTo(tbody);
-		  
-		  //Update Radio button to current settings
-			 var isApproved=jobAd.attr("isApproved") ;
-			  if( isApproved == 0 ){
-				  $("input[name='"+jobAdId+"']")[1].checked = true;
-			  }else{
-				  $("input[name='"+jobAdId+"']")[0].checked = true;
-			  }
-			  
-		  
-		  //$('input:radio[name=bar]:checked').val();
-			  
-		  
-		  //ADD ADMIN BUTTONS: (deprecated - changed to radio buttons)
-//		  var approveButton = $('<td></td>');
-//		  var denyButton = $('<td></td>');
-//		  var deleteButton = $('<td></td>');
-//
-//		  approveButton.appendTo(tr);
-//		  denyButton.appendTo(tr);
-//		  deleteButton.appendTo(tr);
-//		  
-//		  $("<button>Approve</button>").attr("id", id='td-approveButton').click(
-//			function() {
-//			  if(jobAd.attr("isApproved") == 1)
-//				  alert("This Job Ad has already been approved");
-//			  else{			  
-//				  adminApprove(jobAd.attr("jobAdId"));
-//			  }
-//		  }).appendTo(approveButton);
-//		  
-//		  $("<button>Deny</button>").attr("id", id='td-denyButton').click(
-//					function() {
-//					  if(jobAd.attr("isApproved") == 0)
-//						  alert("This Job Ad has not yet been approved");
-//					  else{			  
-//					      adminDeny(jobAd.attr("jobAdId"));
-//					  }
-//		  }).appendTo(denyButton);
-//		  
-//		  $("<button>Delete</button>").attr("id", id='td-deleteButton').click(
-//					function() {
-//						  alert("This Job Ad will be permanently deleted! (TODO: Add Checks)");
-//						  adminDeleteJobAd(jobAd.attr("jobAdId"));
-//					  }
-//		  ).appendTo(deleteButton);
-//		  
-//		  
-//		 tr.appendTo(tbody);
-		  
-			  
-			  
-		});//END OF FOR EACH FUNCTION
-		
-		 $("tr:odd", tbody).addClass("oddRow");
-		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
-		 
-	}
-	  $.fn.smartLightBox.closeLightBox(200,"home-frame");
-}
-
-
-
-
-
 function filterTable(filter, tbContainerId){
 	
 	var tbody  = $("tbody", "#"+tbContainerId);
@@ -269,14 +152,19 @@ function bindClearError(){
  * @param xmlObj: THE xmlObject name returned from the server
  * @param outputDiv: The DIV where the table is held
 **************************************************************************************************/
-function buildAdListTb(targetXMLTag, outputDiv, xmlResponse){
-	outputDiv="#"+outputDiv;
+function buildAdListTb(targetXMLTag, outputDiv, mapDiv, xmlResponse){
+	
+	var outputDiv=domObjById(outputDiv);
+	var mapDiv=domObjById(mapDiv);
 	var tbody  = $("tbody", outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlResponse);
+	var emptyLocNum=0;
+	
 	if(xmlObj.length==0 || xmlObj==null){//if no results
 		$("#feedback").html("<h2 class='error'>No Results Found</h2>");
 	}
 	else{
+		emptyLocNum=0;
 		xmlObj.each(function() {//for All returned xml obj
 		  var jobAd = $(this);
 		  var tr =$('<tr></tr>');
@@ -286,6 +174,7 @@ function buildAdListTb(targetXMLTag, outputDiv, xmlResponse){
 		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("educationReq")).appendTo(tr);
 		  $('<td></td>').text(jobAd.attr("jobAvailability")).appendTo(tr);
 		  $('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
+		  
 		  var strSessionKey = $("#sessionKey").val();
 //		  var favouriteAnchor =  "<a class='button' href='#' " +
 //		  		"onclick='saveFavouriteJobAd("+ strSessionKey +", "+ jobAd.attr('jobAdId')+">" +
@@ -303,11 +192,31 @@ function buildAdListTb(targetXMLTag, outputDiv, xmlResponse){
 		  $("#td-title", tr).click(function(){
 			  getJobAdById(jobAd.attr("jobAdId"),'adDetailTable');
 			 });
-		});
+		  var locations=jobAd.find("location");
+			if(locations.length){ //if there is some location
+				$.fn.smartMap.initDisplayMap(mapDiv);
+				
+				$.each(locations, function(idx){
+					addr=$(this).attr("addr");
+					lat=$(this).attr("latlng").split(",")[0];
+					lng=$(this).attr("latlng").split(",")[1];
+					$.fn.smartMap.buildJobListMap(lat, lng);
+				});
+			}
+			else{
+				emptyLocNum++;
+			}
+		});//eof process each jobAd
 		 
 		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
-	}
+		  
+	} // eof check ad num
+	emptyLocNum==xmlObj.length ?
+		$.fn.smartMap.locationListener(false, mapDiv)
+		:
+		$.fn.smartMap.locationListener(true, mapDiv);
+	
 }
 
 function saveFavouriteJobAd(sessKey, jobId){

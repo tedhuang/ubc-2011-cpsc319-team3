@@ -10,7 +10,7 @@
 		
 		return this.each(function(){
 			mapTool=$(this);
-			var mapCanvas= $($("#map_canvas"),mapTool).get(0); //the map canvas
+			var mapCanvasId= setting.mapCanvasId; //the map Canvas Id
 			var geocoder;
 			var map;
 			var maxAddrNum=3; //max 3 location allowed
@@ -19,16 +19,18 @@
 			var markers=[];
 			var dfltLat=setting.dftLat;
 			var dfltLng=setting.dftLng;
+			
+			var mapCanvas= $(domObjById(mapCanvasId),mapTool).get(0); //the map canvas
 			var addrMap={addr:"", city:"",province:"",country:"",zip:""};
 			var displayMap = setting.displayMap;
 			
 			var infoWindow = new google.maps.InfoWindow({});
-			if(displayMap){
-				
-			}
-			else{
+			if(!displayMap){
 				initMap();
 //				initAutoCplt();
+			}
+			else{
+//				initDisplayMap(domObjById(mapCanvasId));
 			}
 			
 /**************FUNCTION GROUP STARTS HERE****************************************************************/			
@@ -44,6 +46,15 @@
 		  //GEOCODER
 		  geocoder = new google.maps.Geocoder();
 	}//eof initMap
+	
+	function hideAllMarkrs(clearMarkr) {// Removes the markers from the map, but keeps them in the array
+		  if (markers) {
+		    $(markers).each(function(){
+		    	this.setMap(null);
+		    });
+		  }
+		  clearMarkr? markers.length = 0 : null;
+	}
 	
 	function initSearchLocAutoCplt(inputBar){
 		locSearchBar=domObjById(inputBar);
@@ -156,8 +167,51 @@
 	$.fn.smartMap.resize=function(){//fix map when the map is resized or position changed
 		google.maps.event.trigger(map, 'resize');
 	};
+	$.fn.smartMap.locationListener=function(hasLoc, containerObj){//fix map when the map is resized or position changed
+		if(hasLoc){
+			containerObj.show();
+			$.fn.smartMap.resize();
+		}	
+		else{
+			hideAllMarkrs(true);
+			containerObj.hide();
+		}
+	};
 	
-	$.fn.smartMap.displayMap=function(container, locObjArray){//display the a new map according to info
+	$.fn.smartMap.initDisplayMap=function(containerObj){//display the a new map according to info
+		var dispMap = $('<div></div>').addClass("displayMap");
+		var mapCanvas = $('<div></div>').addClass("dispMapCanvas");
+		containerObj.show();
+		
+		  var defaultLoc = new google.maps.LatLng(dfltLat,dfltLng);
+		  var options = {
+		    zoom: 11,
+		    center: defaultLoc,
+		    mapTypeId: google.maps.MapTypeId.ROADMAP
+		  };
+		  
+		if(!$(".displayMap").length){
+			dispMap.appendTo(containerObj);
+			mapCanvas.appendTo(dispMap);
+			map = new google.maps.Map(mapCanvas.get(0), options);
+		}
+		else{
+			hideAllMarkrs(true);
+			map = new google.maps.Map(mapCanvas.get(0), options);
+		}
+		
+	};
+	
+	$.fn.smartMap.buildJobListMap=function(lat, lng){
+		var location = new google.maps.LatLng(lat,lng);
+		var marker=placeMarkr(location);
+		typeof marker !==undefined ? 
+				markers.push(marker)
+				:
+				null;
+	};
+	
+	$.fn.smartMap.adDetailMapDisplay=function(container, locObjArray){//display map of ad detail according to info
 		var dispMap = $('<div></div>').addClass("displayMap").appendTo(container);
 		var dispList = $('<ul></ul>').addClass("dispLocList").appendTo(dispMap);
 		var mapPatch = $('<div></div>').addClass("dispMapPatch").appendTo(dispMap);
@@ -181,6 +235,7 @@
 		
 		
 	};
+	
 	
 	function placeMarkr(location){ //place display marker
 //					var markr=new google.maps.Marker({
@@ -313,8 +368,8 @@
     		
     		dftLat : 49.26518835849344,
     		dftLng : -123.24735386655271, //UBC COORD
-    		displayMap: false
-
+    		displayMap: false,
+    		mapCanvasId: "map_canvas"
           
     };
 })(jQuery);

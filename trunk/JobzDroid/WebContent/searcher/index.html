@@ -196,17 +196,21 @@
         </div><!--ENDOF Home Tab-->
 		
   		<div id="searchJob-frame" class="subFrame unremovable">
+  		 <label class="heading-text">Quick Search(Optional)</label>
+			  <div id="qkSearchForm" class="content">
+			  	<div class="formFieldWrapper">
+						<label class="formFieldLabel">Quick Search: </label>
+						<input id="quickSearchBox" type="text" name="quickSearch" size="50" />
+				</div>
+					<button id="newJobAdButton" type="button" onclick="quickJobAd('resultTable','adSearchMap' )">Search</button>
+					<div id="feedback"><h2>Let's Do Some Search!</h2></div>
+			  </div>
          <label class="heading-text">Advanced Search</label>
 			  <div id="advSearchForm" class="content">
 			     <div class="columnBox">
 			     	<div class="formFieldWrapper">
 						<label class="formFieldLabel">Search title: </label><br />
 						<input id="titleSearch" type="text" name="searchTitle" size="40" />
-					</div>
-					<div class="formFieldWrapper">
-						<label class="formFieldLabel">Location</label><br />
-						<input id="locSearch" class="loc_search" type="text" name="searchJobLoc" size="40" />
-						<div id="adSearchMap"></div>
 					</div>
 				  <div class="formFieldWrapper">
 						<label class="formFieldLabel">Tags </label><br />
@@ -240,9 +244,16 @@
 							</label>
 				</div>
 			  </div><!--ENDOF columnBox-->
-			  
+			   
+			   <div id="locSearchBox" class="columnBox fullBox">
+			  		<div class="formFieldWrapper">
+						<label class="formFieldLabel">Location</label>
+						<input id="locSearch" class="loc_search" type="text" name="searchJobLoc" size="40" />
+						<div id="adSearchMap"></div>
+					</div>
+			   </div>
 			  <div class="floatLeftBtn"> 
-				<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement('resultTable')">Search</button>
+				<button id="newJobAdButton" type="button" onclick="searchJobAdvertisement('resultTable','adSearchMap' )">Search</button>
 				<div id="feedback"><h2>Let's Do Some Search!</h2></div>
 			  </div>	
 			</div><!--END ADVSEARCHFORM-->
