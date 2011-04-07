@@ -53,7 +53,7 @@
 			<div class="field"> 
 				<label for="edu-field">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
-					<option value="">Choose a degree</option>
+					<option value="0">Choose a degree</option>
 					<option value="1">B.Sc.</option>
 					<option value="2">M.Sc.</option>
 					<option value="3">Ph.D.</option>
@@ -144,7 +144,7 @@
 			<div class="field"> 
 				<label for="edu-field">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
-					<option value="">Choose a degree</option>
+					<option value="0">Choose a degree</option>
 					<option value="1">B.Sc.</option>
 					<option value="2">M.Sc.</option>
 					<option value="3">Ph.D.</option>
