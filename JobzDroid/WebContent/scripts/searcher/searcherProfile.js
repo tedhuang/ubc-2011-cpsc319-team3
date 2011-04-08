@@ -242,7 +242,11 @@ function fileUploadProgress() {
 		if (xmlhttp.status == 200) // OK response
 		{
 			var xml = xmlhttp.responseXML;
-
+			
+			if ( xml == null ) {
+				window.setTimeout("fileUploadProgress();", 500);
+			}
+			
 			// No need to iterate since there will only be one set of lines
 			var isNotFinished = xml.getElementsByTagName("finished")[0];
 			var myBytesRead = xml.getElementsByTagName("bytes_read")[0];
