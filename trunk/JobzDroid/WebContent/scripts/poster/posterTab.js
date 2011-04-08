@@ -300,20 +300,15 @@
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
                 	var status=tr.find('td.td-status').text();
-                	var topMenuItem=({"View":"view", "Edit":"edit", "Inactivate":"inactive"});
-                	
+                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
                 	/*******************************
-                	 * WE WANT INACTIVATE NOT DELETE
+                	 * OPEN NEED TO GO TO DRAFT AND INACTIVE 
+						CAN TAKE OUT DEL BUT NEED DIFFRENET STATUS CHANGE
                 	 *******************************/
-                	
-//                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
-//                	var subMenu=({
-//                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
-//                				});
-                	
-                	
-                	
-                	
+                	var chgStsSubMenu=({
+                					"open":({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"}),
+                					"pending":({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})
+                				});
                 	var homeFrame = domObjById("home-frame");
                 	var parentOffset=homeFrame.offset(); // calculate the offset for menu use
                 	
@@ -325,23 +320,24 @@
                 		$('<span></span>').addClass(cls).html(name).appendTo(topMenu);
                 	});
                 	
-                	//menuDiv.append('<div class="sptr-li"></div>');//add a seperator
                 	// install subMenu
-//                	$.each(subMenu, function(){
-//                		var topMenu=$('<div></div>').addClass('top-li').appendTo(menuDiv);
-//            			var subMenuLi=$('<div></div>').addClass('sub-li').appendTo(topMenu);
-//                		
-//                		$.each(this, function(name, cls){
-//                			if(cls=="top-li"){
-//                				$('<span></span>').html(name).appendTo(topMenu);
-//                			}
-//                			else if(cls=="sub-li"){
-//                				$('<span></span>').addClass(name.toLowerCase()).html(name).appendTo(subMenuLi);
-//                			}
-//                    		
-//                		});
-//                	});
-                	$(".sub-li", homeFrame).css("margin-left", menuDiv.width());//set the submenu display pos
+            		if(chgStsSubMenu[status]){// if it has a sub-menu
+            			menuDiv.append('<div class="sptr-li"></div>');//add a seperator
+            			var topMenu=$('<div></div>').addClass('top-li').appendTo(menuDiv);
+                		var subMenuLi=$('<div></div>').addClass('sub-li').appendTo(topMenu);
+		    			$.each(chgStsSubMenu[status], function(name, cls){
+		        			if(cls=="top-li"){
+		        				$('<span></span>').html(name).appendTo(topMenu);
+		        			}
+		        			else if(cls=="sub-li"){
+		        				$('<span></span>').addClass(name.toLowerCase()).html(name).appendTo(subMenuLi);
+		        			}
+                		
+		    			});
+		    			$(".sub-li").css("margin-left", menuDiv.width());//set the submenu display pos
+            		}//eof install submenu
+            		
+                	
                 	
 					$(".top-li, .sub-li span").hover(function () {
 							$(this).css({backgroundColor : '#57E964' , cursor : 'pointer'});
@@ -780,13 +776,13 @@
 //			  .removeClass()
 			  .toggleClass('label-rby');
 			  
-			$("input[name='gf-field']", 		edFormContainer).val(xmlData.attr("gfStr"));
+			$("input[name='gf-field']", edFormContainer).val(xmlData.attr("gfStr"));
 			
 			// replace &nbsp; with space and <br /> with \n for description in textarea
 			var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
 			processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
 			
-			$("textarea[name='desc-field']", 	edFormContainer).val(processedDesc);//Type-in Forms
+			$("textarea[name='desc-field']", edFormContainer).val(processedDesc);//Type-in Forms
 			
 			$("#edu-field option",edFormContainer).each(function(){
 				if($(this).text()==xmlData.attr("educationReq")){
