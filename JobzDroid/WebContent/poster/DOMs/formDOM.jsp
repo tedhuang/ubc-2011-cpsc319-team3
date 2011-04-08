@@ -18,8 +18,8 @@
 		<input type="hidden" id="oldAdValues">
 		   <div id="edAdTool" class="head-Bar">
 	   		   <h2 class="welcome" id="edTabTitle">Editing Ad:</h2>
-			   <a class="jsBtn" id="ed_saveDraft">Save Draft |</a>
-			   <a class="jsBtn" id="ed_update" >Publish |</a>
+			  <!--   <a class="jsBtn" id="ed_saveDraft"></a>
+			   <a class="jsBtn" id="ed_publish" ></a>-->
 			   <a class="jsBtn" id="ed_reset" > Reset Fields</a>
 				<!-- <span class="feedback">Feed Back Area</span>-->
 			</div><!--ENDOF head-Bar-->

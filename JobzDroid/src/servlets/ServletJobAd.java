@@ -1139,7 +1139,7 @@ private void updateJobAd(HttpServletRequest request, HttpServletResponse respons
 	//Checks the user's privilege
 	System.out.println("User with sessionKey: " + request.getParameter("sessionKey"));
 	String sKey=request.getParameter("sessionKey");
-	
+	int jobAdId = Integer.parseInt(request.getParameter("adId-field"));
 	int acctId=-1;
 	StringBuffer qBuf =DBQ.sessAuthQuery(sKey,new String[]{"idAccount"},"poster"); // authenticate user
 	String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
@@ -1171,6 +1171,23 @@ private void updateJobAd(HttpServletRequest request, HttpServletResponse respons
 				}
 				else{
 					msg = "Ad Updated Successfully";
+//					PreparedStatement getLastInsertId = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+//					ResultSet rs = getLastInsertId.executeQuery();
+					ArrayList<String>cond=new ArrayList<String>();
+					cond.add("idJobAd"+DBQ.EQ+jobAdId);
+					StringBuffer[] statusQuery=DBQ.buidlSelQuery(new String[]{"tableJobAd"}, new String[]{"idJobAd","status"}, cond);
+					query = statusQuery[0].append(statusQuery[1]).toString();
+					ResultSet rs = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery(query);
+					if(rs.first()){
+						if(rs.getString("status").matches("(?i)inactive|pending")){
+							rs.updateString("status", "draft");
+							rs.updateRow();
+						}
+					}
+					
+//					StringBuffer stm1=new StringBuffer( DBQ.UPDATE + "tableJobAd" +DBQ.SET);
+//					StringBuffer stm2=new StringBuffer( DBQ.WHERE + "idJobAd"+DBQ.EQ+DBQ.BRKT.insert(0, "SELECT LAST_INSERT_ID()")+
+//														DBQ.AND+"status"+DBQ.EQ+"inactive"+DBQ.OR+"status"+DBQ.EQ+"pending");
 				}
 			}
 			

@@ -299,12 +299,11 @@
      * ********************************************************************************************************************/ 
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
-                	var topMenuItem=({"View":"view", "Edit":"edit", "Set Inactive":"inactive"});
-//                	var subMenuItem=({"Draft":"draft"});
-//                	var subMenu=({
-//                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
-//                				});
-                	
+                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
+                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
+                	var subMenu=({
+                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
+                				});
                 	var homeFrame = domObjById("home-frame");
                 	var parentOffset=homeFrame.offset(); // calculate the offset for menu use
                 	
@@ -602,24 +601,86 @@
         
         function bindHeadToolBar(toolBarId,formId, status){
         	var toolBar=domObjById(toolBarId);
-        	
+        	var edTool=["ed_saveDraft", "ed_publish"];
+        	            
         	switch(toolBarId){
         	
         	case "edAdTool":
-        		
+        		$.each(edTool, function(i, id){
+        			var toolBtn = $('<a></a>').addClass('jsBtn').attr('id',id).insertBefore(toolBar.find('#ed_reset'));
+        			switch(id){
+        			case "ed_saveDraft":
+	        			switch(status){
+	        			case "draft":
+	        				toolBtn.html("Update Draft | ");
+	        				break;
+	        			case "open":
+	        				toolBtn.html("Save Another Draft | ");
+	        				break;
+	        			case "pending":
+	        				toolBtn.html("Save Another Draft | ");
+	        				break;
+	        			case "inactive":
+	        				toolBtn.html("Save As Draft | ");
+	        				break;
+	        			}
+        			break;
+        			
+        			case "ed_publish":
+	        			switch(status){
+	        			case "draft":
+	        				toolBtn.html("Publish | ");
+	        				break;
+	        			case "open":
+	        				toolBtn.html("Update | ");
+	        				break;
+	        			case "pending":
+	        				toolBtn.remove();
+	        				break;
+	        			case "inactive":
+	        				toolBtn.html("Publish | ");
+	        				break;
+	        			}
+        			break;
+        			
+        			}
+        			
+        		});
         		toolBar.delegate('#ed_saveDraft', "click", function(){
+        			
         			if(status=="draft"){
         				updateJobAd("draftAd",formId);
         			}
-        			else if(status == "open"){
+        			else if(status=="open"){
+        				postJobAd('draft', formId);
+        			}
+        				
+        			else if(status=="pending"){
+    					postJobAd('draft', formId);
+        			}
+        				
+        			else if(status== "inactive"){
+    					updateJobAd('updateInactive', formId);
+        			}
+        				
+        		});
+        		toolBar.delegate('#ed_publish', "click", function(){
+//        			updateJobAd('openAd', formId);//TODO CHANGE UPDATE DRAFT
+        			if(status=="draft"){
+        				postJobAd("create",formId);
+        			}
+        			else if(status=="open"){
         				updateJobAd('openAd', formId);
         			}
-        			else if(status=="pending"){
         				
+        			else if(status=="pending"){
+        				$(this).hide(); // pending cannot publish twice
         			}
-        		});
-        		toolBar.delegate('#ed_update', "click", function(){
-        			updateJobAd('openAd', formId);//TODO CHANGE UPDATE DRAFT
+        				
+        			else if(status== "inactive"){
+        				updateJobAd('updateInactive', formId);
+        			}
+        			
         		});
         		toolBar.delegate('#ed_reset', "click", function(){
         			$.fn.smartLightBox.diaBox("you unsaved data will be reset continue?", "alert");
@@ -660,7 +721,7 @@
  			});
        		
        		$("div.headToolBar", "#adDetailFrame").delegate('a.del', "click", function(){
- 				$.fn.smartLightBox.diaBox("are you sure you want to inactivate this ad?", "alert");
+ 				$.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
 					$('a.yes', "#btnBox").click(function(){
 						$("#btnBox", "#lightBox").hide();
 						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
