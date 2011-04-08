@@ -31,7 +31,7 @@
 					<input id="adId-field"  name="adId-field"  class="hidden mustNotNull" READONLY/>
 				</div>
 				<div class="field"> 
-						<label for="contact-field" >Company:</label> 
+						<label for="contact-field" >Contact Info:</label> 
 						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
 					</div>
 					
@@ -122,7 +122,7 @@
 					<input id="title-filed" name="title-field" class="textBox mustNotNull" value="" />
 				</div>
 				<div class="field"> 
-						<label for="contact-field" >Company:</label> 
+						<label for="contact-field" >Contact Info:</label> 
 						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
 					</div>
 					
