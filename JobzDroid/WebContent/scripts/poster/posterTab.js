@@ -299,11 +299,12 @@
      * ********************************************************************************************************************/ 
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
-                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
-                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
-                	var subMenu=({
-                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
-                				});
+                	var topMenuItem=({"View":"view", "Edit":"edit", "Set Inactive":"inactive"});
+//                	var subMenuItem=({"Draft":"draft"});
+//                	var subMenu=({
+//                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
+//                				});
+                	
                 	var homeFrame = domObjById("home-frame");
                 	var parentOffset=homeFrame.offset(); // calculate the offset for menu use
                 	
@@ -314,22 +315,23 @@
                 		var topMenu=$('<div></div>').addClass("top-li").appendTo(menuDiv);
                 		$('<span></span>').addClass(cls).html(name).appendTo(topMenu);
                 	});
-                	menuDiv.append('<div class="sptr-li"></div>');//add a seperator
+                	
+                	//menuDiv.append('<div class="sptr-li"></div>');//add a seperator
                 	// install subMenu
-                	$.each(subMenu, function(){
-                		var topMenu=$('<div></div>').addClass('top-li').appendTo(menuDiv);
-            			var subMenuLi=$('<div></div>').addClass('sub-li').appendTo(topMenu);
-                		
-                		$.each(this, function(name, cls){
-                			if(cls=="top-li"){
-                				$('<span></span>').html(name).appendTo(topMenu);
-                			}
-                			else if(cls=="sub-li"){
-                				$('<span></span>').addClass(name.toLowerCase()).html(name).appendTo(subMenuLi);
-                			}
-                    		
-                		});
-                	});
+//                	$.each(subMenu, function(){
+//                		var topMenu=$('<div></div>').addClass('top-li').appendTo(menuDiv);
+//            			var subMenuLi=$('<div></div>').addClass('sub-li').appendTo(topMenu);
+//                		
+//                		$.each(this, function(name, cls){
+//                			if(cls=="top-li"){
+//                				$('<span></span>').html(name).appendTo(topMenu);
+//                			}
+//                			else if(cls=="sub-li"){
+//                				$('<span></span>').addClass(name.toLowerCase()).html(name).appendTo(subMenuLi);
+//                			}
+//                    		
+//                		});
+//                	});
                 	$(".sub-li", homeFrame).css("margin-left", menuDiv.width());//set the submenu display pos
                 	
 					$(".top-li, .sub-li span").hover(function () {
@@ -353,7 +355,7 @@
                 		return false; // no browser default context menu
                 	})
                 	.hover(function() {
-         		        $(this).toggleClass("tr-hover");
+         		        $(this).stop(true,true).toggleClass("tr-hover");
          		    });
                 	
                 	menuDiv
@@ -391,16 +393,46 @@
 	         	        	}
          				togglePopMenu.call(menuDiv, tr,menuHolder,"", ""); //hide the menu
     				     }) //eof dalegate edit
-    				      .delegate("span.del", "click", function(){
-    				    	  $.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
-    	     					$('a.yes', "#btnBox").click(function(){
-    	     						$("#btnBox", "#lightBox").hide();
-    	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
-    	     						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
-    	     						delJobAd(tr, adId);
-    	     					});
-    	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
-    				      })//eof delegate delete
+    				     
+//    				      .delegate("span.del", "click", function(){
+//    				    	  $.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
+//    	     					$('a.yes', "#btnBox").click(function(){
+//    	     						$("#btnBox", "#lightBox").hide();
+//    	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+//    	     						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
+//    	     						
+//    	     						changeJobAdStatus(adId, "inactive"); //Change status to inactive instead of permanently deleting
+//    	     						//delJobAd(tr, adId);
+//    	     					});
+//    	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
+//    				      })//eof delegate delete
+    				     
+    				      
+    				      .delegate("span.inactive", "click", function(){
+    				    	  $.fn.smartLightBox.diaBox("Are you sure you want to inactivate this ad?", "alert");
+  	     					$('a.yes', "#btnBox").click(function(){
+  	     						$("#btnBox", "#lightBox").hide();
+  	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+  	     						$("#lbMsg","#lightBox").html("Setting ad to inactive...");
+  	     						changeJobAdStatus(adId, "inactive"); //Change status to inactive instead of permanently deleting
+  	     					});
+  	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
+  				      })//eend of delegate inactivate
+  				      				      
+  				      
+  				      
+//    				   .delegate("span.publish", "click", function(){
+//    				    	  $.fn.smartLightBox.diaBox("Are you sure you want to publish this ad?", "alert");
+//  	     					$('a.yes', "#btnBox").click(function(){
+//  	     						$("#btnBox", "#lightBox").hide();
+//  	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+//  	     						$("#lbMsg","#lightBox").html("Publishing Your Ad...");
+//  	     						
+//  	     						changeJobAdStatus(adId, "pending"); //Change status to inactive instead of permanently deleting
+//  	     					});
+//  	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
+//  				      })//end of delegate publish
+  				      
     				     ;
                 };
                 
@@ -413,6 +445,7 @@
                 	else{
                 		$('<div></div>').addClass('fullOverlay').appendTo('body').bind("click contextmenu", function(){
                 			$(this).remove();
+                			tr.hasClass('tr-hover')? tr.stop(true,true).toggleClass("tr-hover"):null;
                 			popMenu.toggleClass('opened').hide();
                 			return false;
                 		}); // setup a overlay so that we can close the menu if user clicks somewhere else
@@ -430,7 +463,7 @@
          			var tool= $('<span></span>').addClass('edTool');
          			$('<a></a>').addClass('jsBtn').addClass('view').text('View | ').appendTo(tool);
          			$('<a></a>').addClass('jsBtn').addClass('edit').text('Edit | ').appendTo(tool);
-         			$('<a></a>').addClass('jsBtn').addClass('del').text('Delete').appendTo(tool);
+         			$('<a></a>').addClass('jsBtn').addClass('del').text('Set Inactive').appendTo(tool);
          			tRow.hover(function() {
          		        tool.animate({opacity: "show", left: "0"}, 0);
          		    }, function() {
@@ -475,12 +508,13 @@
          				
          			});
          			tRow.delegate('a.del', "click", function(){
-         				$.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
+         				$.fn.smartLightBox.diaBox("are you sure you want to inactivate this ad?", "alert");
      					$('a.yes', "#btnBox").click(function(){
      						$("#btnBox", "#lightBox").hide();
      						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
      						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
-     						delJobAd(tRow, adId);
+     						changeJobAdStatus(adId, "inactive"); //Change status to inactive instead of permanently deleting
+     						//delJobAd(tr, adId);
      					});
          			});
          };
@@ -577,7 +611,7 @@
         			if(status=="draft"){
         				updateJobAd("draftAd",formId);
         			}
-        			else if(status=="open"){
+        			else if(status == "open"){
         				updateJobAd('openAd', formId);
         			}
         			else if(status=="pending"){
@@ -626,12 +660,13 @@
  			});
        		
        		$("div.headToolBar", "#adDetailFrame").delegate('a.del', "click", function(){
- 				$.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
+ 				$.fn.smartLightBox.diaBox("are you sure you want to inactivate this ad?", "alert");
 					$('a.yes', "#btnBox").click(function(){
 						$("#btnBox", "#lightBox").hide();
 						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
 						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
-						delJobAd(tRow, adId);
+ 						changeJobAdStatus(adId, "inactive"); //Change status to inactive instead of permanently deleting
+ 						//delJobAd(tr, adId);
 					});
         	});
        	 });

@@ -1,56 +1,5 @@
 
-//TODO: hook up with UI
-function changeJobAdStatus(intJobAdId, strNewStatus){
-	
-	//TODO: use these ID for UI
-	//var intJobAdId = document.getElementById("jobAdId").value;
-	//var strNewStatus = document.getElementById("newStatus").value; 
 
-	if( intJobAdId == null ){
-		alert("Job Ad ID is not provided");//USE console.log(); instead
-	}
-	
-	request = new Request;
-	request.addAction("changeJobAdStatus");
-	request.addParam("jobAdId", intJobAdId);
-	request.addParam("status", strNewStatus);
-	
-	//Concurrent Ajax handling
-	var xmlhttp=createXHR();
-	if(xmlhttp){
-		try{
-			//send the parameters to the servlet with POST
-			xmlhttp.open("POST","../ServletJobAd" ,true);
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.onreadystatechange = processResponse;
-			xmlhttp.send( request.toString() );
-		}catch(e){
-			
-		}
-	}
-	$("#feedback").text("Sending Request");
-
-	function processResponse(){
-		  if (xmlhttp.readyState==4){ 
-		    try {
-			  if(xmlhttp.status==200){
-				  //AJAX: TODO:remove this job ad row
-				  $("#row-"+intJobAdId).remove();
-		    }
-			else{
-				  console.log("Change Job Ad Status Failed");
-				  	$("#lbImg", theForm).removeClass("load").addClass("alert");
-					$("#lbMsg",theForm).html("Action Not Successful, please try again");
-					$.fn.smartLightBox.closeLightBox(1000, formDiv);
-			}
-		   }catch(e){
-			   //error-handling
-		   }
-		 }
-	}
-	
-	
-}
 
 /**
  * Admin Function: handles delete job ad
@@ -90,7 +39,6 @@ function adminDeleteJobAd(intJobAdId){
 		  if (xmlhttp.readyState==4){ 
 		    try {
 			  if(xmlhttp.status==200){
-				  //AJAX: TODO:remove this job ad row
 				  $("#row-"+intJobAdId).remove();
 		    }
 			else{

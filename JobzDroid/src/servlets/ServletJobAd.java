@@ -143,11 +143,9 @@ public class ServletJobAd extends HttpServlet {
 					response.sendRedirect("../sessionExpired.html");
 					return;
 				}
-				else if( sessionCheck = session.checkPrivilege( "poster") ){
+				else if( sessionCheck = session.checkPrivilege( "poster" ) )
 					changeJobAdStatus(request,response);
 				break;
-				
-			}
 				
 				
 		/*****************Retrieve AD ACTIONS***********************/		
@@ -444,29 +442,33 @@ public class ServletJobAd extends HttpServlet {
 		String message = "There is a problem getting the detail, please try again.";
 		String jobAdId = request.getParameter("jobAdId");
 		String toStatus = request.getParameter("status");
-		
-		String[]colToGet={"idJobAd", "status"};
-		String[]tables={"tableJobAd"};
-		String[]onCond={"idJobAd="+jobAdId };
-		
 		Connection conn = dbManager.getConnection();	
-		StringBuffer[]qBuf=DBQ.buildJoinQuery(tables, colToGet, "join", onCond);
+		
+		String[]colToGet = {"idJobAd", "status"};
+		ArrayList<String>cond = new ArrayList<String>();
+		cond.add("idJobAd="+jobAdId);
+		StringBuffer []qBuf = DBQ.buidlSelQuery(new String[]{"tableJobAd"}, colToGet, cond);
 		
 		try {
 			
-			String query = qBuf[0].append(qBuf[1]).toString();
-			System.out.println("getJobAdById query:" + query);
+			String query = 
+				//"SELECT idJobAd, status FROM tableJobAd WHERE idJobAd='" + jobAdId + "'";
+				qBuf[0].append(qBuf[1]).toString();
+			System.out.println("changeJobAdStatus query: " + query);
 			
-			ResultSet result = conn.createStatement().executeQuery(query);
+			ResultSet result = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery(query);
 			   if(result.first()){
 				   result.updateString("status", toStatus);
 				   result.updateRow();
+				   message = "Update job ad status successful";
+				   System.out.println(message);
 				}
 			   else{ //if the job ad doesn't specify  a location
 				}
 		 }//eof try		 
 	    
 		catch (SQLException e) {
+			System.out.println("SQL exception : " + e.getMessage());
 			Utility.logError("SQL exception : " + e.getMessage());
 		}
 		// close DB objects

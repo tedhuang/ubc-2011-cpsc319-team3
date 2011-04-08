@@ -347,11 +347,66 @@ function getJobAdByOwner(outputDiv){
 	}
 }
 
+
+
+function changeJobAdStatus(intJobAdId, strNewStatus){
+	
+	if( intJobAdId == null ){
+		alert("Job Ad ID is not provided");//USE console.log(); instead
+	}
+	
+	var strSessionKey = $("#sessionKey").val();
+
+	request = new Request;
+	request.addAction("changeJobAdStatus");
+	request.addParam("sessionKey", strSessionKey);
+	request.addParam("jobAdId", intJobAdId);
+	request.addParam("status", strNewStatus);
+
+	
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
+	$("#feedback").text("Sending Request");
+
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  //$.fn.smartLightBox.diaBox
+					$.fn.smartLightBox.closeLightBox(1000);
+		    }
+			else{
+				  console.log("Change Job Ad Status Failed");
+				  	$("#lbImg", "#home-frame").removeClass("load").addClass("alert");
+					$("#lbMsg","#home-frame").html("Action Not Successful, please try again");
+					$.fn.smartLightBox.closeLightBox(1000);
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}
+}
+
+
 function delJobAd(tbRow, jobAdId){
 	
 	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
+//	request.addAction("changeJobAdStatus");
+//	request.addParam("status", "inactive");
 	request.addAction("deleteJobAd");
 	request.addParam("sessionKey", strSessionKey);
 	request.addParam("jobAdId", jobAdId);
@@ -377,7 +432,7 @@ function delJobAd(tbRow, jobAdId){
 			  tbRow.remove();
 	    }
 		else{
-			 console.log("delete was unsuccessful");
+			 console.log("set job ad to inactive was unsuccessful");
 		}
 	   }catch(e){
 		   //error-handling
