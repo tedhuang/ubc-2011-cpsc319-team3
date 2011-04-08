@@ -183,15 +183,6 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 		  deleteInput.appendTo(tr);
 		  $.fn.DynaSmartTab.adminTool(tr, jobAdId);
 		  
-//		  tr.mouseover(function(){
-//			  tr.removeClass("oddRow");
-//			  tr.addClass("oddRow hover");
-//		  });
-//		  tr.mouseout(function(){
-//			  tr.removeClass("oddRow hover");
-//			  $("tr:odd", tbody).addClass("oddRow");
-//		  });
-		  
 		  tr.appendTo(tbody);
 		  
 		  //Update Radio button to current settings
@@ -201,11 +192,6 @@ function buildAdminJobAdTb(targetXMLTag, outputDiv){
 				  $("input[name='"+jobAdId+"']")[0].checked = true;
 			  }
 		  
-		 //Add Button Function to load details tab
-//		  $("#td-title", tr).click(function(){
-//			  getJobAdById(jobAdId,'adDetailTable');
-//			 });
-		 
 		    
 		});//END OF FOR EACH FUNCTION
 		

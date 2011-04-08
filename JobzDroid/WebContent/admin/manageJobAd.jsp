@@ -196,8 +196,6 @@
           	</ul>
           	
           </div>
-          
-
 		  
 	       <div id="allJobAdtable" class="resultTableDiv">
 	          <table>
