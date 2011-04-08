@@ -194,8 +194,6 @@ function buildAdListTb(targetXMLTag, outputDiv, mapDiv, xmlResponse){
 			 });
 		  var locations=jobAd.find("location");
 			if(locations.length){ //if there is some location
-				$.fn.smartMap.initDisplayMap(mapDiv);
-				
 				$.each(locations, function(idx){
 					addr=$(this).attr("addr");
 					lat=$(this).attr("latlng").split(",")[0];

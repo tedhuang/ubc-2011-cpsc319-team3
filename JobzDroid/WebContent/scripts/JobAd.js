@@ -361,32 +361,38 @@ function getJobAdById(id, outputDiv){
 	//change the text while sending the request
 	fb.html("<h2>Sending getJobAdById Request</h2>");
 	
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-	$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletJobAd" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.send(request.toString());
+			xmlhttp.onreadystatechange=processResponse;
+			$.fn.smartLightBox.openDivlb("adDetailFrame", 'load','loading data...');
+		}catch(e){
+			
+		}
+	}
 	
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		    //parse XML response from server
-		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  	buildDetailTable("jobAd", outputDiv);
-	    }
-	  else if(xmlhttp.status!=200){
-		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
-	  }
-	  $.fn.smartLightBox.closeLightBox(0, "adDetailFrame");
-	  };
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
+				  buildDetailTable("jobAd", outputDiv, xmlhttp.responseXML);
+		    }
+			else{
+				  fb.html("<h2 class='error'> There is error</h2>");
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+		  $.fn.smartLightBox.closeLightBox(0, "adDetailFrame");
+	}  
+	
+	
 }
 /************************************************************************************************************
  * 				Function used by admin to get job ads of all status

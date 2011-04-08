@@ -33,13 +33,13 @@ public class Location {
 			for(Map.Entry<String, String> entry : locationMap.entrySet()){
 				String fld= entry.getKey();
 				Object value = entry.getValue();
-				if(value!=null){
+				if(value!=null && fld.matches("(?i)addr.*|latlng.*")){
 					if(fld.matches("(?i)addr.*")){
 						int idx=Integer.parseInt(fld.substring("addr".length()));
 						if(locList[idx]!=null){
 							locList[idx].insert(12,"addr"+EQ+QUO+value+QUO+SP);
 						}else{
-							locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, "addr"+EQ+QUO+value+QUO+SP));
+							locList[idx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, "addr"+EQ+QUO+value+QUO+SP));
 							locIdx++;
 						}
 							
@@ -50,7 +50,7 @@ public class Location {
 							locList[idx].insert(12,"latlng"+EQ+QUO+value+QUO+SP);
 						}
 						else{
-							locList[locIdx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, "latlng"+EQ+QUO+value+QUO+SP));
+							locList[idx]=new StringBuffer(new StringBuffer("\t\t<location >\n\t\t</location>\n").insert(12, "latlng"+EQ+QUO+value+QUO+SP));
 							locIdx++;
 						}
 					}

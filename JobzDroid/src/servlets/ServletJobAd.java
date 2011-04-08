@@ -715,7 +715,7 @@ public class ServletJobAd extends HttpServlet {
 					locationMap=new HashMap<String, String>();
 					for(int i=1; i<=numColumns; i++){
 						String colName = rsmd.getColumnName(i);
-						if(result.getString(colName)!=null){ //not getting the null values
+						if(result.getString(colName)!=null ){ //not getting the null values
 							locationMap.put(colName, result.getString(colName));
 						}
 					}
