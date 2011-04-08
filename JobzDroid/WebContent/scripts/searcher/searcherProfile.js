@@ -1,6 +1,7 @@
 
 function submitChangeProfile(accountType){
-	
+	$.fn.smartLightBox.openDivlb('profileFrame','load','Loading..');
+
 	//disables button to prevent multiple submit
 	document.getElementById("submitProfileButton").disabled=true;
 	
@@ -69,17 +70,27 @@ function submitChangeProfile(accountType){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
-		    //parse XML response from server
-		  	//TODO: implement response
-		  alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
-		  
+		  //alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+			getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");
+			$.fn.smartLightBox.closeLightBox(1000, "profileFrame");
+	    }else{
+		  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+			$("#lbMsg","#profileFrame").html("Approving Not Successful, please try again");
+			$.fn.smartLightBox.closeLightBox(1000, "profileFrame");
 	    }
 	  };	
 }
+
+
+
+
 //function getProfileAndFileList(profileOutputDiv, profileHeading, fileOutputDiv){
 //	getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv );
 //	listUserFiles(fileOutputDiv);
 //}
+
+
+
 
 function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv ){
   
@@ -90,7 +101,41 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 	request = new Request;
 	request.addAction("getProfileBySessionKey");
 	request.addSessionKey(strSessionKey);
-
+	
+//	//Concurrent Ajax handling
+//	var xmlhttp=createXHR();
+//	if(xmlhttp){
+//		try{
+//			//send the parameters to the servlet with POST
+//			xmlhttp.open("POST","../ServletProfile" ,true);
+//			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//			xmlhttp.onreadystatechange = processResponse;
+//			xmlhttp.send( request.toString() );
+//		}catch(e){
+//			
+//		}
+//	}
+//	
+//	function processResponse(){
+//		  if (xmlhttp.readyState==4){ 
+//		    try {
+//			  if(xmlhttp.status==200){
+//				  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
+//				  buildSearcherFileTb("file", fileOutputDiv);
+//				  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
+//		    }
+//			else{
+//				  console.log("Get Seracher Profile failed");
+//				  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+//					$("#lbMsg","#profileFrame").html("Action not successful, please try again");
+//					$.fn.smartLightBox.closeLightBox(500, "profileFrame");
+//			}
+//		   }catch(e){
+//			   //error-handling
+//		   }
+//		 }
+//	}  
+	
 	var xmlHttpReq;
 	if (window.XMLHttpRequest)
 	  xmlhttp = new XMLHttpRequest();
@@ -104,7 +149,7 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 	
 	xmlhttp.onreadystatechange = function()
 	  {
-	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+	  if ( xmlhttp.readyState == 4   && xmlhttp.status == 200)
 	    {
 		  //you can find this in uiBot.js under scripts folder
 		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
@@ -112,8 +157,10 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 		  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
 		  
 	    }else{
-        	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
-			$("#lbMsg","#profileFrame").html("Action Not Successful, please try again");
+	    	
+	    	//TODO: fix bug: Get profile seems to hit here 3 times	    	
+//        	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+//			$("#lbMsg","#profileFrame").html("Action Not Successful, please try again");
 			 $.fn.smartLightBox.closeLightBox(500, "profileFrame");
 	    }
 	    	

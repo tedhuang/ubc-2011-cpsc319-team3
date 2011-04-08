@@ -64,7 +64,7 @@ function adminApprove(intJobAdId){
 	var formDiv = 'home-frame';
 	var theForm =$("#"+formDiv);
 	var tbody  = $("tbody", "#allJobAdtable");
-//	$.fn.smartLightBox.openDivlb(formDiv,'load','Loading..');
+//	$.fn.smartLightBox.openDivlb('profileFrame','load','Loading..');
 	
 	var sessionKey = document.getElementById("sessionKey").value;
 	

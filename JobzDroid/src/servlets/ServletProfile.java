@@ -535,7 +535,6 @@ public class ServletProfile extends HttpServlet{
 	
 	private void getProfileBySessionKey(HttpServletRequest request, HttpServletResponse response, Session session)throws ServletException, IOException{
 		
-		
 		//Initialize Return statements
 		boolean isSuccessful = false;
 		String message = "Failure to fetch profile by Session Key";
@@ -547,11 +546,6 @@ public class ServletProfile extends HttpServlet{
 		Connection conn = null;	
 		Statement stmt = null;
 		
-//		String documentList = "";
-		// if invalid session, redirect to error page
-//TODO REFACTOR
-		earlyExit:
-		{
 		try{
 
 			String acctType = "";
@@ -565,7 +559,6 @@ public class ServletProfile extends HttpServlet{
 				profile = poster;
 			}
 
-			
 			System.out.println("Getting Job " + acctType + " Profile");
 			
 			conn = dbManager.getConnection();
@@ -680,10 +673,6 @@ public class ServletProfile extends HttpServlet{
 				}
 			}// END OF EMPLOYMENT PREFERENCE
 			
-//			if( currSession.getAccountType().equalsIgnoreCase("searcher") ) {
-//				documentList = ServletDocument.getXMLDocumentList( currSession );
-//			}
-			
 			
 		}
 		catch (SQLException e) {
@@ -707,7 +696,8 @@ public class ServletProfile extends HttpServlet{
 	        }
 	    }
 	    
-		}//earlyExit:
+//		}//earlyExit:
+	    
 	    System.out.println("Checkpoint: End of getPofileBySessionKey - Message: " + message);
 	    
 		StringBuffer XMLResponse = new StringBuffer();	

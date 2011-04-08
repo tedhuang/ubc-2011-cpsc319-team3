@@ -30,8 +30,9 @@ function changePrimaryEmail(sessionKey, newEmail){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 			document.getElementById("submitAccountButton").disabled=false;
+			$("#oldEmail").text(newEmail);
 		  //TODO: parse response
-			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue );
+			//alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue );
 	    }
 	  };
 }
@@ -66,8 +67,9 @@ function changeSecondaryEmail(sessionKey, secEmail){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 			document.getElementById("submitAccountButton").disabled=false;
+			$("#oldSecEmail").text(secEmail);
 		  //TODO: parse response
-			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+			//alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
 			
 			
 	    }
@@ -105,8 +107,9 @@ function changePassword(sessionKey, oldPassword, newPassword, newPasswordRepeat)
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 			document.getElementById("submitAccountButton").disabled=false;
+
 		  //TODO: parse response
-			alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+			//alert( (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
 			
 			
 	    }
@@ -118,7 +121,8 @@ function changePassword(sessionKey, oldPassword, newPassword, newPasswordRepeat)
  * 					Change Account Fields - Primary E-mail, Secondary E-mail, Password
  ****************************************************************************************************/
 function submitChangeAccount(){
-	
+	$.fn.smartLightBox.openDivlb('profileFrame','load','Loading..');
+
 	//disables button to prevent multiple submit
 	document.getElementById("submitAccountButton").disabled=true;
 	
@@ -165,7 +169,9 @@ function submitChangeAccount(){
 		}
 	}
 	
-	
+	$.fn.smartLightBox.closeLightBox(3000, "profileFrame");
+	//getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");
+
 }
 
 
@@ -194,7 +200,8 @@ function sendPasswordChangeRequest(evt){
 			//parse XML response from server
 			var responseText = parseForgetPasswordResponse(xmlHttpReq.responseXML);
 	    	$("#statusText").text(responseText);
-		}};
+		}
+	};
 
 	request = new Request;
 	request.addAction("requestForgetPassword");
@@ -208,6 +215,8 @@ function sendPasswordChangeRequest(evt){
 	//update status text
 	$("#statusText").text("Processing...This may take a moment.");
 }
+
+
 
 // parses response from server
 function parseForgetPasswordResponse(responseXML){	
