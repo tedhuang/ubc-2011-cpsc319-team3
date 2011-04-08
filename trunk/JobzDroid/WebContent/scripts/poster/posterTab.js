@@ -300,11 +300,20 @@
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
                 	var status=tr.find('td.td-status').text();
-                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
-                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
-                	var subMenu=({
-                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
-                				});
+                	var topMenuItem=({"View":"view", "Edit":"edit", "Inactivate":"inactive"});
+                	
+                	/*******************************
+                	 * WE WANT INACTIVATE NOT DELETE
+                	 *******************************/
+                	
+//                	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
+//                	var subMenu=({
+//                					statusChanger:({"Change Ad Status":"top-li", "Inactive":"sub-li", "Draft":"sub-li"})	
+//                				});
+                	
+                	
+                	
+                	
                 	var homeFrame = domObjById("home-frame");
                 	var parentOffset=homeFrame.offset(); // calculate the offset for menu use
                 	
