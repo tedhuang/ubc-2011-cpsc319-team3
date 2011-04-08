@@ -558,6 +558,8 @@
         function open_edAd_form(status){
         	$("#edAdFrame").load("DOMs/formDOM.jsp #edAdForm",function(){//TODO move this to server side for security reason
         		$.fn.smartLightBox.openDivlb("edAdFrame", 'load','loading data...');
+        		customizeInput("form-cb", "label-cbn", "label-cby");
+    			customizeInput("form-rb", "label-rbn", "label-rby");
         		$( "#startTime-field","#edAdFrame" ).datepicker({ maxDate: "+3M +10D" });
         		$( "#expireTime-field" ,"#edAdFrame").datepicker({minDate: "+1M", maxDate: "+3M"	});//ad expires in max 3 months
         		bindHeadToolBar("edAdTool", "edAdForm",status);
@@ -759,6 +761,23 @@
 			$("input[name='company-field']", 	edFormContainer).val(xmlData.attr("contactInfo"));
 			$("input[name='tag-field']", 		edFormContainer).val(xmlData.attr("tags"));
 			
+			var hasGradFunding = xmlData.attr("hasGradFunding");
+			
+			//Update has grad funding radio button
+			  if( hasGradFunding == "true" ){
+				  $('input[name="gf-field"]')[0].checked = true;
+				  
+				  
+			  }else{
+				  $('input[name="gf-field"]')[1].checked = true;
+
+			  }
+			  $('input[name="gf-field"]:checked + label')
+//			  .removeClass()
+			  .toggleClass('label-rby');
+			  
+			$("input[name='gf-field']", 		edFormContainer).val(xmlData.attr("gfStr"));
+			
 			// replace &nbsp; with space and <br /> with \n for description in textarea
 			var processedDesc = xmlData.attr("jobAdDescription").replace(/&nbsp;/gi, ' ');
 			processedDesc = processedDesc.replace(/<br \/>/gi, '\n');
@@ -790,8 +809,7 @@
 			   });
 			//TODO MAP
 			
-			customizeInput("form-cb", "label-cbn", "label-cby");
-			customizeInput("form-rb", "label-rbn", "label-rby");
+			
 			$.fn.smartLightBox.closeLightBox(0, $(edFormContainer).parent(".subFrame").attr('id'));
 		
       };
