@@ -447,6 +447,10 @@ public class ServletDocument extends HttpServlet {
 		File[] userfiles = getUserFiles( idOwner );
 		String fileData = "";
 		
+		if( userfiles == null ) {
+			return "";
+		}
+		
 		for( File eachFile: userfiles ) {
 			BigDecimal fileSizeMB = new BigDecimal( FileUtils.sizeOf( eachFile ) );
 			fileSizeMB = fileSizeMB.divide( new BigDecimal( SystemManager.bytesInMB ) );

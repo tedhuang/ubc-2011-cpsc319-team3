@@ -1084,10 +1084,14 @@ private StringBuffer[] buildPostAdQuery(HttpServletRequest request, int IdAcct){
 	  }
 	else if(action.equals("createJobAdvertisement")){
 		//status is pending
-		if(SystemManager.enableJobAdApproval)
+		if(SystemManager.enableJobAdApproval){
 			stm2.insert(stm2.length()-2, "'pending'" + qcmd.COMA);//CAUTION: SIGLE QUO & COMA IMPORTANT
-		else
-			stm2.insert(stm2.length()-2, "'open'" + qcmd.COMA);
+		}
+		else{//auto approved
+				stm1.insert(stm1.length()-2, "isApproved"+qcmd.COMA);
+				stm2.insert(stm2.length()-2, "'open'" + qcmd.COMA);
+				stm2.insert(stm2.length()-2, 1 + qcmd.COMA);
+			}
 	}
 	
 	for(Map.Entry<String, Object> entry : paraMap.entrySet()){
