@@ -65,6 +65,7 @@ function searchJobAdvertisement(outputDiv, mapDiv){
 		 if (xhr.readyState == 4) {
 				try {
 					  if (xhr.status == 200) {
+						  $.fn.smartMap.initDisplayMap(domObjById(mapDiv));
 						  buildAdListTb("jobAd", outputDiv, mapDiv,xhr.responseXML);
 					  }
 	                else { 

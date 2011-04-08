@@ -135,11 +135,16 @@
 				markers.remove(this);
 			}
 			function initAutoCplt(){
+				var theCity, theProvince, theCountry, theZip;
 				$("#addrBar").autocomplete({
 				      source: //use jquery UI auto complete function to get the address
 				    	function(request, response) {
 					        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
 					          response($.map(results, function(item) {
+					        	  theCity="";
+					        	  theProvince="";
+					        	  theCountry="";
+					        	  theZip="";
 					        	  
 					        	  $.each(item['address_components'], function(index){
 							    		$.each(item['address_components'][index]['types'], function(i){
@@ -367,7 +372,7 @@
 				$.fn.smartMap.adDetailMapDisplay=function(container, locObjArray){//display the a new map according to info
 					var dispMap = $('<div></div>').addClass("displayMap").appendTo(container);
 					var dispList = $('<ul></ul>').addClass("dispLocList").appendTo(dispMap);
-					var mapPatch = $('<div></div>').addClass("dispMapPatch").appendTo(dispMap);
+					var mapPatch = $('<div></div>').addClass("dispMapCanvas").appendTo(dispMap);
 					var location = new google.maps.LatLng(dfltLat,dfltLng);
 					  var options = {
 					    zoom: 14,

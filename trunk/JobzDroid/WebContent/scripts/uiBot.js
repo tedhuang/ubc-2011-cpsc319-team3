@@ -4,11 +4,11 @@
  * @param outputDiv
  * @param heading
  *********************************************************************************************************************/
-function buildDetailTable(targetXMLTag, outputDiv){
+function buildDetailTable(targetXMLTag, outputDiv, xmlResponse){
 	var fb =$(".feedback", "#"+outputDiv);
 	var heading=$('.heading', "#"+outputDiv);
 	
-	var jobAd = $(targetXMLTag,xmlhttp.responseXML);
+	var jobAd = $(targetXMLTag,xmlResponse);
 	
 	if(jobAd.length==0){//if no results
 		fb.html("<h2 class='error'>Oops, you are looking at something that does not exist</h2>");
@@ -52,10 +52,10 @@ function buildDetailTable(targetXMLTag, outputDiv){
 		var locations=jobAd.find("location");
 		if(locations.length){ //if there is some location
 		var locObjArray = [];
-		$.each(locations, function(idx){
+		$.each(locations, function(){
 			var locObj={addr:null, latlng:null};
-			locObj.addr=$(this).attr("addr"+idx);
-			locObj.latlng=$(this).attr("latlng"+idx);
+			locObj.addr=$(this).attr("addr");
+			locObj.latlng=$(this).attr("latlng");
 			locObjArray.push(locObj);
 		});
 		$.fn.smartMap.adDetailMapDisplay(locTd, locObjArray);

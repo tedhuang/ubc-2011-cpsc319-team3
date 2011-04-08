@@ -75,7 +75,7 @@
 		    	  
 		    	 function(request, response) {
 		    	  
-			        geocoder.geocode( {'address': request.term + ', CA' }, function(results, status) {
+			        geocoder.geocode( {'address': request.term }, function(results, status) {
 			          response($.map(results, function(item) {
 			        	//reset all fields
 			        	location=({citySN:"", provinceSN:"", countrySN:"",
@@ -179,18 +179,18 @@
 	};
 	
 	$.fn.smartMap.initDisplayMap=function(containerObj){//display the a new map according to info
-		var dispMap = $('<div></div>').addClass("displayMap");
-		var mapCanvas = $('<div></div>').addClass("dispMapCanvas");
-		containerObj.show();
+//		containerObj.show();
 		
 		  var defaultLoc = new google.maps.LatLng(dfltLat,dfltLng);
 		  var options = {
-		    zoom: 11,
+		    zoom: 10,
 		    center: defaultLoc,
 		    mapTypeId: google.maps.MapTypeId.ROADMAP
 		  };
 		  
 		if(!$(".displayMap").length){
+			var dispMap = $('<div></div>').addClass("displayMap");
+			var mapCanvas = $('<div></div>').addClass("dispMapCanvas");
 			dispMap.appendTo(containerObj);
 			mapCanvas.appendTo(dispMap);
 			map = new google.maps.Map(mapCanvas.get(0), options);
@@ -204,7 +204,7 @@
 	
 	$.fn.smartMap.buildJobListMap=function(lat, lng){
 		var location = new google.maps.LatLng(lat,lng);
-		var marker=placeMarkr(location);
+		var marker=addMarkr(location);
 		typeof marker !==undefined ? 
 				markers.push(marker)
 				:
@@ -214,7 +214,7 @@
 	$.fn.smartMap.adDetailMapDisplay=function(container, locObjArray){//display map of ad detail according to info
 		var dispMap = $('<div></div>').addClass("displayMap").appendTo(container);
 		var dispList = $('<ul></ul>').addClass("dispLocList").appendTo(dispMap);
-		var mapPatch = $('<div></div>').addClass("dispMapPatch").appendTo(dispMap);
+		var mapPatch = $('<div></div>').addClass("dispMapCanvas").appendTo(dispMap);
 		var location = new google.maps.LatLng(dfltLat,dfltLng);
 		  var options = {
 		    zoom: 14,
@@ -246,6 +246,15 @@
 		});
 		map.setCenter(location);
 		return markr;
+	}
+	function addMarkr(location) {//For multiple work locations
+			var markr = new google.maps.Marker({
+			    position 	: location,
+			    map		 	: map
+			  });
+			  markers.push(markr);
+			  map.setCenter(location);
+			  return markr;
 	}
 	function buildDisplayList(dispList, lat, lng, addr, idx){
 		var li=	$("<li></li>")

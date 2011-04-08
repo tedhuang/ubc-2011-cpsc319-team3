@@ -1,5 +1,4 @@
 .ui-autocomplete {background-color: white;width: 500px;	border: 1px solid #cfcfcf;	list-style-type: none;	padding-left: 0px;	cursor: pointer;}
-.ui-autocomplete item:hover{background-color: green;}
 #mapPanel {background-color: rgba(0, 0, 0, 0.5);color: white; display: none; height: 500px; left: 0; position: absolute; top: 0; width: 100%;
 			z-index: 300; font: 1.3em bolder italic small-caps Times New Roman, serif;}
 #mapPanel #theMap{left: 3em;position: absolute;}
