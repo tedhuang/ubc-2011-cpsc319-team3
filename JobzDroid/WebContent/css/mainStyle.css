@@ -139,6 +139,7 @@ div.fullBox{width:100%;}
 .resultTableDiv td.td-eduReq{max-width: 92px;}
 .resultTableDiv td.td-title{min-width:200px;max-width:350px;word-wrap: break-word;cursor:pointer;}
 .resultTableDiv td.td-loc{max-width:300px;word-wrap: break-word;}
+.resultTableDiv td.hasMap{background:green;}
 .resultTableDiv td.adMenu{width:2em;}
 .resultTableDiv td.clean {	padding: 0 5px;}
 .resultTableDiv td.hide{display: none;}

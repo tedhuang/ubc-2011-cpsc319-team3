@@ -180,7 +180,7 @@
 	
 	$.fn.smartMap.initDisplayMap=function(containerObj){//display the a new map according to info
 //		containerObj.show();
-		
+		  var mapCanvas = $('<div></div>').addClass("dispMapCanvas");
 		  var defaultLoc = new google.maps.LatLng(dfltLat,dfltLng);
 		  var options = {
 		    zoom: 10,
@@ -190,7 +190,7 @@
 		  
 		if(!$(".displayMap").length){
 			var dispMap = $('<div></div>').addClass("displayMap");
-			var mapCanvas = $('<div></div>').addClass("dispMapCanvas");
+			
 			dispMap.appendTo(containerObj);
 			mapCanvas.appendTo(dispMap);
 			map = new google.maps.Map(mapCanvas.get(0), options);
@@ -202,13 +202,16 @@
 		
 	};
 	
-	$.fn.smartMap.buildJobListMap=function(lat, lng){
+	$.fn.smartMap.buildJobListMap=function(td, lat, lng){
 		var location = new google.maps.LatLng(lat,lng);
 		var marker=addMarkr(location);
 		typeof marker !==undefined ? 
 				markers.push(marker)
 				:
 				null;
+		td.bind("click", function(){ //when click on location col, pan to loc
+	        map.panTo(location);
+		});
 	};
 	
 	$.fn.smartMap.adDetailMapDisplay=function(container, locObjArray){//display map of ad detail according to info
