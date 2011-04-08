@@ -947,8 +947,8 @@ public class ServletProfile extends HttpServlet{
 			System.out.println(query);
 			
 			//Create ArrayList to store Job Searcher's location(s) in jsList as parameter "locationList"
-			Location location = new Location();
-			ArrayList<Location> locationList = new ArrayList<Location>();
+			
+			
 			
 			//Execute query and get result set
 			stmt.execute(query);
@@ -957,6 +957,8 @@ public class ServletProfile extends HttpServlet{
 			//Compile each result from the result set into jsList ArrayList
 			while( result.next() ) {
 				ProfileSearcher temp = new ProfileSearcher();
+				ArrayList<Location> locationList = new ArrayList<Location>();
+				Location location = new Location();
 					
 				temp.accountID 				= result.getInt("idAccount");
 				temp.name					= result.getString("name");
