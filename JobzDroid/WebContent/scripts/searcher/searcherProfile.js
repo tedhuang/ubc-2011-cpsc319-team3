@@ -149,10 +149,11 @@ function listUserFiles( outputDiv ) {
 }
 
 function uploadSearcherFile() {
-	
-	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
+	var sessionKey = document.getElementById("sessionKey").value;
+	document.fileUploadForm.sessionKey.value = sessionKey;
 	document.fileUploadForm.action = "../ServletDocument";
-
+	var Params = "sessionKey=" + sessionKey;
+	
 	var url = "../ServletDocument";
 	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
     	xmlhttp = new XMLHttpRequest();
@@ -164,7 +165,7 @@ function uploadSearcherFile() {
     	catch(e) {
     		alert(e);
     	}
-    	xmlhttp.send(null);
+    	xmlhttp.send(Params);
     }
 	else if  (window.ActiveXObject ){// code for IE6, IE5
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
@@ -172,12 +173,10 @@ function uploadSearcherFile() {
 		if( xmlhttp ) {
 			xmlhttp.onreadystatechange = fileUploadProgress;
 			xmlhttp.open("GET", "../ServletDocument", true);
-			xmlhttp.send();
+			xmlhttp.send(Params);
 		}
 	}
 
-//	xmlhttp.open("GET", url, true);
-//    document.fileUploadForm.submit();
 	
 }
 

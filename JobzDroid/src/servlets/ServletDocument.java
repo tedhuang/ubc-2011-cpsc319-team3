@@ -289,6 +289,7 @@ public class ServletDocument extends HttpServlet {
 		        	System.out.println("Writing to File: " + uploadedFile.getAbsolutePath() );
 		        	message = "ServletDocument: Upload Sucessful";
 					item.write(uploadedFile);
+					return;
 					//TODO set file permission?
 				} catch (Exception e) {
 					Utility.logError("Write user file error: " + e.getMessage());
@@ -298,7 +299,6 @@ public class ServletDocument extends HttpServlet {
 		}
 		}//earlyExit:
 		System.out.println(message);
-		
 //		StringBuffer XMLResponse = new StringBuffer();	
 //		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 //		XMLResponse.append("<response>\n");
