@@ -175,9 +175,9 @@
 		  	  		List<SyndCategory> categoryList = entry.getCategories();
 		  	  		String categories = "";
 		  	  		for(int j = 0; j < categoryList.size(); j++){
-		  	  			categories.concat(categoryList.get(j).getName());		  	  			
-		  	  			categories = categories.trim();
+		  	  			categories = categories.concat(categoryList.get(j).getName() + " ");	
 		  	  		}
+	  	  			categories = categories.trim();
 		  	  		if(categories.equals(""))
 		  	  			categories = "None";
 		  	  %>
