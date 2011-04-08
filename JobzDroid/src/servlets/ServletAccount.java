@@ -99,7 +99,7 @@ public class ServletAccount extends HttpServlet {
 			// request for a primary email change
 			case requestEmailChange:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				if(sessionCheck = session.checkPrivilege( "searcher", "poster") )
@@ -133,7 +133,7 @@ public class ServletAccount extends HttpServlet {
 				break;
 			case requestPasswordChange:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				if (sessionCheck = session.checkPrivilege( "searcher", "poster", "admin", "superAdmin") ) 
@@ -144,7 +144,7 @@ public class ServletAccount extends HttpServlet {
 		}
 		
 		if( sessionCheck == false && session != null  ) {
-			response.sendRedirect("../error.html");
+			response.sendRedirect("error.html");
 		}
 		
 	}
