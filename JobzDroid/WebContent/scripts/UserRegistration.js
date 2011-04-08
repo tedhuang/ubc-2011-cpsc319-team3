@@ -215,20 +215,26 @@ function sendRegRequest(evt){
 		var eduLevel 		= $("#eduLevel").val();
 		var strStartingDate = $("#startingDate").val();
 		//Load Employment Preference Checkbox values
-		var boolEmpPrefPT	= document.getElementById("partTimeCheck").checked;
-		var boolEmpPrefFT	= document.getElementById("fullTimeCheck").checked;
-		var boolEmpPrefIn	= document.getElementById("internCheck").checked;
 		
-		$('input[name=empPref]:checked').each(function() {
-			strEmpPref += $(this).val() + "_";
-			});
-		request.addParam("eduLevel", eduLevel);
-		if( strStartingDate && strStartingDate != "")
-			request.addParam("startingDate", strStartingDate);
-
+		
+		var boolEmpPrefPT	= $("#partTimeCheck").attr("checked");
+		var boolEmpPrefFT	= $("#fullTimeCheck").attr("checked");
+		var boolEmpPrefIn	= $("#internCheck").attr("checked");
+		
+		if ( boolEmpPrefPT )
+			boolEmpPrefPT = 1;
+		if ( boolEmpPrefFT )
+			boolEmpPrefFT = 1;
+		if ( boolEmpPrefIn )
+			boolEmpPrefIn = 1;
+		
 		request.addParam("empPrefPT", boolEmpPrefPT); //These will be 1s and 0s
 		request.addParam("empPrefFT", boolEmpPrefFT);
 		request.addParam("empPrefIn", boolEmpPrefIn);
+		
+		request.addParam("eduLevel", eduLevel);
+		if( strStartingDate && strStartingDate != "")
+			request.addParam("startingDate", strStartingDate);
 	}
 
 

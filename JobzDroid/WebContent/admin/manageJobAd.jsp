@@ -37,6 +37,7 @@
 
     	changeFilterStatus("all");
     	adminGetJobAd('allJobAdtable', 'first');
+        $.fn.smartLightBox.closeLightBox(3000);
     	
     	bindClearError();
 	});
