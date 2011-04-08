@@ -30,7 +30,15 @@ public class ProfilePoster {
 		}
 		
 		if( secondaryEmail == null || secondaryEmail == ""){
-			secondaryEmail = "N/A";
+			secondaryEmail = "";
+		}
+		
+		if( phone == null || phone.equals("null")) {
+			phone = "";
+		}
+		
+		if( selfDescription == null || selfDescription.equals("null")) {
+			selfDescription = "";
 		}
 		
 		// escape chars for XML
@@ -58,6 +66,8 @@ public class ProfilePoster {
 		
 		result = result.concat( "\t\t</profile>\n" );
 		
+		
+		System.out.println(result);
 		return result;
 	}
 	

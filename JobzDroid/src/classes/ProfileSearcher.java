@@ -37,12 +37,20 @@ public class ProfileSearcher {
 		}
 		
 		if(preferredStartDate == 0)
-			startingDateFormatted = "N/A";
+			startingDateFormatted = "";
 		else
 			startingDateFormatted = Utility.dateConvertor(preferredStartDate);
 	
 		if( secondaryEmail == null || secondaryEmail == ""){
-			secondaryEmail = "N/A";
+			secondaryEmail = "";
+		}
+		
+		if( phone == null || phone.equals("null")) {
+			phone = "";
+		}
+		
+		if( selfDescription == null || selfDescription.equals("null")) {
+			selfDescription = "";
 		}
 		
 		// escape characters into valid XML
