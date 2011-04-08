@@ -236,18 +236,17 @@
      * - Publicly Accessible
      *
      * ********************************************************************************************************************/ 
-                $.fn.DynaSmartTab.guestTool=function(tRow, adId){
+               $.fn.DynaSmartTab.searcherTool=function(tRow, adId){
          			
 //         			var tool= $('<button></button>').addClass('guestView');
-         			
-         			tRow.hover(function() {
-         		        $(this).addClass("hover");
-         		    }, function(){
-         		    	$(this).removeClass("hover");
-         		    })
+         			tRow
+//         			.hover(function() {
+//         		        $(this).toggleClass("hover");
+//         		    })
          			.unbind('click')
          			.click( function(){
-         				$.fn.DynaSmartTab.viewDetail(adId);
+         				openTab('adDetailTab'); 
+         				getJobAdById(adId, "adDetailTable");
          			});
 
          };

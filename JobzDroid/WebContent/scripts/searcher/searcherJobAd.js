@@ -150,34 +150,33 @@ function getJobAdById(id, outputDiv)
 	var fb = $(".feedback", "#"+outputDiv);
 	//change the text while sending the request
 	fb.html("<h2>Sending getJobAdById Request</h2>");
-	
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-	
-//	$.fn.smartLightBox.openlb('small','Retrieving Information...','load');
-	
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-		    //parse XML response from server
-		  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
-		  	buildDetailTable("jobAd", outputDiv);
+	var xhr = createXHR(); //Now created xhr used a function
+	function processResult(){
+		if (xhr.readyState == 4) {
+			try {
+				  if (xhr.status == 200) {
+					  fb.html("<h2 class='good'> Successfully finished tasks</h2>");	
+					  buildDetailTable("jobAd", outputDiv, xhr.responseXML);
+				  }
+                else{ 
+                	fb.html("<h2 class='error'>There is a problem when load the detail<br/>" +
+                			"please try again.</h2>");
+                }
+			} 
+			catch (e){
+			}
 	    }
-	  else if(xmlhttp.status!=200){
-		  fb.html("<h2 class='error'> Successfully finished tasks</h2>");
-	  }
-//	  $.fn.smartLightBox.closeLightBox(0);
-	  };
+	}//eof processResult
+	
+	if(xhr){
+		try {
+			  xhr.open("POST", "../ServletJobAd", true);
+			  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			  xhr.onreadystatechange = processResult; //bind to callBack to have threaded ajax calls
+			  xhr.send(request.toString());
+		} catch (e) {
+		  }
+	}	  
 }
 
 /************************************************************************************************************
