@@ -33,6 +33,7 @@ public class DbQuery{
 //	public final String RPRNTHS			= ") ";
 	public final String SQUO			= "'";
 	public final String EQ				= "=";
+	public final String NEQ 			= "!=";		//CAUTION: SPACE IMPORTANT
 	public final String GRTR			= ">";
 	public final String SMLR			= "<";
 	public final String BR				= "&lt;br /&gt;";
