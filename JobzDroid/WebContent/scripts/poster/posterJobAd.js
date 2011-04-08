@@ -31,23 +31,25 @@ function postJobAd(mode, formDiv){
 	var sessionKey = $("#sessionKey").val();
 	var infoText;
 	request = new Request;
+	var inputFields = $("#typeInForm .field, #desc-div .field", theForm).get();//.serializeArray(); //get type-in-form and description
+	var selFields=$("#chooseForm .selField", theForm).get();//.serializeArray(); //get choose fields
+	var data=({inputFld:inputFields, selFld:selFields});
+	
 	if(mode=="create" ){
 		request.addAction("createJobAdvertisement");
-		noNullData = checkMandatory(theForm);
 		infoText="Submitting Your Request...";
 	}
 	else if(mode=="draft"){
 		request.addAction("saveJobAdDraft");
-		noNullData = true;
 		infoText="Saving Draft...";
 	}
-	
+	noNullData=checkMandatory(data,theForm);
 	if(noNullData){
 //		$.fn.smartLightBox.openDivlb(formDiv,'load',infoText);
 		request.addSessionKey( sessionKey );
-		var inputFields = $(":input:not('.map')", theForm).serializeArray();
+		var dataFields = $(":input:not('.map')", theForm).serializeArray();
 		
-		jQuery.each(inputFields, function(i, field){
+		jQuery.each(dataFields, function(i, field){
 				request.addParam(field.name, field.value); //add parameter to the request
 		   });
 		//get location info
@@ -142,29 +144,28 @@ function updateJobAd(mode, formDiv){
 	else if(mode.match(/draftAd|publishInactive/gi)){
 		request.addAction("updateDraftAd");
 	}
+	var inputFields = $("#typeInForm .field, #desc-div .field", theForm).get(); //.serializeArray(); //get type-in-form and description
+	var selFields=$("#chooseForm .selField", theForm).get();//.serializeArray(); //get choose fields
+	var data=({inputFld:inputFields, selFld:selFields});
 	
-	 if(checkMandatory(theForm)){
+	if(checkMandatory(data,theForm)){
 		
 		request.addSessionKey( sessionKey );
-		var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray();
-		var compareResult =compareChange("oldAdValues", inputFields, formDiv);
-		if(!mode=="publishInactive"){
-			if(compareResult.numChanged){ //only update changed data
-				var changedData = compareResult.changedData;
-				$.each( changedData.data(),function(name, value) {
-					request.addParam(name, value);
-				});
+		var dataFields = $(":input:not('.map')", theForm).serializeArray();
+		var compareResult =compareChange("oldAdValues", dataFields, formDiv);
+		if(compareResult.DataChanged){ //only update changed data
+			var changedData = compareResult.changedData;
+			$.each( changedData.data(),function(name, value) {
+				request.addParam(name, value);
+			});
 			changedData.remove();//remove the cache(and the dom)
 			}
-			else{
-				$.fn.smartLightBox.closeLightBox(0);
-				$.fn.smartLightBox.diaBox("You Didn't Change Anything", "alert", "notification");
-			}
-		}
 		else{
-			$.each(inputFields, function(i, field){
-				request.addParam(field.name, field.value); //add parameter to the request
-		   });
+			$.fn.smartLightBox.closeLightBox(0);
+			$.fn.smartLightBox.diaBox("You Didn't Change Anything", "alert", "notification");
+		}
+		
+		if(mode=="publishInactive"){
 			request.addParam("updateDead", mode);
 		}
 		console.log(request.toString());
@@ -189,6 +190,7 @@ function updateJobAd(mode, formDiv){
 				xhr.onreadystatechange = processResult;
 				xhr.send(request.toString());
 				$.fn.smartLightBox.openDivlb(formDiv,'load',"Updating...");
+				adsdasadssadsad;
 			}catch(e){
 				console.log(e);
 			}
@@ -216,34 +218,76 @@ function updateJobAd(mode, formDiv){
 	}//eof processResult
 } //eof updateJobAd
 
-function checkMandatory(formContainer){
-	var count=0;
-	var error = "<h2 class='error'>Hmm...You seem to miss something</h2>";
-	var chkList = $('.mustNotNull', formContainer).get();
-	
-	$(chkList).each(function(){
-		if(!$(this).val().length){
+function checkMandatory(dataObj, formDiv){
+	var noNull=true;
+	$.each(dataObj, function(key){
+		switch(key){
+		case "inputFld":
+			$.each(this, function(){
+				var input = $(this).find(':input');
+				if(input.hasClass("mustNotNull")){
+					if(!input.val().length){
+						$(this).find('label').css('background','red');
+						noNull=false;
+					}
+				}
+				
+			});
+			break;
 			
-			$(error).insertAfter($(this).siblings('label'));
+		case "selFld":
+			$.each(this, function(){
+				var inputs = $(this).find(':input');
+				if(inputs.hasClass("mustNotNull")){
+//					if(!inputs.find(':checked')){
+					if(!$(this).find(':checked').length){
+						$(this).find('label.topLabel').css('background','red');
+						noNull=false;
+					}
+				}
+				
+			});
+		break;
 		}
-		else{
-			count++;
-		}
+		
 	});
-	if(count==chkList.length){
-		return true;
-	}
-	else{
-		return false;
-	}
+	noNull? null:$('<h2></h2>').addClass('error').html('Hmm...You seem to missed something').appendTo($('h2.welcome', formDiv));
+	return noNull;
 }
+//	var chkInput = $('.mustNotNull', formContainer).not(":radio");
+//	var chkSel =$(':radio.mustNotNull :checked', formContainer);
+//	$(chkInput).each(function(){
+//		if(!$(this).val().length){
+//			$(error).insertAfter($(this).siblings('label'));
+//		}
+//		else{
+//			count++;
+//		}
+//	});
+////	$(chkSel).each(function(){
+//	var temp=chkSel.find(":checked");
+//		if(temp.length){
+//			count++;
+//		}
+//		else{
+//			$(error).insertAfter($(this).siblings('label'));
+//		}
+////	});
+//	
+//	if(count==chkList.length){
+//		return true;
+//	}
+//	else{
+//		return false;
+//	}
+//}
 
 function compareChange(oldVal, newVal, formDiv){
 	
 	var changedData =$('<input>')
 					.attr({'type':'HIDDEN', 'id':'changedData'})
 					.appendTo(domObjById(formDiv));
-	var numChange=0;
+	var DataChanged=false;
 	oldVal = domObjById(oldVal);
 	$.each(newVal, function(i, field){
 		var fld=field.name;
@@ -252,11 +296,11 @@ function compareChange(oldVal, newVal, formDiv){
 		}
 		else if(field.value!=oldVal.data(fld)){
 			changedData.data(fld, field.value);
-			numChange++;
+			DataChanged=true;
 		}
 	});
 //	changedData.data("numChanged", numChange);
-	var compareResult={numChanged: numChange, changedData:changedData};
+	var compareResult={DataChanged: DataChanged, changedData:changedData};
 //	return changedData;
 	return compareResult;
 }

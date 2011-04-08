@@ -15,7 +15,6 @@
 
 	<div id="edAdForm" class="edFormContainer">
 		
-		<input type="hidden" id="oldAdValues">
 		   <div id="edAdTool" class="head-Bar">
 	   		   <h2 class="welcome" id="edTabTitle">Editing Ad:</h2>
 			  <!--   <a class="jsBtn" id="ed_saveDraft"></a>
@@ -23,7 +22,7 @@
 			   <a class="jsBtn" id="ed_reset" > Reset Fields</a>
 				<!-- <span class="feedback">Feed Back Area</span>-->
 			</div><!--ENDOF head-Bar-->
-			  
+	<input type="hidden" id="oldAdValues">
 	<div id="typeInForm" class="fillInForm"> 
 				<div class="field">
 					<label for="title-field" >Ad Title:</label>
@@ -39,19 +38,28 @@
 						<label for="tag-field" >Add Tags:</label> 
 						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
 					</div>
-				<div class="field"> 
-					<label>Is Graduate Funding Available:</label>
-						<input type="radio" name="gf-field" value="1" id="gf-field1" class="mustNotNull form-rb"/> 
-						<label class="label-rbn" for="gf-field1">Yes</label>
-						<input type="radio" name="gf-field" value="0" id="gf-field2" class="mustNotNull form-rb"/>
-						<label class="label-rbn" for="gf-field2">No</label>
-					
+				<div class="field">
+					<label for="startTime-field">Starting Date</label>
+					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
+				</div >	
+				<div class="field">
+					<label for="expireTime-field">Expiry date</label>
+					<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
 				</div>
 			</div><!--ENDOF typeInForm-->
 				
 		<div id="chooseForm" class="fillInForm">
-			<div class="field"> 
-				<label for="edu-field">Minimal Degree Requirement:</label>
+			<div class="selField"> 
+				<label class="topLabel">Is Graduate Funding Available:</label>
+					<input type="radio" name="gf-field" value="1" id="gf-field1" class="mustNotNull form-rb"/> 
+					<label class="label-rbn" for="gf-field1">Yes</label>
+					<input type="radio" name="gf-field" value="0" id="gf-field2" class="mustNotNull form-rb"/>
+					<label class="label-rbn" for="gf-field2">No</label>
+				
+			</div>
+		
+			<div class="selField"> 
+				<label class="topLabel" for="edu-field">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
 					<option value="0">Choose a degree</option>
 					<option value="1">B.Sc.</option>
@@ -60,27 +68,18 @@
 				</select>
 			</div>
 					
-			<div class="field">
-					<label for="startTime-field">Starting Date</label>
-					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
-			</div >	
-			<div class="field">
-				<label for="expireTime-field">Expiry date</label>
-				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
+			<div class="selField"> 
+				<label class="topLabel">Available Positions:</label>
+					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
+					<label class="label-cbn" for="ft-field">Full Time</label>
+					<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
+    				<label class="label-cbn" for="pt-field">Part Time</label>
+    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
+   		 			<label class="label-cbn" for="is-field">Internship</label>
 			</div>
-					
-					<div class="field"> 
-						<label>Available Positions:</label>
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
-							<label class="label-cbn" for="ft-field">Full Time</label>
-							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
-		    				<label class="label-cbn" for="pt-field">Part Time</label>
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
-		   		 			<label class="label-cbn" for="is-field">Internship</label>
-					</div>
-				<div class="field"> 
+				<div class="selField"> 
 					<label class="mapLabel">Add Locations:</label>
-					<span class="jsBtn btn-map" title="Add Location"></span>
+					<div class="jsBtn btn-map" title="Add Location"></div>
 				</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
 			   <div id="fields">
@@ -97,7 +96,7 @@
 				  	<ul id="locList"></ul>
 				 </div>
 				</div><!-- EOF MAP FIELD DIV -->
-			   <div id="desc-div" class="fillInForm">
+			   <div id="desc-div" class="descForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label>
 						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
@@ -110,7 +109,7 @@
           
 		  <div id="newAdForm" class="newFormContainer">
 			  <div class="head-bar" id="newAdTool">
-					<h2 class="welcome">Create New Ad</h2>
+					<h2 id="newAdHeading" class="welcome">Create New Ad</h2>
 						<a class="jsBtn" id="newAd_saveDraft">Save to Draft |</a>
 			    		<a class="jsBtn" id="newAd_publish">Post it |</a>
 						<a class="jsBtn" id="newAd_reset"> Reset Fields</a>
@@ -125,24 +124,32 @@
 						<label for="contact-field" >Contact Info:</label> 
 						<input id="contact-filed" name="company-field" class="textBox mustNotNull" value="" /> 
 					</div>
-					
-					<div class="field"> 
-						<label for="tag-field" >Add Tags:</label> 
-						<input id="tag-field" name="tag-field" class="textBox" value=""/> 
-					</div>
+				<div class="field">
+					<label for="startTime-field">Starting Date</label>
+					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
+				</div >	
+				<div class="field">
+					<label for="expireTime-field">Expiry date</label>
+					<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
+				</div>
+				
 				<div class="field"> 
-					<label>Is Graduate Funding Available:</label>
+					<label for="tag-field" >Add Tags:</label> 
+					<input id="tag-field" name="tag-field" class="textBox" value=""/> 
+				</div>
+			</div><!--ENDOF typeInForm-->
+				
+		<div id="chooseForm" class="fillInForm">
+			<div class="selField"> 
+					<label class="topLabel">Is Graduate Funding Available:</label>
 						<input type="radio" name="gf-field" value="1" id="gf-field1" class="mustNotNull form-rb"/> 
 						<label class="label-rbn" for="gf-field1">Yes</label>
 						<input type="radio" name="gf-field" value="0" id="gf-field2" class="mustNotNull form-rb"/>
 						<label class="label-rbn" for="gf-field2">No</label>
 					
-				</div>
-			</div><!--ENDOF typeInForm-->
-				
-		<div id="chooseForm" class="fillInForm">
-			<div class="field"> 
-				<label for="edu-field">Minimal Degree Requirement:</label>
+			</div><br/>
+			<div class="selField"> 
+				<label for="edu-field" class="topLabel">Minimal Degree Requirement:</label>
 				<select id="edu-field" name="edu-field">
 					<option value="0">Choose a degree</option>
 					<option value="1">B.Sc.</option>
@@ -151,30 +158,21 @@
 				</select>
 			</div>
 					
-			<div class="field">
-					<label for="startTime-field">Starting Date</label>
-					<input id="startTime-field" name="startTime-field" class="textBox mustNotNull" value="" READONLY/>
-			</div >	
-			<div class="field">
-				<label for="expireTime-field">Expiry date</label>
-				<input id="expireTime-field" name="expireTime-field" class="textBox mustNotNull" value="" READONLY/>
+			<div class="selField"> 
+				<label class="topLabel">Available Positions:</label>
+					<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
+					<label class="label-cbn" for="ft-field">Full Time</label>
+					<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
+    				<label class="label-cbn" for="pt-field">Part Time</label>
+    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
+   		 			<label class="label-cbn" for="is-field">Internship</label>
 			</div>
-					
-					<div class="field"> 
-						<label>Available Positions:</label>
-							<input type="checkbox" name="ft-field" value="fullTime" id="ft-field" class="mustNotNull form-cb "/>
-							<label class="label-cbn" for="ft-field">Full Time</label>
-							<input type="checkbox" name="pt-field" value="partTime" id="pt-field" class="mustNotNull form-cb"/>
-		    				<label class="label-cbn" for="pt-field">Part Time</label>
-		    				<input type="checkbox" name="is-field" value="internship" id="is-field" class="mustNotNull form-cb"/>
-		   		 			<label class="label-cbn" for="is-field">Internship</label>
-					</div>
-				<div class="field"> 
+				<div class="selField"> 
 					<label class="mapLabel">Add Locations:</label>
-					<span class="jsBtn btn-map" title="Add Location"></span>
+					<div class="jsBtn btn-map" title="Add Location"></div>
 				</div>
 			   </div><!--ENDOF RIGHT CHOOSEFORM-->
-			   <div id="fields">
+			   <div id="selField">
 			   	  
 				  <div id="mapPanel">
 				 	<div id="theMap">
@@ -184,11 +182,12 @@
 					    <label>longitude: </label><input id="longitude" class="map"type="text"/>
 					    <button id="rmPtr">Clear Map</button>
 				  	</div>
-				  	<span>You Can Save Up To 3 Job Locations</span>
+				  	<div class="jsBtn btn-map" title="Add Location"></div>
+				  	<span class="locListTitle">You Can Save Up To 3 Job Locations</span>
 				  	<ul id="locList"></ul>
 				 </div>
 				</div><!-- EOF MAP FIELD DIV -->
-			   <div id="desc-div" class="fillInForm">
+			   <div id="desc-div" class="descForm">
 			       <div class="field"> 
 						<label for="desc-field" >Job Description:</label>
 						<textarea id="desc-filed" name="desc-field" class="textBoxXL mustNotNull"></textarea> 
