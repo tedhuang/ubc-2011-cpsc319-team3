@@ -659,7 +659,7 @@
         			}
         				
         			else if(status=="pending"){
-    					postJobAd('draft', formId);
+    					postJobAd('pendingDraft', formId);
         			}
         				
         			else if(status== "inactive"){
@@ -675,13 +675,8 @@
         			else if(status=="open"){
         				updateJobAd('openAd', formId);
         			}
-        				
-        			else if(status=="pending"){
-        				$(this).hide(); // pending cannot publish twice
-        			}
-        				
         			else if(status== "inactive"){
-        				updateJobAd('updateInactive', formId);
+        				updateJobAd('publishInactive', formId);
         			}
         			
         		});
