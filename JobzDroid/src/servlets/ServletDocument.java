@@ -2,10 +2,12 @@ package servlets;
 
 import managers.AccountManager;
 import managers.SystemManager;
+import classes.FileUploadListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -51,7 +54,55 @@ public class ServletDocument extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		processRequest(request, response);
+		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession();
+		FileUploadListener
+		listener = null;
+		StringBuffer buffy = new StringBuffer();
+		long bytesRead = 0, contentLength = 0;
+
+		// Make sure the session has started
+		if (session == null) {
+			return;
+		}
+		else if (session != null) {
+			// Check to see if we've created the listener object yet
+			listener = (FileUploadListener)session.getAttribute("LISTENER");
+
+			if (listener == null) {
+				return;
+			}
+			else {
+				// Get the meta information
+				bytesRead = listener.getBytesRead();
+				contentLength = listener.getContentLength();
+			}
+		}
+		
+		response.setContentType("text/xml");
+		
+		buffy.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		buffy.append("<response>\n");
+		buffy.append("\t<bytes_read>" + bytesRead + "</bytes_read>\n");
+		buffy.append("\t<content_length>" + contentLength + "</content_length>\n");
+		
+		// Check to see if we're done
+		if (bytesRead == contentLength) {
+			buffy.append("\t<finished />\n");
+			//No reason to keep listener in session since we're done
+			session.setAttribute("LISTENER", null);
+			buffy.append("\t<message>Document Upload Sucessful </message>");
+		}
+		else {
+			// Calculate the percent complete
+			long percentComplete = ((100 * bytesRead) / contentLength);
+			buffy.append("\t<percent_complete>" + percentComplete + "</percent_complete>\n");
+		}
+		
+		buffy.append("</response>\n");
+		out.println(buffy.toString());
+		out.flush();
+		out.close();
 	}
 
 	/**
@@ -119,7 +170,15 @@ public class ServletDocument extends HttpServlet {
 		FileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		// Create a new file upload handler
+		FileUploadListener listener = new FileUploadListener();
 		
+		HttpSession httpSession = request.getSession();
+
+		httpSession.setAttribute("LISTENER", listener);
+
+      	// upload servlet allows to set upload listener
+      	upload.setProgressListener(listener);
+      
 		if ( isMultipart ) {
 			try {
 				// Parse the request
@@ -148,9 +207,6 @@ public class ServletDocument extends HttpServlet {
 			    name = item.getFieldName();
 			    value = item.getString();
 			    
-//			    if(name.equals("fileName")) {
-//			    	nextFileName = value;
-//			    }
 			    // fetch the hidden sessionkey
 			    if(name.equals("sessionKey")) {
 			    	sessionKey = value;
@@ -243,15 +299,15 @@ public class ServletDocument extends HttpServlet {
 		}//earlyExit:
 		System.out.println(message);
 		
-		StringBuffer XMLResponse = new StringBuffer();	
-		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
-		XMLResponse.append("<response>\n");
-		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
-		XMLResponse.append("\t<message>" + message + "</message>\n");
-		XMLResponse.append("\t<action>" + action + "</action>\n");
-		XMLResponse.append("</response>\n");
-		response.setContentType("application/xml");
-		response.getWriter().println(XMLResponse);
+//		StringBuffer XMLResponse = new StringBuffer();	
+//		XMLResponse.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+//		XMLResponse.append("<response>\n");
+//		XMLResponse.append("\t<sessionKey>" + sessionKey + "</sessionKey>\n");
+//		XMLResponse.append("\t<message>" + message + "</message>\n");
+//		XMLResponse.append("\t<action>" + action + "</action>\n");
+//		XMLResponse.append("</response>\n");
+//		response.setContentType("application/xml");
+//		response.getWriter().println(XMLResponse);
 //		response.sendRedirect( SystemManager.serverBaseURL + "/searcher/index.html" + "?sessionKey=" + sessionKey );
 		
 	}
