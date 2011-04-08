@@ -656,9 +656,9 @@ public class ServletProfile extends HttpServlet{
 					fullTime = result.getInt("fullTime");
 					partTime = result.getInt("partTime");
 					internship = result.getInt("internship");	
-
+					
 					if( (fullTime+partTime+internship) == 3   || (fullTime+partTime+internship) == 0)
-						empPref = "N/A"; //no preference
+						empPref = "No Preference"; //no preference
 					else{
 						if( fullTime == 1)
 							empPref += "Full-time ";
