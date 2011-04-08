@@ -512,8 +512,8 @@ function guestViewJobAd(outputDiv, mode){
 					$("#nextButton").attr("disabled", false);
 				}
 			  $("#browseIndex").val(index ); //increase index by 20
+			  $.fn.smartLightBox.closeLightBox(500);
 		    }
-		    $.fn.smartLightBox.closeLightBox(500);
 		};	  
 	//send the parameters to the servlet with POST
 	xmlhttp.open("POST","../ServletJobAd" ,true);
