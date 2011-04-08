@@ -280,23 +280,94 @@
 		</div><!--ENDOF DIV SEARCH TAB-->
 		
 		<div id="profileFrame" class="subFrame">
-				 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
+				 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");' id='refreshProfileButton'>Refresh Profile</button>
+			<!--STARTOF Profile Frame -->
 			 <div id="profileTable" class="resultTableDiv noBorder">
 			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
 				<table>
 					<tbody>
 					</tbody>
 				</table>
-			 </div>	
-			 <div id="fileUploadDIV">
-	    		<form name="fileUploadForm" onsubmit="uploadSearcherFile()" method="post" enctype="multipart/form-data" target="error.html">
-       				<input type="hidden" name="sessionKey"/>
-					File: <input type="file" name="file"/><input type="submit" value="Upload"/>
-    			</form>
-				<div id="fileFeedback">
-				</div>
-				<br />
-			 </div>
+				<div id="fileUploadDIV">
+	    			<form name="fileUploadForm" method="post" enctype="multipart/form-data"
+	    		 	target="hiddenUploadFrame" onsubmit="uploadSearcherFile()">
+       					<input type="hidden" name="sessionKey"/>
+						File: <input type="file" name="file"/><input type="submit" value="Upload"/>
+    				</form>
+					<div id="fileFeedback">
+					</div>
+					<br />
+			 	</div>
+			 	
+			 <div id="initializing" style="display: none; position: absolute; top: 100px;">
+			   <table width="100%"
+			          style="border: 1px; background-color: black;">
+			      <tr>
+			         <td>
+			            <table width="100%"
+			                   style="border: 1px; background-color: black;
+			                          color: white;">
+			               <tr>
+			                  <td align="center">
+			                     <b>Initializing Upload...</b>
+			                  </td>
+			               </tr>
+			            </table>
+			         </td>
+			      </tr>
+			   </table>
+			</div>
+			
+					<!-- STARTOF File Upload Progress Bar-->
+					<div id="progressBarTable"
+					     style="display: none; position: absolute; top: 100px;">
+					   <table width="100%"
+					          style="border: 1px; background-color: black;
+					                 color: white;">
+					      <tr>
+					         <td>
+					            <table id="progressBar" width="0px" 
+					               style="border: 1px; width: 0px;
+					                      background-color: blue;">
+					                  <tr>
+					                     <td>&nbsp;</td>
+					               </tr>
+					            </table>
+					         </td>
+					      </tr>
+					   </table>
+					   <table width="100%"
+					          style="background-color: white; color: black;">
+					      <tr>
+					         <td align="center" nowrap="nowrap">
+					            <span id="bytesRead"
+					                  style="font-weight: bold;">&nbsp;</span>
+					         </td>
+					      </tr>
+					   </table>
+					</div>
+					
+					<div id="percentCompleteTable" align="center"
+					   style="display: none; position: absolute; top: 100px;">
+					   <table width="100%" style="border: 1px;">
+					      <tr>
+					         <td>
+					            <table width="100%" style="border: 1px;">
+					               <tr>
+					                  <td align="center" nowrap="nowrap">
+					                     <span id="percentComplete"
+					                           style="color: white; font-weight:
+					                                  bold;">&nbsp;</span>
+					                  </td>
+					               </tr>
+					            </table>
+					         </td>
+					      </tr>
+					   </table>
+					</div><!--ENDOF File Upload Progress Bar-->
+			 	
+			 </div>	<!--ENDOF Profile Frame -->
+
 			 <div id="fileTable" class="resultTableDiv">
 				<table>
 					<thead>

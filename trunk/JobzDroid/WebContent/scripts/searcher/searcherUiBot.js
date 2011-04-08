@@ -368,33 +368,41 @@ function buildSearcherFileTb(targetXMLTag, outputDiv){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
 	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
 	var sKey = $("#sessionKey").val();
+	var dblTotalSize = 0;
+	
 	if(xmlObj.length==0){//if no results
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj
-		  var file = $(this);
-		  var filename = file.attr("fileName");
-		  var idOwner = file.attr("idOwner");
-		  var tr = $('<tr></tr>');
-		  var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
-		  var deleteAnchor =  "<a title='Delete' onclick='deleteSearcherFile(\"" + filename +"\")'" +
-		  		" class='linkImg' style='float:right'><img src='../images/icon/delete_icon.png'/></a>";
-
-		  var filenameCell = $('<td></td>');
-		  filenameCell.css("text-align","center");
-		  filenameAnchor.appendTo(filenameCell);
-		  filenameCell.appendTo(tr);
-		  
-		  var filesizeCell = $('<td></td>');
-		  filesizeCell.text(file.attr("size"));
-		  filesizeCell.css("text-align","center");
-		  filesizeCell.appendTo(tr);
-		  
-		  tr.append(deleteAnchor);
-		  
-		  tr.appendTo(tbody);		  
+			var file = $(this);
+			var filename = file.attr("fileName");
+			var idOwner = file.attr("idOwner");
+			var tr = $('<tr></tr>');
+			var filenameAnchor =  $('<a></a>').attr('href', '../downloadDoc.jsp?sessionKey=' + sKey + '&filename=' + filename + '&idOwner=' + idOwner).text(filename);
+			var deleteAnchor =  "<a title='Delete' onclick='deleteSearcherFile(\"" + filename +"\")'" +
+					" class='linkImg' style='float:right'><img src='../images/icon/delete_icon.png'/></a>";
+			
+			var filenameCell = $('<td></td>');
+			filenameCell.css("text-align","center");
+			filenameAnchor.appendTo(filenameCell);
+			filenameCell.appendTo(tr);
+			  
+			var filesizeCell = $('<td></td>');
+			filesizeCell.text(file.attr("size") + " MB");
+			filesizeCell.css("text-align","center");
+			filesizeCell.appendTo(tr);
+			  
+			dblTotalSize = dblTotalSize + parseFloat( file.attr("size") );
+			
+			tr.append(deleteAnchor);
+			  
+			tr.appendTo(tbody);		  
 		});
-		 $("tr:odd", tbody).addClass("oddRow");
+		var totalSizeRow = $('<tr></tr>');
+		$('<td></td>').appendTo(totalSizeRow);
+		$('<td></td>').css("text-align", "center").html("Total Files Size: "+ dblTotalSize + " MB").appendTo(totalSizeRow);
+		totalSizeRow.appendTo(tbody);
+	$("tr:odd", tbody).addClass("oddRow");
 	}
 }
 

@@ -1,48 +1,3 @@
-//function ParseXMLResponse(responseXML)
-//{
-//	 var result = (responseXML.getElementsByTagName("result")[0]).childNodes[0].nodeValue;
-//	 var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
-//	 	 
-//	 var response_text = "<h2>AJAX XML response from server: ";
-//	 response_text += message + "</h2>";
-//
-//	 return response_text;
-//}
-//
-//function loadProfileDetails(responseXML){
-//	
-//	var profile = responseXML.getElementsByTagName("profile").item(0);
-//	
-//	if( profile.getAttribute("accountType") == "searcher" ) {
-//		document.getElementById("name").innerHTML
-//			= profile.getAttribute("name");
-//		
-//		document.getElementById("email").innerHTML
-//			= profile.getAttribute("email");
-//		
-//		document.getElementById("secondaryEmail").innerHTML 
-//			= profile.getAttribute("secondaryEmail");
-//		
-//		document.getElementById("educationFormatted").innerHTML 
-//			= profile.getAttribute("educationFormatted");
-//		
-//		document.getElementById("empPref").innerHTML 
-//			= profile.getAttribute("empPref");
-//		
-//		document.getElementById("address").innerHTML 
-//			= profile.getAttribute("address");
-//		
-//		document.getElementById("startingDate").innerHTML 
-//			= profile.getAttribute("startingDate");
-//		
-//		document.getElementById("selfDescription").innerHTML 
-//			= profile.getAttribute("selfDescription");
-//		
-//	}
-//
-//	//TODO handle errors for invalid account type
-//}
-
 
 function submitChangeProfile(accountType){
 	
@@ -179,7 +134,7 @@ function listUserFiles( outputDiv ) {
 	
 	var Params = "action=listUserDocuments" + "&sessionKey=" + sessionKey;
 	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletDocument" ,true);
+	xmlhttp.open("POST", "../ServletDocument",true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xmlhttp.send(Params); 
 	
@@ -198,24 +153,111 @@ function uploadSearcherFile() {
 	document.fileUploadForm.sessionKey.value = document.getElementById("sessionKey").value;
 	document.fileUploadForm.action = "../ServletDocument";
 
+	var url = "../ServletDocument";
 	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-    	xmlhttp=new XMLHttpRequest();
+    	xmlhttp = new XMLHttpRequest();
+    	xmlhttp.onreadystatechange = fileUploadProgress;
+    	
+    	try {
+    		xmlhttp.open("GET", "../ServletDocument", true);
+    	}
+    	catch(e) {
+    		alert(e);
+    	}
+    	xmlhttp.send(null);
     }
-		else {// code for IE6, IE5
-	   		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	   	}
+	else if  (window.ActiveXObject ){// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		
+		if( xmlhttp ) {
+			xmlhttp.onreadystatechange = fileUploadProgress;
+			xmlhttp.open("GET", "../ServletDocument", true);
+			xmlhttp.send();
+		}
+	}
 
-	xmlhttp.onreadystatechange = fileUploadProgress;
+//	xmlhttp.open("GET", url, true);
+//    document.fileUploadForm.submit();
 	
-    document.fileUploadForm.submit();
 }
 
 function fileUploadProgress() {
 
-	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-		var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;;
-		document.getElementById("fileFeedback").innerHTML = message;
-    }
+	/**
+	 *	State	Description
+	 *	0		The request is not initialized
+	 *	1		The request has been set up
+	 *	2		The request has been sent
+	 *	3		The request is in process
+	 *	4		The request is complete
+	 */
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200) // OK response
+		{
+			var xml = xmlhttp.responseXML;
+
+			// No need to iterate since there will only be one set of lines
+			var isNotFinished = xml.getElementsByTagName("finished")[0];
+			var myBytesRead = xml.getElementsByTagName("bytes_read")[0];
+			var myContentLength = xml.getElementsByTagName("content_length")[0];
+			var myPercent = xml.getElementsByTagName("percent_complete")[0];
+
+			// Check to see if it's even started yet
+			if ((isNotFinished == null) && (myPercent == null))
+			{
+				$("#initializing").hide();
+
+				// Sleep then call the function again
+				window.setTimeout("fileUploadProgress();", 100);
+			}
+			else 
+			{
+				$("#initializing").hide();
+				$("#progressBarTable").hide();
+				$("#percentCompleteTable").hide();
+				$("#bytesRead").hide();
+
+				myBytesRead = myBytesRead.firstChild.data;
+				myContentLength = myContentLength.firstChild.data;
+
+				if (myPercent != null) // It's started, get the status of the upload
+				{
+					myPercent = myPercent.firstChild.data;
+		
+					$("#progressBar").css("width", myPercent + "%");
+					$("#bytesRead").html(myBytesRead + " of " +	myContentLength + " bytes read");
+					$("#percentComplete").html(myPercent + "%");
+	
+					// Sleep then call the function again
+					window.setTimeout("fileUploadProgress();", 100);
+				}
+				else
+				{
+					$("bytesRead").hide();
+					$("progressBar").css("width", "100%");
+					$("percentComplete").html("Done!");
+					
+
+					var msg =  (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
+					$("#fileFeedback").text(msg);
+					setTimeout( "refreshFiles()", 2000 );
+				}
+			}
+		}
+		else
+		{
+			alert(xmlhttp.statusText);
+		}
+	}
+//	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+//		var message = (responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;;
+//		document.getElementById("fileFeedback").innerHTML = message;
+//    }
+}
+
+function refreshFiles() {
+	$("#refreshProfileButton").click();
 }
 
 function deleteSearcherFile(filename) {
@@ -248,6 +290,7 @@ function deleteSearcherFile(filename) {
 	    {
 		  var msg =  (xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue;
 		  $("#fileFeedback").text(msg);
+		  $("#refreshProfileButton").click();
 	    }
 	  };
 }
