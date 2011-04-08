@@ -204,7 +204,7 @@ function uploadSearcherFile() {
 	var url = "../ServletDocument";
 	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
     	xmlhttp = new XMLHttpRequest();
-    	xmlhttp.onreadystatechange = fileUploadProgress;
+    	xmlhttp.onreadystatechange = handleFileUpload;
     	
     	try {
     		xmlhttp.open("GET", "../ServletDocument", true);
@@ -218,13 +218,23 @@ function uploadSearcherFile() {
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 		
 		if( xmlhttp ) {
-			xmlhttp.onreadystatechange = fileUploadProgress;
+			xmlhttp.onreadystatechange = handleFileUpload;
 			xmlhttp.open("GET", "../ServletDocument", true);
 			xmlhttp.send(Params);
 		}
 	}
 
 	
+}
+
+function handleFileUpload() {
+	
+	if ( xmlhttp.responseXML == null ) {
+		window.setTimeout("fileUploadProgress();", 1000);
+	}
+	
+//	$("#fileFeedback").text("Upload failed");
+//	setTimeout( "refreshFiles()", 2000 );
 }
 
 function fileUploadProgress() {
@@ -243,8 +253,10 @@ function fileUploadProgress() {
 		{
 			var xml = xmlhttp.responseXML;
 			
-			if ( xml == null ) {
-				window.setTimeout("fileUploadProgress();", 500);
+			if( xml == null ) {
+				$("#fileFeedback").text("Upload failed");
+				setTimeout( "refreshFiles()", 2000 );
+				return;
 			}
 			
 			// No need to iterate since there will only be one set of lines
