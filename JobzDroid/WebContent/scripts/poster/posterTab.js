@@ -299,6 +299,7 @@
      * ********************************************************************************************************************/ 
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
+                	var status=tr.find('td.td-status').text();
                 	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
                 	var subMenuItem=({"Inactive":"inactive", "Draft":"draft"});
                 	var subMenu=({
