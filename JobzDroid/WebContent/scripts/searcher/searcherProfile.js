@@ -128,6 +128,8 @@ function submitChangeProfile(accountType){
 
 function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOutputDiv ){
   
+	$.fn.smartLightBox.openDivlb("profileFrame", 'load','Loading Profile Data...');
+	
 	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
@@ -150,10 +152,16 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 	  if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
 	    {
 		  //you can find this in uiBot.js under scripts folder
-		 //buildProfileSearcherEditTb("profile", profileOutputDiv, profileHeading);
 		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
 		  buildSearcherFileTb("file", fileOutputDiv);
+		  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
+		  
+	    }else{
+        	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+			$("#lbMsg","#profileFrame").html("Action Not Successful, please try again");
+			 $.fn.smartLightBox.closeLightBox(500, "profileFrame");
 	    }
+	    	
 	  };	
 }
 

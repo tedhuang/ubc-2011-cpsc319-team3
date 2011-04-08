@@ -69,17 +69,27 @@
 
 <!-- STARTOF SIDEMENU -->
  	<ul id="sideMenu" class="sideNavMenu">	
-		<li>
-			<a href="#" class="topMenu">
-				<img src="../images/icon/help_icon.png" alt=""/>
-				<h2>Help & Feeds</h2>
+		<li>	
+			<a class="jsBtn" href="../rss.html" target="_blank">
+			<img src="../images/icon/rss.png" />
+			<span>RSS</span>
 			</a>
-			<ul id="subMenu">
-				<li><a href="../rss.html" target="_blank">RSS<img src="../images/icon/rss.png" /></a></li>
-				<li><a href="../news.jsp" target="_blank">News<img src="../images/icon/news.png" /></a></li>
-				<li><a href="../faq.html">FAQ<img src="../images/icon/faq.png" /></a></li>
-			</ul>
 		</li>
+		
+		<li>
+			<a class="jsBtn" href="../news.jsp" target="_blank">
+			<span>News</span>
+			<img src="../images/icon/news.png" />
+			</a>
+		</li>
+		<li>
+			<a class="jsBtn" href="../faq.html" class="topMenu" >
+			<span>FAQ</span>
+			<img src="../images/icon/faq.png" />
+			</a>
+		</li>
+
+		
   	</ul><!--ENDOF SideMenu-->
 
 <div id="main-container">
@@ -269,8 +279,8 @@
 			  </div><!--ENDOF DIV RESULT TABLE-->
 		</div><!--ENDOF DIV SEARCH TAB-->
 		
-		 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
 		<div id="profileFrame" class="subFrame">
+				 <button onclick='getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");'>Refresh Profile</button>	
 			 <div id="profileTable" class="resultTableDiv noBorder">
 			 	<h2 id="profileHeading" class="welcome"></h2><span id="profileFB"></span>
 				<table>
