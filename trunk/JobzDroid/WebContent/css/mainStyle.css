@@ -53,7 +53,7 @@ label.cby   { background: url(../images/ele-ui/cby.png) no-repeat; }
 label.rby   { background: url(../images/ele-ui/rby.png) no-repeat; }
 .label-cb input, .label-rb input  	{ 	position: absolute; 	left: -9999px;}
 /************************ELEMENTS STYLE*********************************************************/
-.main{	width: 1050px;	height: auto;  margin: 0 auto; overflow: hidden;position: relative;	max-width: 1600px; 	min-width: 600px;}
+.main{	width: 1050px;	height: auto;  margin: 0 auto; position: relative;	max-width: 1600px; 	min-width: 600px;}
 /**********************header bar************************************************************/
 div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg.jpg") repeat-x 0 -12px;	position: relative;}
 
@@ -129,7 +129,7 @@ div.fullBox{width:100%;}
 .resultTableDiv th{ border-right: 1px solid white; background-color:#4E8975;  line-height: 25px; padding:0; cursor:pointer;text-align: center;}
 .resultTableDiv th.noStyle{background:none; cursor:default; border-bottom:1px solid grey;}
 .resultTableDiv tbody {	color: #000;}
-.resultTableDiv td {border-right: 1px solid white; border-bottom: 1px solid grey;height: 23px;	overflow: hidden; /*word-wrap: break-word;*/ text-align: left;}
+.resultTableDiv td {border-right: 1px solid white; height: 23px;	overflow: hidden; /*word-wrap: break-word;*/ text-align: left;}
 .resultTableDiv td.verticalTh{border-bottom: 1px solid grey; max-height: 30px; width:200px; word-wrap: break-word; background-color: #4E8975;
 							  color:white;	vertical-align: top; text-align: right; padding:1em;}
 .resultTableDiv td.verticalTb{ border-bottom: 1px solid grey; word-wrap: break-word; vertical-align: middle; text-align: left;
