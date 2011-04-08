@@ -58,7 +58,7 @@ public class SystemManager {
 	// document and file system management variables
 	public static String[] validFileExtensions
 						= { ".doc", ".docx", ".pdf" , ".rtf", ".txt" };
-	public static String documentDirectory		= "./WEB-INF/Documents/"; //TODO maybe change to default user path
+	public static String documentDirectory		= "../webapps/JobzDroid/WEB-INF/Documents/";
 	public static long bytesInMB				=  1000 * 1000;
 	public static long fileStorageSizeLimit		= 5 * bytesInMB; // limit is 5 Mb, base unit is byte
 	
