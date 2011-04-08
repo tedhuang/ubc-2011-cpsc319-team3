@@ -1540,10 +1540,10 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 				if(str.equals("startingDate")){
 					mostMatched.append(colMatchMap.get(str)+DBQ.GRTR +"?" +DBQ.AND);
 				}
-				else if(str.equals("location")){
-					mostMatched.append(colMatchMap.get(str) + DBQ.LIKE + "?" +
-										DBQ.AND + colMatchMap.get(str) + DBQ.LIKE + "?" +DBQ.AND); //location 
-				}
+//				else if(str.equals("location")){
+//					mostMatched.append(colMatchMap.get(str) + DBQ.LIKE + "?" +
+//										DBQ.AND + colMatchMap.get(str) + DBQ.LIKE + "?" +DBQ.AND); //location 
+//				}
 				else{
 					mostMatched.append(colMatchMap.get(str)+DBQ.EQ +"?" +DBQ.AND);
 				}
@@ -1560,10 +1560,15 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 			wildSugg.append(DBQ.SELECT + adInfoBuf + DBQ.FROM + "tableJobAd" +  
 							DBQ.WHERE );
 			for(String str:userInfo){
-				
-				wildSugg.append(colMatchMap.get(str)+DBQ.EQ +"?" +DBQ.OR);
+				if(str.equals("startingDate")){
+					wildSugg.append(colMatchMap.get(str)+DBQ.GRTR +"?" +DBQ.OR);
+				}
+				else{
+					wildSugg.append(colMatchMap.get(str)+DBQ.EQ +"?" +DBQ.OR);
+				}
 			}
 			wildSugg.delete(wildSugg.length()-DBQ.OR.length(), wildSugg.length()); //rm extra "OR"
+//			wildSugg.append(DBQ.ORDERBY + "datePosted" + DBQ.DESC + DBQ.LIMIT + "?" + DBQ.COMA + 5);
 			suggQueryArr[2]=wildSugg;
 			return suggQueryArr;
 		}
@@ -1572,8 +1577,8 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 		 	ArrayList<JobAdvertisement> jobAdList = new ArrayList<JobAdvertisement>();
 			mysqlCmd qcmd = new mysqlCmd();
 			String[]authInfo={"idAccount"};
-			String[]uInfo={"educationLevel", "startingDate", "location"};
-			String[]adInfo={"idJobAd","title","datePosted","location","contactInfo","educationRequired"};
+			String[]uInfo={"educationLevel", "startingDate"};
+			String[]adInfo={"idJobAd","title","datePosted","contactInfo","educationRequired"};
 			//Debug
 			System.out.println("Entered get Suggestions");
 			//initialize return statements
@@ -1625,14 +1630,19 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 						
 						//now get the suggestions that MOST MATCHED user's info
 						suggQuery = conn.prepareStatement(suggQueryBuf[1].toString());
+						int edu=0;
+						long sd=0;
 						while(suggRs.next()){
 							//THE ORDER NEEDS TO BE CONSISTENT WITH THE USERINFO ARRAY
 							//TODO NULL CHECK
-							String[]locInfo=Utility.locationParser(suggRs.getString("location"));
-							suggQuery.setInt(1, suggRs.getInt("educationLevel"));
-							suggQuery.setLong(2, suggRs.getLong("startingDate"));
-							suggQuery.setString(3, "%"+locInfo[0]+"%");
-							suggQuery.setString(4, "%"+locInfo[1]+"%");
+//							String[]locInfo=Utility.locationParser(suggRs.getString("location"));
+							edu=suggRs.getInt("educationLevel");
+							sd=suggRs.getLong("startingDate");
+							suggQuery.setInt(1, edu);
+							suggQuery.setLong(2, sd);
+							
+//							suggQuery.setString(3, "%"+locInfo[0]+"%");
+//							suggQuery.setString(4, "%"+locInfo[1]+"%");
 						}
 						
 					   stmt=conn.createStatement(); //create a new statement maybe not needed
@@ -1650,21 +1660,37 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 							for(int i=1; i<=numColumns; i++){
 								String colName = rsmd.getColumnName(i);
 								temp.valueMap.put(jobAdDBDict.get(colName), suggRs.getObject(colName));
-								
 							}
-//							temp.jobAdId 				= suggRs.getInt("idJobAd");
-//							temp.jobAdTitle				= suggRs.getString("title");
-//							temp.creationDate		 	= suggRs.getLong("datePosted");
-//							temp.location				= suggRs.getString("location");
-//							temp.contactInfo 			= suggRs.getString("contactInfo");
-//							temp.educationReq	 		= suggRs.getInt("educationRequired");
-//							temp.jobAvailability 		= Utility.jobTypeTranslator(false,suggRs.getString("jobAvailability"));
-//							temp.tags 					= result.getString("tags");
 							
 							jobAdList.add( temp ); //add to the temporary list
 					   }
-					   
-					  }//ENDOF INSERT INTO LOCATION TABLE 
+					   // Now the wilded Matched
+					   if(jobAdList.size()<5){
+						   int wildSuggNum =5-jobAdList.size();
+						   StringBuffer msq=suggQueryBuf[2];
+						   for(JobAdvertisement jobAd: jobAdList){
+							   msq.append(DBQ.AND+"idJobAd"+DBQ.NEQ+jobAd.valueMap.get("jobAdId"));
+						   }
+						   msq.append(DBQ.ORDERBY + "datePosted" + DBQ.DESC + DBQ.LIMIT + wildSuggNum + DBQ.COMA + 5);
+						 
+						   PreparedStatement moreSuggQuery = conn.prepareStatement(msq.toString());
+						   moreSuggQuery.setInt(1, edu);
+						   moreSuggQuery.setLong(2, sd);
+						   
+						   suggRs = moreSuggQuery.executeQuery();
+						   while(suggRs.next()){
+							   JobAdvertisement temp = new JobAdvertisement();
+							   rsmd = suggRs.getMetaData();
+								int numColumns = rsmd.getColumnCount();
+								for(int i=1; i<=numColumns; i++){
+									String colName = rsmd.getColumnName(i);
+									temp.valueMap.put(jobAdDBDict.get(colName), suggRs.getObject(colName));
+								}
+								
+								jobAdList.add( temp ); //add to the temporary list
+						   }
+					   }
+					  }//ENDOF acctId not null
 				}
 				catch (SQLException e) {
 					Utility.logError("SQL exception : " + e.getMessage());

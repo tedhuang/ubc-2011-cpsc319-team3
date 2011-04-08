@@ -334,19 +334,27 @@ function buildSuggList(xmlTag, outputDiv, xhrResponse){
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj\
-			$('<li></li>')
-			.append('<span class="title jsBtn">'+$(this).attr("jobAdTitle")+'</span>')
-			.append('<span class="qkView">'+
-					$(this).attr("creationDate") + " | " +
-					$(this).attr("educationReq") + " | " +
-					$(this).attr("location") 	 + " | " +
-					$(this).attr("contactInfo") +
-					'</span>')
-			.delegate("span.title", "click", function(){
-				$.fn.DynaSmartTab.viewDetail($(this).attr("jobAdId"));
-			})
-			.appendTo(list);
-		 });
+		  var li=$('<li></li>')
+				.append('<span class="title jsBtn">'+$(this).attr("jobAdTitle")+'</span>')
+				.delegate("span.title", "click", function(){
+						$.fn.DynaSmartTab.viewDetail($(this).attr("jobAdId"));
+					})
+				.appendTo(list);
+			
+		  var qkView = $('<span></span>').addClass('qkView').appendTo(li);
+		  $.each($(this), function(name, value){
+			  if(typeof value!== undefined || value!=""){
+				  qkView.append(value);
+			  }
+		  });
+//		  .append('<span class="qkView">'+
+//					$(this).attr("creationDate") + " | " +
+//					$(this).attr("educationReq") + " | " +
+//					$(this).attr("location") 	 + " | " +
+//					$(this).attr("contactInfo") +
+//					'</span>')
+//		 });
+	});
 	}
 }
 /************************************************************************************************************
