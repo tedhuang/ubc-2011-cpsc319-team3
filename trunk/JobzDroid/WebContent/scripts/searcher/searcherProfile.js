@@ -74,9 +74,9 @@ function submitChangeProfile(accountType){
 			getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");
 			$.fn.smartLightBox.closeLightBox(1000, "profileFrame");
 	    }else{
-		  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
-			$("#lbMsg","#profileFrame").html("Approving Not Successful, please try again");
-			$.fn.smartLightBox.closeLightBox(1000, "profileFrame");
+//		  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+//			$("#lbMsg","#profileFrame").html("Approving Not Successful, please try again");
+			$.fn.smartLightBox.closeLightBox(200, "profileFrame");
 	    }
 	  };	
 }
