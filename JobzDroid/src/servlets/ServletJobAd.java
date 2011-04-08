@@ -1843,9 +1843,8 @@ private StringBuffer[] buildUpdateAdQuery(HttpServletRequest request, int IdAcct
 		try {		
 			stmt = conn.createStatement();
 			//Add individual queries onto total query
-			String query = "SELECT * FROM tablefavouritejobad INNER JOIN tablejobad " +
-					"USING(idJobAd) WHERE tablefavouritejobad.idAccount =" +
-					accountId;
+			String query = "SELECT * FROM tablefavouritejobad LEFT OUTER JOIN tablejobad " +
+					"USING(idJobAd) WHERE tablefavouritejobad.idAccount =\"" + accountId + "\"";
 					
 			
 			//DEBUG
