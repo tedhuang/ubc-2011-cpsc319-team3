@@ -58,6 +58,7 @@ public class JobAdvertisement {
 		contactInfo = Utility.processXMLEscapeChars(contactInfo);
 		jobAdDescription = Utility.processXMLEscapeChars(jobAdDescription);
 		String gfStr=Utility.GFConvertor(hasGradFunding);
+		
 		if(locationList.isEmpty()){
 //			Location loc = new Location("Not Specified");
 //			locationList.add(loc);
@@ -65,6 +66,18 @@ public class JobAdvertisement {
 		
 		if(status == null){
 			status = "N/A";
+		}
+		
+		if( contactInfo == null || contactInfo == "null"){
+			contactInfo = "";
+		}
+		
+		if( tags == null || tags == "null"){
+			tags = "";
+		}
+		
+		if( jobAdDescription == null || jobAdDescription == "null"){
+			jobAdDescription = "";
 		}
 		
 		if(jobAvailability == null){
