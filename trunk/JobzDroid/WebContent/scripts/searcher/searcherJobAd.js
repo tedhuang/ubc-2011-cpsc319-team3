@@ -342,18 +342,15 @@ function buildSuggList(xmlTag, outputDiv, xhrResponse){
 				.appendTo(list);
 			
 		  var qkView = $('<span></span>').addClass('qkView').appendTo(li);
-		  $.each($(this), function(name, value){
-			  if(typeof value!== undefined || value!=""){
-				  qkView.append(value);
-			  }
-		  });
-//		  .append('<span class="qkView">'+
-//					$(this).attr("creationDate") + " | " +
-//					$(this).attr("educationReq") + " | " +
-//					$(this).attr("location") 	 + " | " +
-//					$(this).attr("contactInfo") +
-//					'</span>')
-//		 });
+		  $.each(this.attributes, function(i, attrib){
+			     var name = attrib.name;
+			     var value = attrib.value;
+			     if(!name.match(/title|id/gi)){
+			      if(typeof value!== undefined || value!=""){
+					  qkView.append(value + " ");
+				  }
+			     }
+			  });
 	});
 	}
 }

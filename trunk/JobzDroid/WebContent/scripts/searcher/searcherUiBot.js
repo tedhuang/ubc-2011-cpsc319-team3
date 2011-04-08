@@ -173,7 +173,7 @@ function buildAdListTb(targetXMLTag, outputDiv, mapDiv, xmlResponse){
 		  $('<td></td>').text(jobAd.attr("contactInfo")).appendTo(tr);
 		  $('<td></td>').addClass('td-eduReq').text(jobAd.attr("educationReq")).appendTo(tr);
 		  $('<td></td>').text(jobAd.attr("jobAvailability")).appendTo(tr);
-		  $('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
+		  var locTd=$('<td></td>').addClass('td-loc').html(jobAd.attr("location")).appendTo(tr);
 		  
 		  var strSessionKey = $("#sessionKey").val();
 //		  var favouriteAnchor =  "<a class='button' href='#' " +
@@ -198,7 +198,8 @@ function buildAdListTb(targetXMLTag, outputDiv, mapDiv, xmlResponse){
 					addr=$(this).attr("addr");
 					lat=$(this).attr("latlng").split(",")[0];
 					lng=$(this).attr("latlng").split(",")[1];
-					$.fn.smartMap.buildJobListMap(lat, lng);
+					locTd.addClass("hasMap jsBtn").attr("title","Map Available");
+					$.fn.smartMap.buildJobListMap(locTd, lat, lng);
 				});
 			}
 			else{
@@ -206,7 +207,7 @@ function buildAdListTb(targetXMLTag, outputDiv, mapDiv, xmlResponse){
 			}
 		});//eof process each jobAd
 		 
-		 $("tr:odd", tbody).addClass("oddRow");
+//		 $("tr:odd", tbody).addClass("oddRow");
 		 $("#feedback").html('<h2 class="good">Found '+ xmlObj.length +' Records</h2>');
 		  
 	} // eof check ad num
