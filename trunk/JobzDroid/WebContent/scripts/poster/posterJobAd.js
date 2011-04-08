@@ -139,22 +139,34 @@ function updateJobAd(mode, formDiv){
 	if(mode=="openAd" ){
 		request.addAction("updateOpenAd");
 	}
-	else if(mode=="draftAd"){
+	else if(mode.match(/draftAd|publishInactive/gi)){
 		request.addAction("updateDraftAd");
 	}
 	
-	if(checkMandatory(theForm)){
+	 if(checkMandatory(theForm)){
 		
 		request.addSessionKey( sessionKey );
 		var inputFields = $(":input", theForm).not('.map, #oldAdValues').serializeArray();
 		var compareResult =compareChange("oldAdValues", inputFields, formDiv);
-		
-		if(compareResult.numChanged){ //only update changed data
-			var changedData = compareResult.changedData;
-			$.each( changedData.data(),function(name, value) {
-				request.addParam(name, value);
-			});
-		changedData.remove();//remove the cache(and the dom)
+		if(!mode=="publishInactive"){
+			if(compareResult.numChanged){ //only update changed data
+				var changedData = compareResult.changedData;
+				$.each( changedData.data(),function(name, value) {
+					request.addParam(name, value);
+				});
+			changedData.remove();//remove the cache(and the dom)
+			}
+			else{
+				$.fn.smartLightBox.closeLightBox(0);
+				$.fn.smartLightBox.diaBox("You Didn't Change Anything", "alert", "notification");
+			}
+		}
+		else{
+			$.each(inputFields, function(i, field){
+				request.addParam(field.name, field.value); //add parameter to the request
+		   });
+			request.addParam("updateDead", mode);
+		}
 		console.log(request.toString());
 		//get location info
 //		var locList = $("li", $("#locList", theForm)).get();
@@ -178,14 +190,9 @@ function updateJobAd(mode, formDiv){
 				xhr.send(request.toString());
 				$.fn.smartLightBox.openDivlb(formDiv,'load',"Updating...");
 			}catch(e){
-				
+				console.log(e);
 			}
 		}//eof if xhr not null
-	  }//eof check if change
-		else{
-			$.fn.smartLightBox.closeLightBox(0);
-			$.fn.smartLightBox.diaBox("You Didn't Change Anything", "alert", "notification");
-		}
 	}//eof check mandatory
 	function processResult(){
 		if (xhr.readyState == 4) {
