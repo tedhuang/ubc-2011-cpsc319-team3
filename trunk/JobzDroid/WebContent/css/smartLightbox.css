@@ -3,13 +3,13 @@
 #lightBox #overlay.whitebg{background-color: #102232;}
 #lightBox #divlb {z-index:9999; margin: 0.5em;position:absolute; top:30%; left:40%; font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;min-width:400px;}
 #lightBox #divlb img{position:relative; padding:2em;  float:left;}
-#lightBox #midBox{z-index:9999;position:absolute; top:20%; left: 30%;height:235px;width:485px;
+#lightBox #midBox{z-index:9999;position:absolute; top:20%; left: 30%;height:226px;width:528px;
 				  font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;color:white;
 				  background: url(../images/bg/midBox.png) no-repeat scroll center center;}
 #lightBox #midBox #info{position:relative; top:2em;  padding:1em;}
 #lightBox  h2{font-size:0.8em; }
-#lightBox #divlb h2#lbMsg{padding-left: 3em; font-size:1.5em; color:#FFFFFF;}
-#lightBox #midBox #info h2{color:#FFFFFF;}
+#lightBox #divlb h2#lbMsg{padding-left: 3em; font-size:1.5em; color:green;}
+#lightBox #midBox #info h2{color:color:green;}
 #lightBox #midBox #info img{position:relative;  padding:4em 4em 1em 2em;  float:left; }
 #lightBox #divlb img.load,
 #lightBox #midBox #info img.load{background: url(../images/loadin.gif) no-repeat scroll center center;}
