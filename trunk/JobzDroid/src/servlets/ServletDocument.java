@@ -87,7 +87,7 @@ public class ServletDocument extends HttpServlet {
 				// account registration
 				case deleteDocument:
 					if( session == null ) {
-						response.sendRedirect("../sessionExpired.html");
+						response.sendRedirect("sessionExpired.html");
 						return;
 					}
 					else if( sessionCheck = session.checkPrivilege( "searcher", "poster" ) )
@@ -96,7 +96,7 @@ public class ServletDocument extends HttpServlet {
 			}
 			
 			if ( sessionCheck == false  ) {
-				response.sendRedirect("../error.html");
+				response.sendRedirect("error.html");
 			}
 			
 		}

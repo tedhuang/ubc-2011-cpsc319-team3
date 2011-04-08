@@ -104,7 +104,7 @@ public class ServletJobAd extends HttpServlet {
 			
 			case saveJobAdDraft:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster") )
@@ -113,7 +113,7 @@ public class ServletJobAd extends HttpServlet {
 				
 			case updateOpenAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster" ) )
@@ -122,7 +122,7 @@ public class ServletJobAd extends HttpServlet {
 				
 			case updateDraftAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster") )
@@ -131,7 +131,7 @@ public class ServletJobAd extends HttpServlet {
 
 			case deleteJobAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
@@ -140,7 +140,7 @@ public class ServletJobAd extends HttpServlet {
 			
 			case changeJobAdStatus:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster" ) )
@@ -157,7 +157,7 @@ public class ServletJobAd extends HttpServlet {
 //				break;
 			case getJobAdByOwner:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if(session.checkPrivilege( "poster" ) )
@@ -173,7 +173,7 @@ public class ServletJobAd extends HttpServlet {
 				break;	
 			case getSuggestions:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
@@ -183,7 +183,7 @@ public class ServletJobAd extends HttpServlet {
 				
 			case saveFavouriteJobAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher") )
@@ -192,7 +192,7 @@ public class ServletJobAd extends HttpServlet {
 				
 			case listFavouriteJobAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
@@ -211,7 +211,7 @@ public class ServletJobAd extends HttpServlet {
 		}
 		
 		if ( sessionCheck == false && session != null ) {
-			response.sendRedirect("../error.html");
+			response.sendRedirect("error.html");
 		}
 		
 	}

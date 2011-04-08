@@ -263,34 +263,36 @@ function searchSearcherProfile(outputDiv){
  * 
  *******************************************************************************************************************/
 function viewAllSearchers(outputDiv){
+	var strSessionKey = $("#sessionKey").val();
 	
 	request = new Request;
 	request.addAction("viewAllSearchers");
+	request.addSessionKey(strSessionKey);
 	
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-				xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			
-			//send the parameters to the servlet with POST
-			$("#feedback").html("<h2>Sending Request</h2>");
-			xmlhttp.open("POST","../ServletProfile" ,true);
-			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xmlhttp.send(request.toString());
-			
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			    {
-					//parse XML response from server
-					buildJSListTb("profile", outputDiv);
-		
-			    }
-			  };
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	
+	//send the parameters to the servlet with POST
+	$("#feedback").html("<h2>Sending Request</h2>");
+	xmlhttp.open("POST","../ServletProfile" ,true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(request.toString());
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	    {
+			//parse XML response from server
+			buildJSListTb("profile", outputDiv);
+
+	    }
+	  };
 	}
 
 		  

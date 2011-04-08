@@ -110,7 +110,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case adminApprove:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -118,7 +118,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case adminDeny:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -126,7 +126,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case adminDeleteJobAd:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -134,7 +134,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case ban:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -142,7 +142,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case unban:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -150,7 +150,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case createAdmin:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "superAdmin") )
@@ -158,7 +158,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case deleteAccount:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -166,7 +166,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case postNews:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -174,7 +174,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case deleteNews:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -182,7 +182,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case postRSSEntry:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -190,7 +190,7 @@ public class ServletAdmin extends HttpServlet {
 				break;
 			case removeRSSEntry:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )

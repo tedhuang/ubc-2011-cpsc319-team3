@@ -99,7 +99,7 @@ public class ServletProfile extends HttpServlet{
 		
 			case getProfileById:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "admin", "superAdmin") )
@@ -108,7 +108,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case getProfileSearcherById:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
@@ -117,7 +117,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case editProfile:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher", "poster") )
@@ -126,7 +126,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case getProfileBySessionKey:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher", "poster") )
@@ -135,7 +135,7 @@ public class ServletProfile extends HttpServlet{
 							
 			case searchSearcherProfile:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
@@ -144,7 +144,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case viewAllSearchers:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster", "admin", "superAdmin") )
@@ -152,7 +152,7 @@ public class ServletProfile extends HttpServlet{
 				break;
 			case smrSearcherProfile:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "searcher" ) )
@@ -161,7 +161,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case saveCandidate:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster") )
@@ -169,7 +169,7 @@ public class ServletProfile extends HttpServlet{
 				
 			case deleteCandidate:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster") )
@@ -177,7 +177,7 @@ public class ServletProfile extends HttpServlet{
 
 			case listCandidate:
 				if( session == null ) {
-					response.sendRedirect("../sessionExpired.html");
+					response.sendRedirect("sessionExpired.html");
 					return;
 				}
 				else if( sessionCheck = session.checkPrivilege( "poster") )
@@ -185,7 +185,7 @@ public class ServletProfile extends HttpServlet{
 		}//ENDOF SWITCH
 
 		if ( sessionCheck == false && session != null ) {
-			response.sendRedirect("../error.html");
+			response.sendRedirect("error.html");
 		}
 		
 	}//ENDOF processReq Func
