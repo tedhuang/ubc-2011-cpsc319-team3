@@ -136,15 +136,15 @@
 <!--===================== JOB AD DETAILS FRAME ==========================-->
 <!-- ==================================================================== -->	
 
-	<div id="adDetailFrame" class="subFrame unremovable">
-		<div id="adDetailTable" class="resultTableDiv noBorder fullTab">
-			<h2 id="adDetailHeading" class="welcome heading"></h2>
-			<table><tbody></tbody></table>
+		<div id="adDetailFrame" class="subFrame unremovable">
+			<div id="adDetailTable" class="resultTableDiv noBorder fullTab">
+				<h2 id="adDetailHeading" class="welcome heading"></h2>
+				<table><tbody></tbody></table>
 		</div>
-	</div><!--end of EDADFRAME-->
+	</div><!--end of TADFRAME-->
 
-		</div>
 	</div><!--ENDOF TABFRAME-->
+</div><!--ENDOF TABS-->
 </div><!--ENDOF MAIN-->
 	
 
