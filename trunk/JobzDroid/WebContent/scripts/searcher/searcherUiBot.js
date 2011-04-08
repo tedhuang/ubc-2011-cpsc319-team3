@@ -472,13 +472,13 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
 		
 		var accountText = 
-				"<tr id='oldEmailRow' ><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
+				"<tr id='oldEmailRow' ><td>Your Account E-mail</td><td id='oldEmail'>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
 				"<tr id='newEmailRow' 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /><span id='emailError'></td></tr>" +
-				"<tr id='oldSecEmailRow'><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
+				"<tr id='oldSecEmailRow'><td>Your Backup E-mail</td><td id='oldSecEmail'>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
 				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
 				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld' type='password'/></td></tr>" +
 				"<tr id='newPWRow' 		 style='DISPLAY:none;'><td>New Password</td><td>"			+ " " + "</td><td><input id='passwordNew' type='password'/><span id='pwError'></td></tr>" +
-				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat type='password''/></td></tr>";
+				"<tr id='repeatPWRow' 	 style='DISPLAY:none;'><td>Repeat Password</td><td>"		+ "	" + "</td><td><input id='passwordRepeat' type='password'/></td></tr>";
 
 		var profileText =
 			"<tr id='nameRow'><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name' style='DISPLAY: none;'/><span id='nameError'></td></tr>" +
