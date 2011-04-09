@@ -254,7 +254,7 @@ function fileUploadProgress() {
 			var xml = xmlhttp.responseXML;
 			
 			if( xml == null ) {
-				$("#fileFeedback").text("Upload failed");
+				$("#fileFeedback").text("");
 				setTimeout( "refreshFiles()", 2000 );
 				return;
 			}
