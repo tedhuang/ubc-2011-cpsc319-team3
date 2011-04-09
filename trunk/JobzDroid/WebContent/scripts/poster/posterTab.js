@@ -300,7 +300,7 @@
                 
                 $.fn.DynaSmartTab.posterAdTool=function(tr,menuHolder,adId){
                 	var status=tr.find('td.td-status').text();
-                	var topMenuItem=({"View":"view", "Edit":"edit", "Delete":"del"});
+                	var topMenuItem=({"View":"view", "Edit":"edit"});
                 	/*******************************
                 	 * OPEN NEED TO GO TO DRAFT AND INACTIVE 
 						CAN TAKE OUT DEL BUT NEED DIFFRENET STATUS CHANGE
@@ -396,25 +396,11 @@
          		        			getJobAdById("edit",adId, "edAdForm" );
          		        		}
 	         	        	}
-         				togglePopMenu.call(menuDiv, tr,menuHolder,"", ""); //hide the menu
+         					togglePopMenu.call(menuDiv, tr,menuHolder,"", ""); //hide the menu
     				     }) //eof dalegate edit
-    				     
-//    				      .delegate("span.del", "click", function(){
-//    				    	  $.fn.smartLightBox.diaBox("are you sure you want to delete this ad?", "alert");
-//    	     					$('a.yes', "#btnBox").click(function(){
-//    	     						$("#btnBox", "#lightBox").hide();
-//    	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
-//    	     						$("#lbMsg","#lightBox").html("Deleting Your Ad...");
-//    	     						
-//    	     						changeJobAdStatus(adId, "inactive"); //Change status to inactive instead of permanently deleting
-//    	     						//delJobAd(tr, adId);
-//    	     					});
-//    	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
-//    				      })//eof delegate delete
-    				     
     				      
     				      .delegate("span.inactive", "click", function(){
-    				    	  $.fn.smartLightBox.diaBox("Are you sure you want to inactivate this ad?", "alert");
+    				    	  $.fn.smartLightBox.diaBox("Are you sure you want to inactivate this ad? People Will Not See It If you do so", "alert");
   	     					$('a.yes', "#btnBox").click(function(){
   	     						$("#btnBox", "#lightBox").hide();
   	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
@@ -423,7 +409,16 @@
   	     					});
   	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
   				      })//eend of delegate inactivate
-  				      				      
+  				      .delegate("span.draft", "click", function(){
+    				    	  $.fn.smartLightBox.diaBox("Are you sure you want to send it to draft? people will not see it if you do so", "alert");
+  	     					$('a.yes', "#btnBox").click(function(){
+  	     						$("#btnBox", "#lightBox").hide();
+  	     						$("#lbImg", "#lightBox").removeClass("alert").addClass("load");
+  	     						$("#lbMsg","#lightBox").html("Processing...");
+  	     						changeJobAdStatus(adId, "draft"); //Change status to inactive instead of permanently deleting
+  	     					});
+  	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
+  				      });//eend of delegate inactivate				      
   				      
   				      
 //    				   .delegate("span.publish", "click", function(){
@@ -438,7 +433,6 @@
 //  	     				togglePopMenu.call(menuDiv,tr, menuHolder,"", ""); //hide the menu
 //  				      })//end of delegate publish
   				      
-    				     ;
                 };
                 
                 function togglePopMenu(tr,allMenus,xPos, yPos){

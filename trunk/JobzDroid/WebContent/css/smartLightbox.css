@@ -5,7 +5,7 @@
 #lightBox #divlb img{position:relative; padding:2em;  float:left;}
 #lightBox #midBox{z-index:9999;position:absolute; top:20%; left: 30%;height:226px;width:528px; font: bold italic small-caps 1.3em/1.5em verdana, Ariel, sans-serif;
 color:green; background: url(../images/bg/midBox.png) no-repeat scroll center center;}
-#lightBox #midBox #info{position:relative; top:1.1em;  padding:1em;word-wrap: break-word;}
+#lightBox #midBox #info{position:relative; width:450px;top:1.1em;  padding:1em;word-wrap: break-word;}
 #lightBox  h2{font-size:0.8em; }
 #lightBox #divlb h2#lbMsg{padding-left: 3em; font-size:1.5em; color:green;}
 #lightBox #midBox #info h2{color:green;}
@@ -18,5 +18,5 @@ color:green; background: url(../images/bg/midBox.png) no-repeat scroll center ce
 #lightBox #midBox #info img.good{background: url(../images/icon/good.png) no-repeat scroll center center;}
 #lightBox #midBox #btnBox {/*position:absolute; bottom:0; right:0; display:inline; */padding:1.3em; float:right;}
 #lightBox #midBox #btnBox a{padding-top:0.5em; padding-right:0.5em;}
-#lightBox #midBox #btnBox a.yes{}
-#lightBox #midBox #btnBox a.no{}
+#lightBox #midBox #btnBox a.yes{color: #F88017;}
+#lightBox #midBox #btnBox a.no{color: #151B54;}

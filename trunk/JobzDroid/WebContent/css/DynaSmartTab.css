@@ -61,8 +61,8 @@ background-image: -webkit-gradient(linear,0 top,0 bottom,from(white),to(whiteSmo
 .fillInForm input.hidden{display:none;}
 .descForm div.field textarea.textBoxXL,
 .fillInForm div.field textarea.textBoxXL{	border-color: #CCC;	width: 880px;	height:300px;  resize: none; }
-#suggBox{ border: 1px solid green; padding:1em;float: left; height: 380px; margin: 1em; padding: 2em; }
-#suggBox ul#suggList{list-style: none outside none;padding-top: 1em; width: 350px; padding-left:0.5em; overflow:auto;}
+#suggBox{ border: 1px solid green; padding:1em; height: 380px; margin: 1em; padding: 2em; }
+#suggBox ul#suggList{list-style: none outside none;padding-top: 1em;  padding-left:0.5em; overflow:auto;}
 #suggBox ul#suggList li{padding-top: 1em; border-bottom: 1px solid grey;}
 #suggBox ul#suggList span{color:blue;}
 #suggBox ul#suggList span.qkView{display:block;}
