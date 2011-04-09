@@ -190,7 +190,6 @@ function updateJobAd(mode, formDiv){
 				xhr.onreadystatechange = processResult;
 				xhr.send(request.toString());
 				$.fn.smartLightBox.openDivlb(formDiv,'load',"Updating...");
-				adsdasadssadsad;
 			}catch(e){
 				console.log(e);
 			}
