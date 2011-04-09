@@ -276,8 +276,8 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");//HEADUP: CSS changed
+		 $(tbody).find('tr').find('td').addClass("verticalTb");
+		 $(tbody).find('tr').find('td:first').addClass("verticalTh");
 		 $("#detailFB").hide();
 		 
 		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
