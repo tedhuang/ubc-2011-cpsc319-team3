@@ -162,7 +162,7 @@ div.fullBox{width:100%;}
 .columnButton{ border-left:1px solid #FFFFFF;   border-right:0px solid #FFFFFF;  height:31px;
 				font-weight:normal;  color:#333;  margin:0px; padding:0; width: 100%; cursor:pointer;}
 .headToolBar{ height:32px; padding: 1em;}
-.headToolBar a{float:left; padding: 1em;}
+.headToolBar a{float:left; padding: 1em; font-size:14px; }
 .headToolBar ul#filter, ul#newAdTool, 
 ul#edAdTool, ul#ownerDtlViewTool{list-style: none; float:left;list-style-image: none;list-style-position: outside;
 								 list-style-type: none;margin: 0;padding-left: 4em; padding-bottom:1em;}
