@@ -134,8 +134,8 @@ function submitChangeProfile(accountType){
 	    {
 		    //parse XML response from server
 		  	//TODO: implement response
-		  alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
-		  getSearcherProfileBySessionKey("profileTable", "profileHeading", "fileTable");
+		  //alert((xmlhttp.responseXML.getElementsByTagName("message")[0]).childNodes[0].nodeValue);
+		  getProfileBySessionKey("profileTable", "profileHeading", "fileTable");
 		  
 	    }
 	  };	

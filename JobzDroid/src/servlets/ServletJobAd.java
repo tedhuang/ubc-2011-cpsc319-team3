@@ -891,7 +891,7 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 		//initialize return statements
 		boolean isSuccessful = false;
 		String msg = "";
-		
+				
 		System.out.println("sessionKey=" + request.getParameter("sessionKey"));
 		
 		String sKey=request.getParameter("sessionKey");
@@ -902,13 +902,6 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 		StringBuffer qBuf =sessPosterAuthQuery(sKey,qcmd); // authenticate user
 		String query=qBuf.substring(1, qBuf.length()-2); //Remove bracket
 		System.out.println(query);
-
-//			String address 				 = request.getParameter("address");
-//			double longitude 			 = Double.parseDouble(request.getParameter("longitude"));
-//			double latitude 			 = Double.parseDouble(request.getParameter("latitude"));
-			
-//			System.out.println("Created On: " + millisDateCreated + " Expire On: " + millisExpiryDate);
-//			System.out.println("Location: " + address + " Long: " + longitude + " Lat: " + latitude);
 			
 			Connection conn = dbManager.getConnection();	
 			Statement stmt = null;
@@ -970,6 +963,10 @@ private void createJobAd(HttpServletRequest request, HttpServletResponse respons
 	
 				  }//ENDOF INSERT INTO LOCATION TABLE 
 				}
+				
+				
+				
+				
 			}
 			catch (SQLException e) {
 				Utility.logError("SQL exception : " + e.getMessage());
