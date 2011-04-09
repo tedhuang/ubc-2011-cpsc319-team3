@@ -517,8 +517,8 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading, xmlResp){
 		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
-//		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-//		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $(tbody).find('tr').find('td').addClass("verticalTb");
+		 $(tbody).find('tr').find('td:first').addClass("verticalTh");
 		 $("#detailFB").hide();
 		 
 		$("#secondaryEmail").val(profile.attr("secondaryEmail"));
