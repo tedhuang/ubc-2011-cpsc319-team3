@@ -78,7 +78,7 @@ div.header{	margin-top: 30px;	height: 60px;background	: url("../images/header-bg
 .centerbox .loginbox{background: url("../images/bg/login-box.png") no-repeat;	float: right;  list-style-type: none; padding: 0;  position: absolute;
 					right:3em; top: 1em;height: 339px;	width: 375px;}
 .centerbox .loginbox a{ padding: 0.3em 0 0 1.5em;float: left;font-size: 15px;}
-.centerbox .loginbox #loginDiv{position: absolute; bottom:1em; overflow:hidden;width: 320px;padding-left:1em;}
+.centerbox .loginbox #loginDiv{position: absolute; overflow:hidden;width: 320px;padding: 1em 0 0 1em;}
 .centerbox .loginbox #loginDiv h2{font: bold small-caps 1.2em verdana, Ariel, sans-serif;}
 .centerbox .loginbox label{clear: both;float: left;width:100%;font: bold small-caps 1em verdana, Ariel, sans-serif;color:white;padding:0 0 0 1em;}
 .centerbox .loginbox input{background: url("../images/bg/input-bg.png") no-repeat scroll left top transparent;
