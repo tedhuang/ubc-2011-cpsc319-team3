@@ -333,10 +333,11 @@ function buildSuggList(xmlTag, outputDiv, xhrResponse){
 	}
 	else{
 		xmlObj.each(function() {//for All returned xml obj\
+			var jobId=$(this).attr("jobAdId");
 		  var li=$('<li></li>')
 				.append('<span class="title jsBtn">'+$(this).attr("jobAdTitle")+'</span>')
 				.delegate("span.title", "click", function(){
-						$.fn.DynaSmartTab.viewDetail($(this).attr("jobAdId"));
+						$.fn.DynaSmartTab.viewDetail(jobId);
 					})
 				.appendTo(list);
 			
