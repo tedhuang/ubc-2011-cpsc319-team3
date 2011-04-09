@@ -286,9 +286,9 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 							"<span id='resultTableTitle'></span> <table id='lookUpTable'></table>";
 		
 
-		var accountText = 
-				"<tr><td>Your Account E-mail</td><td>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
-				"<tr id=newEmailRow 	 style='DISPLAY:none;'><td>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
+		var accountText =
+				"<tr><td class='verticalTh'>Your Account E-mail</td><td class='verticalTb'>"	+ profile.attr("email")						+ "</td><td></td></tr>" +
+				"<tr id=newEmailRow 	 style='DISPLAY:none;'><td class='verticalTh'>New E-mail</td><td>"				+ " " + "</td><td><input id='emailNew' /></td></tr>" +
 				"<tr><td>Your Backup E-mail</td><td>"	+ profile.attr("secondaryEmail") 			+ "</td><td></td></tr>" +
 				"<tr id='secEmailRow' 	 style='DISPLAY:none;'><td>New Secondary E-mail</td><td>"	+ " " + "</td><td><input id='secondaryEmail'/></td></tr>" +
 				"<tr id='oldPWRow' 		 style='DISPLAY:none;'><td>Old Password</td><td>"			+ " " + "</td><td><input id='passwordOld'   /></td></tr>" +
@@ -297,24 +297,24 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 
 			
 		var profileText =
-			"<tr><td>Your Name</td><td>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
-			"<tr><td>Your Phone Number</td><td>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td class='verticalTh'>Your Name</td><td class='verticalTb>" 			+ profile.attr("name") 				+ "</td><td><input id='name'		    style = 'DISPLAY: none;' /></td></tr>" +
+			"<tr><td class='verticalTh'>Your Phone Number</td><td class='verticalTb'>"	+ profile.attr("phone")				+ "</td><td><input id='phone' 			style = 'DISPLAY: none;' /></td></tr>" +
 			
-			"<tr><td>Your Self Description</td><td>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
+			"<tr><td class='verticalTh'>Your Self Description</td><td class='verticalTb'>"+ profile.attr("selfDescription")	+ "</td><td><textarea id='selfDescription' rows='10' cols='50' style = 'DISPLAY: none;'/><br/><span id='descInfo'></span></td></tr>";
 		
 		profileText +=
-			"<tr><td>Your Education Level</td><td>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
-			"<tr><td>Your Employment Preference</td><td>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
-			"<tr><td>You're Available From</td><td>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
+			"<tr><td class='verticalTh'>Your Education Level</td><td class='verticalTb'>"			+ profile.attr("educationFormatted")	+ "</td><td>" + educationLevelSelection + "</td></tr>" +
+			"<tr><td class='verticalTh'>Your Employment Preference</td><td class='verticalTb'>"	+ profile.attr("employmentPreference")	+ "</td><td>" + employmentPrefSelection + "</td></tr>" +
+			"<tr><td class='verticalTh'>You're Available From</td><td class='verticalTb'>"		+ profile.attr("startingDateFormatted")	+ "</td><td><input id='startingDate' style = 'DISPLAY: none;'/> TODO: yyyy/mm/dd (add date picker?) </td></tr>";
 
 		
 		//Add Address Input Field
 		var address = profile.find("location").attr("address");		
 			
 		profileText += 
-			"<tr><td>Your Address</td>  <td>"+address +"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
-			"<tr><td></td><td></td><td>" + addressButton + "</td></tr>" +
-			"<tr><td></td><td></td><td>" + addressResult + "</td></tr>";
+			"<tr><td class='verticalTh'>Your Address</td>  <td>"+address +"</td>  <td><input id='loc-filed' style='DISPLAY:none;'/></td></tr>" +
+			"<tr><td class='verticalTh'></td><td></td><td>" + addressButton + "</td></tr>" +
+			"<tr><td class='verticalTh'></td><td></td><td>" + addressResult + "</td></tr>";
 			
 			
 		//Add buttons 
@@ -332,8 +332,8 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+		 $(tbody).find('tr').find('td:first').addClass("verticalTh");
+		 $(tbody).find('tr').find('td:last').addClass("verticalTb");
 		 $("#detailFB").hide();
 		 
 		 //document.getElementById("emailNew").innerHtml=profile.attr("email");
@@ -365,9 +365,9 @@ function buildProfileSearcherEditTb(targetXMLTag, outputDiv, heading){
 /******************************************************
  * 			build file list
  ******************************************************/
-function buildSearcherFileTb(targetXMLTag, outputDiv){
+function buildSearcherFileTb(targetXMLTag, outputDiv,xmlResp){
 	var tbody  = $("tbody", "#"+outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	var xmlObj = $(targetXMLTag,xmlResp);
 	var sKey = $("#sessionKey").val();
 	var dblTotalSize = 0;
 	
@@ -445,9 +445,9 @@ function buildSearcherFileViewingTb(targetXMLTag, outputDiv){
  * @param outputDiv
  * @param heading
  *********************************************************************************************************************/
-function buildProfileEditTb(targetXMLTag, outputDiv, heading){
+function buildProfileEditTb(targetXMLTag, outputDiv, heading, xmlResp){
 	var tbody  = $( "tbody", "#"+outputDiv).html("");
-	var profile = $(targetXMLTag, xmlhttp.responseXML);
+	var profile = $(targetXMLTag, xmlResp);
 	
 	if(profile.length==0){//if no results
 		$("#profileFB").html("<h2 class='error'>Oops, you are looking at something that does not exist!</h2>");
@@ -517,8 +517,8 @@ function buildProfileEditTb(targetXMLTag, outputDiv, heading){
 		 $(tbody).append(accountText);
 		 $(tbody).append(profileText);
 		 $(tbody).append(buttonHTML);
-		 $(tbody).find('tr').find('td:first').addClass("nameCol");
-		 $(tbody).find('tr').find('td:last').addClass("dataCol");
+//		 $(tbody).find('tr').find('td:first').addClass("nameCol");
+//		 $(tbody).find('tr').find('td:last').addClass("dataCol");
 		 $("#detailFB").hide();
 		 
 		$("#secondaryEmail").val(profile.attr("secondaryEmail"));
@@ -792,8 +792,8 @@ function redisplayProfile(accountType)
 		  				"<tr class='clean'></tr>";
 		  
 		    $(tbody).append(rowText);
-		 	$(tbody).find('tr').find('td:first').addClass("nameCol");
-		 	$(tbody).find('tr').find('td:last').addClass("dataCol");
+		 	$(tbody).find('tr').find('td:first').addClass("verticalTh");
+		 	$(tbody).find('tr').find('td:last').addClass("verticalTb");
 		 	fb.hide();
 		}
 	}
