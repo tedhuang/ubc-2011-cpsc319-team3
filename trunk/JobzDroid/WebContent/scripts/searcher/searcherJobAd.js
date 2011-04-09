@@ -469,7 +469,7 @@ function buildFavouriteListTb(targetXMLTag, outputDiv, xmlResp){
 		  $('<td></td>').attr("id", id='td-status').text(jobAdXML.attr("contactInfo")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-eduReq').text(jobAdXML.attr("eduReqFormatted")).appendTo(tr);
 		  $('<td></td>').attr("id", id='td-jobAvail').text(jobAdXML.attr("jobAvail")).appendTo(tr);
-		  $('<td></td>').attr("id", id='td-loc').html(jobAdXML.children("location").attr("address")).appendTo(tr);
+//		  $('<td></td>').attr("id", id='td-loc').html(jobAdXML.find("location").attr("address")).appendTo(tr);
 		  
 		  $('<div></div>')
 		  .addClass('jsBtn rmFavJob')
