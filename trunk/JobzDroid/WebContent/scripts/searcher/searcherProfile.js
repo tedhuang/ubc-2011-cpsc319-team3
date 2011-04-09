@@ -102,69 +102,69 @@ function getSearcherProfileBySessionKey(profileOutputDiv, profileHeading, fileOu
 	request.addAction("getProfileBySessionKey");
 	request.addSessionKey(strSessionKey);
 	
-//	//Concurrent Ajax handling
-//	var xmlhttp=createXHR();
-//	if(xmlhttp){
-//		try{
-//			//send the parameters to the servlet with POST
-//			xmlhttp.open("POST","../ServletProfile" ,true);
-//			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//			xmlhttp.onreadystatechange = processResponse;
-//			xmlhttp.send( request.toString() );
-//		}catch(e){
-//			
-//		}
-//	}
+	//Concurrent Ajax handling
+	var xmlhttp=createXHR();
+	if(xmlhttp){
+		try{
+			//send the parameters to the servlet with POST
+			xmlhttp.open("POST","../ServletProfile" ,true);
+			xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = processResponse;
+			xmlhttp.send( request.toString() );
+		}catch(e){
+			
+		}
+	}
+	
+	function processResponse(){
+		  if (xmlhttp.readyState==4){ 
+		    try {
+			  if(xmlhttp.status==200){
+				  buildProfileEditTb("profile", profileOutputDiv, profileHeading,xmlhttp.responseXML);
+				  buildSearcherFileTb("file", fileOutputDiv, xmlhttp.responseXML);
+				  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
+		    }
+			else{
+				  console.log("Get Seracher Profile failed");
+				  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+					$("#lbMsg","#profileFrame").html("Action not successful, please try again");
+					$.fn.smartLightBox.closeLightBox(500, "profileFrame");
+			}
+		   }catch(e){
+			   //error-handling
+		   }
+		 }
+	}  
+	
+//	var xmlHttpReq;
+//	if (window.XMLHttpRequest)
+//	  xmlhttp = new XMLHttpRequest();
+//	else
+//	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 //	
-//	function processResponse(){
-//		  if (xmlhttp.readyState==4){ 
-//		    try {
-//			  if(xmlhttp.status==200){
-//				  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
-//				  buildSearcherFileTb("file", fileOutputDiv);
-//				  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
-//		    }
-//			else{
-//				  console.log("Get Seracher Profile failed");
-//				  	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
-//					$("#lbMsg","#profileFrame").html("Action not successful, please try again");
-//					$.fn.smartLightBox.closeLightBox(500, "profileFrame");
-//			}
-//		   }catch(e){
-//			   //error-handling
-//		   }
-//		 }
-//	}  
-	
-	var xmlHttpReq;
-	if (window.XMLHttpRequest)
-	  xmlhttp = new XMLHttpRequest();
-	else
-	  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletProfile" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-	
-	xmlhttp.onreadystatechange = function()
-	  {
-	  if ( xmlhttp.readyState == 4   && xmlhttp.status == 200)
-	    {
-		  //you can find this in uiBot.js under scripts folder
-		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
-		  buildSearcherFileTb("file", fileOutputDiv);
-		  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
-		  
-	    }else{
-	    	
-	    	//TODO: fix bug: Get profile seems to hit here 3 times	    	
-//        	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
-//			$("#lbMsg","#profileFrame").html("Action Not Successful, please try again");
-			 $.fn.smartLightBox.closeLightBox(500, "profileFrame");
-	    }
-	    	
-	  };	
+//	//send the parameters to the servlet with POST
+//	xmlhttp.open("POST","../ServletProfile" ,true);
+//	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//	xmlhttp.send(request.toString());
+//	
+//	xmlhttp.onreadystatechange = function()
+//	  {
+//	  if ( xmlhttp.readyState == 4   && xmlhttp.status == 200)
+//	    {
+//		  //you can find this in uiBot.js under scripts folder
+//		  buildProfileEditTb("profile", profileOutputDiv, profileHeading);
+//		  buildSearcherFileTb("file", fileOutputDiv);
+//		  $.fn.smartLightBox.closeLightBox(500, "profileFrame");
+//		  
+//	    }else{
+//	    	
+//	    	//TODO: fix bug: Get profile seems to hit here 3 times	    	
+////        	$("#lbImg", "#profileFrame").removeClass("load").addClass("alert");
+////			$("#lbMsg","#profileFrame").html("Action Not Successful, please try again");
+//			 $.fn.smartLightBox.closeLightBox(500, "profileFrame");
+//	    }
+//	    	
+//	  };	
 }
 
 function listUserFiles( outputDiv ) {

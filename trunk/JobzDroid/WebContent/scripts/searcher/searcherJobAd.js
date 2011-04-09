@@ -365,20 +365,42 @@ function saveFavouriteJobAd(sessKey, jobId){
 	request.addParam("sessionKey", sessKey);
 	request.addParam("jobAdId", jobId);
 	
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
+	var xhr = createXHR(); //Now created xhr used a function
+	function processResult(){
+		if (xhr.readyState == 4) {
+			try {
+				  if (xhr.status == 200) {
+					 $('<h2></h2>')
+					 .addClass('good')
+					 .html("Ad has been save to your favorite!")
+					 .appendTo(domObjById("feedback"))
+					 .fadeOut(2000);
+					 
+				  }
+                else{ 
+                	 $('<h2></h2>')
+                	 .addClass('error')
+                	 .html("We are sorry, the ad has not been save to your favorite!")
+                	 .appendTo(domObjById("feedback"))
+                	 .fadeOut(2000);;
+                }
+			} 
+			catch (e){
+			}
+	    }
+//		  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	}//eof processResult
 	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-
+	if(xhr){
+		try {
+			  xhr.open("POST", "../ServletJobAd", true);
+			  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			  xhr.onreadystatechange = processResult; //bind to callBack to have threaded ajax calls
+			  xhr.send(request.toString());
+		} catch (e) {
+			             //Handle error
+		  }
+	}	  
 	
 }
 
@@ -394,39 +416,47 @@ function listFavouriteJobAd(outputDiv){
 	var strSessionKey = $("#sessionKey").val();
 	request.addParam("sessionKey", strSessionKey);
 
-	
-	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	}
-	else{// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	
-	//send the parameters to the servlet with POST
-	xmlhttp.open("POST","../ServletJobAd" ,true);
-	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	xmlhttp.send(request.toString());
-	
-	xmlhttp.onreadystatechange=function(){
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200){  
-		  buildFavouriteListTb("jobAd", outputDiv);	  
+	var xhr = createXHR(); //Now created xhr used a function
+	function processResult(){
+		if (xhr.readyState == 4) {
+			try {
+				  if (xhr.status == 200) {
+					  
+					  buildFavouriteListTb("jobAd", outputDiv, xhr.responseXML);	
+					 
+				  }
+                else{ 
+                	 
+                }
+			} 
+			catch (e){
+			}
 	    }
-	  else{
-		  //TODO: implement error handling
-	  }
-	};
+//		  $.fn.smartLightBox.closeLightBox(1000,"home-frame");
+	}//eof processResult
+	
+	if(xhr){
+		try {
+			  xhr.open("POST", "../ServletJobAd", true);
+			  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			  xhr.onreadystatechange = processResult; //bind to callBack to have threaded ajax calls
+			  xhr.send(request.toString());
+		} catch (e) {
+			             //Handle error
+		  }
+	}	  
 }
 
 /************************************************************************************************************
  * 				Build Favourite Job Ad List 
  * @param 
  ************************************************************************************************************/	
-function buildFavouriteListTb(targetXMLTag, outputDiv){
+function buildFavouriteListTb(targetXMLTag, outputDiv, xmlResp){
 	
 	var strSessionKey = $("#sessionKey").val();
 	
 	var tbody  = $("tbody", outputDiv).html("");
-	var xmlObj = $(targetXMLTag,xmlhttp.responseXML);
+	var xmlObj = $(targetXMLTag,xmlResp);
 	if(xmlObj.length==0){//if no results
 		$("#feedbackFavourites").html("<h2 class='error'>You have not saved any favourite Job Advertisements </h2>");
 	}
